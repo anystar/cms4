@@ -1,14 +1,14 @@
 <?php
 
 // Fat free framework
-$f3 = include("/home/alan/www/f3/lib/base.php");
+$f3 = include("/home/f3/lib/base.php");
 
 $f3->set("client", $config);
 
 //if (!@mkdir("/tmp/", 0700)) { die("failed to make tmp directory. Please create tmp directory in client folder."); }
 
 // Killackey CMS
-$f3->set('AUTOLOAD', "/home/alan/www/killackeyCMS/");
+$f3->set('AUTOLOAD', "/home/cms/");
 $f3->set('UI', getcwd()."/");
 $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
@@ -59,7 +59,7 @@ $f3->route("POST /contact", function ($f3, $params) {
 $f3->route('GET /admin/theme', "admin::theme");
 
 $f3->route("POST /admin/login", function ($f3) {
-	$f3->set('UI', "/home/alan/www/killackeyCMS/adminUI/");
+	$f3->set('UI', "/home/cms/adminUI/");
 	admin::login($f3);
 });
 
@@ -78,7 +78,7 @@ $f3->route("GET /cms", function ($f3) {
 
 $f3->route(array("GET /admin", "GET /admin/*"), function ($f3) {
 
-	$f3->set('UI', "/home/alan/www/killackeyCMS/adminUI/");
+	$f3->set('UI', "/home/cms/adminUI/");
 
 	// If admin is not logged in, pull up login page.
 	if (!admin::$signed) 

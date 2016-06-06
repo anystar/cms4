@@ -54,7 +54,7 @@ class admin {
 			new Session();
 			$f3->set("SESSION.user", $post["user"]);
 
-			$f3->set('UI', "/home/alan/www/killackeyCMS/adminUI/");
+			$f3->set('UI', "/home/cms/adminUI/");
 
 			if ($f3->get("POST.redirecttolive"))
 				$f3->reroute("/");
@@ -99,7 +99,7 @@ class admin {
 
 	static public function theme($f3) {
 
-		$f3->set('UI', "/home/alan/www/killackeyCMS/adminUI/");
+		$f3->set('UI', "/home/cms/adminUI/");
 		echo Template::instance()->render("css/adminstyle.css", "text/css");
 	}
 }
