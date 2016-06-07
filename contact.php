@@ -158,13 +158,17 @@ class contact
 		}
 		else 
 		{
-			if (empty($db->exec("SELECT setting FROM settings WHERE setting='contact-email'")))
+
+			$result = $db->exec("SELECT setting FROM settings WHERE setting='contact-email'");
+			if (empty($result))
 				$db->exec("INSERT INTO settings VALUES ('contact-email', 'joe@example.com')");
 
-			if (empty($db->exec("SELECT setting FROM settings WHERE setting='contact-name'")))
+			$result = $db->exec("SELECT setting FROM settings WHERE setting='contact-name'");
+			if (empty($result))
 				$db->exec("INSERT INTO settings VALUES ('contact-name', 'Joe')");
 
-			if (empty($db->exec("SELECT setting FROM settings WHERE setting='contact-subject'")))
+			$result = $db->exec("SELECT setting FROM settings WHERE setting='contact-subject'");
+			if (empty($result))
 				$db->exec("INSERT INTO settings VALUES ('contact-subject', 'Email subject line')");
 		}
 
