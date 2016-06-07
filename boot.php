@@ -1,25 +1,38 @@
 <?php
 
+if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
+{
+	// Local machine (Alans Dell)
+	$cms_location = "/home/alan/www/killackeyCMS/";
+	$f3_location  = "/home/alan/www/f3/lib/base.php";
+	$ckeditor_location = "";
+}
+else
+{
+	// Webworks Server
+	$cms_location = "/home/cms/";
+	$f3_location  = "/home/f3/lib/base.php";
+	$ckeditor_location = "";
+}
+
 // Fat free framework
-$f3 = include("/home/f3/lib/base.php");
+$f3 = include($f3_location);
 
 $f3->set("client", $config);
+$f3->set("CMS", $cms_location);
+$f3->set("ckeditor", '<script src="http://'.$f3->get("SERVER.SERVER_NAME").'/ckeditor/ckeditor.js"></script>');
 
 //if (!@mkdir("/tmp/", 0700)) { die("failed to make tmp directory. Please create tmp directory in client folder."); }
 
 // Killackey CMS
-$f3->set('AUTOLOAD', "/home/cms/");
+$f3->set('AUTOLOAD', $cms_location);
 $f3->set('UI', getcwd()."/");
 $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
 $f3->set('DEBUG', 1);
 
-
-$f3->set("ckeditor", '<script src="http://'.$f3->get("SERVER.SERVER_NAME").'/ckeditor/ckeditor.js"></script>');
-
 // Connect to DB
 $f3->set('DB', new DB\SQL('sqlite:db/cmsdb'));
-
 
 $f3->route("GET /mkdir", function () {
 
@@ -59,7 +72,7 @@ $f3->route("POST /contact", function ($f3, $params) {
 $f3->route('GET /admin/theme', "admin::theme");
 
 $f3->route("POST /admin/login", function ($f3) {
-	$f3->set('UI', "/home/cms/adminUI/");
+	$f3->set('UI', $f3->CMS."adminUI/");
 	admin::login($f3);
 });
 
@@ -78,7 +91,7 @@ $f3->route("GET /cms", function ($f3) {
 
 $f3->route(array("GET /admin", "GET /admin/*"), function ($f3) {
 
-	$f3->set('UI', "/home/cms/adminUI/");
+	$f3->set('UI', $f3->CMS."adminUI/");
 
 	// If admin is not logged in, pull up login page.
 	if (!admin::$signed) 

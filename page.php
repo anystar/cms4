@@ -52,7 +52,7 @@ class page {
 			$f3->set("ck_instances", $ck_instances);
 
 			$tmp = $f3->get("UI");
-			$f3->set('UI', "/home/alan/www/killackeyCMS/adminUI/");
+			$f3->set('UI', $f3->CMS."adminUI/");
 			$inlinecode = Template::instance()->render("ckeditor_inline.js");
 			$f3->set('UI', $tmp);
 
