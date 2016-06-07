@@ -99,7 +99,9 @@ class admin {
 
 	static public function theme($f3) {
 
-		$f3->set('UI', "/home/cms/adminUI/");
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
 		echo Template::instance()->render("css/adminstyle.css", "text/css");
+		$f3->UI = $tmp;
 	}
 }
