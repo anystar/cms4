@@ -5,14 +5,14 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 	// Local machine (Alans Dell)
 	$cms_location = "/home/alan/www/killackeyCMS/";
 	$f3_location  = "/home/alan/www/f3/lib/base.php";
-	$ckeditor_location = "<script src="http://localhost/ckeditor/ckeditor.js"></script>";
+	$ckeditor_location = "<script src=\"http://localhost/ckeditor/ckeditor.js\"></script>";
 }
 else
 {
 	// Webworks Server
 	$cms_location = "/home/cms/";
 	$f3_location  = "/home/f3/lib/base.php";
-	$ckeditor_location = "<script src="http://webworksau.com/ckeditor/ckeditor.js"></script>";
+	$ckeditor_location = "<script src=\"http://webworksau.com/ckeditor/ckeditor.js\"></script>";
 }
 
 // Fat free framework
