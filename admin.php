@@ -54,7 +54,7 @@ class admin {
 			new Session();
 			$f3->set("SESSION.user", $post["user"]);
 
-			$f3->set('UI', "/home/cms/adminUI/");
+			$f3->set('UI', $f3->CMS."adminUI/");
 
 			if ($f3->get("POST.redirecttolive"))
 				$f3->reroute("/");
