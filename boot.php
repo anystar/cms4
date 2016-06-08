@@ -67,6 +67,17 @@ $f3->route("POST /contact", function ($f3, $params) {
 		$f3->mock("GET /contact");
 });
 
+$f3->route(["GET /gallery", "GET /gallery/@gallery"], function ($f3, $params) {
+	
+	if (isset($params["gallery"]))
+		$section = $params["gallery"];
+
+	if (page::exists("gallery"))
+		gallery::load($section);
+
+	page::render($f3, array("page"=>"gallery"));
+});
+
 
 // Admin routes
 $f3->route('GET /admin/theme', "admin::theme");
@@ -111,6 +122,9 @@ $f3->route(array("GET /admin", "GET /admin/*"), function ($f3) {
 	
 	$f3->route('GET /admin/contact', "admin::contact");
 	$f3->route('GET /admin/contact/generate', "contact::generate");
+
+	$f3->route('GET /admin/gallery', "admin::gallery");
+	$f3->route('GET /admin/gallery/generate', "gallery::generate");
 
 	// Admin content blocks
 	$f3->route('GET /admin/pages', 'admin::pages_admin_render');

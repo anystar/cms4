@@ -97,6 +97,13 @@ class admin {
 			echo Template::instance()->render("contactForm/nocontact.html");
 	}
 
+	static public function gallery ($f3) {
+		if (gallery::exists())
+			echo Template::instance()->render("gallery/gallery.html");
+		else
+			echo Template::instance()->render("gallery/nogallery.html");
+	}
+
 	static public function theme($f3) {
 
 		$tmp = $f3->UI;
