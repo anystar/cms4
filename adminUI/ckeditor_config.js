@@ -1,25 +1,19 @@
 CKEDITOR.editorConfig = function( config ) {
-  // Define changes to default configuration here.
-  // For complete reference see:
-  // http://docs.ckeditor.com/#!/api/CKEDITOR.config
-
-  // The toolbar groups arrangement, optimized for two toolbar rows.
   config.toolbarGroups = [
-    { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-    { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
-    { name: 'links' },
-    { name: 'insert' },
-    { name: 'forms' },
-    { name: 'tools' },
-    { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
-    { name: 'others' },
+    { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+    { name: 'forms', groups: [ 'forms' ] },
+    { name: 'links', groups: [ 'links' ] },
+    { name: 'insert', groups: [ 'insert' ] },
+    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+    { name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing', 'others', 'tools' ] },
     '/',
     { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-    { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
-    { name: 'styles' },
-    { name: 'colors' },
-    { name: 'about' }
+    { name: 'styles', groups: [ 'styles' ] },
+    { name: 'colors', groups: [ 'colors' ] },
+    { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
   ];
+
+  config.removeButtons = 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Undo,Redo,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,Table,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
 
   config.inlinesave = {
     postUrl: '{{@BASE}}/admin/page/save',
@@ -27,17 +21,12 @@ CKEDITOR.editorConfig = function( config ) {
     useColorIcon: true
   };
 
-  // Remove some buttons provided by the standard plugins, which are
-  // not needed in the Standard(s) toolbar.
-  config.removeButtons = 'Underline,Subscript,Superscript';
+  config.extraPlugins = 'uploadimage';
+  config.uploadUrl = '/uploader/';
 
-  // Set the most common block elements.
-  config.format_tags = 'p;h1;h2;h3;pre';
-
-  // Simplify the dialog windows.
-  config.removeDialogTabs = 'image:advanced;link:advanced';
+  config.filebrowserBrowseUrl = "/";
+  config.filebrowserUploadUrl = "/";
 };
-
 
 // The "instanceCreated" event is fired for every editor instance created.
 CKEDITOR.on( 'instanceCreated', function ( event ) {

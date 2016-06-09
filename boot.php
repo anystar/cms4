@@ -31,6 +31,14 @@ $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
 $f3->set('DEBUG', 1);
 
+
+// //DOC: http://f3.ikkez.de/assets
+// $f3->set("ASSETS.combine.public_path", "assets/");
+// $f3->set("ASSETS.filter.css", "combine");
+
+// \Assets::instance();
+
+
 // Connect to DB
 $f3->set('DB', new DB\SQL('sqlite:db/cmsdb'));
 
