@@ -1,11 +1,41 @@
 <?php
 
+########################################
+####### phpLiteAdmin redirecting #######
+########################################
+
+if ($config['enable_admin']) {
+	$db_sub_folder = "admindb";
+
+	$url = pathinfo($_SERVER["REQUEST_URI"]);
+	$dir = basename($url["dirname"]);
+
+	$dir2 = explode("?", $url["basename"]);
+
+	if ($url["filename"] == "phpliteadmin")
+	{
+		include("/home/phpliteadmin/dynamic_myAdmin.php");
+		die;
+	}
+
+	if ($dir == $db_sub_folder || $url["basename"] == $db_sub_folder || $dir2[0] == $db_sub_folder)
+	{
+		include("/home/phpliteadmin/phpliteadmin.php");
+		die;
+	}
+}
+
+########################################
+####### remote vs local configs ########
+########################################
+
 if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 {
 	// Local machine (Alans Dell)
 	$cms_location = "/home/alan/www/killackeyCMS/";
 	$f3_location  = "/home/alan/www/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://localhost/ckeditor/ckeditor.js\"></script>";
+	$debug = true;
 }
 else
 {
@@ -13,7 +43,13 @@ else
 	$cms_location = "/home/cms/";
 	$f3_location  = "/home/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://webworksau.com/ckeditor/ckeditor.js\"></script>";
+	$debug = true;
 }
+
+
+########################################
+########## Fatfree framework ###########
+########################################
 
 // Fat free framework
 $f3 = include($f3_location);
@@ -21,6 +57,7 @@ $f3 = include($f3_location);
 $f3->set("client", $config);
 $f3->set("CMS", $cms_location);
 $f3->set("ckeditor", $ckeditor_location);
+$f3->set("phpliteadmin", $phpliteadmin);
 
 //if (!@mkdir("/tmp/", 0700)) { die("failed to make tmp directory. Please create tmp directory in client folder."); }
 
@@ -29,7 +66,7 @@ $f3->set('AUTOLOAD', $cms_location);
 $f3->set('UI', getcwd()."/");
 $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
-$f3->set('DEBUG', 1);
+$f3->set('DEBUG', $debug);
 
 
 // //DOC: http://f3.ikkez.de/assets
@@ -47,7 +84,6 @@ $f3->route("GET /mkdir", function () {
 	echo exec("whoami");
 	die;
 });
-
 
 // CMS routes
 $f3->route(array('GET /', 'GET /@page'), function ($f3, $params) {
