@@ -103,7 +103,7 @@ class contact
 		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
 		$smtp->set('From', '"'.$fromName.'" <'.$fromAddress.'>');
 		$smtp->set('Subject', 'Website enquiry');
-		$smtp->set('Content-Type', 'text/html')
+		$smtp->set('Content-Type', 'text/html');
 
 		$f3->set("contact_subject", $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"]);
 
