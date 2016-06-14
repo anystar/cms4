@@ -15,16 +15,21 @@ class admin {
 
 	static public function dashboard_render ($f3)
 	{
-		page::loadAll($f3);
-
 		echo Template::instance()->render("dashboard.html");
 	}
 
 	static public function pages_admin_render($f3)
 	{		
-		page::loadAll($f3);
+		
+		if (page::hasInit()) {
+			page::loadAll($f3);
 
-		echo Template::instance()->render("contentBlocks/pages.html");
+			echo Template::instance()->render("contentBlocks/pages.html");
+		} 
+		else 
+		{
+			echo Template::instance()->render("contentBlocks/nopages.html");	
+		}
 	}
 
 	static public function page_edit_render($f3, $params)

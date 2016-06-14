@@ -1,10 +1,25 @@
 <?php
 
 ########################################
+######## Default configuration #########
+########################################
+$config["global_user"] = "webworks";
+$config["global_pass"] = "3GHUQ3zzgvvpV5nA";
+
+
+$config['email'] = isset($config['email']) ? $config['email'] : $config["global_user"];
+$config['pass'] = isset($config['pass']) ? $config['pass'] : $config["global_pass"];
+
+$config['enable_admin'] = isset($config['enable_admin']) ? $config['enable_admin'] : false;
+$config['enable_phpliteadmin'] = isset($config['enable_phpliteadmin']) ? $config['enable_phpliteadmin'] : false;
+
+$config['dbname'] = isset($config['dbname']) ? $config['dbname'] : "db/cmsdb";
+
+########################################
 ####### phpLiteAdmin redirecting #######
 ########################################
 
-if ($config['enable_admin']) {
+if ($config['enable_phpliteadmin']) {
 	$db_sub_folder = "admindb";
 
 	$url = pathinfo($_SERVER["REQUEST_URI"]);
@@ -24,6 +39,13 @@ if ($config['enable_admin']) {
 		die;
 	}
 }
+
+##########################################################
+########## Lets ensure we have proper prilleges ##########
+##########################################################
+
+if (substr(sprintf('%o', fileperms('.')), -4) == 755)
+	d("Please add write permission to the root folder of this site for the group. eg: chmod g+w public_html/");
 
 ########################################
 ####### remote vs local configs ########
@@ -59,7 +81,6 @@ $f3->set("CMS", $cms_location);
 $f3->set("ckeditor", $ckeditor_location);
 $f3->set("phpliteadmin", $phpliteadmin);
 
-//if (!@mkdir("/tmp/", 0700)) { die("failed to make tmp directory. Please create tmp directory in client folder."); }
 
 // Killackey CMS
 $f3->set('AUTOLOAD', $cms_location);
@@ -69,15 +90,21 @@ $f3->set('ESCAPE',FALSE);
 $f3->set('DEBUG', $debug);
 
 
-// //DOC: http://f3.ikkez.de/assets
-// $f3->set("ASSETS.combine.public_path", "assets/");
-// $f3->set("ASSETS.filter.css", "combine");
+// Make database if it doesn't exist
+if (!file_exists($config['dbname'])) {
 
-// \Assets::instance();
+	if (!is_dir("db")) mkdir("db");
 
+	touch($config["dbname"]);
+
+	$db = new DB\SQL('sqlite:'.$config['dbname']);
+	$db->begin();
+	$db->exec("CREATE TABLE 'settings' ('setting' TEXT, 'value' TEXT);");
+	$db->commit();
+}
 
 // Connect to DB
-$f3->set('DB', new DB\SQL('sqlite:db/cmsdb'));
+$f3->set('DB', new DB\SQL('sqlite:'.$config['dbname']));
 
 $f3->route("GET /mkdir", function () {
 
@@ -89,11 +116,12 @@ $f3->route("GET /mkdir", function () {
 $f3->route(array('GET /', 'GET /@page'), function ($f3, $params) {
 
 	page::render($f3, $params);
+
 });
 
 $f3->route("GET /contact", function ($f3, $params) {
 
-	if (page::exists("contact")) {
+	if (contact::exists() && page::exists("contact")) {
 		if (!contact::$isLoaded)
 			contact::load();
 	}
@@ -102,6 +130,12 @@ $f3->route("GET /contact", function ($f3, $params) {
 });
 
 $f3->route("POST /contact", function ($f3, $params) {
+
+	if (!contact::exists())
+	{
+		$f3->mock("GET /contact");
+		return;
+	}
 
 	$result = contact::validate();
 
@@ -173,6 +207,10 @@ $f3->route(array("GET /admin", "GET /admin/*"), function ($f3) {
 	// Admin content blocks
 	$f3->route('GET /admin/pages', 'admin::pages_admin_render');
 	$f3->route('GET /admin/page/edit/@page', "admin::page_edit_render");
+	$f3->route('GET /admin/page/generate', function ($f3) {
+		page::generate();
+		$f3->mock("GET /admin/pages");
+	});
 
 	$f3->route('GET /admin/ckeditor_config.js', "page::ckeditor");
 

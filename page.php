@@ -4,18 +4,21 @@ class page {
 	
 	public static function render($f3, $params)
 	{
+
 		// '/' is index
 		if ($params[0] == "/")
 			$params['page']	= "index";
-
-		// Does page file exist?
-		if (page::exists($params['page'])) 
+		
+		if (page::hasInit())
 		{
-			page::retreiveContent($f3, $params['page']);
-		} else {
-			$f3->error("404");
+			// Does page file exist?
+			if (page::exists($params['page'])) 
+			{
+				page::retreiveContent($f3, $params['page']);
+			} else {
+				$f3->error("404");
+			}
 		}
-
 
 		echo Template::instance()->render($params['page'] . ".html");
 	}
@@ -88,5 +91,23 @@ class page {
 	public static function ckeditor($f3) 
 	{
 		echo Template::instance()->render("ckeditor_config.js", "text/javascript");
+	}
+
+	public static function hasInit() {
+		$db = base::instance()->DB;
+
+		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contentBlocks'");
+
+		if ($result)
+			return true;
+		else
+			return false;
+	}
+
+	public static function generate() {
+
+		$db = base::instance()->DB;
+
+		$db->exec("CREATE TABLE IF NOT EXISTS 'contentBlocks' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'page' TEXT, 'content' TEXT, 'lastUpdated' DATETIME DEFAULT CURRENT_TIMESTAMP,'contentName' TEXT);");
 	}
 }
