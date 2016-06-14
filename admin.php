@@ -54,20 +54,26 @@ class admin {
 	static public function login ($f3) {
 		$post = $f3->get("POST");
 
-		if ($post["user"] == $f3->get("client.email") && $post["pass"] == $f3->get("client.pass"))
+		// Check global user and pass
+		if ($post["user"] != $f3->get("CONFIG.global_email") && $post["pass"] != $f3->get("CONFIG.global_pass"))
 		{
-			new Session();
-			$f3->set("SESSION.user", $post["user"]);
-
-			$f3->set('UI', $f3->CMS."adminUI/");
-
-			if ($f3->get("POST.redirecttolive"))
-				$f3->reroute("/");
-			else
-				admin::dashboard_render($f3);
+			// Check client user and pass
+			if ($post["user"] != $f3->get("client.email") && $post["pass"] != $f3->get("client.pass"))
+			{
+				admin::login_render();
+				return;
+			}
 		}
+
+		new Session();
+		$f3->set("SESSION.user", $post["user"]);
+
+		$f3->set('UI', $f3->CMS."adminUI/");
+
+		if ($f3->get("POST.redirecttolive"))
+			$f3->reroute("/");
 		else
-			admin::login_render();
+			admin::dashboard_render($f3);
 	}
 
 	static public function logout ($f3) {

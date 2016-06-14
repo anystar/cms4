@@ -3,7 +3,7 @@
 ########################################
 ######## Default configuration #########
 ########################################
-$config["global_user"] = "webworks";
+$config["global_email"] = "admin@webworksau.com";
 $config["global_pass"] = "3GHUQ3zzgvvpV5nA";
 
 
@@ -79,8 +79,8 @@ $f3 = include($f3_location);
 $f3->set("client", $config);
 $f3->set("CMS", $cms_location);
 $f3->set("ckeditor", $ckeditor_location);
-$f3->set("phpliteadmin", $phpliteadmin);
 
+$f3->set("CONFIG", $config);
 
 // Killackey CMS
 $f3->set('AUTOLOAD', $cms_location);
