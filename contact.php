@@ -98,7 +98,7 @@ class contact
  		$fromName = $f3->get("fromName");
 		$fromAddress = $f3->get("fromAddress");
 
-		$smtp = new SMTP("127.0.0.1", "2551", "", "", "");
+		$smtp = new SMTP("127.0.0.1", "25", "", "", "");
 
 		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
 		$smtp->set('From', '"'.$fromName.'" <'.$fromAddress.'>');

@@ -7,10 +7,10 @@ $config["global_email"] = "admin@webworksau.com";
 $config["global_pass"] = "3GHUQ3zzgvvpV5nA";
 
 
-$config['email'] = isset($config['email']) ? $config['email'] : $config["global_user"];
+$config['email'] = isset($config['email']) ? $config['email'] : $config["global_email"];
 $config['pass'] = isset($config['pass']) ? $config['pass'] : $config["global_pass"];
 
-$config['enable_admin'] = isset($config['enable_admin']) ? $config['enable_admin'] : false;
+$config['enable_admin'] = isset($config['enable_admin']) ? $config['enable_admin'] : true;
 $config['enable_phpliteadmin'] = isset($config['enable_phpliteadmin']) ? $config['enable_phpliteadmin'] : false;
 
 $config['dbname'] = isset($config['dbname']) ? $config['dbname'] : "db/cmsdb";
@@ -65,7 +65,7 @@ else
 	$cms_location = "/home/cms/";
 	$f3_location  = "/home/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://webworksau.com/ckeditor/ckeditor.js\"></script>";
-	$debug = true;
+	$debug = false;
 }
 
 
