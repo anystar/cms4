@@ -1,8 +1,58 @@
 <?php
 
-class contact
+class contact extends prefab
 {
-	static $isLoaded = false;
+	function __construct() {
+		$f3 = base::instance();
+
+		$default = $f3->exists("CONFIG[contact.page]") ? $f3->get("CONFIG[contact.page]") : "/contact";
+		$f3->set("CONFIG[contact.page]", $default);
+
+		if (contact::hasInit())
+		{
+			$this->routes($f3);
+
+			$pageToLoadOn = $f3->get("CONFIG[contact.page]");
+
+			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all") {			
+				$this->load();
+			}
+		}
+
+		if (admin::$signed)
+			$this->admin_routes($f3);
+	}
+
+	function routes($f3) {
+
+		$f3->route("POST /contact", function ($f3, $params) {
+
+			if ($f3->get("CONFIG[contact.page]") == "all")
+				$mock = $f3->get("POST.return");
+			else
+				$mock = $f3->get("CONFIG[contact.page]");
+
+			$result = contact::validate();
+
+			if ($result)
+				content_blocks::render($f3, array("page"=>"contact_success"));
+			else
+				$f3->mock("GET ".$mock);
+		});
+	}
+
+	function admin_routes ($f3)
+	{
+		$f3->route('GET /admin/contact', "contact::admin");
+		$f3->route('GET /admin/contact/generate', "contact::generate");
+	}
+
+	static public function contact ($f3) {
+		if (contact::exists())
+			echo Template::instance()->render("contactForm/contact.html");
+		else
+			echo Template::instance()->render("contactForm/nocontact.html");
+	}
 
 	static function load()
 	{
@@ -12,11 +62,7 @@ class contact
 		$result = $db->exec("SELECT * FROM contact_form ORDER BY `order`");
 
 		foreach ($result as $r) 
-		{
 			$formcompiled[$r["id"]] = $r;
-		}
-
-		contact::$isLoaded = true;
 
 		$f3->set("form", $formcompiled);
 	}
@@ -115,10 +161,11 @@ class contact
 	}
 
 
-	static function exists()
+	static function hasInit()
 	{	
 		$db = f3::instance()->get("DB");
 		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contact_form'");
+		
 		if (empty($result)) 
 			return false;
 
@@ -159,7 +206,6 @@ class contact
 		}
 		else 
 		{
-
 			$result = $db->exec("SELECT setting FROM settings WHERE setting='contact-email'");
 			if (empty($result))
 				$db->exec("INSERT INTO settings VALUES ('contact-email', 'joe@example.com')");
@@ -174,6 +220,13 @@ class contact
 		}
 
 		f3::instance()->mock('GET /admin/contact');
+	}
+
+	static public function admin ($f3) {
+		if (contact::hasInit())
+			echo Template::instance()->render("contact_form/contact.html");
+		else
+			echo Template::instance()->render("contact_form/nocontact.html");
 	}
 
 }

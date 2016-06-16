@@ -1,49 +1,57 @@
 <?php
 
-admin::init();
-class admin {
+
+class admin extends prefab {
 
 	static public $signed = false;
 
-	static public function init ()
-	{	
-		$f3 = f3::instance();
+	function __construct() {
+		$f3 = base::instance();
 
 		if ($f3->exists("COOKIE.PHPSESSID"))
+		{
+
 			admin::$signed = true;
+			$this->dashboard_routes($f3);
+		} else {
+			$this->login_routes($f3);
+		}
+
+		$f3->route('GET /admin/theme', "admin::theme");
+		$f3->route("GET /cms", function ($f3) {
+			$f3->reroute("/admin", true);
+		});
+	}
+
+	function login_routes($f3) {
+		$f3->set('UI', $f3->CMS."adminUI/");
+		$f3->route('GET /admin', "admin::logout");
+
+		$f3->route("POST /admin/login", function ($f3) {
+			$f3->set('UI', $f3->CMS."adminUI/");
+			admin::login($f3);
+		});
+	}
+
+
+	function dashboard_routes($f3) {
+
+		$f3->set('UI', $f3->CMS."adminUI/");
+
+		// Admin routes
+		$f3->route('GET /admin', "admin::dashboard_render");
+		$f3->route('GET /admin/logout', "admin::logout");
+
+		$f3->route('GET /admin/theme', "admin::theme");
+
+		$f3->route('GET /admin/help', "admin::help");
+		$f3->route('GET /admin/settings', "admin::settings");
+	
 	}
 
 	static public function dashboard_render ($f3)
 	{
 		echo Template::instance()->render("dashboard.html");
-	}
-
-	static public function pages_admin_render($f3)
-	{		
-		
-		if (page::hasInit()) {
-			page::loadAll($f3);
-
-			echo Template::instance()->render("contentBlocks/pages.html");
-		} 
-		else 
-		{
-			echo Template::instance()->render("contentBlocks/nopages.html");	
-		}
-	}
-
-	static public function page_edit_render($f3, $params)
-	{
-		page::loadAll($f3);
-
-		foreach ($f3->get("pages") as $pagename=>$page) {
-			if ($pagename == $params["page"])
-				$editable = $page;
-		}
-
-		$f3->set("editable", $editable);
-
-		echo Template::instance()->render("contentBlocks/page_edit.html");
 	}
 
 	static public function login_render ()
@@ -101,12 +109,7 @@ class admin {
 		echo Template::instance()->render("settings.html");
 	}
 
-	static public function contact ($f3) {
-		if (contact::exists())
-			echo Template::instance()->render("contactForm/contact.html");
-		else
-			echo Template::instance()->render("contactForm/nocontact.html");
-	}
+
 
 	static public function gallery ($f3) {
 		if (gallery::exists())
@@ -116,7 +119,6 @@ class admin {
 	}
 
 	static public function theme($f3) {
-
 		$tmp = $f3->UI;
 		$f3->UI = $f3->CMS . "adminUI/";
 		echo Template::instance()->render("css/adminstyle.css", "text/css");

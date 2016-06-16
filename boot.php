@@ -6,7 +6,6 @@
 $config["global_email"] = "admin@webworksau.com";
 $config["global_pass"] = "3GHUQ3zzgvvpV5nA";
 
-
 $config['email'] = isset($config['email']) ? $config['email'] : $config["global_email"];
 $config['pass'] = isset($config['pass']) ? $config['pass'] : $config["global_pass"];
 
@@ -14,6 +13,9 @@ $config['enable_admin'] = isset($config['enable_admin']) ? $config['enable_admin
 $config['enable_phpliteadmin'] = isset($config['enable_phpliteadmin']) ? $config['enable_phpliteadmin'] : false;
 
 $config['dbname'] = isset($config['dbname']) ? $config['dbname'] : "db/cmsdb";
+
+$config['enabled_modules'] = [ "pages", "content_blocks", "contact", "gallery" ];
+$config['disabled_modules'] = [ ];
 
 ########################################
 ####### phpLiteAdmin redirecting #######
@@ -83,7 +85,7 @@ $f3->set("ckeditor", $ckeditor_location);
 $f3->set("CONFIG", $config);
 
 // Killackey CMS
-$f3->set('AUTOLOAD', $cms_location);
+$f3->set('AUTOLOAD', $cms_location."modules/");
 $f3->set('UI', getcwd()."/");
 $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
@@ -106,117 +108,16 @@ if (!file_exists($config['dbname'])) {
 // Connect to DB
 $f3->set('DB', new DB\SQL('sqlite:'.$config['dbname']));
 
-$f3->route("GET /mkdir", function () {
 
-	echo exec("whoami");
-	die;
-});
+########################################
+############ LOAD MODULES ##############
+########################################
 
-// CMS routes
-$f3->route(array('GET /', 'GET /@page'), function ($f3, $params) {
+new admin();
 
-	page::render($f3, $params);
-
-});
-
-$f3->route("GET /contact", function ($f3, $params) {
-
-	if (contact::exists() && page::exists("contact")) {
-		if (!contact::$isLoaded)
-			contact::load();
-	}
-
-	page::render($f3, array("page"=>"contact"));
-});
-
-$f3->route("POST /contact", function ($f3, $params) {
-
-	if (!contact::exists())
-	{
-		$f3->mock("GET /contact");
-		return;
-	}
-
-	$result = contact::validate();
-
-	if ($result)
-		page::render($f3, array("page"=>"contact_success"));
-	else
-		$f3->mock("GET /contact");
-});
-
-$f3->route(["GET /gallery", "GET /gallery/@gallery"], function ($f3, $params) {
-	
-	if (isset($params["gallery"]))
-		$section = $params["gallery"];
-
-	if (page::exists("gallery"))
-		gallery::load($section);
-
-	page::render($f3, array("page"=>"gallery"));
-});
-
-
-// Admin routes
-$f3->route('GET /admin/theme', "admin::theme");
-
-$f3->route("POST /admin/login", function ($f3) {
-	$f3->set('UI', $f3->CMS."adminUI/");
-	admin::login($f3);
-});
-
-
-$f3->route('POST /admin/page/save', function ($f3, $params) {
-	if (!admin::$signed) { return; }
-
-	page::save_inline($f3);
-});
-
-$f3->route("GET /cms", function ($f3) {
-	$f3->reroute("/admin", true);
-});
-
-
-
-$f3->route(array("GET /admin", "GET /admin/*"), function ($f3) {
-
-	$f3->set('UI', $f3->CMS."adminUI/");
-
-	// If admin is not logged in, pull up login page.
-	if (!admin::$signed) 
-	{
-		admin::login_render();
-		return;
-	}
-
-	// Admin routes
-	$f3->route('GET /admin', "admin::dashboard_render");
-	$f3->route('GET /admin/logout', "admin::logout");
-
-	$f3->route('GET /admin/theme', "admin::theme");
-
-	$f3->route('GET /admin/help', "admin::help");
-	$f3->route('GET /admin/settings', "admin::settings");
-	
-	$f3->route('GET /admin/contact', "admin::contact");
-	$f3->route('GET /admin/contact/generate', "contact::generate");
-
-	$f3->route('GET /admin/gallery', "admin::gallery");
-	$f3->route('GET /admin/gallery/generate', "gallery::generate");
-
-	// Admin content blocks
-	$f3->route('GET /admin/pages', 'admin::pages_admin_render');
-	$f3->route('GET /admin/page/edit/@page', "admin::page_edit_render");
-	$f3->route('GET /admin/page/generate', function ($f3) {
-		page::generate();
-		$f3->mock("GET /admin/pages");
-	});
-
-	$f3->route('GET /admin/ckeditor_config.js', "page::ckeditor");
-
-	$f3->run();
-});
-
+foreach ($f3->get("CONFIG.enabled_modules") as $module) {
+	new $module();
+}
 
 $f3->run();
 

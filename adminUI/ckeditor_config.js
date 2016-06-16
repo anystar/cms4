@@ -33,7 +33,18 @@ CKEDITOR.on( 'instanceCreated', function ( event ) {
 
   var editor = event.editor,
       element = editor.element;
-      
+  
+      if (element.is('img'))
+      {
+        editor.on('configLoaded', function () {
+          
+          editor.config.toolbarGroups = [
+
+          ];
+
+        });
+      }
+
   // Customize editors for headers and tag list.
   // These editors do not need features like smileys, templates, iframes etc.
   if ( element.is( 'h1', 'h2', 'h3' ) || element.getAttribute( 'id' ) == 'taglist' ) {
