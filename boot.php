@@ -91,7 +91,6 @@ $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
 $f3->set('DEBUG', $debug);
 
-
 // Make database if it doesn't exist
 if (!file_exists($config['dbname'])) {
 
@@ -114,6 +113,8 @@ $f3->set('DB', new DB\SQL('sqlite:'.$config['dbname']));
 ########################################
 
 new admin();
+
+
 
 foreach ($f3->get("CONFIG.enabled_modules") as $module) {
 	new $module();

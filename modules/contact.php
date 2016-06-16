@@ -35,7 +35,9 @@ class contact extends prefab
 			$result = contact::validate();
 
 			if ($result)
-				content_blocks::render($f3, array("page"=>"contact_success"));
+			{
+				$f3->mock("GET /contact_success");
+			}
 			else
 				$f3->mock("GET ".$mock);
 		});

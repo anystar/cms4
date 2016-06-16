@@ -10,9 +10,16 @@ class admin extends prefab {
 
 		if ($f3->exists("COOKIE.PHPSESSID"))
 		{
-
 			admin::$signed = true;
 			$this->dashboard_routes($f3);
+
+			$page = $f3->PATH;
+			$page = ($page!="/") ? trim($page, "/") : "index";
+			$page = explode("/", $page);
+
+			if ($page[0] == "admin")
+				$f3->set('UI', $f3->CMS."adminUI/");
+
 		} else {
 			$this->login_routes($f3);
 		}
@@ -24,8 +31,8 @@ class admin extends prefab {
 	}
 
 	function login_routes($f3) {
-		$f3->set('UI', $f3->CMS."adminUI/");
-		$f3->route('GET /admin', "admin::logout");
+
+		$f3->route('GET /admin', "admin::login_render");
 
 		$f3->route("POST /admin/login", function ($f3) {
 			$f3->set('UI', $f3->CMS."adminUI/");
@@ -36,7 +43,10 @@ class admin extends prefab {
 
 	function dashboard_routes($f3) {
 
-		$f3->set('UI', $f3->CMS."adminUI/");
+		$page = $f3->PATH;
+		$page = ($page!="/") ? trim($page, "/") : "index";
+
+		$page = explode("/", $page);
 
 		// Admin routes
 		$f3->route('GET /admin', "admin::dashboard_render");
@@ -51,11 +61,13 @@ class admin extends prefab {
 
 	static public function dashboard_render ($f3)
 	{
+		$f3->set('UI', $f3->CMS."adminUI/");
 		echo Template::instance()->render("dashboard.html");
 	}
 
-	static public function login_render ()
+	static public function login_render ($f3)
 	{
+		$f3->set('UI', $f3->CMS."adminUI/");
 		echo Template::instance()->render("login.html");
 	}
 
@@ -98,7 +110,7 @@ class admin extends prefab {
 		    }
 		}
 
-		echo Template::instance()->render("login.html");
+		$f3->mock("GET /admin/login");
 	}
 
 	static public function help($f3) {
