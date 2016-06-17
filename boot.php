@@ -46,8 +46,8 @@ if ($config['enable_phpliteadmin']) {
 ########## Lets ensure we have proper prilleges ##########
 ##########################################################
 
-if (substr(sprintf('%o', fileperms('.')), -4) == 755)
-	d("Please add write permission to the root folder of this site for the group. eg: chmod g+w public_html/");
+//if (substr(sprintf('%o', fileperms('.')), -4) == 755)
+//	d("Please add write permission to the root folder of this site for the group. eg: chmod g+w public_html/");
 
 ########################################
 ####### remote vs local configs ########
