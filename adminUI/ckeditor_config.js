@@ -13,7 +13,7 @@ CKEDITOR.editorConfig = function( config ) {
     { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
   ];
 
-  config.removeButtons = 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,Table,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
+  config.removeButtons = 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
 
   config.inlinesave = {
     postUrl: '{{@BASE}}/admin/page/save',
@@ -22,7 +22,7 @@ CKEDITOR.editorConfig = function( config ) {
   };
 
   config.extraPlugins = 'uploadimage';
-  config.removePlugins = 'scayt,menubutton,contextmenu,tabbedimagebrowser';
+  config.removePlugins = 'scayt';
   config.uploadUrl = '{{@BASE}}/image_upload';
 };
 
