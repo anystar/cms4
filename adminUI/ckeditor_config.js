@@ -13,7 +13,7 @@ CKEDITOR.editorConfig = function( config ) {
     { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
   ];
 
-  config.removeButtons = 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Undo,Redo,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,Table,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
+  config.removeButtons = 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,Table,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
 
   config.inlinesave = {
     postUrl: '{{@BASE}}/admin/page/save',
@@ -22,10 +22,8 @@ CKEDITOR.editorConfig = function( config ) {
   };
 
   config.extraPlugins = 'uploadimage';
-  config.uploadUrl = '/uploader/';
-
-  config.filebrowserBrowseUrl = "/";
-  config.filebrowserUploadUrl = "/";
+  config.removePlugins = 'scayt,menubutton,contextmenu,tabbedimagebrowser';
+  config.uploadUrl = '{{@BASE}}/image_upload';
 };
 
 // The "instanceCreated" event is fired for every editor instance created.
@@ -63,6 +61,7 @@ CKEDITOR.on( 'instanceCreated', function ( event ) {
       editor.config.toolbarGroups = [
         { name: 'editing', groups: [ 'basicstyles', 'links' ] },
         { name: 'undo' },
+        { name: 'colors' },
         { name: 'clipboard', groups: [ 'selection', 'clipboard' ] },
         { name: 'about' }
       ];
