@@ -2,7 +2,7 @@
 
 class file_manager extends prefab {
 
-	static $upload_path = "uploads/";
+	static $upload_path = "uploads";
 
 	function __construct() {
 		$f3 = base::instance();
@@ -23,7 +23,6 @@ class file_manager extends prefab {
 
 	function routes($f3) {
 
-		// TODO: Insert routes for this module
 
 	}
 
@@ -31,7 +30,7 @@ class file_manager extends prefab {
 		
 		// TODO: Insert admin related routes for this module
 
-		$f3->route("POST /file_upload", function ($f3, $post) {
+		$f3->route("POST /admin/file_upload", function ($f3, $post) {
 
 			$file = $f3->FILES["upload"]["tmp_name"];
 			$new_name = $f3->FILES["upload"]["name"];
@@ -50,30 +49,84 @@ class file_manager extends prefab {
 			die;
 		});
 
-		$f3->route(["GET /browse_files", "GET /browse_files/*"], function ($f3) {
+		$f3->route(["GET /admin/browse_files", "GET /browse_files/*"], function ($f3) {
 			
 			$f3->set('UI', $f3->CMS."adminUI/");
-
-			$path = 'uploads/';
-
-			foreach (new DirectoryIterator($path) as $fileInfo) {
-
-			    if ($fileInfo->isDot()) continue; // Excludes linux . and .. directories
-			    
-			    $filename = $fileInfo->getFilename();
-			    if ($filename == ".htaccess") continue; // Ignore htaccess files
-
-			    $f["name"] = $filename;
-			    $f["is_folder"] = $fileInfo->isDir();
-
-			    $files[] = $f;
-			}
-
-			$f3->set("file_list", $files);
 
 			echo Template::instance()->render("file_manager/file_browser.html");
 		});
 
+		$f3->route("GET /admin/file_manager/file_list", "file_manager::file_list");
+
+		$f3->route("GET /admin/file_manager/style.css", function ($f3) {
+			echo Template::instance()->render("file_manager/style.css", "text/css");
+		});
+
+		$f3->route("GET /admin/file_manager/script.js", function ($f3) {
+			echo Template::instance()->render("file_manager/script.js", "text/javascript");
+		});
+
+	}
+
+	static function file_list() {
+		$files = array();
+
+		$response = file_manager::scan(file_manager::$upload_path);
+
+		header('Content-type: application/json');
+
+		echo json_encode(array(
+			"name" => basename(file_manager::$upload_path),
+			"type" => "folder",
+			"path" => file_manager::$upload_path,
+			"items" => $response
+		));
+
+		exit;
+	}
+
+	static function scan($dir){
+
+		$files = array();
+
+		// Is there actually such a folder/file?
+
+		if(file_exists($dir)){
+		
+			foreach(scandir($dir) as $f) {
+			
+				if(!$f || $f[0] == '.') {
+					continue; // Ignore hidden files
+				}
+
+				if(is_dir($dir . '/' . $f)) {
+
+					// The path is a folder
+
+					$files[] = array(
+						"name" => $f,
+						"type" => "folder",
+						"path" => $dir . '/' . $f,
+						"items" => file_manager::scan($dir . '/' . $f) // Recursively get the contents of the folder
+					);
+				}
+				
+				else {
+
+					// It is a file
+
+					$files[] = array(
+						"name" => $f,
+						"type" => "file",
+						"path" => $dir . '/' . $f,
+						"size" => filesize($dir . '/' . $f) // Gets the size of this file
+					);
+				}
+			}
+		
+		}
+
+		return $files;
 	}
 
 	static function hasInit() {

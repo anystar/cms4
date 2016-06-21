@@ -31,7 +31,7 @@ class upload_image extends prefab {
 		
 		// TODO: Insert admin related routes for this module
 
-		$f3->route("POST /image_upload", function ($f3, $post) {
+		$f3->route("POST /admin/image_upload", function ($f3, $post) {
 
 			$file = $f3->FILES["upload"]["tmp_name"];
 			$new_name = $f3->FILES["upload"]["name"];
@@ -53,6 +53,15 @@ class upload_image extends prefab {
 	}
 
 	static function hasInit() {
+
+
+
+		if (!file_exists(upload_image::$upload_path))
+			die("<strong>Fatel Error in upload image module:</strong> Please create upload folder for image uploading to work.<br>Upload folder is: ".upload_image::$upload_path);
+
+		if (!is_writable(upload_image::$upload_path))
+			die("<strong>Fatel Error in upload image module:</strong> Please ensure upload folder is writable by PHP. Perhaps chmod g+w uploads.<br>Upload folder is: ".upload_image::$upload_path);
+
 		return true;
 	}
 

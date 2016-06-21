@@ -34,7 +34,9 @@ class content_blocks extends prefab {
 			content_blocks::save_inline($f3);
 		});
 
-		$f3->route('GET /admin/ckeditor_config.js', "content_blocks::ckeditor");
+		$f3->route('GET /admin/ckeditor_config.js', "content_blocks::ckeditor_toolbar");
+		$f3->route('GET /admin/ckeditor_imgs_config.js', "content_blocks::ckeditor_imgs_toolbar");
+		$f3->route('GET /admin/ckeditor_header_config.js', "content_blocks::ckeditor_header_toolbar");
 	}
 
 
@@ -44,13 +46,15 @@ class content_blocks extends prefab {
 
 		$bc = array(); // Blocks compiled
 		$ck_instances = array();
-		foreach ($blocksraw as $block) {
+		foreach ($blocksraw as $key=>$block) {
 			if ($block["contentName"] != "")
 			{
 				// Wrap in content editable
 				if (admin::$signed) {
 					$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
-					$ck_instances[] = $block["page"]."_".$block["id"];
+
+					$ck_instances[$key]["id"] = $block["page"]."_".$block["id"];
+					$ck_instances[$key]["type"] = $block["type"];
 				}
 
 				$f3->set($block["contentName"], $block["content"]);
@@ -101,7 +105,10 @@ class content_blocks extends prefab {
 		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contentBlocks'");
 
 		if ($result)
+		{
+			$this->patch_columns();
 			return true;
+		}
 		else
 			return false;
 	}
@@ -140,11 +147,41 @@ class content_blocks extends prefab {
 		echo Template::instance()->render("content_blocks/page_edit.html");
 	}
 
-	static public function ckeditor($f3) 
+	static public function ckeditor_toolbar($f3) 
 	{
 		$tmp = $f3->UI;
 		$f3->UI = $f3->CMS . "adminUI/";
 		echo Template::instance()->render("ckeditor_config.js", "text/javascript");
 		$f3->UI = $tmp;
+	}
+
+	static public function ckeditor_imgs_toolbar($f3) 
+	{
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
+		echo Template::instance()->render("ckeditor_imgs_config.js", "text/javascript");
+		$f3->UI = $tmp;
+	}
+
+	static public function ckeditor_header_toolbar($f3) 
+	{
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
+		echo Template::instance()->render("ckeditor_header_config.js", "text/javascript");
+		$f3->UI = $tmp;
+	}
+
+	function patch_columns ()
+	{
+		$result = base::instance()->DB->exec("PRAGMA table_info(contentBlocks)");
+		
+		//Patch to ensure type column is added.
+		foreach ($result as $r) {
+			if ($r["name"] == "type") {
+				return;
+			}
+		}
+
+		base::instance()->DB->exec("ALTER TABLE contentBlocks ADD COLUMN type char(100)");
 	}
 }
