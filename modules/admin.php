@@ -29,8 +29,8 @@ class admin extends prefab {
 			$f3->reroute("/admin", true);
 		});
 
-		$f3->route('GET /remote-tools/dbhash', function () {
-			echo sha1_file("db/" . $f3->CONFIG["dbname"]);
+		$f3->route('GET /remote-tools/dbhash', function ($f3) {
+			echo sha1_file($f3->get("CONFIG.dbname"));
 			exit;
 		});
 	}
