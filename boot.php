@@ -53,6 +53,16 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 	$f3_location  = "/home/alan/www/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://localhost/ckeditor/ckeditor.js\"></script>";
 	$debug = true;
+
+	if ($f3->exists("remote_tools"))
+	{
+		
+		$hash = file_get_contents($f3->get("remote_tools") . "dbhash")
+
+		d($hash);
+		// Check to see if remote db has changed..
+
+	}
 }
 else
 {

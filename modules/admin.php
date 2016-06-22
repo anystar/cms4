@@ -29,12 +29,7 @@ class admin extends prefab {
 			$f3->reroute("/admin", true);
 		});
 
-		$f3->route('GET /remote_tools/dbhash', function () {
-			echo sha1_file("db/" . $f3->CONFIG["dbname"]);
-			exit;
-		});
-
-		$f3->route('GET /remote_tools/dbhash', function () {
+		$f3->route('GET /remote-tools/dbhash', function () {
 			echo sha1_file("db/" . $f3->CONFIG["dbname"]);
 			exit;
 		});
