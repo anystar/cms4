@@ -57,7 +57,7 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 	if ($f3->exists("remote_tools"))
 	{
 		
-		$hash = file_get_contents($f3->get("remote_tools") . "dbhash")
+		$hash = file_get_contents($f3->get("remote_tools") . "dbhash");
 
 		d($hash);
 		// Check to see if remote db has changed..
