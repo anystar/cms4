@@ -23,8 +23,8 @@ CKEDITOR.editorConfig = function( config ) {
 
   config.extraPlugins = 'uploadimage';
   config.removePlugins = 'scayt';
-  config.uploadUrl = '{{@BASE}}/image_upload';
+  config.uploadUrl = '{{@BASE}}/admin/file_manager/image_upload';
 
-  config.filebrowserBrowseUrl = '{{@BASE}}/admin/browse_files';
-  config.filebrowserUploadUrl = '{{@BASE}}/admin/file_upload';
+  config.filebrowserBrowseUrl = '{{@BASE}}/admin/file_manager/browse_files';
+  config.filebrowserUploadUrl = '{{@BASE}}/admin/file_manager/image_upload_via_dialog';
 };

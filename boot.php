@@ -14,7 +14,7 @@ $config['enable_phpliteadmin'] = isset($config['enable_phpliteadmin']) ? $config
 
 $config['dbname'] = isset($config['dbname']) ? $config['dbname'] : "db/cmsdb";
 
-$config['enabled_modules'] = [ "pages", "upload_image", "file_manager", "content_blocks", "contact", "gallery" ];
+$config['enabled_modules'] = [ "pages", "file_manager", "content_blocks", "contact", "gallery" ];
 $config['disabled_modules'] = [ ];
 
 ########################################
@@ -41,13 +41,6 @@ if ($config['enable_phpliteadmin']) {
 		die;
 	}
 }
-
-##########################################################
-########## Lets ensure we have proper prilleges ##########
-##########################################################
-
-//if (substr(sprintf('%o', fileperms('.')), -4) == 755)
-//	d("Please add write permission to the root folder of this site for the group. eg: chmod g+w public_html/");
 
 ########################################
 ####### remote vs local configs ########

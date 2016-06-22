@@ -2,13 +2,17 @@
 
 class file_manager extends prefab {
 
-	static $upload_path = "uploads";
+	static $upload_path = "uploads/";
+	static $image_upload_path = "uploads/images/";
 
 	function __construct() {
 		$f3 = base::instance();
 
 		if ($f3->exists("config.file_upload_path"))
-			upload_image::$upload_path = $f3->get("config.file_upload_path");
+			file_manager::$upload_path = $f3->get("config.file_upload_path");
+
+		if ($f3->exists("config.image_upload_path"))
+			file_manager::$upload_path = $f3->get("config.image_upload_path");
 
 		if ($this->hasInit())
 		{
@@ -28,28 +32,28 @@ class file_manager extends prefab {
 
 	function admin_routes($f3) {
 		
-		// TODO: Insert admin related routes for this module
-
-		$f3->route("POST /admin/file_upload", function ($f3, $post) {
-
-			$file = $f3->FILES["upload"]["tmp_name"];
-			$new_name = $f3->FILES["upload"]["name"];
-			$new_name = str_replace(' ', '_', $new_name);
-			$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
-
-			move_uploaded_file($file, upload_image::$upload_path . $new_name);
-
+		$f3->route("POST /admin/file_manager/image_upload", function ($f3) {
+			$response = file_manager::upload_image($f3, $f3->FILES["upload"]["tmp_name"], $f3->FILES["upload"]["name"]);
 
 			echo json_encode([
 					"uploaded" => 1,
-					"fileName" => $new_name,
-					"url" => $f3->BASE . "/" . upload_image::$upload_path . $new_name
+					"fileName" => $response,
+					"url" => $f3->BASE . "/" . file_manager::$image_upload_path . $response
 				]);
 
-			die;
+			exit;
 		});
 
-		$f3->route(["GET /admin/browse_files", "GET /browse_files/*"], function ($f3) {
+		$f3->route("POST /admin/file_manager/image_upload_via_dialog", function ($f3) {				
+			$response = file_manager::upload_image($f3, $f3->FILES["upload"]["tmp_name"], $f3->FILES["upload"]["name"]);
+			
+			$path = file_manager::$image_upload_path . $response;
+			$ck_func_number = $f3->GET["CKEditorFuncNum"];
+			echo "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('$ck_func_number', '$path', 'File uploaded successfully');</script>";
+			exit;
+		});
+
+		$f3->route(["GET /admin/file_manager/browse_files", "GET /browse_files/*"], function ($f3) {
 			
 			$f3->set('UI', $f3->CMS."adminUI/");
 
@@ -68,6 +72,18 @@ class file_manager extends prefab {
 
 	}
 
+	static function upload_image($f3, $temp_path, $temp_name) {
+
+		$file = $temp_path;
+		$new_name = $temp_name;
+		$new_name = str_replace(' ', '_', $new_name);
+		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
+
+		move_uploaded_file($file, file_manager::$image_upload_path . $new_name);
+
+		return $new_name;
+	}
+
 	static function file_list() {
 		$files = array();
 
@@ -81,8 +97,6 @@ class file_manager extends prefab {
 			"path" => file_manager::$upload_path,
 			"items" => $response
 		));
-
-		exit;
 	}
 
 	static function scan($dir){
@@ -130,6 +144,28 @@ class file_manager extends prefab {
 	}
 
 	static function hasInit() {
+		$upload_path = file_manager::$upload_path;
+
+		if (!file_exists($upload_path))
+		{
+			// Attempt to make directory
+			if (mkdir($upload_path))
+				return;
+
+			die("<strong>Fatel Error in file manager module:</strong> Please create upload folder for uploading to work.<br>Upload folder is: ".$upload_path);
+		}
+
+		if (!is_writable($upload_path))
+			die("<strong>Fatel Error in file manager module:</strong> Please ensure upload folder is writable by PHP. Perhaps chmod g+w uploads.<br>Upload folder is: ".$upload_path);
+
+		if (!file_exists(file_manager::$image_upload_path)) {
+			// Attempt to make directory
+			if (mkdir(file_manager::$image_upload_path))
+				return;
+			
+			die("<strong>Fatel Error in file manager module:</strong> Trying to make image upload directory. Please ensure upload directory is writable by group. Perhaps chmod g+w uploads.<br>Upload folder is: ".$upload_path);			
+		}
+
 		return true;
 	}
 
