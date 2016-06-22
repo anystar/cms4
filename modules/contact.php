@@ -2,11 +2,17 @@
 
 class contact extends prefab
 {
+
+	static $email_template = "website-enquiry.html";
+
 	function __construct() {
 		$f3 = base::instance();
 
 		$default = $f3->exists("CONFIG[contact.page]") ? $f3->get("CONFIG[contact.page]") : "/contact";
 		$f3->set("CONFIG[contact.page]", $default);
+
+		if ($f3->exists("CONFIG[contact.email_template]"))
+			contact::$email_template = $f3->get("CONFIG[contact.email_template]");
 
 		if (contact::hasInit())
 		{
@@ -155,7 +161,7 @@ class contact extends prefab
 
 		$f3->set("contact_subject", $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"]);
 
-		$body = Template::instance()->render("website-enquiry.html");
+		$body = Template::instance()->render(contact::$email_template);
 
 		$smtp->send($body);
 
@@ -174,6 +180,10 @@ class contact extends prefab
 		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
 		if (empty($result)) 
 			return false;
+
+		if (!file_exists(contact::$email_template)) {
+			d("Fatel Error in contact module: Email template does not exsist. Please create a html file named ".contact::$email_template);
+		}
 
 		return true;
 	}

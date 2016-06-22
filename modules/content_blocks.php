@@ -43,7 +43,7 @@ class content_blocks extends prefab {
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
 		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all"', $page);
-
+		
 		$bc = array(); // Blocks compiled
 		$ck_instances = array();
 		foreach ($blocksraw as $key=>$block) {
