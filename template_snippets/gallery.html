@@ -1,10 +1,6 @@
 
 <repeat group="{{@gallery_images}}" value="{{@image}}">
-	
-
-	<a class="thumb" href="{{@BASE}}{{@gallery_upload_path}}{{@image.filename}}" data-lity>
-		<img width="300" src="{{@BASE}}/imgs/gallery/{{@image.filename}}" alt="{{@image.caption}}">
+	<a class="thumb" href="{{@BASE}}/{{@gallery_path}}{{@image.filename}}" data-lity>
+		<img width="300" src="{{@BASE}}/{{@gallery_thumb_path}}{{@image.gallery}}" alt="{{@image.caption}}">
 	</a>
-
-
 </repeat>

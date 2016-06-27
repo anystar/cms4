@@ -148,6 +148,8 @@ class contact extends prefab
 		
 		$toAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-email'")[0]["value"];
 		$toName = $db->exec("SELECT `value` FROM settings WHERE setting='contact-name'")[0]["value"];
+		$subject = $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"];
+
 
  		$fromName = $f3->get("fromName");
 		$fromAddress = $f3->get("fromAddress");
@@ -156,7 +158,7 @@ class contact extends prefab
 
 		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
 		$smtp->set('From', '"'.$fromName.'" <'.$fromAddress.'>');
-		$smtp->set('Subject', 'Website enquiry');
+		$smtp->set('Subject', $subject);
 		$smtp->set('Content-Type', 'text/html');
 
 		$f3->set("contact_subject", $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"]);
