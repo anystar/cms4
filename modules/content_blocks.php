@@ -37,8 +37,35 @@ class content_blocks extends prefab {
 		$f3->route('GET /admin/ckeditor_config.js', "content_blocks::ckeditor_toolbar");
 		$f3->route('GET /admin/ckeditor_imgs_config.js', "content_blocks::ckeditor_imgs_toolbar");
 		$f3->route('GET /admin/ckeditor_header_config.js', "content_blocks::ckeditor_header_toolbar");
+
+		$f3->route('POST /admin/page/add_content', function ($f3) {
+
+			if (strlen($f3->POST["content_name"]) == 0)
+			{
+				$f3->mock("GET /admin/pages");
+			} else {
+
+				// Ensure no duplicate content names are used
+				$result = base::instance()->DB->exec("SELECT id FROM contentBlocks WHERE contentName=? AND page=?", [$f3->POST["content_name"], $f3->POST["page"]]);
+				if ($result)
+				{
+					d("hit");
+					$f3->mock("GET /admin/pages");
+				} else {
+					content_blocks::createContent($f3->POST["content_name"], $f3->POST["page"], $f3->POST["type"], $f3->POST["dummy_content"]);
+					$f3->mock("GET /admin/pages");
+				}
+			}
+		});
 	}
 
+
+	static function createContent($name, $page=null, $type=null, $dummy_content=null)
+	{
+		$db = base::instance()->DB;
+
+		$db->exec("INSERT INTO contentBlocks (page, content, type, contentName) VALUES (?,?,?,?)", [$page, $dummy_content, $type, $name]);
+	}
 
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
@@ -92,7 +119,7 @@ class content_blocks extends prefab {
 		{
 			$blocks[$contentBlock["page"]][] = $contentBlock;
 		}
-		
+
 		$f3->set("pages", $blocks);
 	}
 

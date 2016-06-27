@@ -26,25 +26,70 @@
     </div>
 
     <div class="container">
-      <div class="col-xs-3">
+        <div class="col-xs-8">
+
+        <h2>Content Manager</h2>
+
+        <repeat group="{{ @pages }}" key="{{ @name}}" value="{{ @page }}">
+        <h3>{{@BASE}}/{{@name}}</h3>
+        <table class="table table-condensed">
+          <tr>
+            <th width="20%">Content Name</th>
+            <th width="30%">Content Type</th>
+            <th style="text-align: right;" width="40%">Tools</th>
+          </tr>
         
-        <div id="pages">
-          <h2>Content</h2>
 
-          <repeat group="{{ @pages }}" key="{{ @name}}" value="{{ @page }}">
-            <a href="{{ @BASE }}/admin/page/edit/{{ @name }}">{{ @name }}</a>
+          <repeat group="{{@page}}" value="{{@content_block}}">
+          <tr>
+              <td>{{@content_block.contentName}}</td>
+              <td>{{@content_block.type}}</td>
+              <td align="right">
+                <a href="{{@BASE}}/admin/#"><button>Live Edit</button></a>
+                <a href="{{@BASE}}/admin/#"><button>HTML Edit</button></a>
+                <a href="{{@BASE}}/admin/#"><button>Delete</button></a>
+              </td>
+          </tr>
           </repeat>
+          
+          <form method="post" action="{{@BASE}}/admin/page/add_content">
+          <tr>
+              <td><input placeholder="Content Name" type="text" name="content_name"></td>
+              <td>
+                <input placeholder="Content Type" type="text" name="type">
+                <input name="dummy_content" value="Some test content">
+              </td>
+              <td align="right">
+                <button type="submit">Add Content Block</button>
+              </td>
+          </tr>
+          <input type="hidden" name="page" value="{{@content_block.page}}">
+          </form>
 
-          <a class="addPage" href="{{ @BASE }}/admin/page/add">Add Page</a>
+        </table>
+
+        </repeat>
         </div>
 
-      </div>
+        <div class="col-xs-4">
+          <h3>Help</h3>
+          <p>
+            The content system is designed so you are able to edit your own content. Each page
+            has a series of content blocks as shown to the left. If you navigate to your website
+            you'll be able to edit each content block. You can also gain access to the
+            html for finer tweaking.
+          </p>
+          <p>
+            We have tailor made your website with a specific set of pages and associated content.
+            If you want another page added or more content please free feel to contact us.
+          </p>
+          <p>
+            If you need a page which has more dynamic content, for example a page that consist of products
+            where there is an unknown quanitiy, feel free to contact us and we'll build it into your website.
+          </p>
+          - Alan from Web Works
+        </div>
 
-      <div class="col-xs-9">
-        
-        Some content here...
-
-      </div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

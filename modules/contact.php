@@ -150,7 +150,6 @@ class contact extends prefab
 		$toName = $db->exec("SELECT `value` FROM settings WHERE setting='contact-name'")[0]["value"];
 		$subject = $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"];
 
-
  		$fromName = $f3->get("fromName");
 		$fromAddress = $f3->get("fromAddress");
 

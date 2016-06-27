@@ -19,11 +19,13 @@ class admin extends prefab {
 
 			if ($page[0] == "admin")
 				$f3->set('UI', $f3->CMS."adminUI/");
-
 		}
-		
-		$this->login_routes($f3);
 
+
+		if (!admin::$signed)
+			$this->login_routes($f3);
+
+		$f3->route('GET /admin/logout', "admin::logout");
 		$f3->route('GET /admin/theme', "admin::theme");
 		$f3->route("GET /cms", function ($f3) {
 			$f3->reroute("/admin", true);
@@ -43,8 +45,6 @@ class admin extends prefab {
 			$f3->set('UI', $f3->CMS."adminUI/");
 			admin::login($f3);
 		});
-
-		$f3->route('GET /admin/logout', "admin::logout");
 	}
 
 
@@ -115,7 +115,8 @@ class admin extends prefab {
 		        setcookie($name, '', time()-1000, '/');
 		    }
 		}
-
+		
+		admin::instance()->login_routes($f3);
 		$f3->mock("GET /admin");
 	}
 
