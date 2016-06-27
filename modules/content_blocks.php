@@ -51,7 +51,17 @@ class content_blocks extends prefab {
 			{
 				// Wrap in content editable
 				if (admin::$signed) {
-					$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
+
+					switch ($block['type'])
+					{
+						case "header":
+							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
+						break;
+
+						default:
+							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
+						break;
+					}
 
 					$ck_instances[$key]["id"] = $block["page"]."_".$block["id"];
 					$ck_instances[$key]["type"] = $block["type"];

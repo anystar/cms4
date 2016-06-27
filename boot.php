@@ -57,9 +57,9 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 	if (isset($config["remote_tools"]))
 	{		
 		$hash = file_get_contents($config["remote_tools"] . "dbhash");
-
+		
 		if (sha1_file($config["dbname"]) != $hash)
-			d("remote db changed");
+			d("local vs remote hashes do not match");
 	}
 }
 else

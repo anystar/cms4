@@ -10,7 +10,8 @@
     <!-- Bootstrap -->
     <link href="{{ @BASE }}/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ @BASE }}/admin/theme" rel="stylesheet">
-    <link href="{{ @BASE }}/admin/gallery.css" rel="stylesheet">
+    <link href="{{ @BASE }}/admin/gallery/css/dropzone.css" rel="stylesheet">
+    <link href="{{ @BASE }}/admin/gallery/css/gallery.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -29,10 +30,41 @@
     <div class="container">
       <div class="col-xs-12">
         
-        Gallery System
+        <form>
+
+        </form>
+
+        <check if="{{@gallery_images}}">
+          <true>
+            <include href="gallery/table_of_images.html">
+          </true>
+        </check>
+
+        <check if="{{@gallery_images}}">
+          <false>
+            <form method="post" action="{{@BASE}}/admin/gallery/dropzone" class="dropzone" id="gallerydropzone">
+              <div class="dz-message">
+                    <div>Drop some photos (or click) to create first gallery.</div>
+                    <div>Max file size: 6mb</div>
+              </div>
+            </form>
+          </false>
+        </check>
         
       </div>
     </div>
+    
+    <script src="{{ @BASE }}/admin/gallery/js/dropzone.js"></script>
+    <script>
+      
+      Dropzone.autoDiscover = false;
+      Dropzone.options.gallerydropzone = {
+        init: function() {
+          this.on("queuecomplete", function(file) { location.reload();  });
+        }
+      };
 
+      new Dropzone("#gallerydropzone");
+    </script>
   </body>
 </html>
