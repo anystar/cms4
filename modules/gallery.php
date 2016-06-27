@@ -21,7 +21,7 @@ class gallery extends prefab {
 
 		if ($this->hasInit()) {
 
-			$pageToLoadOn = $f3->get("CONFIG[contact.page]");
+			$pageToLoadOn = $f3->get("CONFIG[gallery.page]");
 
 			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all")
 				$this->retreiveContent($page[1]);
