@@ -1,6 +1,6 @@
 <?php
 
-class module_template extends prefab {
+class banners extends prefab {
 
 	function __construct() {
 
@@ -23,7 +23,7 @@ class module_template extends prefab {
 
 	function admin_routes($f3) {
 		
-		// TODO: Insert admin related routes for this module
+		$f3->route('GET /admin/banners', 'banners::admin_render');
 
 	}
 
@@ -41,15 +41,15 @@ class module_template extends prefab {
 		$db = base::instance()->DB;
 
 		//TODO: Insert sql to generate table structures
-		$db->exec("");
+		//$db->exec("");
 	}
 
 	static function admin_render() {
 
 		//TODO: Create html files for admin display and generation
-		if ($this::instance()->hasInit())
-			echo Template::instance()->render("module_name/module.html");
+		if (banners::hasInit())
+			echo Template::instance()->render("banners/banners.html");
 		else
-			echo Template::instance()->render("module_name/module.html");
+			echo Template::instance()->render("banners/init.html");
 	}
 }

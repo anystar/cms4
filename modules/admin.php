@@ -27,6 +27,7 @@ class admin extends prefab {
 
 		$f3->route('GET /admin/logout', "admin::logout");
 		$f3->route('GET /admin/theme', "admin::theme");
+		$f3->route('GET /admin/bootstrap.min.css', "admin::bootstrap");
 		$f3->route("GET /cms", function ($f3) {
 			$f3->reroute("/admin", true);
 		});
@@ -57,12 +58,8 @@ class admin extends prefab {
 
 		// Admin routes
 		$f3->route('GET /admin', "admin::dashboard_render");
-
-		$f3->route('GET /admin/theme', "admin::theme");
-
 		$f3->route('GET /admin/help', "admin::help");
 		$f3->route('GET /admin/settings', "admin::settings");
-	
 	}
 
 	static public function dashboard_render ($f3)
@@ -141,6 +138,13 @@ class admin extends prefab {
 		$tmp = $f3->UI;
 		$f3->UI = $f3->CMS . "adminUI/";
 		echo Template::instance()->render("css/adminstyle.css", "text/css");
+		$f3->UI = $tmp;
+	}
+
+	static public function bootstrap($f3) {
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
+		echo Template::instance()->render("css/bootstrap.min.css", "text/css");
 		$f3->UI = $tmp;
 	}
 }

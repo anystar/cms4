@@ -14,7 +14,7 @@ $config['enable_phpliteadmin'] = isset($config['enable_phpliteadmin']) ? $config
 
 $config['dbname'] = isset($config['dbname']) ? $config['dbname'] : "db/cmsdb";
 
-$config['enabled_modules'] = [ "pages", "file_manager", "content_blocks", "contact", "gallery" ];
+$config['enabled_modules'] = [ "pages", "file_manager", "content_blocks", "contact", "gallery", "banners" ];
 $config['disabled_modules'] = [ ];
 
 ########################################

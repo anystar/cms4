@@ -25,3 +25,27 @@
 	font-weight: bold;
 	font-size: 20px;
 }
+
+.image_upload_settings {
+
+	margin-top: 20px;
+
+	.form-group {
+		display: block;
+		margin-top: 5px;
+	}
+
+	.form-control {
+		width: 80px;
+	}
+
+	label {
+		width: 150px;
+	}
+	
+	button {
+		width: 100%;
+		margin: 20px 0;
+		font-weight: bold;
+	}
+}
