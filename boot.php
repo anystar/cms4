@@ -85,8 +85,9 @@ $f3->set("ckeditor", $ckeditor_location);
 
 $f3->set("CONFIG", $config);
 
-foreach ($variables as $key=>$v)
-	$f3->set($key, $v);
+if (isset($variables))
+	foreach ($variables as $key=>$v)
+		$f3->set($key, $v);
 
 // Killackey CMS
 $f3->set('AUTOLOAD', $cms_location."modules/");
