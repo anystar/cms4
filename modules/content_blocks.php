@@ -46,7 +46,8 @@ class content_blocks extends prefab {
 			} else {
 
 				// Ensure no duplicate content names are used
-				$result = base::instance()->DB->exec("SELECT id FROM contentBlocks WHERE contentName=? AND page=?", [$f3->POST["content_name"], $f3->POST["page"]]);
+				$result = base::instance()->DB->exec("SELECT id FROM contentBlocks WHERE contentName=? AND page LIKE ?", [$f3->POST["content_name"], "%".$f3->POST["page"]."%"]);
+
 				if ($result)
 				{
 					d("hit");
@@ -69,7 +70,7 @@ class content_blocks extends prefab {
 
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
-		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all"', $page);
+		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page LIKE ? OR page="all"', "%".$page."%");
 		
 		$bc = array(); // Blocks compiled
 		$ck_instances = array();
