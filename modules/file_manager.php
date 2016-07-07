@@ -149,8 +149,9 @@ class file_manager extends prefab {
 		if (!file_exists($upload_path))
 		{
 			// Attempt to make directory
-			if (mkdir($upload_path))
-				return;
+			if (is_writable(getcwd()))
+				if (mkdir($upload_path))
+					return;
 
 			die("<strong>Fatel Error in file manager module:</strong> Please create upload folder for uploading to work.<br>Upload folder is: ".$upload_path);
 		}
@@ -165,6 +166,9 @@ class file_manager extends prefab {
 			
 			die("<strong>Fatel Error in file manager module:</strong> Trying to make image upload directory. Please ensure upload directory is writable by group. Perhaps chmod g+w uploads or chown www-data:www-data uploads.<br>Upload folder is: ".$upload_path);			
 		}
+
+		if (!file_exists(getcwd()."/".$upload_path.".htaccess"))
+			file_put_contents(getcwd()."/".$upload_path.".htaccess", "RewriteEngine off");
 
 		return true;
 	}

@@ -24,6 +24,17 @@ if (!isset($config['disabled_modules']))
 if (isset($config['additional_modules']))
 	$config['enabled_modules'] = array_merge($config['enabled_modules'], $config['additional_modules']);
 
+
+########################################
+## Check folder and file permissions  ##
+########################################
+// Required folders for operation
+if (!file_exists(getcwd()."/tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder with group writable permissions. (chmod g+w tmp or chmod 755 db)";exit; }
+if (!is_writable(getcwd()."/tmp/")) { echo "Please make <strong>tmp</strong> folder writable by group";exit; }
+if (!file_exists(getcwd()."/db")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder with group writable permissions. (chmod g+w db chmod 755 db)";exit; }
+if (!is_writable(getcwd()."/db/")) { echo "Please make <strong>db</strong> folder writable by group";exit; }
+if (!file_exists(getcwd()."/.htaccess")) htaccess_example();
+
 ########################################
 ####### phpLiteAdmin redirecting #######
 ########################################
@@ -120,6 +131,9 @@ if (!file_exists($config['dbname'])) {
 	$db->begin();
 	$db->exec("CREATE TABLE 'settings' ('setting' TEXT, 'value' TEXT);");
 	$db->commit();
+
+	if (!file_exists(getcwd()."/db/.htaccess"))
+		file_put_contents(getcwd()."/db/.htaccess", "Deny from all");
 }
 
 // Connect to DB
@@ -144,4 +158,33 @@ function d($e=null)
 	print_r($e);
 	echo "</pre>";
 	die;
+}
+
+function htaccess_example() {
+
+
+echo <<<EOF
+<strong>.htaccess does not exist. Please use this snippet to create a .htaccess folder in the client directory.</strong>
+
+<p>
+<textarea cols=50 rows=10>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule .* cms.php [L,QSA]
+RewriteRule .* cms.php [L,QSA]
+</textarea>
+</p>
+
+<strong>This snippet redirects all requests to cms.php. If you want a folder accessable put this .htaccess file in each folder.</strong>
+<p>
+<textarea cols=50 rows=10>
+RewriteEngine off
+</textarea>
+</p>
+
+<strong>Hint: CMS modules will attempt to create .htaccess for you where they can.</strong>
+EOF;
+
+exit;
 }
