@@ -13,7 +13,10 @@ class pages extends prefab {
 
 			$f3->set('UI', getcwd()."/");
 
-			$page = ($params[0]=="/") ? "index.html" : $params["page"].".html";
+			if (!file_exists($params["page"]))
+				$page = ($params[0]=="/") ? "index.html" : $params["page"].".html";
+			else
+				$page = $params["page"];
 
 			if (file_exists($page))
 				echo Template::instance()->render($page);
