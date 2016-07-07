@@ -14,8 +14,15 @@ $config['enable_phpliteadmin'] = isset($config['enable_phpliteadmin']) ? $config
 
 $config['dbname'] = isset($config['dbname']) ? $config['dbname'] : "db/cmsdb";
 
-$config['enabled_modules'] = [ "pages", "file_manager", "content_blocks", "contact", "gallery", "banners" ];
-$config['disabled_modules'] = [ ];
+
+if (!isset($config['enabled_modules']))
+	$config['enabled_modules'] = [ "pages", "file_manager", "content_blocks", "contact", "gallery", "banners" ];
+
+if (!isset($config['disabled_modules']))
+	$config['disabled_modules'] = [ ];
+
+if (isset($config['additional_modules']))
+	$config['enabled_modules'] = array_merge($config['enabled_modules'], $config['additional_modules']);
 
 ########################################
 ####### phpLiteAdmin redirecting #######
@@ -49,7 +56,7 @@ if ($config['enable_phpliteadmin']) {
 if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 {
 	// Local machine (Alans Dell)
-	$cms_location = "/home/alan/www/killackeyCMS/";
+	$cms_location = "/home/cms/";
 	$f3_location  = "/home/alan/www/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://localhost/ckeditor/ckeditor.js\"></script>";
 	$debug = true;
@@ -77,7 +84,12 @@ else
 ########################################
 
 // Fat free framework
-$f3 = include($f3_location);
+if(($f3 = include $f3_location) === false)
+	d("Fat free framework not found at $f3_location. Please download from http://fatfreeframework.com/");
+
+// Webworks CMS
+if (!file_exists($cms_location))
+	d("Webworks CMS not found at $cms_location. Please update $\cms_location variable to point to CMS folder.");
 
 $f3->set("client", $config);
 $f3->set("CMS", $cms_location);
@@ -90,11 +102,12 @@ if (isset($variables))
 		$f3->set($key, $v);
 
 // Killackey CMS
-$f3->set('AUTOLOAD', $cms_location."modules/");
+$f3->set('AUTOLOAD', $cms_location."modules/" . ";" . getcwd()."/modules/");
 $f3->set('UI', getcwd()."/");
 $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
 $f3->set('DEBUG', $debug);
+
 
 // Make database if it doesn't exist
 if (!file_exists($config['dbname'])) {
@@ -118,8 +131,6 @@ $f3->set('DB', new DB\SQL('sqlite:'.$config['dbname']));
 ########################################
 
 new admin();
-
-
 
 foreach ($f3->get("CONFIG.enabled_modules") as $module) {
 	new $module();

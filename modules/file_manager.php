@@ -156,14 +156,14 @@ class file_manager extends prefab {
 		}
 
 		if (!is_writable($upload_path))
-			die("<strong>Fatel Error in file manager module:</strong> Please ensure upload folder is writable by PHP. Perhaps chmod g+w uploads.<br>Upload folder is: ".$upload_path);
+			die("<strong>Fatel Error in file manager module:</strong> Please ensure upload folder is writable by PHP. Perhaps chmod g+w uploads or chown www-data:www-data uploads.<br>Upload folder is: ".$upload_path);
 
 		if (!file_exists(file_manager::$image_upload_path)) {
 			// Attempt to make directory
 			if (mkdir(file_manager::$image_upload_path))
 				return;
 			
-			die("<strong>Fatel Error in file manager module:</strong> Trying to make image upload directory. Please ensure upload directory is writable by group. Perhaps chmod g+w uploads.<br>Upload folder is: ".$upload_path);			
+			die("<strong>Fatel Error in file manager module:</strong> Trying to make image upload directory. Please ensure upload directory is writable by group. Perhaps chmod g+w uploads or chown www-data:www-data uploads.<br>Upload folder is: ".$upload_path);			
 		}
 
 		return true;
