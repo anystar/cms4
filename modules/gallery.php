@@ -34,6 +34,8 @@ class gallery extends prefab {
 		if (admin::$signed)
 			$this->admin_routes($f3);
 
+
+
 	}
 
 	public function admin_routes($f3) {
@@ -207,10 +209,10 @@ class gallery extends prefab {
 
 	static function hasInit()
 	{	
+		if (!extension_loaded("gd")) return false;
+
 		$db = base::instance()->get("DB");
 		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='gallery'");
-		
-
 
 		if (empty($result)) 
 			return false;
@@ -262,6 +264,7 @@ class gallery extends prefab {
 	}
 
 	static function admin_render() {
+		$f3 = base::instance();
 
 		if (gallery::hasInit())
 		{
@@ -270,7 +273,14 @@ class gallery extends prefab {
 			echo Template::instance()->render("gallery/gallery.html");
 		}
 		else
+		{
+
+			$f3->gd_not_loaded = false;
+			if (!extension_loaded("gd"))
+				$f3->gd_not_loaded = true;
+
 			echo Template::instance()->render("gallery/nogallery.html");
+		}
 	}
 
 	static function patch_columns ()

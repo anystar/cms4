@@ -38,6 +38,8 @@ class content_blocks extends prefab {
 		$f3->route('GET /admin/ckeditor_imgs_config.js', "content_blocks::ckeditor_imgs_toolbar");
 		$f3->route('GET /admin/ckeditor_header_config.js', "content_blocks::ckeditor_header_toolbar");
 
+		$f3->route('GET /admin/page/delete_content/@content', "content_blocks::deleteContent");
+
 		$f3->route('POST /admin/page/add_content', function ($f3) {
 
 			if (strlen($f3->POST["content_name"]) == 0)
@@ -66,6 +68,12 @@ class content_blocks extends prefab {
 		$db = base::instance()->DB;
 
 		$db->exec("INSERT INTO contentBlocks (page, content, type, contentName) VALUES (?,?,?,?)", [$page, $dummy_content, $type, $name]);
+	}
+
+	static function deleteContent($f3, $params) {
+		base::instance()->DB->exec("DELETE FROM contentBlocks WHERE id=?", $params["content"]);
+
+		$f3->mock("GET /admin/pages");
 	}
 
 	function retreiveContent($f3, $page) {

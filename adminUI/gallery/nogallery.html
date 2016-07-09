@@ -28,7 +28,19 @@
     <div class="container">
       <div class="col-xs-12">
         
-        <a href="{{@BASE}}/admin/gallery/generate">Initilize Gallery System</a>
+        <check if="{{@gd_not_loaded}}">
+          <true>
+          <div class="error_message">
+            GD image library is not installed. Please install before using this gallery system.
+          </div>
+          </true>
+
+          <false>
+            <a href="{{@BASE}}/admin/gallery/generate">Initilize Gallery System</a>
+          </false>
+        </check>
+
+
 
       </div>
     </div>
