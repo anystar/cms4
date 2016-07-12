@@ -70,6 +70,8 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 	$cms_location = "/home/cms/";
 	$f3_location  = "/home/alan/www/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://localhost/ckeditor/ckeditor.js\"></script>";
+	$ace_editor = "http://localhost/ace/src-min/ace.js";
+
 	$debug = true;
 
 	if (isset($config["remote_tools"]))
@@ -86,6 +88,8 @@ else
 	$cms_location = "/home/cms/";
 	$f3_location  = "/home/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://webworksau.com/ckeditor/ckeditor.js\"></script>";
+	$ace_editor = "http://webworksau.com/ace/src-min/ace.js";
+	
 	$debug = false;
 }
 
@@ -105,6 +109,7 @@ if (!file_exists($cms_location))
 $f3->set("client", $config);
 $f3->set("CMS", $cms_location);
 $f3->set("ckeditor", $ckeditor_location);
+$f3->set("ACE", $ace_editor);
 
 $f3->set("CONFIG", $config);
 

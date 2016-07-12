@@ -24,9 +24,21 @@
       }
 
       .page {
-         margin: 0 0 30px 0;
-         padding: 10px;
-         border: 1px solid #cce;
+        margin: 0 0 30px 0;
+        padding: 10px;
+        border: 1px solid #cce;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 2px 2px 1px 1px rgba(179,179,179,1);
+        -moz-box-shadow: 2px 2px 1px 1px rgba(179,179,179,1);
+        box-shadow: 2px 2px 1px 1px rgba(179,179,179,1);
+      }
+
+      .addcontent {
+        position: relative;
+        top: 3px;
+        color: blue;
       }
     </style>
   </head>
@@ -49,10 +61,10 @@
          <div class="col-xs-6">
             <check if="{{@name == 'all'}}">
             <true>
-               <h3>Display on all pages</h3>
+               <h3><span class="glyphicon glyphicon-file"></span> Display on all pages</h3>
             </true>
             <false>
-               <h3>Page: <a target="_blank" href="{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}">{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}</a></h3>
+               <h3><span class="glyphicon glyphicon-file"></span> <a target="_blank" href="{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}">{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}</a></h3>
             </false>
             </check>
          </div>
@@ -74,9 +86,9 @@
               <td>{{@content_block.contentName}}</td>
               <td>{{@content_block.type}}</td>
               <td align="right">
-                <a href="{{@BASE}}/admin/#"><button>Live Edit</button></a>
-                <a href="{{@BASE}}/admin/#"><button>HTML Edit</button></a>
-                <a href="{{@BASE}}/admin/page/delete_content/{{@content_block.id}}"><button>Delete</button></a>
+                <check if="{{@name != 'all'}}"><a href="{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}" target="_blank"><button><span class="glyphicon glyphicon-pencil"></span>  Live Edit</button></a></check>
+                <a href="{{@BASE}}/admin/page/html_edit/{{@content_block.id}}"><button><span class="glyphicon glyphicon-list-alt"></span> HTML Edit</button></a>
+                <a href="{{@BASE}}/admin/page/delete_content/{{@content_block.id}}"><button><span class="glyphicon glyphicon-remove-sign"></span> Delete</button></a>
               </td>
           </tr>
           </repeat>
@@ -106,7 +118,7 @@
             </div>
             <div class="col-xs-3">
                <div class="input-group">
-                <button class="form-control" type="submit">Add Content Block</button>
+                <button class="addcontent" type="submit"><span class="glyphicon glyphicon-plus-sign"></span> Add Content Block</button>
                </div>
             </div>
          </div><!-- /.row -->

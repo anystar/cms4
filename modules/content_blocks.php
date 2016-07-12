@@ -34,11 +34,18 @@ class content_blocks extends prefab {
 			content_blocks::save_inline($f3);
 		});
 
+		$f3->route('POST /admin/page/htmlsave', function ($f3, $params) {
+			content_blocks::save_inline($f3, $f3->POST["id"], $f3->POST["contents"]);
+			die;
+		});
+
 		$f3->route('GET /admin/ckeditor_config.js', "content_blocks::ckeditor_toolbar");
 		$f3->route('GET /admin/ckeditor_imgs_config.js', "content_blocks::ckeditor_imgs_toolbar");
 		$f3->route('GET /admin/ckeditor_header_config.js', "content_blocks::ckeditor_header_toolbar");
 
 		$f3->route('GET /admin/page/delete_content/@content', "content_blocks::deleteContent");
+		$f3->route('GET /admin/page/html_edit/@content', "content_blocks::admin_render_htmledit");
+		$f3->route('GET /admin/page/ace.js', "content_blocks::ace_editor");
 
 		$f3->route('POST /admin/page/add_content', function ($f3) {
 
@@ -52,7 +59,6 @@ class content_blocks extends prefab {
 
 				if ($result)
 				{
-					d("hit");
 					$f3->mock("GET /admin/pages");
 				} else {
 					content_blocks::createContent($f3->POST["content_name"], $f3->POST["page"], $f3->POST["type"], $f3->POST["dummy_content"]);
@@ -132,10 +138,17 @@ class content_blocks extends prefab {
 		$f3->set("pages", $blocks);
 	}
 
-	static function save_inline($f3) 
+	static function save_inline($f3, $id=null, $content=null) 
 	{
-		$pageID = filter_var($f3->get("POST.editorID"), FILTER_SANITIZE_NUMBER_INT);
-		$pageContent = $f3->get("POST.editabledata");
+		if ($id != null)
+		{
+			$pageID = filter_var($f3->get("POST.editorID"), FILTER_SANITIZE_NUMBER_INT);
+			$pageContent = $f3->get("POST.editabledata");
+		} else {
+			echo "hit";
+			$pageID = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+			$pageContent = $content;
+		}
 
 		$db = $f3->get("DB");
 
@@ -193,6 +206,13 @@ class content_blocks extends prefab {
 		echo Template::instance()->render("content_blocks/page_edit.html");
 	}
 
+	static public function admin_render_htmledit ($f3, $params) {
+		$result = base::instance()->DB->exec("SELECT * FROM contentBlocks WHERE id=?", $params["content"]);
+		base::instance()->set("block", $result[0]);
+
+		echo Template::instance()->render("content_blocks/ace_editor.html");
+	}
+
 	static public function ckeditor_toolbar($f3) 
 	{
 		$tmp = $f3->UI;
@@ -214,6 +234,14 @@ class content_blocks extends prefab {
 		$tmp = $f3->UI;
 		$f3->UI = $f3->CMS . "adminUI/";
 		echo Template::instance()->render("ckeditor_header_config.js", "text/javascript");
+		$f3->UI = $tmp;
+	}
+
+	static public function ace_editor($f3) 
+	{
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
+		echo Template::instance()->render("content_blocks/additional.js", "text/javascript");
 		$f3->UI = $tmp;
 	}
 
