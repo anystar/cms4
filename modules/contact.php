@@ -4,6 +4,8 @@ class contact extends prefab
 {
 
 	static $email_template = "website-enquiry.html";
+	static $port = 25;
+
 
 	function __construct() {
 		$f3 = base::instance();
@@ -11,14 +13,21 @@ class contact extends prefab
 		$default = $f3->exists("CONFIG[contact.page]") ? $f3->get("CONFIG[contact.page]") : "/contact";
 		$f3->set("CONFIG[contact.page]", $default);
 
-		if ($f3->exists("CONFIG[contact.email_template]"))
-			contact::$email_template = $f3->get("CONFIG[contact.email_template]");
+		if ($f3->exists("CONFIG[contact.email_template]")) contact::$email_template = $f3->get("CONFIG[contact.email_template]");
+		if ($f3->exists("CONFIG[contact.port]")) contact::$port = $f3->get("CONFIG[contact.port]");
 
 		if (contact::hasInit())
 		{
 			$this->routes($f3);
 
 			$pageToLoadOn = $f3->get("CONFIG[contact.page]");
+
+			if ($f3->POST["return"] == null) {
+				$f3->set("contact_return_page", $f3->PATH);
+			} else {
+				$f3->set("contact_return_page", $f3->POST["return"]);
+			}
+
 
 			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all") {			
 				$this->load();
@@ -42,10 +51,10 @@ class contact extends prefab
 
 			if ($result)
 			{
-				$f3->mock("GET /contact_success");
+				$f3->reroute("/contact_success");
 			}
 			else
-				$f3->mock("GET ".$mock);
+				$f3->mock("GET ". $mock);
 		});
 	}
 
@@ -153,7 +162,7 @@ class contact extends prefab
  		$fromName = $f3->get("fromName");
 		$fromAddress = $f3->get("fromAddress");
 
-		$smtp = new SMTP("127.0.0.1", "25", "", "", "");
+		$smtp = new SMTP("127.0.0.1", contact::$port, "", "", "");
 
 		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
 		$smtp->set('From', '"'.$fromName.'" <'.$fromAddress.'>');

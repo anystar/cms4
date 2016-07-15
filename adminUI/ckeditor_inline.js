@@ -4,7 +4,7 @@
 	<repeat group="{{@ck_instances}}" value="{{@instance}}">
 
 		if (document.getElementById("{{@instance.id}}")) {
-			
+
 			<switch expr="{{@instance.type}}">
 				<case value="img">
 				var editor = CKEDITOR.inline( '{{@instance.id}}', { customConfig: '{{ @BASE }}/admin/ckeditor_imgs_config.js' } );

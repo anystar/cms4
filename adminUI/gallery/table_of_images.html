@@ -1,26 +1,25 @@
-        <table class="table table-condensed">
-          <tr>
-            <th>Thumb</th>
-            <th width="20%">File name</th>
-            <th width="30%">Caption</th>
-            <th width="40%">Tools</th>
-          </tr>
-          
-          <repeat group="{{@gallery_images}}" value="{{@img}}">
-          <tr>
-              <td>
-                <a href="#" data-lity data-lity-target="{{@BASE}}/{{@gallery_upload_path}}{{@img.filename}}">
-                  <img width="60" src="{{@BASE}}/{{@gallery_thumb_path}}{{@img.thumb}}" />
-                </a>
-              </td>
-              <td class="filename">{{@img.filename}}</td>
-              <td>{{@img.caption}}</td>
-              <td>
-                <a href="{{@BASE}}/admin/gallery/delete/{{@img.id}}"><button>Delete</button></a>
-              </td>
-          </tr>
-          </repeat>
-        </table>
+
+				<table class="table table-condensed">
+					<tr>
+						<th width="200">Thumb</th>
+						<th width="20%">File name</th>
+						<th width="20%">Caption</th>
+						<th width="10%">Tools</th>
+					</tr>
+					
+					<repeat group="{{@gallery_images}}" value="{{@img}}">
+					<tr>
+							<td>
+								<img data-lity data-lity-target="{{@BASE}}/{{@gallery_path}}{{@img.filename}}" width="250" src="{{@BASE}}/{{@gallery_thumb_path}}{{@img.thumb}}" />
+							</td>
+							<td class="filename">{{@img.filename}}</td>
+							<td>{{@img.caption}}</td>
+							<td>
+								<a class="delete_image" href="{{@BASE}}/admin/gallery/delete/{{@img.id}}"><button>Delete</button></a>
+							</td>
+					</tr>
+					</repeat>
+				</table>
 
         <form method="post" action="{{@BASE}}/admin/gallery/dropzone" class="dropzone" id="gallerydropzone">
           <div class="dz-message">

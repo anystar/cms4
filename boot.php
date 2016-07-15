@@ -33,6 +33,7 @@ if (!file_exists(getcwd()."/tmp/")) { echo "<strong>tmp</strong> folder does not
 if (!is_writable(getcwd()."/tmp/")) { echo "Please make <strong>tmp</strong> folder writable by group";exit; }
 if (!file_exists(getcwd()."/db")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder with group writable permissions. (chmod g+w db chmod 755 db)";exit; }
 if (!is_writable(getcwd()."/db/")) { echo "Please make <strong>db</strong> folder writable by group";exit; }
+if (!is_writable(getcwd()."/".$config["dbname"])) { echo "Please make database file writable."; exit;}
 if (!file_exists(getcwd()."/.htaccess")) htaccess_example();
 
 ########################################
@@ -73,6 +74,8 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 	$ace_editor = "http://localhost/ace/src-min/ace.js";
 
 	$debug = true;
+
+	$config["contact.port"] = 2525;
 
 	if (isset($config["remote_tools"]))
 	{		

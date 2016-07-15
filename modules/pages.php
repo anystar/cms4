@@ -2,6 +2,8 @@
 
 class pages extends prefab {
 
+	static $has_routed = false;
+
 	function __construct() {
 
 		$this->routes(base::instance());
@@ -9,7 +11,12 @@ class pages extends prefab {
 
 	function routes($f3) {
 
+
 		$f3->route(['GET /', 'GET /@page'], function ($f3, $params) {
+
+			// prevent running twice.
+			if (pages::$has_routed) exit;
+			pages::$has_routed = true;
 
 			$f3->set('UI', getcwd()."/");
 

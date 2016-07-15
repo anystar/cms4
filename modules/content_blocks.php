@@ -8,7 +8,16 @@ class content_blocks extends prefab {
 
 		if ($this->hasInit())
 		{
-			$page = $f3->PATH;
+
+			// "return" is used in forms which
+			// return back to the same page.
+			// The main example of this is the contact
+			// module which can be used on the same page.
+			if ($f3->POST["return"])
+				$page = $f3->POST["return"];
+			else
+				$page = $f3->PATH;
+
 			$page = ($page!="/") ? trim($page, "/") : "index";
 
 			$this->retreiveContent($f3, $page);
@@ -128,24 +137,32 @@ class content_blocks extends prefab {
 
 	function loadAll ($f3) {
 		$db = $f3->get("DB");
-		$result = $db->exec('SELECT * FROM contentBlocks');
+		$result = $db->exec('SELECT * FROM contentBlocks ORDER BY page');
 
 		foreach ($result as $contentBlock)
 		{
-			$blocks[$contentBlock["page"]][] = $contentBlock;
+			if ($contentBlock["page"] == "all")
+				$putAtStart[] = $contentBlock;
+			else
+				$tmp_blocks[] = $contentBlock;
 		}
+
+		foreach ($putAtStart as $contentBlock)
+			$blocks["all"][] = $contentBlock;
+		
+		foreach ($tmp_blocks as $contentBlock)
+			$blocks[$contentBlock["page"]][] = $contentBlock;
 
 		$f3->set("pages", $blocks);
 	}
 
 	static function save_inline($f3, $id=null, $content=null) 
 	{
-		if ($id != null)
+		if ($id==null)
 		{
 			$pageID = filter_var($f3->get("POST.editorID"), FILTER_SANITIZE_NUMBER_INT);
 			$pageContent = $f3->get("POST.editabledata");
 		} else {
-			echo "hit";
 			$pageID = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
 			$pageContent = $content;
 		}

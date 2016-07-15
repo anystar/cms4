@@ -24,7 +24,7 @@ class gallery extends prefab {
 
 			$pageToLoadOn = $f3->get("CONFIG[gallery.page]");
 
-			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all")
+			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all" || $pageToLoadOn == $f3->POST["return"])
 				$this->retreiveContent($page[1]);
 
 			base::instance()->set("gallery_path", gallery::$upload_path);
@@ -33,8 +33,6 @@ class gallery extends prefab {
 
 		if (admin::$signed)
 			$this->admin_routes($f3);
-
-
 
 	}
 
@@ -52,6 +50,16 @@ class gallery extends prefab {
 			exit;
 		});
 
+		$f3->route('GET /admin/gallery/css/lity.min.css', function ($f3) {
+			echo View::instance()->render("gallery/css/lity.min.css", "text/css");
+			exit;
+		});
+
+		$f3->route('GET /admin/gallery/js/lity.min.js', function ($f3) {
+			echo View::instance()->render("gallery/js/lity.min.js", "text/javascript");
+			exit;
+		});
+
 		$f3->route('GET /admin/gallery/css/gallery.css', function ($f3) {
 			echo View::instance()->render("gallery/css/gallery.css", "text/css");
 			exit;
@@ -60,6 +68,11 @@ class gallery extends prefab {
 		$f3->route('POST /admin/gallery/dropzone', function ($f3) {
 			gallery::upload($f3);
 			exit;
+		});
+
+
+		$f3->route('GET /admin/gallery/delete/@id [ajax]', function ($f3, $params) {
+			gallery::ajaxDelete($f3, $params["id"]);			
 		});
 
 		$f3->route('GET /admin/gallery/delete/@id', function ($f3, $params) {
@@ -71,7 +84,23 @@ class gallery extends prefab {
 		});
 	}
 
-	static function delete($f3, $id) {
+	static function ajaxDelete($f3, $id) {
+		$db = $f3->DB;
+		$result = $db->exec("SELECT * FROM gallery WHERE id=?", $id)[0];
+
+		if (file_exists(gallery::$upload_path . $result["filename"]))
+			unlink(gallery::$upload_path . $result["filename"]);
+
+		if (file_exists(gallery::$thumb_path . $result["thumb"]))
+			unlink(gallery::$thumb_path . $result["thumb"]);
+
+		$db->exec("DELETE FROM gallery WHERE id=?", $id);
+
+		echo true;
+		exit;
+	}
+
+	static function delete($f3, $id, $ajax=false) {
 		$db = $f3->DB;
 		$result = $db->exec("SELECT * FROM gallery WHERE id=?", $id)[0];
 
