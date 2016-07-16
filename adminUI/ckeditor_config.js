@@ -21,12 +21,14 @@ CKEDITOR.editorConfig = function( config ) {
     useColorIcon: true
   };
 
-  config.extraPlugins = 'uploadimage';
+  config.extraPlugins = 'uploadimage,ckeditor-gwf-plugin';
   config.removePlugins = 'scayt';
   config.uploadUrl = '{{@BASE}}/admin/file_manager/image_upload';
 
   config.filebrowserBrowseUrl = '{{@BASE}}/admin/file_manager/browse_files';
   config.filebrowserUploadUrl = '{{@BASE}}/admin/file_manager/image_upload_via_dialog';
+
+  config.font_names = config.font_names + ";GoogleWebFonts";
 };
 
 /*CKEDITOR.on( 'dialogDefinition', function( ev )
