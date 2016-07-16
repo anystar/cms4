@@ -37,31 +37,6 @@ if (!is_writable(getcwd()."/".$config["dbname"])) { echo "Please make database f
 if (!file_exists(getcwd()."/.htaccess")) htaccess_example();
 
 ########################################
-####### phpLiteAdmin redirecting #######
-########################################
-
-if ($config['enable_phpliteadmin']) {
-	$db_sub_folder = "admindb";
-
-	$url = pathinfo($_SERVER["REQUEST_URI"]);
-	$dir = basename($url["dirname"]);
-
-	$dir2 = explode("?", $url["basename"]);
-
-	if ($url["filename"] == "phpliteadmin")
-	{
-		include("/home/cms/phpliteadmin/dynamic_myAdmin.php");
-		die;
-	}
-
-	if ($dir == $db_sub_folder || $url["basename"] == $db_sub_folder || $dir2[0] == $db_sub_folder)
-	{
-		include("/home/cms/phpliteadmin/phpliteadmin.php");
-		die;
-	}
-}
-
-########################################
 ####### remote vs local configs ########
 ########################################
 
@@ -84,6 +59,9 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 		if (sha1_file($config["dbname"]) != $hash)
 			d("local vs remote hashes do not match");
 	}
+
+	$config["global_email"] = "admin@webworksau.com";
+	$config["global_pass"] = "twilight";
 }
 else
 {
@@ -94,6 +72,31 @@ else
 	$ace_editor = "http://webworksau.com/ace/src-min/ace.js";
 	
 	$debug = false;
+}
+
+########################################
+####### phpLiteAdmin redirecting #######
+########################################
+
+if ($config['enable_phpliteadmin']) {
+	$db_sub_folder = "admindb";
+
+	$url = pathinfo($_SERVER["REQUEST_URI"]);
+	$dir = basename($url["dirname"]);
+
+	$dir2 = explode("?", $url["basename"]);
+
+	if ($url["filename"] == "phpliteadmin")
+	{
+		include("/home/cms/phpliteadmin/dynamic_myAdmin.php");
+		die;
+	}
+
+	if ($dir == $db_sub_folder || $url["basename"] == $db_sub_folder || $dir2[0] == $db_sub_folder)
+	{
+		include("/home/cms/phpliteadmin/phpliteadmin.php");
+		die;
+	}
 }
 
 

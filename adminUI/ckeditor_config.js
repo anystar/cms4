@@ -29,7 +29,7 @@ CKEDITOR.editorConfig = function( config ) {
   config.filebrowserUploadUrl = '{{@BASE}}/admin/file_manager/image_upload_via_dialog';
 };
 
-CKEDITOR.on( 'dialogDefinition', function( ev )
+/*CKEDITOR.on( 'dialogDefinition', function( ev )
   {
     // Take the dialog name and its definition from the event data.
     var dialogName = ev.data.name;
@@ -45,4 +45,4 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
       var urlField = infoTab.get( 'url' );
       urlField['default'] = 'www.google.com';
     }
-  });
+  });*/

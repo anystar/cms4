@@ -2,12 +2,15 @@
 
 class content_blocks extends prefab {
 	
+	static $hasInit = false;
+
 	function __construct() {
 
 		$f3 = base::instance();
 
 		if ($this->hasInit())
 		{
+			content_blocks::$hasInit = true;
 
 			// "return" is used in forms which
 			// return back to the same page.
@@ -32,9 +35,12 @@ class content_blocks extends prefab {
 
 		$f3->route('GET /admin/pages', 'content_blocks::admin_page_render');
 		$f3->route('GET /admin/page/edit/@page', "content_blocks::admin_edit_render");
-		$f3->route('GET /admin/page/generate', function ($f3) {
-			content_blocks::generate();
-			$f3->mock("GET /admin/pages");
+		$f3->route('POST /admin/page/generate', function ($f3) {
+
+			if (!content_blocks::$hasInit)
+				content_blocks::generate();
+
+			$f3->reroute("/admin/pages");
 		});
 
 		$f3->route('POST /admin/page/save', function ($f3, $params) {
@@ -93,8 +99,8 @@ class content_blocks extends prefab {
 
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
-		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page LIKE ? OR page="all"', "%".$page."%");
-		
+		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page LIKE ? OR page="all" OR page=""', "%".$page."%");
+
 		$bc = array(); // Blocks compiled
 		$ck_instances = array();
 		foreach ($blocksraw as $key=>$block) {
@@ -108,6 +114,8 @@ class content_blocks extends prefab {
 						case "header":
 							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
 						break;
+
+						case "none": break;
 
 						default:
 							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
@@ -136,22 +144,31 @@ class content_blocks extends prefab {
 	}
 
 	function loadAll ($f3) {
+
+		$pages = glob("*.html");
+
+		$blocks["all"] = array();
+
+		foreach ($pages as $page) {
+			$page = str_replace(".html", "", $page);
+			$blocks[$page] = array();
+		}	
+		
+		$f3->set("pages", $blocks);
+
 		$db = $f3->get("DB");
 		$result = $db->exec('SELECT * FROM contentBlocks ORDER BY page');
 
+
+		if (!$result) return;
+
 		foreach ($result as $contentBlock)
 		{
-			if ($contentBlock["page"] == "all")
-				$putAtStart[] = $contentBlock;
+			if ($contentBlock["page"] == "all" || $contentBlock["page"] == "")
+				$blocks["all"][] = $contentBlock;
 			else
-				$tmp_blocks[] = $contentBlock;
+				$blocks[] = $contentBlock;
 		}
-
-		foreach ($putAtStart as $contentBlock)
-			$blocks["all"][] = $contentBlock;
-		
-		foreach ($tmp_blocks as $contentBlock)
-			$blocks[$contentBlock["page"]][] = $contentBlock;
 
 		$f3->set("pages", $blocks);
 	}
@@ -190,10 +207,20 @@ class content_blocks extends prefab {
 	}
 
 	function generate() {
+		$f3 = base::instance();
 
 		$db = base::instance()->DB;
 
 		$db->exec("CREATE TABLE IF NOT EXISTS 'contentBlocks' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'page' TEXT, 'content' TEXT, 'lastUpdated' DATETIME DEFAULT CURRENT_TIMESTAMP,'contentName' TEXT);");
+
+		// $pages = $f3->POST["pages"];
+		// $pages = explode(",", $pages);
+		// $pages = array_unique($pages);
+		
+		// foreach ($pages as $page) {
+			
+		// }
+
 	}
 
 	static public function admin_page_render($f3)
