@@ -99,7 +99,7 @@ class content_blocks extends prefab {
 
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
-		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page LIKE ? OR page="all" OR page=""', "%".$page."%");
+		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page=""', $page);
 
 		$bc = array(); // Blocks compiled
 		$ck_instances = array();
@@ -108,6 +108,8 @@ class content_blocks extends prefab {
 			{
 				// Wrap in content editable
 				if (admin::$signed) {
+
+					if ($block["page"] == "") $block["page"] = "all";
 
 					switch ($block['type'])
 					{
@@ -121,6 +123,7 @@ class content_blocks extends prefab {
 							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
 						break;
 					}
+
 
 					$ck_instances[$key]["id"] = $block["page"]."_".$block["id"];
 					$ck_instances[$key]["type"] = $block["type"];
