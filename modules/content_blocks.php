@@ -150,6 +150,8 @@ class content_blocks extends prefab {
 		$blocks["all"] = array();
 
 		foreach ($pages as $page) {
+			if ($page[0] == "_") continue;
+
 			$page = str_replace(".html", "", $page);
 			$blocks[$page] = array();
 		}	
