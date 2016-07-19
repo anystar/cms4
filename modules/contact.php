@@ -172,7 +172,7 @@ class contact extends prefab
 		$subject = $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"];
 
  		$fromName = $f3->get("fromName");
-		
+
  		if ($f3->exists("fromAddress"))
 			$fromAddress = $f3->get("fromAddress");
 		else
@@ -193,7 +193,7 @@ class contact extends prefab
 		$body = Template::instance()->render(contact::$email_template);
 
 		$smtp->send($body);
-
+		
 		return true;
 	}
 
