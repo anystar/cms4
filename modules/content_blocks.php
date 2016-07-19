@@ -152,8 +152,8 @@ class content_blocks extends prefab {
 		foreach ($pages as $page) {
 			if ($page[0] == "_") continue;
 
-			$page = str_replace(".html", "", $page);
-			$blocks[$page] = array();
+			$pageName = str_replace(".html", "", $page);
+			$blocks[$pageName] = array();
 		}	
 		
 		$f3->set("pages", $blocks);
@@ -161,7 +161,7 @@ class content_blocks extends prefab {
 		$db = $f3->get("DB");
 		$result = $db->exec('SELECT * FROM contentBlocks ORDER BY page');
 
-
+		// Don't bother if there are no content blocks from DB
 		if (!$result) return;
 
 		foreach ($result as $contentBlock)
@@ -169,7 +169,7 @@ class content_blocks extends prefab {
 			if ($contentBlock["page"] == "all" || $contentBlock["page"] == "")
 				$blocks["all"][] = $contentBlock;
 			else
-				$blocks[] = $contentBlock;
+				$blocks[$contentBlock["page"]][] = $contentBlock;
 		}
 
 		$f3->set("pages", $blocks);
