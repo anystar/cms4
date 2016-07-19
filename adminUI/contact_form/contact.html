@@ -26,9 +26,48 @@
     </div>
 
     <div class="container">
-      <div class="col-xs-12">
+      <div class="col-xs-7">        
+        <h2>Contact Form</h2>
         
-        Contact form..
+
+
+
+        <h2>Email Template</h2>
+      </div>
+      <div class="col-xs-5">
+        <h2>Settings</h2>
+
+            <form class="form-horizontal">
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-3 control-label" for="email">Email</label>  
+              <div class="col-md-9">
+              <input id="email" name="email" type="text" placeholder="email address" class="form-control input-md" required="" value="{{@contact_email}}">
+              <span class="help-block">Where should the contact form submit to?</span>  
+              </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-3 control-label" for="name">Name</label>  
+              <div class="col-md-9">
+              <input id="name" name="name" type="text" placeholder="your name" class="form-control input-md" required="" value="{{@contact_name}}">
+              <span class="help-block">Who should the contact form address</span>  
+              </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-3 control-label" for="subject">Subject Line</label>  
+              <div class="col-md-9">
+              <input id="subject" name="subject" type="text" placeholder="" class="form-control input-md" required="" value="{{@contact_subject}}">
+              <span class="help-block">eg: website enquiry</span>  
+              </div>
+            </div>
+
+            </form>
+
       </div>
     </div>
 

@@ -265,7 +265,19 @@ class contact extends prefab
 
 	static public function admin ($f3) {
 		if (contact::hasInit())
+		{
+			contact::load();
+
+			// Get configurables
+			$f3->set("contact_email", config("contact-email"));
+			$f3->set("contact_name", config("contact-name"));
+			$f3->set("contact_subject", config("contact-subject"));
+
+			//
+			$f3->contact_form = base::instance()->DB->exec("SELECT * FROM contact_form");
+
 			echo Template::instance()->render("contact_form/contact.html");
+		}
 		else
 			echo Template::instance()->render("contact_form/nocontact.html");
 	}

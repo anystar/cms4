@@ -48,7 +48,7 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 	$cms_location = "/home/cms/";
 	$f3_location  = "/home/alan/www/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://localhost/ckeditor/ckeditor.js\"></script>";
-	$ace_editor = "http://localhost/ace/src-min/ace.js";
+	$ace_editor = "http://localhost/ace/src-noconflict/ace.js";
 
 	$debug = true;
 
@@ -134,6 +134,7 @@ $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
 $f3->set('DEBUG', $debug);
 
+require_once("tools/tools.php");
 
 // Make database if it doesn't exist
 if (!file_exists($config['dbname'])) {

@@ -230,6 +230,7 @@ class content_blocks extends prefab {
 
 	static public function admin_page_render($f3)
 	{
+
 		if (content_blocks::instance()->hasInit()) {
 			content_blocks::instance()->loadAll($f3);
 
@@ -257,6 +258,8 @@ class content_blocks extends prefab {
 
 	static public function admin_render_htmledit ($f3, $params) {
 		$result = base::instance()->DB->exec("SELECT * FROM contentBlocks WHERE id=?", $params["content"]);
+		$result[0]["content"] = htmlspecialchars($result[0]["content"]);
+
 		base::instance()->set("block", $result[0]);
 
 		echo Template::instance()->render("content_blocks/ace_editor.html");
