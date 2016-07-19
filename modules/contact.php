@@ -178,6 +178,9 @@ class contact extends prefab
 		else
 			$fromAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-from_address'")[0]["value"];
 
+		// Worst case just set it to admin@webworksau.com...
+		if (!$fromAddress) $fromAddress = "admin@webworksau.com";
+
 		$smtp = new SMTP("127.0.0.1", contact::$port, "", "", "");
 
 		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
