@@ -73,6 +73,8 @@ else
 	$ckeditor_location = "<script src=\"http://webworksau.com/ckeditor/ckeditor.js\"></script>";
 	$ace_editor = "http://webworksau.com/ace/src-min/ace.js";
 	
+	$config["contact.port"] = 25;
+
 	$debug = false;
 }
 
