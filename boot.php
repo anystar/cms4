@@ -3,6 +3,8 @@
 ########################################
 ######## Default configuration #########
 ########################################
+$config["inhouse_ip"] = "110.140.119.209";
+
 $config["global_email"] = "admin@webworksau.com";
 $config["global_pass"] = "3GHUQ3zzgvvpV5nA";
 

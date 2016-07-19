@@ -17,13 +17,17 @@
       #login {
         background-color: #fff;
         width: 400px;
-        height: 280px;
+
         margin: auto;
         margin-top: 20vh;
         padding: 10px;
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;
         border-radius: 5px;
+      }
+
+      #login img {
+        margin-bottom: 20px;
       }
 
       #login h1 {
@@ -52,32 +56,35 @@
     <![endif]-->
   </head>
   <body>
+
+    
     <div id="login">
-      <h1>Web Works CMS Login</h1>
+      <img width="100%" src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login">
 
       <form autocomplete="off" method="post" action="{{ @BASE }}/admin/login">
         <div class="form-group">
-          <label for="exampleInputEmail1">Email address</label>
-          <input id="user" name="user" type="email" class="form-control" placeholder="Email">
+
+          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@POST.email}}">
         </div>
         <div class="form-group">
-          <label for="exampleInputPassword1">Password</label>
-          <input id="pass" name="pass" type="password" class="form-control" placeholder="Password">
+
+          <input id="pass" name="pass" type="password" class="form-control" placeholder="Password" value="{{@POST.pass}}">
         </div>
 
-        <div class="checkbox">
-          <label>
-            <input name="redirecttolive" type="checkbox"> Go to live edit
-          </label>
+        <div class="row">
+          <div class="col-xs-6">
+            <button type="submit" name="redirectWhere" class="btn btn-default"><span class="glyphicon glyphicon-list-alt"></span> Live Edit</button>
+          </div>
+          <div class="col-xs-6">
+            <button type="submit" name="redirectWhere" class="btn btn-default"><span class="glyphicon glyphicon-wrench"></span> Admin Panel</button>
+          </div>
         </div>
-
-        <button type="submit" class="btn btn-default">Submit</button>
+         
       </form>
     </div>
     
     <script>
-      document.getElementById("user").value = "";
-      document.getElementById("pass").value = "";
+
     </script>
 
   </body>

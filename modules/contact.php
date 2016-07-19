@@ -82,6 +82,18 @@ class contact extends prefab
 			$formcompiled[$r["id"]] = $r;
 
 		$f3->set("form", $formcompiled);
+
+		$result = $db->exec("SELECT value FROM settings WHERE setting=?", "contact-custom_html")[0]["value"];
+
+		// Use template snippet
+		if ($result == 0) {
+			
+			$tmp = $f3->UI; $f3->UI = $f3->CMS;
+			$snippet = \Template::instance()->render("template_snippets/contactform.html");
+			$f3->UI = $tmp;
+
+			$f3->set("contact_form", $snippet);
+		}
 	}
 
 	static function validate ()
