@@ -48,7 +48,7 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 	$cms_location = "/home/cms/";
 	$f3_location  = "/home/alan/www/f3/lib/base.php";
 	$ckeditor_location = "<script src=\"http://localhost/ckeditor/ckeditor.js\"></script>";
-	$ace_editor = "http://localhost/ace/src-noconflict/ace.js";
+	$ace_editor = "http://localhost/ace/src-min/ace.js";
 
 	$debug = true;
 

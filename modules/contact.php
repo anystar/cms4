@@ -62,6 +62,8 @@ class contact extends prefab
 	{
 		$f3->route('GET /admin/contact', "contact::admin");
 		$f3->route('GET /admin/contact/generate', "contact::generate");
+
+		$f3->route('POST /admin/contact/settings', "contact::update_settings");		
 	}
 
 	static public function contact ($f3) {
@@ -273,13 +275,20 @@ class contact extends prefab
 			$f3->set("contact_name", config("contact-name"));
 			$f3->set("contact_subject", config("contact-subject"));
 
-			//
-			$f3->contact_form = base::instance()->DB->exec("SELECT * FROM contact_form");
+			$f3->contact_fields = base::instance()->DB->exec("SELECT * FROM contact_form ORDER BY `order`");
+			
+			$f3->UI = getcwd()."/";
+			$f3->email_template = Template::instance()->render(contact::$email_template);
+			$f3->UI = $f3->CMS."adminUI/";
 
 			echo Template::instance()->render("contact_form/contact.html");
 		}
 		else
 			echo Template::instance()->render("contact_form/nocontact.html");
+	}
+
+	static public function update_settings($f3) {
+		d("Not finished just yet sorry.");
 	}
 
 }
