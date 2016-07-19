@@ -172,7 +172,11 @@ class contact extends prefab
 		$subject = $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"];
 
  		$fromName = $f3->get("fromName");
-		$fromAddress = $f3->get("fromAddress");
+		
+ 		if ($f3->exists("fromAddress"))
+			$fromAddress = $f3->get("fromAddress");
+		else
+			$fromAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-from_address'")[0]["value"];
 
 		$smtp = new SMTP("127.0.0.1", contact::$port, "", "", "");
 
