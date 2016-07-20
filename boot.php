@@ -26,18 +26,6 @@ if (!isset($config['disabled_modules']))
 if (isset($config['additional_modules']))
 	$config['enabled_modules'] = array_merge($config['enabled_modules'], $config['additional_modules']);
 
-
-########################################
-## Check folder and file permissions  ##
-########################################
-// Required folders for operation
-if (!file_exists(getcwd()."/tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder with group writable permissions. (chmod g+w tmp or chmod 755 db)";exit; }
-if (!is_writable(getcwd()."/tmp/")) { echo "Please make <strong>tmp</strong> folder writable by group";exit; }
-if (!file_exists(getcwd()."/db")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder with group writable permissions. (chmod g+w db chmod 755 db)";exit; }
-if (!is_writable(getcwd()."/db/")) { echo "Please make <strong>db</strong> folder writable by group";exit; }
-if (!is_writable(getcwd()."/".$config["dbname"])) { echo "Please make database file writable."; exit;}
-if (!file_exists(getcwd()."/.htaccess")) htaccess_example();
-
 ########################################
 ####### remote vs local configs ########
 ########################################
@@ -77,6 +65,22 @@ else
 
 	$debug = false;
 }
+
+########################################
+## Check folder and file permissions  ##
+########################################
+if (!file_exists(getcwd()."/.htaccess")) {
+	include("modules/wizard_creator.php");
+	new wizard_creator($cms_location, $f3_location);
+}
+
+// Required folders for operation
+if (!file_exists(getcwd()."/tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder with group writable permissions. (chmod g+w tmp or chmod 755 db)";exit; }
+if (!is_writable(getcwd()."/tmp/")) { echo "Please make <strong>tmp</strong> folder writable by group";exit; }
+if (!file_exists(getcwd()."/db")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder with group writable permissions. (chmod g+w db chmod 755 db)";exit; }
+if (!is_writable(getcwd()."/db/")) { echo "Please make <strong>db</strong> folder writable by group";exit; }
+if (!is_writable(getcwd()."/".$config["dbname"])) { echo "Please make database file writable."; exit;}
+if (!file_exists(getcwd()."/.htaccess")) htaccess_example();
 
 ########################################
 ####### phpLiteAdmin redirecting #######

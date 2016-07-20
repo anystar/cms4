@@ -1,6 +1,7 @@
 CKEDITOR.editorConfig = function( config ) {
 
-  config.toolbar = [ [ 'Image', 'Inlinesave' ] ];
+  config.removePlugins = 'scayt,uploadimage,Font,ckeditor-gwf-plugin';
+  config.toolbar = [ [ 'Image', 'Inlinesave', 'Font' ] ];
 
   config.inlinesave = {
     postUrl: '{{@BASE}}/admin/page/save',
@@ -8,7 +9,6 @@ CKEDITOR.editorConfig = function( config ) {
     useColorIcon: true
   };
 
-  config.removePlugins = 'scayt,uploadimage';
   config.uploadUrl = '{{@BASE}}/admin/file_manager/image_upload';
 
   config.filebrowserBrowseUrl = '{{@BASE}}/admin/file_manager/browse_files';
