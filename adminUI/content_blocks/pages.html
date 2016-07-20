@@ -23,6 +23,10 @@
          margin-bottom: 30px;
       }
 
+      h3 {
+        margin-top: 10px;
+      }
+
       .page {
         margin: 0 0 30px 0;
         padding: 10px;
@@ -39,6 +43,10 @@
         position: relative;
         top: 3px;
         color: blue;
+      }
+
+      .glyphicon-plus {
+        cursor:pointer;
       }
     </style>
   </head>
@@ -61,66 +69,68 @@
          <div class="col-xs-12">
             <check if="{{@name == 'all'}}">
             <true>
-               <h3><span class="glyphicon glyphicon-file"></span> Display on all pages</h3>
+               <h3><span class="glyphicon glyphicon-file"></span> Display on all pages <span class="glyphicon glyphicon-plus pull-right"></span></h3>
             </true>
             <false>
-               <h3><span class="glyphicon glyphicon-file"></span> <a target="_blank" href="{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}">{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}</a></h3>
+               <h3><span class="glyphicon glyphicon-file"></span> <a target="_blank" href="{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}">{{@name}}</a> <span class="glyphicon glyphicon-plus pull-right"></span></h3>
             </false>
             </check>
          </div>
         </div>
+  
 
-        <table class="table table-condensed">
-          <tr>
-            <th width="20%">Content Name</th>
-            <th width="30%">Toolbar type</th>
-            <th style="text-align: right;" width="40%">Tools</th>
-          </tr>
-        
+        <div class="collapse">
+            <table class="table table-condensed">
+              <tr>
+                <th width="20%">Content Name</th>
+                <th width="30%">Toolbar type</th>
+                <th style="text-align: right;" width="40%">Tools</th>
+              </tr>
 
-          <repeat group="{{@page}}" value="{{@content_block}}">
-          <tr>
-              <td>{{@content_block.contentName}}</td>
-              <td>{{@content_block.type}}</td>
-              <td align="right">
-                <check if="{{@name != 'all'}}"><a href="{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}" target="_blank"><button><span class="glyphicon glyphicon-pencil"></span>  Live Edit</button></a></check>
-                <a href="{{@BASE}}/admin/page/html_edit/{{@content_block.id}}"><button><span class="glyphicon glyphicon-list-alt"></span> HTML Edit</button></a>
-                <a href="{{@BASE}}/admin/page/delete_content/{{@content_block.id}}"><button><span class="glyphicon glyphicon-remove-sign"></span> Delete</button></a>
-              </td>
-          </tr>
-          </repeat>
-        </table>
+              <repeat group="{{@page}}" value="{{@content_block}}">
+              <tr>
+                  <td>{{@content_block.contentName}}</td>
+                  <td>{{@content_block.type}}</td>
+                  <td align="right">
+                    <check if="{{@name != 'all'}}"><a href="{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}" target="_blank"><button><span class="glyphicon glyphicon-pencil"></span> Live Edit</button></a></check>
+                    <a href="{{@BASE}}/admin/page/html_edit/{{@content_block.id}}"><button><span class="glyphicon glyphicon-list-alt"></span> HTML Edit</button></a>
+                    <a href="{{@BASE}}/admin/page/delete_content/{{@content_block.id}}"><button><span class="glyphicon glyphicon-remove-sign"></span> Delete</button></a>
+                  </td>
+              </tr>
+              </repeat>
+            </table>
 
-        
-        <form class="well" method="post" action="{{@BASE}}/admin/page/add_content">
-         <div class="row">
-            <div class="col-xs-3">
-               <div class="input-group">
-                 <input name="content_name" type="text" class="form-control" placeholder="Content Name">
-               </div>
-            </div>
-            <div class="col-xs-3">
-               <div class="input-group">
-                  <select name="type" class="selectpicker">
-                    <option value="null">Full toobar</option>
-                    <option value="header">Header toolbar</option>
-                    <option value="img">Image toolbar</option>
-                  </select>
-               </div>
-            </div>
-            <div class="col-xs-3">
-               <div class="input-group">
-                 <input name="dummy_content" value="Content Here" type="text" class="form-control">
-               </div>
-            </div>
-            <div class="col-xs-3">
-               <div class="input-group">
-                <button class="addcontent" type="submit"><span class="glyphicon glyphicon-plus-sign"></span> Add Content Block</button>
-               </div>
-            </div>
-         </div><!-- /.row -->
-          <input type="hidden" name="page" value="{{@name}}">
-         </form>
+            <form class="well" method="post" action="{{@BASE}}/admin/page/add_content">
+             <div class="row">
+                <div class="col-xs-3">
+                   <div class="input-group">
+                     <input name="content_name" type="text" class="form-control" placeholder="Content Name">
+                   </div>
+                </div>
+                <div class="col-xs-3">
+                   <div class="input-group">
+                      <select name="type" class="selectpicker">
+                        <option value="null">Full toobar</option>
+                        <option value="header">Header toolbar</option>
+                        <option value="img">Image toolbar</option>
+                      </select>
+                   </div>
+                </div>
+                <div class="col-xs-3">
+                   <div class="input-group">
+                     <input name="dummy_content" value="Content Here" type="text" class="form-control">
+                   </div>
+                </div>
+                <div class="col-xs-3">
+                   <div class="input-group">
+                    <button class="addcontent" type="submit"><span class="glyphicon glyphicon-plus-sign"></span> Add Content Block</button>
+                   </div>
+                </div>
+             </div><!-- /.row -->
+              <input type="hidden" name="page" value="{{@name}}">
+             </form>
+         </div>
+
          </div>
         </repeat>
         </div>
@@ -148,5 +158,13 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="{{@BASE}}/admin/bootstrap.min.js"></script>
+    <script>
+      // Shorthand for $( document ).ready()
+      $(function() {
+          $(".glyphicon-plus").click(function () {
+            $(this).parent().parent().parent().parent().find(".collapse").toggle();
+          });
+      });
+    </script>
   </body>
 </html>

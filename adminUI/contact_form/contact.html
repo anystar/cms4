@@ -32,7 +32,7 @@
     </div>
 
     <div class="container">
-      <div class="col-xs-8">        
+      <div class="col-xs-12">        
         <h2>Contact Form</h2>
         
         <table class="table table-condensed table-responsive">
@@ -41,83 +41,94 @@
                 <th>Type</th>
                 <th>Placeholder</th>
                 <th>Error Message</th>
+                <th>Order</th>
                 <th></th>
             </thead>
 
             <repeat group="{{@contact_fields}}" value="{{@field}}">
+                <form action="{{@BASE}}/admin/contact/update_field/{{@field.id}}" method="post">
                 <tr>
                     <td>
                         <div class="input-group">
-                          <input type="text" class="form-control" placeholder="input label" value="{{@field.label}}">
+                          <input name="label" type="text" class="form-control" placeholder="input label" value="{{@field.label}}">
                         </div>
                     </td>
                     <td>
                        <div class="input-group">
-                          <select name="type" class="selectpicker">
-                            <option value="null">Name</option>
-                            <option value="header">Text</option>
-                            <option value="img">Textarea</option>
-                            <option value="img">Number</option>
-                            <option value="img">Email</option>
+                          <select name="type" class="">
+                            <option value="name">Name</option>
+                            <option value="text">Text</option>
+                            <option value="textarea">Textarea</option>
+                            <option value="number">Number</option>
+                            <option value="email">Email</option>
                           </select>
                        </div>
                     </td>
                     <td>
                         <div class="input-group">
-                          <input type="text" class="form-control" placeholder="text your reading now" value="{{@field.placeholder}}">
+                          <input name="placeholder" type="text" class="form-control" placeholder="text your reading now" value="{{@field.placeholder}}">
                         </div>
                     </td>
                     <td>
                         <div class="input-group">
-                          <input type="text" class="form-control" value="{{@field.error_message}}">
+                          <input name="error_message" type="text" class="form-control" value="{{@field.error_message}}">
                         </div>
                     </td>
-                    <td><a href="{{@BASE}}/"><button type="button" class="btn btn-default">Delete</button></a></td>
+                    <td>
+                        <div class="input-group">
+                          <input name="order" type="text" class="form-control" value="{{@field.order}}">
+                        </div>
+                    </td>
+                    <td><a href="{{@BASE}}/admin/contact/delete_field/{{@field.id}}"><button type="button" class="btn btn-default">Delete</button></a></td>
+                    <td><button type="submit" class="btn btn-default">Update</button></td>
                 </tr>
+                </form>
             </repeat>
-
+            
+            <form action="{{@BASE}}/admin/contact/add_field" method="post">
             <tr>
                 <td>
                     <div class="input-group">
-                      <input type="text" class="form-control" placeholder="input label">
+                      <input name="label" type="text" class="form-control" placeholder="input label">
                     </div>
                 </td>
                 <td>
                    <div class="input-group">
-                      <select name="type" class="selectpicker">
-                        <option value="null">Name</option>
-                        <option value="header">Text</option>
-                        <option value="img">Textarea</option>
-                        <option value="img">Number</option>
-                        <option value="img">Email</option>
+                      <select name="type" class="">
+                        <option value="name">Name</option>
+                        <option value="text">Text</option>
+                        <option value="textarea">Textarea</option>
+                        <option value="number">Number</option>
+                        <option value="email">Email</option>
                       </select>
                    </div>
                 </td>
                 <td>
                     <div class="input-group">
-                      <input type="text" class="form-control" placeholder="text your reading now">
+                      <input name="placeholder" type="text" class="form-control" placeholder="text your reading now">
                     </div>
                 </td>
                 <td>
                     <div class="input-group">
-                      <input type="text" class="form-control">
+                      <input name="error_message" type="text" class="form-control">
                     </div>
                 </td>
-                <td><a href="{{@BASE}}/"><button type="button" class="btn btn-default">Add</button></a></td>
+                <td>
+                    <div class="input-group">
+                      <input name="order" type="text" class="form-control" value="{{@field.order+1}}">
+                    </div>
+                </td>
+                <td><a href="{{@BASE}}/"><button type="submit" class="btn btn-default">Add</button></a></td>
             </tr>
+            </form>
         </table>
 
-
-        <h2>Email Template</h2>
-        
-        <iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/email_template"></iframe>
-
-
-      </div>
-      <div class="col-xs-4">
         <h2>Settings</h2>
+          
 
             <form class="form-horizontal" action="{{@BASE}}/admin/contact/settings" method="post">
+            <div class="row">
+            <div class="col-xs-6">
 
                 <!-- Text input-->
                 <div class="form-group">
@@ -145,9 +156,16 @@
                   <span class="help-block">eg: website enquiry</span>  
                   </div>
                 </div>
-                
-                <button type="submit" class="btn btn-default pull-right">Update Settings</button>
+                <button type="submit" class="btn btn-default pull-right">Update Settings</button>                
+                </div>
+                </div>
+
             </form>
+
+        <h2>Email Template</h2>
+        
+        <iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/email_template"></iframe>
+
 
       </div>
     </div>

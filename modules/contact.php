@@ -64,6 +64,9 @@ class contact extends prefab
 		$f3->route('GET /admin/contact/generate', "contact::generate");
 
 		$f3->route('POST /admin/contact/settings', "contact::update_settings");		
+		$f3->route('POST /admin/contact/update_field/@field', "contact::update_field");
+		$f3->route('POST /admin/contact/add_field', "contact::add_field");
+		$f3->route('GET /admin/contact/delete_field/@field', "contact::delete_field");
 	}
 
 	static public function contact ($f3) {
@@ -199,6 +202,27 @@ class contact extends prefab
 		return true;
 	}
 
+	static function update_field ($f3, $params) {
+		$db = Base::instance()->DB;
+		$field = $params["field"];
+
+		if ($f3->POST["label"])
+			$db->exec("UPDATE contact_form SET label=? WHERE id=?", [$f3->POST["label"], $field]);
+
+		if ($f3->POST["type"])
+			$db->exec("UPDATE contact_form SET type=? WHERE id=?", [$f3->POST["type"], $field]);
+
+		if ($f3->POST["error_message"])
+			$db->exec("UPDATE contact_form SET error_message=? WHERE id=?", [$f3->POST["error_message"], $field]);
+
+		if ($f3->POST["placeholder"])
+			$db->exec("UPDATE contact_form SET placeholder=? WHERE id=?", [$f3->POST["placeholder"], $field]);
+
+		if ($f3->POST["order"])
+			$db->exec("UPDATE contact_form SET `order`=? WHERE id=?", [$f3->POST["order"], $field]);
+
+		$f3->reroute("/admin/contact");
+	}
 
 	static function hasInit()
 	{	
@@ -288,7 +312,31 @@ class contact extends prefab
 	}
 
 	static public function update_settings($f3) {
-		d("Not finished just yet sorry.");
+		$db = base::instance()->DB;
+
+		if ($f3->POST["email"])
+			$db->exec("UPDATE settings SET value=? WHERE setting='contact-email'", $f3->POST["email"]);
+		if ($f3->POST["name"])
+			$db->exec("UPDATE settings SET value=? WHERE setting='contact-name'", $f3->POST["name"]);
+		if ($f3->POST["subject"])
+			$db->exec("UPDATE settings SET value=? WHERE setting='contact-subject'", $f3->POST["subject"]);
+
+		$f3->reroute("/admin/contact");
+	}
+
+	static public function add_field($f3) {
+
+		$db = base::instance()->DB;
+		$p = $f3->POST;
+
+		$db->exec("INSERT INTO contact_form (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
+
+		$f3->reroute("/admin/contact");
+	}
+
+	static public function delete_field ($f3, $params) {
+		base::instance()->DB->exec("DELETE FROM contact_form WHERE id=?", $params["field"]);
+		$f3->reroute("/admin/contact");
 	}
 
 }
