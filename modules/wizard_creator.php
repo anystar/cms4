@@ -44,14 +44,17 @@ class wizard_creator {
 			    exit('Login Failed');
 			}
 
-			//$ssh->exec("mkdir ". getcwd() ."/test");
-
+			$ssh->exec("mkdir ". getcwd() ."/test");
 
 			$linuxuser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
+
 			$ssh->exec("chown ".$linuxuser.":".$linuxuser. " " . getcwd()."/test");
 
-
 			d($linuxuser);
+
+
+			// Create tmp folder
+			// Create .htaccess file
 
 		});
 
