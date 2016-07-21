@@ -11,7 +11,7 @@ class wizard_creator {
 
 		$f3->set("CACHE", false);
 		$f3->UI = $cms."adminUI/";
-
+		
 		$f3->TEMP = $cms."adminUI/wizard/tmp/";
 		$f3->DEBUG = 3;
 
@@ -36,22 +36,26 @@ class wizard_creator {
 
 		$f3->route("POST /cms.php?step=2", function ($f3) {
 
-			set_include_path("../phpseclib/");
+			set_include_path("/home/phpseclib/");
 			include('Net/SSH2.php');
 
 			$ssh = new Net_SSH2('localhost');
-			if (!$ssh->login('root', 'twilight')) {
+			if (!$ssh->login('root', 'KRXPoErYxHgmZD7o6Ky0')) {
 			    exit('Login Failed');
 			}
 
-			//$ssh->exec("mkdir ". getcwd() ."/test");
+			$dir = getcwd() . "/";			
+			$user = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
 
+			$ssh->exec("mkdir {$dir}/tmp");
+			$ssh->exec("mkdir {$dir}/db");
+			$ssh->exec("touch {$dir}/db/cmsdb");			
+	
+			$ssh->exec("chown www-data:www-data {$dir}/tmp");
+			$ssh->exec("chown www-data:www-data {$dir}/db");						
+			$ssh->exec("chown www-data:www-data {$dir}/db/cmsdb");
 
-			$linuxuser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
-			$ssh->exec("chown ".$linuxuser.":".$linuxuser. " " . getcwd()."/test");
-
-
-			d($linuxuser);
+			d("Go check the directory now $dir");
 
 		});
 
