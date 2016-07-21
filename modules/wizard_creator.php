@@ -36,7 +36,22 @@ class wizard_creator {
 
 		$f3->route("POST /cms.php?step=2", function ($f3) {
 
-			d();
+			set_include_path("../phpseclib/");
+			include('Net/SSH2.php');
+
+			$ssh = new Net_SSH2('localhost');
+			if (!$ssh->login('root', 'twilight')) {
+			    exit('Login Failed');
+			}
+
+			//$ssh->exec("mkdir ". getcwd() ."/test");
+
+
+			$linuxuser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
+			$ssh->exec("chown ".$linuxuser.":".$linuxuser. " " . getcwd()."/test");
+
+
+			d($linuxuser);
 
 		});
 
