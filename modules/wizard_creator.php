@@ -31,7 +31,6 @@ class wizard_creator {
 			$f3->POST["password"] = "KRXPoErYxHgmZD7o6Ky0";
 
 			echo Template::instance()->render("wizard/step1.html");
-
 		});
 
 		$f3->route("POST /cms.php?step=2", function ($f3) {
@@ -40,20 +39,28 @@ class wizard_creator {
 			include('Net/SSH2.php');
 
 			$ssh = new Net_SSH2('localhost');
-			if (!$ssh->login('root', 'KRXPoErYxHgmZD7o6Ky0')) {
-			    exit('Login Failed');
+			if (!$ssh->login('root', $f3->POST["password"])) {
+			    $f3->mock("GET /cms.php");
+			    exit();
 			}
 
-			$dir = getcwd() . "/";			
+			$dir = getcwd();
 			$user = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
 
-			$ssh->exec("mkdir {$dir}/tmp");
-			$ssh->exec("mkdir {$dir}/db");
-			$ssh->exec("touch {$dir}/db/cmsdb");			
+			define('NET_SSH2_LOGGING', 2);
+
+			$ssh->exec("cp /home/cms/starter_packs/core.zip {$dir}/");
+			$ssh->exec("cd {$dir}");
+			$ssh->exec("unzip -o {$dir}/core.zip -d {$dir}/");
+
+			$
+
+			echo $ssh->getLog();
+			//$ssh->exec("rm -f {$dir}/core.zip");
 	
-			$ssh->exec("chown www-data:www-data {$dir}/tmp");
-			$ssh->exec("chown www-data:www-data {$dir}/db");						
-			$ssh->exec("chown www-data:www-data {$dir}/db/cmsdb");
+			// $ssh->exec("chown www-data:www-data {$dir}/tmp");
+			// $ssh->exec("chown www-data:www-data {$dir}/db");						
+			// $ssh->exec("chown www-data:www-data {$dir}/db/cmsdb");
 
 			d("Go check the directory now $dir");
 

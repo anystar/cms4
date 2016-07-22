@@ -106,7 +106,7 @@ class admin extends prefab {
 
 		$f3->set('UI', $f3->CMS."adminUI/");
 
-		if ($f3->get("POST.redirecttolive"))
+		if ($f3->get("POST.redirectWhere") == "live")
 			$f3->reroute("/");
 		else
 			admin::dashboard_render($f3);
