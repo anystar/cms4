@@ -1,3 +1,7 @@
+<link href="{{ @BASE }}/admin/css/admin_toolbar.css" rel="stylesheet">
+<script src="{{@CONFIG.ckeditor_location}}"></script>
+<script src="{{@BASE}}/admin/js/admin_toolbar.js"></script>
+
 <script>
 	CKEDITOR.disableAutoInline = true;
 

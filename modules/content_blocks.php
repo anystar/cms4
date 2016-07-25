@@ -54,6 +54,9 @@ class content_blocks extends prefab {
 			die;
 		});
 
+		$f3->route('GET /admin/css/admin_toolbar.css', "content_blocks::admin_toolbar_css");
+		$f3->route('GET /admin/js/admin_toolbar.js', "content_blocks::admin_toolbar_js");
+
 		$f3->route('GET /admin/ckeditor_config.js', "content_blocks::ckeditor_toolbar");
 		$f3->route('GET /admin/ckeditor_imgs_config.js', "content_blocks::ckeditor_imgs_toolbar");
 		$f3->route('GET /admin/ckeditor_header_config.js', "content_blocks::ckeditor_header_toolbar");
@@ -137,7 +140,7 @@ class content_blocks extends prefab {
 
 		if (admin::$signed)
 		{
-			$f3->set("ck_instances", $ck_instances);
+			$f3->set("ck_instances", $ck_instances);		
 
 			$tmp = $f3->get("UI");
 			$f3->set('UI', $f3->CMS."adminUI/");
@@ -145,6 +148,7 @@ class content_blocks extends prefab {
 			$f3->set('UI', $tmp);
 
 			$f3->concat("ckeditor", $inlinecode);
+			$f3->concat("admin", $inlinecode);
 		}
 	}
 
@@ -266,6 +270,24 @@ class content_blocks extends prefab {
 
 		echo Template::instance()->render("content_blocks/ace_editor.html");
 	}
+
+	static public function admin_toolbar_css($f3) 
+	{
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
+		echo Template::instance()->render("css/admin_toolbar.css", "text/css");
+		$f3->UI = $tmp;
+	}
+
+
+	static public function admin_toolbar_js($f3) 
+	{
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
+		echo Template::instance()->render("js/admin_toolbar.js", "text/javascript");
+		$f3->UI = $tmp;
+	}
+
 
 	static public function ckeditor_toolbar($f3) 
 	{
