@@ -62,6 +62,11 @@ class contact extends prefab
 	{
 		$f3->route('GET /admin/contact', "contact::admin");
 		$f3->route('GET /admin/contact/generate', "contact::generate");
+
+		$f3->route('POST /admin/contact/settings', "contact::update_settings");		
+		$f3->route('POST /admin/contact/update_field/@field', "contact::update_field");
+		$f3->route('POST /admin/contact/add_field', "contact::add_field");
+		$f3->route('GET /admin/contact/delete_field/@field', "contact::delete_field");
 	}
 
 	static public function contact ($f3) {
@@ -82,6 +87,18 @@ class contact extends prefab
 			$formcompiled[$r["id"]] = $r;
 
 		$f3->set("form", $formcompiled);
+
+		$result = $db->exec("SELECT value FROM settings WHERE setting=?", "contact-custom_html")[0]["value"];
+
+		// Use template snippet
+		if ($result == 0) {
+			
+			$tmp = $f3->UI; $f3->UI = $f3->CMS;
+			$snippet = \Template::instance()->render("template_snippets/contactform.html");
+			$f3->UI = $tmp;
+
+			$f3->set("contact_form", $snippet);
+		}
 	}
 
 	static function validate ()
@@ -160,7 +177,14 @@ class contact extends prefab
 		$subject = $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"];
 
  		$fromName = $f3->get("fromName");
-		$fromAddress = $f3->get("fromAddress");
+
+ 		if ($f3->exists("fromAddress"))
+			$fromAddress = $f3->get("fromAddress");
+		else
+			$fromAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-from_address'")[0]["value"];
+
+		// Worst case just set it to admin@webworksau.com...
+		if (!$fromAddress) $fromAddress = "admin@webworksau.com";
 
 		$smtp = new SMTP("127.0.0.1", contact::$port, "", "", "");
 
@@ -174,10 +198,31 @@ class contact extends prefab
 		$body = Template::instance()->render(contact::$email_template);
 
 		$smtp->send($body);
-
+		
 		return true;
 	}
 
+	static function update_field ($f3, $params) {
+		$db = Base::instance()->DB;
+		$field = $params["field"];
+
+		if ($f3->POST["label"])
+			$db->exec("UPDATE contact_form SET label=? WHERE id=?", [$f3->POST["label"], $field]);
+
+		if ($f3->POST["type"])
+			$db->exec("UPDATE contact_form SET type=? WHERE id=?", [$f3->POST["type"], $field]);
+
+		if ($f3->POST["error_message"])
+			$db->exec("UPDATE contact_form SET error_message=? WHERE id=?", [$f3->POST["error_message"], $field]);
+
+		if ($f3->POST["placeholder"])
+			$db->exec("UPDATE contact_form SET placeholder=? WHERE id=?", [$f3->POST["placeholder"], $field]);
+
+		if ($f3->POST["order"])
+			$db->exec("UPDATE contact_form SET `order`=? WHERE id=?", [$f3->POST["order"], $field]);
+
+		$f3->reroute("/admin/contact");
+	}
 
 	static function hasInit()
 	{	
@@ -246,9 +291,52 @@ class contact extends prefab
 
 	static public function admin ($f3) {
 		if (contact::hasInit())
+		{
+			contact::load();
+
+			// Get configurables
+			$f3->set("contact_email", config("contact-email"));
+			$f3->set("contact_name", config("contact-name"));
+			$f3->set("contact_subject", config("contact-subject"));
+
+			$f3->contact_fields = base::instance()->DB->exec("SELECT * FROM contact_form ORDER BY `order`");
+			
+			$f3->UI = getcwd()."/";
+			$f3->email_template = Template::instance()->render(contact::$email_template);
+			$f3->UI = $f3->CMS."adminUI/";
+
 			echo Template::instance()->render("contact_form/contact.html");
+		}
 		else
 			echo Template::instance()->render("contact_form/nocontact.html");
+	}
+
+	static public function update_settings($f3) {
+		$db = base::instance()->DB;
+
+		if ($f3->POST["email"])
+			$db->exec("UPDATE settings SET value=? WHERE setting='contact-email'", $f3->POST["email"]);
+		if ($f3->POST["name"])
+			$db->exec("UPDATE settings SET value=? WHERE setting='contact-name'", $f3->POST["name"]);
+		if ($f3->POST["subject"])
+			$db->exec("UPDATE settings SET value=? WHERE setting='contact-subject'", $f3->POST["subject"]);
+
+		$f3->reroute("/admin/contact");
+	}
+
+	static public function add_field($f3) {
+
+		$db = base::instance()->DB;
+		$p = $f3->POST;
+
+		$db->exec("INSERT INTO contact_form (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
+
+		$f3->reroute("/admin/contact");
+	}
+
+	static public function delete_field ($f3, $params) {
+		base::instance()->DB->exec("DELETE FROM contact_form WHERE id=?", $params["field"]);
+		$f3->reroute("/admin/contact");
 	}
 
 }

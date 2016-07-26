@@ -2,12 +2,15 @@
 
 class content_blocks extends prefab {
 	
+	static $hasInit = false;
+
 	function __construct() {
 
 		$f3 = base::instance();
 
 		if ($this->hasInit())
 		{
+			content_blocks::$hasInit = true;
 
 			// "return" is used in forms which
 			// return back to the same page.
@@ -32,9 +35,12 @@ class content_blocks extends prefab {
 
 		$f3->route('GET /admin/pages', 'content_blocks::admin_page_render');
 		$f3->route('GET /admin/page/edit/@page', "content_blocks::admin_edit_render");
-		$f3->route('GET /admin/page/generate', function ($f3) {
-			content_blocks::generate();
-			$f3->mock("GET /admin/pages");
+		$f3->route('POST /admin/page/generate', function ($f3) {
+
+			if (!content_blocks::$hasInit)
+				content_blocks::generate();
+
+			$f3->reroute("/admin/pages");
 		});
 
 		$f3->route('POST /admin/page/save', function ($f3, $params) {
@@ -47,6 +53,9 @@ class content_blocks extends prefab {
 			content_blocks::save_inline($f3, $f3->POST["id"], $f3->POST["contents"]);
 			die;
 		});
+
+		$f3->route('GET /admin/css/admin_toolbar.css', "content_blocks::admin_toolbar_css");
+		$f3->route('GET /admin/js/admin_toolbar.js', "content_blocks::admin_toolbar_js");
 
 		$f3->route('GET /admin/ckeditor_config.js', "content_blocks::ckeditor_toolbar");
 		$f3->route('GET /admin/ckeditor_imgs_config.js', "content_blocks::ckeditor_imgs_toolbar");
@@ -93,8 +102,10 @@ class content_blocks extends prefab {
 
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
-		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page LIKE ? OR page="all"', "%".$page."%");
 		
+		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page=""', $page);
+
+
 		$bc = array(); // Blocks compiled
 		$ck_instances = array();
 		foreach ($blocksraw as $key=>$block) {
@@ -103,16 +114,21 @@ class content_blocks extends prefab {
 				// Wrap in content editable
 				if (admin::$signed) {
 
+					if ($block["page"] == "") $block["page"] = "all";
+
 					switch ($block['type'])
 					{
 						case "header":
 							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
 						break;
 
+						case "none": break;
+
 						default:
 							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
 						break;
 					}
+
 
 					$ck_instances[$key]["id"] = $block["page"]."_".$block["id"];
 					$ck_instances[$key]["type"] = $block["type"];
@@ -124,7 +140,7 @@ class content_blocks extends prefab {
 
 		if (admin::$signed)
 		{
-			$f3->set("ck_instances", $ck_instances);
+			$f3->set("ck_instances", $ck_instances);		
 
 			$tmp = $f3->get("UI");
 			$f3->set('UI', $f3->CMS."adminUI/");
@@ -132,26 +148,38 @@ class content_blocks extends prefab {
 			$f3->set('UI', $tmp);
 
 			$f3->concat("ckeditor", $inlinecode);
+			$f3->concat("admin", $inlinecode);
 		}
 	}
 
 	function loadAll ($f3) {
+
+		$pages = glob("*.html");
+
+		$blocks["all"] = array();
+
+		foreach ($pages as $page) {
+			if ($page[0] == "_") continue;
+
+			$pageName = str_replace(".html", "", $page);
+			$blocks[$pageName] = array();
+		}	
+		
+		$f3->set("pages", $blocks);
+
 		$db = $f3->get("DB");
 		$result = $db->exec('SELECT * FROM contentBlocks ORDER BY page');
 
+		// Don't bother if there are no content blocks from DB
+		if (!$result) return;
+
 		foreach ($result as $contentBlock)
 		{
-			if ($contentBlock["page"] == "all")
-				$putAtStart[] = $contentBlock;
+			if ($contentBlock["page"] == "all" || $contentBlock["page"] == "")
+				$blocks["all"][] = $contentBlock;
 			else
-				$tmp_blocks[] = $contentBlock;
+				$blocks[$contentBlock["page"]][] = $contentBlock;
 		}
-
-		foreach ($putAtStart as $contentBlock)
-			$blocks["all"][] = $contentBlock;
-		
-		foreach ($tmp_blocks as $contentBlock)
-			$blocks[$contentBlock["page"]][] = $contentBlock;
 
 		$f3->set("pages", $blocks);
 	}
@@ -190,14 +218,25 @@ class content_blocks extends prefab {
 	}
 
 	function generate() {
+		$f3 = base::instance();
 
 		$db = base::instance()->DB;
 
 		$db->exec("CREATE TABLE IF NOT EXISTS 'contentBlocks' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'page' TEXT, 'content' TEXT, 'lastUpdated' DATETIME DEFAULT CURRENT_TIMESTAMP,'contentName' TEXT);");
+
+		// $pages = $f3->POST["pages"];
+		// $pages = explode(",", $pages);
+		// $pages = array_unique($pages);
+		
+		// foreach ($pages as $page) {
+			
+		// }
+
 	}
 
 	static public function admin_page_render($f3)
 	{
+
 		if (content_blocks::instance()->hasInit()) {
 			content_blocks::instance()->loadAll($f3);
 
@@ -225,10 +264,30 @@ class content_blocks extends prefab {
 
 	static public function admin_render_htmledit ($f3, $params) {
 		$result = base::instance()->DB->exec("SELECT * FROM contentBlocks WHERE id=?", $params["content"]);
+		$result[0]["content"] = htmlspecialchars($result[0]["content"]);
+
 		base::instance()->set("block", $result[0]);
 
 		echo Template::instance()->render("content_blocks/ace_editor.html");
 	}
+
+	static public function admin_toolbar_css($f3) 
+	{
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
+		echo Template::instance()->render("css/admin_toolbar.css", "text/css");
+		$f3->UI = $tmp;
+	}
+
+
+	static public function admin_toolbar_js($f3) 
+	{
+		$tmp = $f3->UI;
+		$f3->UI = $f3->CMS . "adminUI/";
+		echo Template::instance()->render("js/admin_toolbar.js", "text/javascript");
+		$f3->UI = $tmp;
+	}
+
 
 	static public function ckeditor_toolbar($f3) 
 	{

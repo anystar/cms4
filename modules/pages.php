@@ -5,6 +5,8 @@ class pages extends prefab {
 	static $has_routed = false;
 
 	function __construct() {
+		$f3 = base::instance();
+
 		$f3->set("ckeditor", $f3->CONFIG["cdn"]["ckeditor"]);
 
 		$this->routes(base::instance());

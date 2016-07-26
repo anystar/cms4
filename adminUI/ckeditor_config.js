@@ -21,28 +21,12 @@ CKEDITOR.editorConfig = function( config ) {
     useColorIcon: true
   };
 
-  config.extraPlugins = 'uploadimage';
+  config.extraPlugins = 'uploadimage,ckeditor-gwf-plugin';
   config.removePlugins = 'scayt';
   config.uploadUrl = '{{@BASE}}/admin/file_manager/image_upload';
 
   config.filebrowserBrowseUrl = '{{@BASE}}/admin/file_manager/browse_files';
   config.filebrowserUploadUrl = '{{@BASE}}/admin/file_manager/image_upload_via_dialog';
-};
 
-CKEDITOR.on( 'dialogDefinition', function( ev )
-  {
-    // Take the dialog name and its definition from the event data.
-    var dialogName = ev.data.name;
-    var dialogDefinition = ev.data.definition;
- 
-    // Check if the definition is from the dialog window you are interested in (the "Link" dialog window).
-    if ( dialogName == 'image' )
-    {
-      // Get a reference to the "Link Info" tab.
-      var infoTab = dialogDefinition.getContents( 'info' );
- 
-      // Set the default value for the URL field.
-      var urlField = infoTab.get( 'url' );
-      urlField['default'] = 'www.google.com';
-    }
-  });
+  config.font_names = "GoogleWebFonts;" + config.font_names;
+};

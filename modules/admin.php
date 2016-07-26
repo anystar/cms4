@@ -21,6 +21,12 @@ class admin extends prefab {
 				$f3->set('UI', $f3->CMS."adminUI/");
 		}
 
+		$f3->route('GET /admin/imgs/logo.png', function ($f3) {
+			$f3->UI = $f3->CMS.'adminUI/imgs/';
+			$img = new Image('logo.png');
+			$img->render();
+			exit;
+		});
 
 		if (!admin::$signed)
 			$this->login_routes($f3);
@@ -71,6 +77,12 @@ class admin extends prefab {
 
 	static public function login_render ($f3)
 	{
+		// Set default password for inhouse
+		if ($f3->CONFIG["inhouse_ip"] == "110.140.119.209") {
+			$f3->POST["email"] = $f3->CONFIG["global_email"];
+			$f3->POST["pass"] = $f3->CONFIG["global_pass"];
+		}
+
 		$f3->set('UI', $f3->CMS."adminUI/");
 		echo Template::instance()->render("login.html");
 	}
@@ -94,7 +106,7 @@ class admin extends prefab {
 
 		$f3->set('UI', $f3->CMS."adminUI/");
 
-		if ($f3->get("POST.redirecttolive"))
+		if ($f3->get("POST.redirectWhere") == "live")
 			$f3->reroute("/");
 		else
 			admin::dashboard_render($f3);

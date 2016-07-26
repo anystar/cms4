@@ -19,7 +19,7 @@
     <![endif]-->
   </head>
   <body>
-    <h1>Web Works CMS</h1>
+    <h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
 
     <div class="nav">
       <include href="navigation.html" />
@@ -28,7 +28,54 @@
     <div class="container">
       <div class="col-xs-12">
         
-        Nothing here yet;
+        <h2>Initialize Banner System</h2>
+        <form action="{{@BASE}}/admin/banners/init" method="post" class="form-horizontal">
+        <fieldset>
+
+        <!-- Form Name -->
+        <legend>Banner system setup</legend>
+
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="bannerwidth">Banner Width</label>  
+          <div class="col-md-4">
+          <input value="1000px" id="bannerwidth" name="bannerwidth" placeholder="" class="form-control input-md" required="" type="text">
+            
+          </div>
+        </div>
+
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="bannerheight">Banner Height</label>  
+          <div class="col-md-4">
+          <input value="300px" id="bannerheight" name="bannerheight" placeholder="" class="form-control input-md" type="text">
+          <span class="help-block">banner image is resized using these values on upload</span>  
+          </div>
+        </div>
+
+        <!-- Select Basic -->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="system">Javascript slider system</label>
+          <div class="col-md-4">
+            <select id="system" name="system" class="form-control">
+              <option value="supersimpleslider">Super simple slider</option>
+              <option value="unslider">Unslider</option>
+              <option value="swiperslide">SwiperSlide</option>
+              <option value="wowslider">wowslider</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Button -->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for=""></label>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-default">Create System</button>
+          </div>
+        </div>
+
+        </fieldset>
+        </form>
 
       </div>
     </div>

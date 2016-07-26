@@ -44,8 +44,9 @@
 </style>
   </head>
   <body>
-    <h1>Web Works CMS</h1>
 
+    <h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
+    
     <div class="nav">
       <include href="navigation.html" />
     </div>
@@ -55,7 +56,7 @@
         <div class="col-xs-12">
           
           <div id="editor">
-            {{@block.content}}
+              {{@block.content}}
           </div>
 
         </div>
@@ -81,8 +82,8 @@
 
     <script>
         var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/ambiance");
         editor.getSession().setMode("ace/mode/html");
+        editor.setTheme("ace/theme/ambiance");
         editor.setOptions({
             showGutter: true,
             vScrollBarAlwaysVisible: true,

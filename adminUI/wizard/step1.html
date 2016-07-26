@@ -10,11 +10,11 @@
     <title>Web Works CMS</title>
 
     <!-- Bootstrap -->
-    <link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ @BASE }}/admin/theme" rel="stylesheet">
+    <link href="{{ @BASE }}/cms.php?css=bootstrap.min.css" rel="stylesheet">
+    <link href="{{ @BASE }}/cms.php?css=theme" rel="stylesheet">
   
     <style>
-      #login {
+      .form {
         background-color: #fff;
         width: 400px;
 
@@ -26,24 +26,29 @@
         border-radius: 5px;
       }
 
-      #login img {
-        margin-bottom: 20px;
-      }
 
-      #login h1 {
+
+      .form h1 {
         display: block;
         font-size: 18px;
-        padding: 0 0 20px 0;
+        padding: 0 0 10px 0;
         text-align: center;
         color: #000;
       }
 
-      #login form label {
+      .form h2 {
+        margin: 0 0 20px 0;padding:0 0 10px 0;
+        font-size: 20px;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .form form label {
         color: #000;
       }
 
-      #login form button {
+      .form form button {
         width: 100%;
+        font-weight: bold;
       }
 
     </style>
@@ -58,30 +63,31 @@
   <body>
 
     
-    <div id="login">
-      <img width="100%" src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login">
+    <div class="form">
+      <img width="100%" src="{{@BASE}}/cms.php?img=logo" alt="Web Works CMS Login">
+      
+      <p>
+        <h2>Step 1: Create necessary files</h2>
+        Linux User to create files as: <strong>{{@linuxuser}}</strong>
+      </p>
 
-      <form autocomplete="off" method="post" action="{{ @BASE }}/admin/login">
+      <form autocomplete="off" method="post" action="{{ @BASE }}/cms.php?step=2">
         <div class="form-group">
-
-          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@POST.email}}">
-        </div>
-        <div class="form-group">
-
-          <input id="pass" name="pass" type="password" class="form-control" placeholder="Password" value="{{@POST.pass}}">
+          <input id="pass" name="password" type="password" class="form-control" placeholder="Root Password" value="{{@POST.password}}">
         </div>
 
         <div class="row">
-          <div class="col-xs-6">
-            <button type="submit" name="redirectWhere" value="live" class="btn btn-default"><span class="glyphicon glyphicon-list-alt"></span> Live Edit</button>
-          </div>
-          <div class="col-xs-6">
-            <button type="submit" name="redirectWhere" value="admin" class="btn btn-default"><span class="glyphicon glyphicon-wrench"></span> Admin Panel</button>
+          <div class="col-xs-12">
+            <button type="submit" class="btn btn-default">Next</button>
           </div>
         </div>
          
       </form>
     </div>
     
+    <script>
+
+    </script>
+
   </body>
 </html>

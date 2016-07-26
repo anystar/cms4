@@ -4,20 +4,17 @@
 ######## Default configuration #########
 ########################################
 
-if (!isset($config['enabled_modules']))
-	$config['enabled_modules'] = [ "pages", "file_manager", "content_blocks", "contact", "gallery", "banners" ];
-
-if (!isset($config['disabled_modules']))
-	$config['disabled_modules'] = [ ];
-
-if (isset($config['additional_modules']))
-	$config['enabled_modules'] = array_merge($config['enabled_modules'], $config['additional_modules']);
-
-$config = parse_ini_file("config.ini", true);
+// Merge config that may be coming from clients folder
+$config = array_merge(parse_ini_file("config.ini", true), $config);
 
 ########################################
 ## Check folder and file permissions  ##
 ########################################
+if (!file_exists(getcwd()."/.htaccess")) {
+	include("modules/wizard_creator.php");
+	new wizard_creator($config["paths"]["cms"], $f3_location);
+}
+
 // Required folders for operation
 if (!file_exists(getcwd()."/tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder with group writable permissions. (chmod g+w tmp or chmod 755 db)";exit; }
 if (!is_writable(getcwd()."/tmp/")) { echo "Please make <strong>tmp</strong> folder writable by group";exit; }
@@ -54,9 +51,9 @@ if ($config['enable_phpliteadmin']) {
 ########################################
 ########## Fatfree framework ###########
 ########################################
-// Webworks CMS
+
 if (!file_exists($config["paths"]["cms"]))
-	d("Webworks CMS not found at $cms_location. Please update $\cms_location variable to point to CMS folder.");
+	d("Webworks CMS not found at". $config["paths"]["cms"].". Please update $\cms_location variable to point to CMS folder.");
 
 // Fat free framework
 if(($f3 = include $config["paths"]["f3"]) === false)
@@ -76,6 +73,8 @@ $f3->set('DEBUG', $config["debug"]);
 
 $f3->set("CMS", $config["paths"]["cms"]);
 $f3->set("ACE", $config["cdn"]["ace_editor"]);
+
+require_once("tools/tools.php");
 
 // Make database if it doesn't exist
 if (!file_exists(getcwd()."/".$config['database'])) {
@@ -102,8 +101,7 @@ $f3->set('DB', new DB\SQL('sqlite:'.$config['database']));
 
 new admin();
 
- 
-$modules = explode(",", str_replace(' ','',$config["enabled_modules"]));
+$modules = explode(",", str_replace(' ', '', $config["enabled_modules"]));
 
 foreach ($modules as $module) {
 	new $module();
