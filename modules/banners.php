@@ -40,13 +40,13 @@ class banners extends prefab {
 	function routes($f3) {
 
 		$f3->route("GET /banners/slider.css", function ($f3) {
-			$f3->UI = $f3->CONFIG["cms_location"]."/"."adminUI/";
+			$f3->UI = $f3->CONFIG["paths"]["cms"]."/"."adminUI/";
 			echo Template::instance()->render(banners::$system_path."/"."slider.css", "text/css");
 			exit();
 		});
 
 		$f3->route("GET /banners/slider.js", function ($f3) {
-			$f3->UI = $f3->CONFIG["cms_location"]."/"."adminUI/";
+			$f3->UI = $f3->CONFIG["paths"]["cms"]."/"."adminUI/";
 			echo Template::instance()->render(banners::$system_path."/"."slider.js", "text/javascript");
 			exit();
 		});
@@ -107,7 +107,7 @@ class banners extends prefab {
 			]);
 		}
 
-		$tmp = $f3->UI; $f3->UI = $f3->CONFIG["cms_location"]."/"."adminUI/banners/systems/".banners::$system."/";
+		$tmp = $f3->UI; $f3->UI = $f3->CONFIG["paths"]["cms"]."/"."adminUI/banners/systems/".banners::$system."/";
 		$html = \Template::instance()->render("slider.html");
 		$f3->UI = $tmp;
 
@@ -117,6 +117,10 @@ class banners extends prefab {
 
 	static function hasInit() {
 		$db = base::instance()->get("DB");
+
+		$result = config("banners.system");
+
+		if (!$result) return false;
 
 		if (is_dir(getcwd()."/".banners::$upload_path))
 			return true;
@@ -139,7 +143,7 @@ class banners extends prefab {
 		if (banners::hasInit()) return false;
 
 		$system = $f3->POST["system"];
-		$cms = $f3->CONFIG["cms_location"];
+		$cms = $f3->CONFIG["paths"]["cms"];
 		$systemPath = $cms."adminUI/banners/systems/".$system;
 
 		// Check to see if directory exists for javascript system

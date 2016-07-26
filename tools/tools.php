@@ -1,5 +1,10 @@
 <?php
 
+function set_configurable($f3, $config) {
+	
+	d("hit");
+}
+
 function config($name, $value=null) {
 
 	if (!$value)
