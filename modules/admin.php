@@ -1,6 +1,5 @@
 <?php
 
-
 class admin extends prefab {
 
 	static public $signed = false;
