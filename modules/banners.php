@@ -119,7 +119,7 @@ class banners extends prefab {
 		$db = base::instance()->get("DB");
 
 		$result = config("banners-system");
-		d($result);
+
 		if (!$result) return false;
 
 		if (is_dir(getcwd()."/".banners::$upload_path))
