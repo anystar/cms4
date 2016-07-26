@@ -6,6 +6,9 @@ function set_configurable($f3, $config) {
 }
 
 function config($name, $value=null) {
+	$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
+
+	if (!$result) return false;
 
 	if (!$value)
 		return base::instance()->DB->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
