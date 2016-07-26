@@ -28,7 +28,23 @@
     <div class="container">
       <div class="col-xs-12">
         
-        Settings page;
+        <h2>Settings and configuration</h2>
+        
+        <form class="form-horizontal" method="post" action="{{@BASE}}/admin/settings/update">
+          
+
+          <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+              <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+              <span id="helpBlock" class="help-block">A block of help text that breaks onto a new line and may extend beyond one line.</span>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary">Update settings</button>
+
+        </form>
+
       </div>
     </div>
 

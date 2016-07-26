@@ -33,7 +33,7 @@ if (isset($config['additional_modules']))
 if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 {
 	// Local machine (Alans Dell)
-	$cms_location = "/home/cms/";
+	$config["cms_location"] = "/home/cms/";
 	$f3_location  = "/home/alan/www/f3/lib/base.php";
 	$config["ckeditor_location"] = "http://localhost/ckeditor/ckeditor.js";
 	$ace_editor = "http://localhost/ace/src-min/ace.js";
@@ -56,7 +56,7 @@ if ($_SERVER["DOCUMENT_ROOT"] == "/home/alan/www/")
 else
 {
 	// Webworks Server
-	$cms_location = "/home/cms/";
+	$config["cms_location"] = "/home/cms/";
 	$f3_location  = "/home/f3/lib/base.php";
 	$config["ckeditor_location"] = "http://webworksau.com/ckeditor/ckeditor.js";
 	$ace_editor = "http://webworksau.com/ace/src-min/ace.js";
@@ -71,7 +71,7 @@ else
 ########################################
 if (!file_exists(getcwd()."/.htaccess")) {
 	include("modules/wizard_creator.php");
-	new wizard_creator($cms_location, $f3_location);
+	new wizard_creator($config["cms_location"], $f3_location);
 }
 
 // Required folders for operation
@@ -117,11 +117,11 @@ if(($f3 = include $f3_location) === false)
 	d("Fat free framework not found at $f3_location. Please download from http://fatfreeframework.com/");
 
 // Webworks CMS
-if (!file_exists($cms_location))
-	d("Webworks CMS not found at $cms_location. Please update $\cms_location variable to point to CMS folder.");
+if (!file_exists($config["cms_location"]))
+	d("Webworks CMS not found at". $config["cms_location"].". Please update $\cms_location variable to point to CMS folder.");
 
 $f3->set("client", $config);
-$f3->set("CMS", $cms_location);
+$f3->set("CMS", $config["cms_location"]);
 $f3->set("ACE", $ace_editor);
 
 $f3->set("CONFIG", $config);
@@ -131,7 +131,7 @@ if (isset($variables))
 		$f3->set($key, $v);
 
 // Killackey CMS
-$f3->set('AUTOLOAD', $cms_location."modules/" . ";" . getcwd()."/modules/");
+$f3->set('AUTOLOAD', $config["cms_location"]."modules/" . ";" . getcwd()."/modules/");
 $f3->set('UI', getcwd()."/");
 $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
