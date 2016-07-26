@@ -63,7 +63,7 @@ class banners extends prefab {
 		$f3->route('POST /admin/banners/update_settings', function ($f3) {
 			config("banners-width", filter_var($f3->POST["width"], FILTER_SANITIZE_NUMBER_INT));
 			config("banners-height", filter_var($f3->POST["height"], FILTER_SANITIZE_NUMBER_INT));
-	
+
 			// resize all current images?
 			$dir = array_diff(scandir(getcwd()."/".banners::$upload_path), array('..', '.'));
 			
@@ -119,11 +119,7 @@ class banners extends prefab {
 		$db = base::instance()->get("DB");
 
 		if (is_dir(getcwd()."/".banners::$upload_path))
-		{
-			$dir = array_diff(scandir(banners::$upload_path), array('..', '.'));
-
-			if (count($dir)) return true;
-		}
+			return true;
 
 		return false;
 
@@ -217,9 +213,9 @@ class banners extends prefab {
 
 		// Pull image off the disk into memory
 		$temp_image = new Image($image, false, $path."/");
-
+		
 		// Resize image using F3's image plugin
-		$temp_image->resize($x, $y, true, true);	
+		$temp_image->resize($x, $y, true, true);
 
 		switch (banners::$file_type)
 		{

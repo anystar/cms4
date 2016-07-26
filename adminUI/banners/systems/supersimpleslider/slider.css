@@ -11,7 +11,7 @@
 	position: relative;
 	margin: 0;
 	padding: 0;
-	height: 300px;
+	height: {{@banners.height}}px;
 	list-style: none;
 }
 
@@ -21,11 +21,11 @@
 	float: left;
 	margin: 0;
 	padding: 0;
-	width: 1000px;
-	height: 300px;
+	width: {{@banners.width}}px;
+	height: {{@banners.height}}px;
 	background: #ccc;
 	text-align: center;
-	line-height: 300px;
+	line-height: {{@banners.height}}px;
 
 	background-repeat: no-repeat;
 	background-position: center;
