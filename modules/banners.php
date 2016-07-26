@@ -118,8 +118,8 @@ class banners extends prefab {
 	static function hasInit() {
 		$db = base::instance()->get("DB");
 
-		$result = config("banners.system");
-
+		$result = config("banners-system");
+		d($result);
 		if (!$result) return false;
 
 		if (is_dir(getcwd()."/".banners::$upload_path))

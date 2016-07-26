@@ -4,8 +4,11 @@
 ######## Default configuration #########
 ########################################
 
+$client = $config;
+
 // Merge config that may be coming from clients folder
 $config = array_merge(parse_ini_file("config.ini", true), $config);
+
 
 ########################################
 ## Check folder and file permissions  ##
