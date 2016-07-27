@@ -5,8 +5,6 @@ require_once("tools/tools.php");
 ######## Default configuration #########
 ########################################
 
-$client = $config;
-
 // Merge config that may be coming from clients folder
 $config = array_merge_recursive(parse_ini_file("config.ini", true), $config);
 
@@ -90,8 +88,25 @@ if (!file_exists(getcwd()."/".$config['database'])) {
 // Connect to DB
 $f3->set('DB', new DB\SQL('sqlite:'.$config['database']));
 
+
+####################################################
+########## Override config from Database ###########
+####################################################
+$config_definition = parse_ini_file("config-definitions.ini", true);
+
+$settings = $f3->DB->exec("SELECT * FROM settings");
+
+foreach ($settings as $setting)
+{
+	
+	
+	$f3->CONFIG[$setting["setting"]] = $setting["values"];
+}
+
+d($f3->CONFIG);
+
 ########################################
-############ LOAD MODULES ##############
+############ Load modules ##############
 ########################################
 
 new admin();

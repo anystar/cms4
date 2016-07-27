@@ -41,13 +41,27 @@ function set_config($name, $value) {
 }
 
 
-function d($e=null)
-{
-	echo "<pre>";
-	print_r($e);
-	echo "</pre>";
-	die;
+ function d ($x=null) {
+
+        echo "<pre>";
+        if (f3) print_r((f3::instance()->DB->log()));
+        echo "</pre><br><br>";
+        echo "<hr><br><br>";
+        if ($x == null) {
+
+        }       else {
+                echo "<pre>";
+                print_r($x);
+                echo "</pre>";
+        }
+        echo "<br><br><hr><br><br>";
+
+        if (f3)
+	        f3::instance()->error(0);
+
+        die;
 }
+
 
 function htaccess_example() {
 echo <<<EOF
