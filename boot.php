@@ -98,12 +98,10 @@ $settings = $f3->DB->exec("SELECT * FROM settings");
 
 foreach ($settings as $setting)
 {
-	
-	
+
+
 	$f3->CONFIG[$setting["setting"]] = $setting["values"];
 }
-
-d($f3->CONFIG);
 
 ########################################
 ############ Load modules ##############
