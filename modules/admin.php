@@ -66,6 +66,7 @@ class admin extends prefab {
 		$f3->route('GET /admin', "admin::dashboard_render");
 		$f3->route('GET /admin/help', "admin::help");
 		$f3->route('GET /admin/settings', "admin::settings");
+		$f3->route('POST /admin/update_settings', "admin::update_settings");
 	}
 
 	static public function dashboard_render ($f3)
@@ -108,7 +109,7 @@ class admin extends prefab {
 		if ($f3->get("POST.redirectWhere") == "live")
 			$f3->reroute("/");
 		else
-			admin::dashboard_render($f3);
+			$f3->reroute("/admin");
 	}
 
 	static public function logout ($f3) {
@@ -137,11 +138,16 @@ class admin extends prefab {
 		echo Template::instance()->render("settings.html");
 	}
 
-	static public function gallery ($f3) {
-		if (gallery::exists())
-			echo Template::instance()->render("gallery/gallery.html");
-		else
-			echo Template::instance()->render("gallery/nogallery.html");
+	static public function update_settings($f3) {
+		$settings = $f3->POST;
+
+		foreach ($settings as $setting=>$value) {
+			if (!empty($settings[$setting])) {
+				config($setting, $value);
+			}
+		}
+
+		$f3->reroute("/admin/settings");
 	}
 
 	static public function theme($f3) {

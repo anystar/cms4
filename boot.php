@@ -88,17 +88,17 @@ if (!file_exists(getcwd()."/".$config['database'])) {
 // Connect to DB
 $f3->set('DB', new DB\SQL('sqlite:'.$config['database']));
 
-
 ####################################################
 ########## Override config from Database ###########
 ####################################################
-$check = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='TABLE_NAME'");
 
-if ($check) {
+$check = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
+
+if ($check)
+{
 	$config_definition = parse_ini_file("config-definitions.ini", true);
-
+	
 	$settings = $f3->DB->exec("SELECT * FROM settings");
-
 	foreach ($settings as $config)
 	{	
 		$setting = $config["setting"];
@@ -108,13 +108,14 @@ if ($check) {
 			if (!$config_definition[$setting]["permission"])
 				continue;
 
-		$f3->CONFIG[$config["setting"]] = $config["values"];
+		$f3->SETTINGS[$config["setting"]] = $config["value"];
 	}
 }
 
 ########################################
 ############ Load modules ##############
 ########################################
+
 
 new admin();
 
