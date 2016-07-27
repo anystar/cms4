@@ -34,7 +34,7 @@ $(function() {
 					setTimeout(
 					  function() 
 					  {
-					    $("#savebutton").val("Saved!");
+					    $("#savebutton").val("Saved!").css("background", "#3cab4e");
 
 						setTimeout(
 						  function() { $("#savebutton").val("Save"); }, 1500);
