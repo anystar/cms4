@@ -96,11 +96,16 @@ $config_definition = parse_ini_file("config-definitions.ini", true);
 
 $settings = $f3->DB->exec("SELECT * FROM settings");
 
-foreach ($settings as $setting)
-{
+foreach ($settings as $config)
+{	
+	$setting = $config["setting"];
+	$value   = $config["value"];
 
+	if (isset($config_definition[$setting]))
+		if (!$config_definition[$setting]["permission"])
+			continue;
 
-	$f3->CONFIG[$setting["setting"]] = $setting["values"];
+	$f3->CONFIG[$config["setting"]] = $config["values"];
 }
 
 ########################################
@@ -109,7 +114,7 @@ foreach ($settings as $setting)
 
 new admin();
 
-foreach ($config["enabled_modules"] as $module)
+foreach ($f3->CONFIG["enabled_modules"] as $module)
 	new $module();
 
 $f3->run();
