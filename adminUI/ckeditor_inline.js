@@ -12,4 +12,8 @@
 				<default>var editor = CKEDITOR.inline( '{{@instance.id}}',{ customConfig: '{{ @BASE }}/admin/ckeditor_config.js' } );</default>
 			</switch>}
 	</repeat>
+
+	editor.on('blur', function () {
+		console.log("test");
+	});
 </script>
