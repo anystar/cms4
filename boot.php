@@ -92,20 +92,24 @@ $f3->set('DB', new DB\SQL('sqlite:'.$config['database']));
 ####################################################
 ########## Override config from Database ###########
 ####################################################
-$config_definition = parse_ini_file("config-definitions.ini", true);
+$check = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='TABLE_NAME'");
 
-$settings = $f3->DB->exec("SELECT * FROM settings");
+if ($check) {
+	$config_definition = parse_ini_file("config-definitions.ini", true);
 
-foreach ($settings as $config)
-{	
-	$setting = $config["setting"];
-	$value   = $config["value"];
+	$settings = $f3->DB->exec("SELECT * FROM settings");
 
-	if (isset($config_definition[$setting]))
-		if (!$config_definition[$setting]["permission"])
-			continue;
+	foreach ($settings as $config)
+	{	
+		$setting = $config["setting"];
+		$value   = $config["value"];
 
-	$f3->CONFIG[$config["setting"]] = $config["values"];
+		if (isset($config_definition[$setting]))
+			if (!$config_definition[$setting]["permission"])
+				continue;
+
+		$f3->CONFIG[$config["setting"]] = $config["values"];
+	}
 }
 
 ########################################
