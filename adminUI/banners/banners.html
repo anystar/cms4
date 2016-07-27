@@ -103,6 +103,14 @@
 								</repeat>
 							</tbody>
 						</table>
+
+
+						<form method="post" action="{{@BASE}}/admin/banners/dropzone" class="dropzone" id="gallerydropzone">
+						  <div class="dz-message">
+							<div>Click or Drop banner images here. They will automatically be resized.</div>
+			 				<div>Max file size: {{@max_upload_size}}</div>
+						  </div>
+						</form>
 					</div>
 					<div class="col-xs-4">
 						<h2>Banners settings</h2>
@@ -150,13 +158,6 @@
 					</div>
 				</div>
 
-			<form method="post" action="{{@BASE}}/admin/banners/dropzone" class="dropzone" id="gallerydropzone">
-			  <div class="dz-message">
-				<div>Click or Drop banner images here. They will automatically be resized.</div>
- 				<div>Max file size: {{@max_upload_size}}</div>
-			  </div>
-			</form>
-
 			</div>
 		</div>
 
@@ -183,7 +184,7 @@
 	  Dropzone.autoDiscover = false;
 	  Dropzone.options.gallerydropzone = {
 			init: function() {
-			  this.on("queuecomplete", function(file) { location.reload();  });
+				this.on("queuecomplete", function(file) { location.reload();  });
 			}
 	  };
 

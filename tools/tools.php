@@ -1,14 +1,8 @@
 <?php
 
-function set_configurable($f3, $config) {
-	
-	d("hit");
-}
-
 function config($name, $value=null) {
 	$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
-
-	if (!$result) return false;
+	if (!$result) return false; // There is no settings table..
 
 	if (!$value)
 		return base::instance()->DB->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
@@ -32,6 +26,8 @@ function config_json($name, $value=null) {
 }
 
 function set_config($name, $value) {
+	// Lets create a settings table..
+
 	$result = config($name);
 
 	if ($result)

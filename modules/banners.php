@@ -11,10 +11,10 @@ class banners extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		if ($f3->exists("CONFIG.banners-upload_path"))
+		if ($f3->exists("SETTINGS.banners-upload_path"))
 			banners::$upload_path = $f3->get("CONFIG.banners-upload_path");
 
-		if ($f3->exists("CONFIG.banners-file_type"))
+		if ($f3->exists("SETTINGS.banners-file_type"))
 			banners::$file_type = $f3->get("CONFIG.banners-file_type");
 
 		if ($this->hasInit())
@@ -186,15 +186,16 @@ class banners extends prefab {
 	static function upload($f3) {
 
 		// Something happened and couldn't move image file..
-		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], banners::$upload_path."/".$f3->FILES["file"]["name"]))
+		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], banners::$upload_path."/temp_image_name"))
 			return;
 
-		banners::add_banner(getcwd()."/".banners::$upload_path, $f3->FILES["file"]["tmp_name"], $f3->FILES["file"]["tmp_name"], config("banners.width"), config("banners.height"));
+		banners::add_banner(getcwd()."/".banners::$upload_path, "temp_image_name", $f3->FILES["file"]["name"], config("banners-width"), config("banners-height"));
 
-		unlink($path."/".$image);
+		unlink(getcwd()."/".banners::$upload_path."/temp_image_name");
 	}
 
 	static function add_banner($path, $image, $name, $x, $y) {
+
 		$new_name = str_replace(' ', '_', $name);
 		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
 		$new_name = preg_replace('/\.[^.]+$/','',$new_name);
