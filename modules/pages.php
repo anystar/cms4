@@ -7,9 +7,6 @@ class pages extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		$f3->set("ckeditor", "<script src='".$f3->CONFIG["cdn"]["ckeditor"]. "'></script>");
-		$f3->set("admin", "<script src='".$f3->CONFIG["cdn"]["ckeditor"]. "'></script>");
-
 		$this->routes(base::instance());
 	}
 

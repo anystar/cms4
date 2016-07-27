@@ -1,4 +1,5 @@
 <?php
+require_once("tools/tools.php");
 
 ########################################
 ######## Default configuration #########
@@ -7,8 +8,7 @@
 $client = $config;
 
 // Merge config that may be coming from clients folder
-$config = array_merge(parse_ini_file("config.ini", true), $config);
-
+$config = array_merge_recursive(parse_ini_file("config.ini", true), $config);
 
 ########################################
 ## Check folder and file permissions  ##
@@ -19,6 +19,8 @@ if (!file_exists(getcwd()."/.htaccess")) {
 }
 
 // Required folders for operation
+if (!file_exists($config["paths"]["cms"])) d("Webworks CMS not found at". $config["paths"]["cms"].". Please update $\cms_location variable to point to CMS folder.");
+if(($f3 = include $config["paths"]["f3"]) === false) d("Fat free framework not found at $f3_location. Please download from http://fatfreeframework.com/");
 if (!file_exists(getcwd()."/tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder with group writable permissions. (chmod g+w tmp or chmod 755 db)";exit; }
 if (!is_writable(getcwd()."/tmp/")) { echo "Please make <strong>tmp</strong> folder writable by group";exit; }
 if (!file_exists(getcwd()."/db")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder with group writable permissions. (chmod g+w db chmod 755 db)";exit; }
@@ -54,14 +56,6 @@ if ($config['enable_phpliteadmin']) {
 ########################################
 ########## Fatfree framework ###########
 ########################################
-
-if (!file_exists($config["paths"]["cms"]))
-	d("Webworks CMS not found at". $config["paths"]["cms"].". Please update $\cms_location variable to point to CMS folder.");
-
-// Fat free framework
-if(($f3 = include $config["paths"]["f3"]) === false)
-	d("Fat free framework not found at $f3_location. Please download from http://fatfreeframework.com/");
-
 $f3->set("CONFIG", $config);
 
 if (isset($variables))
@@ -76,8 +70,6 @@ $f3->set('DEBUG', $config["debug"]);
 
 $f3->set("CMS", $config["paths"]["cms"]);
 $f3->set("ACE", $config["cdn"]["ace_editor"]);
-
-require_once("tools/tools.php");
 
 // Make database if it doesn't exist
 if (!file_exists(getcwd()."/".$config['database'])) {
@@ -104,47 +96,7 @@ $f3->set('DB', new DB\SQL('sqlite:'.$config['database']));
 
 new admin();
 
-$modules = explode(",", str_replace(' ', '', $config["enabled_modules"]));
-
-foreach ($modules as $module) {
+foreach ($config["enabled_modules"] as $module)
 	new $module();
-}
 
 $f3->run();
-
-function d($e=null)
-{
-	echo "<pre>";
-	print_r($e);
-	echo "</pre>";
-	die;
-}
-
-function htaccess_example() {
-
-
-echo <<<EOF
-<strong>.htaccess does not exist. Please use this snippet to create a .htaccess folder in the client directory.</strong>
-
-<p>
-<textarea cols=50 rows=10>
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-l
-RewriteRule .* cms.php [L,QSA]
-RewriteRule .* cms.php [L,QSA]
-</textarea>
-</p>
-
-<strong>This snippet redirects all requests to cms.php. If you want a folder accessable put this .htaccess file in each folder.</strong>
-<p>
-<textarea cols=50 rows=10>
-RewriteEngine off
-</textarea>
-</p>
-
-<strong>Hint: CMS modules will attempt to create .htaccess for you where they can.</strong>
-EOF;
-
-exit;
-}

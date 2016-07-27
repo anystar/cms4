@@ -39,3 +39,39 @@ function set_config($name, $value) {
 	else
 		base::instance()->DB->exec("INSERT INTO settings VALUES (?, ?)", [$name, $value]);
 }
+
+
+function d($e=null)
+{
+	echo "<pre>";
+	print_r($e);
+	echo "</pre>";
+	die;
+}
+
+function htaccess_example() {
+echo <<<EOF
+<strong>.htaccess does not exist. Please use this snippet to create a .htaccess folder in the client directory.</strong>
+
+<p>
+<textarea cols=50 rows=10>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule .* cms.php [L,QSA]
+RewriteRule .* cms.php [L,QSA]
+</textarea>
+</p>
+
+<strong>This snippet redirects all requests to cms.php. If you want a folder accessable put this .htaccess file in each folder.</strong>
+<p>
+<textarea cols=50 rows=10>
+RewriteEngine off
+</textarea>
+</p>
+
+<strong>Hint: CMS modules will attempt to create .htaccess for you where they can.</strong>
+EOF;
+
+	exit;
+}
