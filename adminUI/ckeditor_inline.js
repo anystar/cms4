@@ -9,11 +9,19 @@
 
 		if (document.getElementById("{{@instance.id}}")) {
 			<switch expr="{{@instance.type}}">
-				<default>var editor = CKEDITOR.inline( '{{@instance.id}}',{ customConfig: '{{ @BASE }}/admin/ckeditor_config.js' } );</default>
+				<default>
+				var editor = CKEDITOR.inline( '{{@instance.id}}',{ customConfig: '{{ @BASE }}/admin/ckeditor_config.js' } );
+
+				editor.on( 'blur', function( e ) {
+					if (e.editor.checkDirty()) {
+						$("#savebutton").css("background-color", "red");
+					}
+				} );
+
+				</default>
 			</switch>}
 	</repeat>
 
-	editor.on('blur', function () {
-		console.log("test");
-	});
 </script>
+
+
