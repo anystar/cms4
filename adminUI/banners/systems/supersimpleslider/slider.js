@@ -1,9 +1,11 @@
 jQuery(document).ready(function ($) {
     var slider = $('#slider ul li');
 
+    <check if="{{@banner.autoplay==1}}">
     setInterval(function () {
         moveRight();
-    }, 3000);
+    }, {{@banner.speed}});
+    </check>
     
 
 	$('#slider').css({ height: calc().slideHeight });

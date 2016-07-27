@@ -47,6 +47,7 @@ class banners extends prefab {
 
 		$f3->route("GET /banners/slider.js", function ($f3) {
 			$f3->UI = $f3->CONFIG["paths"]["cms"]."/"."adminUI/";
+			$f3->banner = config_json("banners-system_config");
 			echo Template::instance()->render(banners::$system_path."/"."slider.js", "text/javascript");
 			exit();
 		});
