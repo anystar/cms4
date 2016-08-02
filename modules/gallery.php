@@ -38,7 +38,7 @@ class gallery extends prefab {
 
 	public function admin_routes($f3) {
 		$f3->route('GET /admin/gallery', "gallery::admin_render");
-		$f3->route('GET /admin/gallery/generate', "gallery::generate");
+		$f3->route('POST /admin/gallery/generate', "gallery::generate");
 
 		$f3->route('GET /admin/gallery/js/dropzone.js', function ($f3) {
 			echo View::instance()->render("gallery/js/dropzone.js", "text/javascript");

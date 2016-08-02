@@ -1,59 +1,51 @@
-#slider {
+.sss {
+	height: 0;
+	margin: 0; 
+	padding: 0;
 	position: relative;
+	display: block;
 	overflow: hidden;
-	border-radius: 4px;
-
-	max-width: {{@banners.width}}px;
-	margin: 0 auto;
 }
 
-#slider ul {
-	position: relative;
+.ssslide {
+	width: 100%;
 	margin: 0;
 	padding: 0;
-	height: {{@banners.height}}px;
-	list-style: none;
-}
-
-#slider ul li {
-	position: relative;
-	display: block;
-	float: left;
-	margin: 0;
-	padding: 0;
-	width: {{@banners.width}}px;
-	height: {{@banners.height}}px;
-	background: #ccc;
-	text-align: center;
-	line-height: {{@banners.height}}px;
-
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: 100% 100%;
-}
-
-a.control_prev, a.control_next {
 	position: absolute;
-	top: 30%;
-	z-index: 999;
-	display: block;
-	padding: 6% 1%;
-	width: auto;
+	top: 0;
+	left: 0;
+	display: none;
+	overflow: hidden;
+}
+
+.ssslide img {
+	max-width: 100%;
 	height: auto;
-	background: #2a2a2a;
-	color: #fff;
-	text-decoration: none;
-	font-weight: 600;
-	font-size: 18px;
-	opacity: 0.8;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	display: block;
+}
+
+.sssnext, .sssprev {
+	width: 25px;
+	height: 100%;
+	margin: 0;
+	position: absolute;
+	top: 0;
+	background: url('images/arr.png') no-repeat;
+}
+
+.sssprev {
+	left: 3%;
+	background-position: 0 50%;
+}
+
+.sssnext {
+	right: 3%;
+	background-position: -26px 50%;
+}
+
+.sssprev:hover, .sssnext:hover {
 	cursor: pointer;
-}
-
-a.control_prev {
-	border-radius: 0 2px 2px 0;
-}
-
-a.control_next {
-	right: 0;
-	border-radius: 2px 0 0 2px;
 }

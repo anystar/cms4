@@ -6,7 +6,10 @@ require_once("tools/tools.php");
 ########################################
 
 // Merge config that may be coming from clients folder
-$config = array_merge_recursive(parse_ini_file("config.ini", true), $config);
+if (isset($config))
+	$config = array_merge_recursive(parse_ini_file("config.ini", true), $config);
+else
+	$config = parse_ini_file("config.ini", true);
 
 ########################################
 ## Check folder and file permissions  ##
@@ -111,6 +114,7 @@ if ($check)
 		$f3->SETTINGS[$config["setting"]] = $config["value"];
 	}
 }
+
 
 ########################################
 ############ Load modules ##############

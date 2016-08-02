@@ -55,7 +55,8 @@ class banners extends prefab {
 	}
 
 	function admin_routes($f3) {
-		
+
+		$f3->route('GET /admin/test', 'banners::test');		
 		$f3->route('GET /admin/banners', 'banners::admin_render');
 		$f3->route('POST /admin/banners/init', 'banners::init');
 
@@ -137,6 +138,13 @@ class banners extends prefab {
 			echo Template::instance()->render("banners/banners.html");
 		else
 			echo Template::instance()->render("banners/init.html");
+	}
+
+
+	static function test() {
+
+		echo Template::instance()->render("banners/test.html");
+
 	}
 
 	static function init($f3) {
