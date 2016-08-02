@@ -65,6 +65,7 @@
 				-moz-border-radius: 8px;
 				border-radius: 8px;
 			}
+
 		</style>
 	</head>
 	<body>
@@ -83,20 +84,18 @@
 				</div>
 				
 				<div class="row">
-					<div class="col-xs-8">			
+					<div class="col-md-8">			
 						<table class="images-table table table-bordered">
 							<thead>
 								<th>Image</th>
-								<th>URL</th>
-								<th>Tools</th>
+								<th width="10%">Tools</th>
 							</thead>
 							
 							<tbody>					
 								<repeat group="{{@banners.images}}" value="{{@image}}">
 								<tr class="banner_images">
-									<td><img src="{{@BASE}}/{{@image.url}}" /></td>
-									<td><a target="_blank" href="{{@BASE}}/{{@image.url}}">{{@image.url}}</a></td>
-									<td>
+									<td width="100%"><a target="_blank" href="{{@BASE}}/{{@image.url}}"><img width="100%" src="{{@BASE}}/{{@image.url}}" /></a></td>
+									<td class="tools">
 										<a class="delete_image" href="{{@BASE}}/admin/banners/delete/{{@image.filename}}"><button>Delete</button></a>
 									</td>
 								</tr>
@@ -112,7 +111,7 @@
 						  </div>
 						</form>
 					</div>
-					<div class="col-xs-4">
+					<div class="col-md-4">
 						<h2>Banners settings</h2>
 
 				        <form class="form-horizontal" method="post" action="{{@BASE}}/admin/banners/update_settings">
@@ -137,7 +136,8 @@
 
 						<div class="container">
 				        </div>
-
+						
+						<check if="{{@banners.system_config}}">
 						<h2>Javascript settings</h2>
 
 				        <form class="form-horizontal" method="post" action="{{@BASE}}/admin/banners/update_javascript_settings">
@@ -154,6 +154,7 @@
 							<button type="submit" class="btn btn-primary pull-right">Update settings</button>
 
 				        </form>
+				        </check>
 
 					</div>
 				</div>
