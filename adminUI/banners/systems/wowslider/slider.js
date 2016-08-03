@@ -360,7 +360,7 @@ jQuery("#wowslider-container1").wowSlider({
     height: {{@banners.system_config.height}},
     autoPlay: true,
     autoPlayVideo: false,
-    playPause: true,
+    playPause: false,
     stopOnHover: false,
     loop: false,
     bullets: 0,
