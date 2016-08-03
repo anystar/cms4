@@ -31,7 +31,7 @@
 	</div>
 
 	<div class="container">
-	  <div class="col-xs-8">
+	  <div class="col-xs-12">
 		
         <h2>Gallery Manager</h2>
 
@@ -51,31 +51,36 @@
 			</form>
 		  </false>
 		</check>
+
+		<h3>Upload settings</h3>
+		<div class="container image_upload_settings">
+			<div class="col-sm-6 pull-right">
+			<p>These settings will</p>
+			<ul>
+				<li>Resize images when uploaded</li>
+				<li>Respect Aspect ratio. <br>(fit image with its longest side into the resize dimensions)</li>
+				<li>Images are not enlarged.</li>
+				<li>Leave blank to not resize.</li>
+				<li><strong>Settings need to be applied to take effect.</strong></li>
+			</ul>
+			</div>
+			
+			<div class="col-sm-6">
+				<form  action="{{@BASE}}/admin/gallery/upload_settings" method="POST" class="form-inline">
+					<div class="form-group">
+					  <label for="a">Thumbnail size: </label>
+					  <input name="thumb_size_x" value="{{@gallery.settings.thumb_size_x}}" type="text" class="form-control" id="a" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="thumb_size_y" value="{{@gallery.settings.thumb_size_x}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
+					</div>
+					<div class="form-group">
+					  <label for="b">Image size: </label>
+					  <input name="image_size_x" value="{{@gallery.settings.image_size_x}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="image_size_y" value="{{@gallery.settings.image_size_y}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
+					</div>
+					<button type="submit" class="btn btn-default">Apply Settings</button>
+				</form>
+			</div>
+		</div>
 		
 	  </div>
-	<div class="col-xs-4 image_upload_settings">
-		<h3>Upload settings</h3>
-		<p>The settings below will</p>
-		<ul>
-			<li>Resize images when uploaded</li>
-			<li>Aspect ratio is maintained to fit with its longest side into the resize box.</li>
-			<li>Images are not enlarged.</li>
-			<li>Leave blank to not resize.</li>
-			<li><strong>Settings need to be applied to take effect.</strong></li>
-		</ul>
-
-		<form  action="{{@BASE}}/admin/gallery/upload_settings" method="POST" class="form-inline">
-			<div class="form-group">
-			  <label for="a">Thumbnail size: </label>
-			  <input name="thumb_size_x" value="{{@gallery.settings.thumb_size_x}}" type="text" class="form-control" id="a" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="thumb_size_y" value="{{@gallery.settings.thumb_size_x}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
-			</div>
-			<div class="form-group">
-			  <label for="b">Image size: </label>
-			  <input name="image_size_x" value="{{@gallery.settings.image_size_x}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="image_size_y" value="{{@gallery.settings.image_size_y}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
-			</div>
-			<button type="submit" class="btn btn-default">Apply Settings</button>
-		</form>
-	</div>
 	</div>
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>

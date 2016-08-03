@@ -63,15 +63,9 @@ class banners extends prefab {
 		$f3->route('POST /admin/banners/dropzone', 'banners::upload');
 
 		$f3->route('POST /admin/banners/update_settings', function ($f3) {
-			config("banners-width", filter_var($f3->POST["width"], FILTER_SANITIZE_NUMBER_INT));
-			config("banners-height", filter_var($f3->POST["height"], FILTER_SANITIZE_NUMBER_INT));
 
-			// resize all current images?
-			$dir = array_diff(scandir(getcwd()."/".banners::$upload_path), array('..', '.'));
-			
-			foreach ($dir as $img) {
-				banners::resize_image (getcwd()."/".banners::$upload_path, $img, $f3->POST["width"], $f3->POST["height"], getcwd()."/".banners::$upload_path."/".$img);
-			}
+			set_config("banners-width", filter_var($f3->POST["width"], FILTER_SANITIZE_NUMBER_INT));
+			set_config("banners-height", filter_var($f3->POST["height"], FILTER_SANITIZE_NUMBER_INT));
 
 			$f3->reroute("/admin/banners");
 		});

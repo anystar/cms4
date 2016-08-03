@@ -1,1 +1,32 @@
-.table{table-layout:fixed;margin-top:30px}.table tr td{vertical-align:middle !important}.table .filename{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:300px !important}.dropzone{margin:30px;border:2px dashed blue}.dropzone .dz-message{font-weight:bold;font-size:20px}.image_upload_settings{margin-top:20px}.image_upload_settings .form-group{display:block;margin-top:5px}.image_upload_settings .form-control{width:80px}.image_upload_settings label{width:150px}.image_upload_settings button{width:100%;margin:20px 0;font-weight:bold}
+.table {
+  table-layout: fixed;
+  margin-top: 30px; }
+.table tr td {
+  vertical-align: middle !important; }
+.table .filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 300px !important; }
+
+.dropzone {
+  margin: 30px;
+  border: 2px dashed blue; }
+
+.dropzone .dz-message {
+  font-weight: bold;
+  font-size: 20px; }
+
+.image_upload_settings {
+  margin-top: 20px; }
+.image_upload_settings .form-group {
+  display: block;
+  margin-top: 5px; }
+.image_upload_settings .form-control {
+  width: 80px; }
+.image_upload_settings label {
+  width: 150px; }
+.image_upload_settings button {
+  width: 100%;
+  margin: 20px 0;
+  font-weight: bold; }
