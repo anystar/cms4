@@ -30,21 +30,26 @@
 		
 		<h2>Settings and configuration</h2>
 
-
 		<h3><span title="Content Management System">CMS</span> settings</h3>
 		<form class="form-horizontal container" method="post" action="{{@BASE}}/admin/update_settings">
 
-
 			<div class="form-group">
-			<label class="control-label">CMS Login username</label>
-			<input type="email" class="form-control" name="admin-user" value="{{@SETTINGS.admin.user}}">
-			<span id="helpBlock" class="help-block">Must be an email address.</span>
+				<label class="control-label">CMS Login username</label>
+				<input type="email" class="form-control" name="admin-user" value="{{@SETTINGS.admin.user}}">
+				<span id="helpBlock" class="help-block">Must be an email address.</span>
 			</div>
 
 			<div class="form-group">
-			<label class="control-label">Password</label>
-			<input type="text" class="form-control" name="admin-user" value="">
-			<span id="helpBlock" class="help-block">Use <a href="http://passwordsgenerator.net/">PasswordsGenerator.net</a> to generate a secure password</span>
+				<label class="control-label">CMS Login password</label>
+				<input type="email" class="form-control" name="admin-password">
+			</div>
+		
+			<div class="panel panel-default">
+				<div class="panel-heading">Generate random password</div>
+				<div class="panel-body">
+					<label class="control-label">CMS Login password</label>
+					<input type="email" class="form-control" name="admin-password">
+				</div>
 			</div>
 
 			<button type="submit" class="btn btn-primary pull-right">Update admin settings</button>
@@ -56,8 +61,8 @@
 		
 			<div class="form-group">
 			<label class="control-label">Website Description</label>
-			<textarea rows="5" class="form-control">{{@SETTINGS.description}}</textarea>
-			<span id="helpBlock" class="help-block">This will be used in saerch engine descriptions</span>
+			<textarea rows="5" class="form-control" name="description">{{@SETTINGS.description}}</textarea>
+			<span id="helpBlock" class="help-block">This will be used in search engine descriptions</span>
 			</div>
 
 			<div class="form-group">
@@ -77,9 +82,8 @@
 			<input type="text" class="form-control" name="author" value="{{@SETTINGS.author}}">
 			<span id="helpBlock" class="help-block"></span>
 			</div>
-
-			<button type="submit" class="btn btn-primary pull-right">Update website settings</button>
-	  
+			
+				<button type="submit" class="control-label btn btn-primary pull-right">Update website settings</button>
 		</form>
 
 
@@ -95,8 +99,11 @@
 			  <span id="helpBlock" class="help-block"></span>
 			</div>
 		  </repeat>
-		  <button type="submit" class="btn btn-primary">Update settings</button>
 		  
+		  <div class="form-group">
+		  	<button type="submit" class="control-label btn btn-primary">Update settings</button>
+		  </div>
+
 		</form>
 		</exclude>
 

@@ -10,7 +10,7 @@
     padding-top: 5px;
 }
 
-#webworkscms_admintoolbar input {
+#webworkscms_admintoolbar input, #webworkscms_admintoolbar a  {
     display: inline-block;
     margin: 5px 0 5px 5px;
     padding: 2px 15px;
@@ -25,15 +25,15 @@
     font-weight: bold;
 }
 
-#webworkscms_admintoolbar input:hover {
+#webworkscms_admintoolbar input:hover, #webworkscms_admintoolbar a:hover {
     background: #3cab4e;
 }
 
-#webworkscms_admintoolbar input:focus {
+#webworkscms_admintoolbar input:focus, #webworkscms_admintoolbar a:focus {
     outline: none !important;
 }
 
-#webworkscms_admintoolbar input:active {
+#webworkscms_admintoolbar input:active, #webworkscms_admintoolbar a:active {
 	    transform: translate(0px,5px);
 		-webkit-transform: translate(0px,3px);
 }
