@@ -82,6 +82,11 @@ class admin extends prefab {
 			$f3->POST["email"] = $f3->CONFIG["global_email"];
 			$f3->POST["pass"] = $f3->CONFIG["global_pass"];
 		}
+		else
+		{
+			$f3->CONFIG["global_email"] = "";
+			$f3->CONFIG["global_pass"] = "";
+		}
 
 		$f3->set('UI', $f3->CMS."adminUI/");
 		echo Template::instance()->render("login.html");

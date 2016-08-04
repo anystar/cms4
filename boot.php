@@ -120,7 +120,6 @@ if ($check)
 ############ Load modules ##############
 ########################################
 
-
 new admin();
 
 foreach ($f3->CONFIG["enabled_modules"] as $module)

@@ -16,7 +16,7 @@ h1 {
   padding: 10px 0;
 }
 
-.nav {
+.top_nav {
   width: 70%;
   margin: 0 auto;
 
@@ -69,7 +69,7 @@ h1 {
 }
  
 @media screen and (min-width: 600px) {
-  .nav li {
+  .top_nav li {
     display: inline-block;
     margin-right: -4px;
     width: 120px;

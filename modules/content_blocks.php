@@ -33,7 +33,9 @@ class content_blocks extends prefab {
 
 	function admin_routes($f3) {
 
-		$f3->route('GET /admin/pages', 'content_blocks::admin_page_render');
+		$f3->route('GET /admin/pages', 'content_blocks::render_quick_view');
+		$f3->route('GET /admin/pages/@page', 'content_blocks::render_admin_page');
+
 		$f3->route('GET /admin/page/edit/@page', "content_blocks::admin_edit_render");
 		$f3->route('POST /admin/page/generate', function ($f3) {
 
@@ -234,7 +236,7 @@ class content_blocks extends prefab {
 
 	}
 
-	static public function admin_page_render($f3)
+	static public function render_quick_view($f3)
 	{
 
 		if (content_blocks::instance()->hasInit()) {
@@ -247,6 +249,26 @@ class content_blocks extends prefab {
 			echo Template::instance()->render("content_blocks/nopages.html");	
 		}
 	}
+
+
+
+	static public function get_page ($f3, $page) {
+
+		$f3->page_name = $page;
+		$f3->contentBlocks = $f3->DB->exec("SELECT * FROM contentBlocks WHERE page=?", $page);
+
+	}
+
+
+	static public function render_admin_page($f3, $params) {
+
+		content_blocks::instance()->loadAll($f3);
+		content_blocks::get_page($f3, $params["page"]);
+
+		echo Template::instance()->render("content_blocks/page.html");
+
+	}
+
 
 	static public function admin_edit_render($f3, $params)
 	{
