@@ -327,15 +327,6 @@ class contact extends prefab
 
 			$f3->contact_fields = base::instance()->DB->exec("SELECT * FROM contact_form ORDER BY `order`");
 
-			if (file_exists(contact::$email_template)) {
-				$f3->email_template = Template::instance()->render(contact::$email_template);
-			} else {
-				$tmp = $f3->UI;
-				$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
-				$f3->email_template = Template::instance()->render("contact_form/email_template/generic_email_template.html");
-				$f3->UI = $tmp;
-			}
-
 			echo Template::instance()->render("contact_form/contact.html");
 		}
 		else
