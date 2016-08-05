@@ -211,7 +211,6 @@ class contact extends prefab
 		$smtp->set('Subject', $subject);
 		$smtp->set('Content-Type', 'text/html');
 
-
 		$f3->set("contact_subject", $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"]);
 
 		if (file_exists(contact::$email_template)) {
