@@ -51,7 +51,15 @@ class contact extends prefab
 
 			if ($result)
 			{
-				$f3->reroute("/contact_success");
+				if (file_exists("contact_success.html")) {
+					$f3->reroute("/contact_success");
+				}
+				else
+				{
+					$tmp = $f3->UI;
+					$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+					echo Template::instance()->render("contact_form/contact_success.html");
+				}
 			}
 			else
 				$f3->mock("GET ". $mock);
@@ -61,7 +69,13 @@ class contact extends prefab
 	function admin_routes ($f3)
 	{
 		$f3->route('GET /admin/contact', "contact::admin");
-		$f3->route('GET /admin/contact/generate', "contact::generate");
+		$f3->route('POST /admin/contact/generate', "contact::generate");
+		$f3->route('GET /admin/contact/email_template', function ($f3) {
+			contact::load($f3);
+			$tmp = $f3->UI;
+			$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+			echo Template::instance()->render("contact_form/email_template/generic_email_template.html");
+		});
 
 		$f3->route('POST /admin/contact/settings', "contact::update_settings");		
 		$f3->route('POST /admin/contact/update_field/@field', "contact::update_field");
@@ -171,8 +185,12 @@ class contact extends prefab
 	{
 		$f3 = f3::instance();
 		$db = $f3->get("DB");
-		
-		$toAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-email'")[0]["value"];
+			
+		if ($f3->POST["sendto"])
+			$toAddress = $f3->POST["sendto"];
+		else
+			$toAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-email'")[0]["value"];
+
 		$toName = $db->exec("SELECT `value` FROM settings WHERE setting='contact-name'")[0]["value"];
 		$subject = $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"];
 
@@ -193,12 +211,20 @@ class contact extends prefab
 		$smtp->set('Subject', $subject);
 		$smtp->set('Content-Type', 'text/html');
 
+
 		$f3->set("contact_subject", $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"]);
 
-		$body = Template::instance()->render(contact::$email_template);
+		if (file_exists(contact::$email_template)) {
+			$body = Template::instance()->render(contact::$email_template);
+		} else {
+			$tmp = $f3->UI;
+			$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+			$body = Template::instance()->render("contact_form/email_template/generic_email_template.html");
+			$f3->UI = $tmp;
+		}
 
 		$smtp->send($body);
-		
+
 		return true;
 	}
 
@@ -236,9 +262,9 @@ class contact extends prefab
 		if (empty($result)) 
 			return false;
 
-		if (!file_exists(contact::$email_template)) {
-			d("Fatel Error in contact module: Email template does not exsist. Please create a html file named ".contact::$email_template);
-		}
+		// if (!file_exists(contact::$email_template)) {
+		// 	d("Fatel Error in contact module: Email template does not exsist. Please create a html file named".contact::$email_template);
+		// }
 
 		return true;
 	}
@@ -286,7 +312,7 @@ class contact extends prefab
 				$db->exec("INSERT INTO settings VALUES ('contact-subject', 'Email subject line')");
 		}
 
-		f3::instance()->mock('GET /admin/contact');
+		base::instance()->reroute('/admin/contact');
 	}
 
 	static public function admin ($f3) {
@@ -300,10 +326,15 @@ class contact extends prefab
 			$f3->set("contact_subject", config("contact-subject"));
 
 			$f3->contact_fields = base::instance()->DB->exec("SELECT * FROM contact_form ORDER BY `order`");
-			
-			$f3->UI = getcwd()."/";
-			$f3->email_template = Template::instance()->render(contact::$email_template);
-			$f3->UI = $f3->CMS."adminUI/";
+
+			if (file_exists(contact::$email_template)) {
+				$f3->email_template = Template::instance()->render(contact::$email_template);
+			} else {
+				$tmp = $f3->UI;
+				$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+				$f3->email_template = Template::instance()->render("contact_form/email_template/generic_email_template.html");
+				$f3->UI = $tmp;
+			}
 
 			echo Template::instance()->render("contact_form/contact.html");
 		}

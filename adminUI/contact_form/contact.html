@@ -1,182 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Web Works CMS</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>Web Works CMS</title>
 
-    <!-- Bootstrap -->
-    <link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ @BASE }}/admin/theme" rel="stylesheet">
+	<!-- Bootstrap -->
+	<link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ @BASE }}/admin/theme" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
 
-    <style>
-        .bootstrap-select {
-            width: 100px;
-        }
-    </style>
+	<style>
+		.bootstrap-select {
+			width: 100px;
+		}
+	</style>
   </head>
   <body>
-    <h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
+	<h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
 
-    <div class="nav top_nav">
-      <include href="navigation.html" />
-    </div>
+	<div class="nav top_nav">
+	  <include href="navigation.html" />
+	</div>
 
-    <div class="container">
-      <div class="col-xs-12">        
-        <h2>Contact Form</h2>
-        
-        <table class="table table-condensed table-responsive">
-            <thead>
-                <th>Label</th>
-                <th>Type</th>
-                <th>Placeholder</th>
-                <th>Error Message</th>
-                <th>Order</th>
-                <th></th>
-            </thead>
+	<div class="container">
+	  <div class="col-xs-12">        
+		<h2>Contact Form</h2>
+		
+		<table class="table table-condensed table-responsive">
+			<thead>
+				<th>Label</th>
+				<th>Type</th>
+				<th>Placeholder</th>
+				<th>Error Message</th>
+				<th>Order</th>
+				<th></th>
+			</thead>
 
-            <repeat group="{{@contact_fields}}" value="{{@field}}">
-                <form action="{{@BASE}}/admin/contact/update_field/{{@field.id}}" method="post">
-                <tr>
-                    <td>
-                        <div class="input-group">
-                          <input name="label" type="text" class="form-control" placeholder="input label" value="{{@field.label}}">
-                        </div>
-                    </td>
-                    <td>
-                       <div class="input-group">
-                          <select name="type" class="">
-                            <option value="name">Name</option>
-                            <option value="text">Text</option>
-                            <option value="textarea">Textarea</option>
-                            <option value="number">Number</option>
-                            <option value="email">Email</option>
-                          </select>
-                       </div>
-                    </td>
-                    <td>
-                        <div class="input-group">
-                          <input name="placeholder" type="text" class="form-control" placeholder="text your reading now" value="{{@field.placeholder}}">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-group">
-                          <input name="error_message" type="text" class="form-control" value="{{@field.error_message}}">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-group">
-                          <input name="order" type="text" class="form-control" value="{{@field.order}}">
-                        </div>
-                    </td>
-                    <td><a href="{{@BASE}}/admin/contact/delete_field/{{@field.id}}"><button type="button" class="btn btn-default">Delete</button></a></td>
-                    <td><button type="submit" class="btn btn-default">Update</button></td>
-                </tr>
-                </form>
-            </repeat>
-            
-            <form action="{{@BASE}}/admin/contact/add_field" method="post">
-            <tr>
-                <td>
-                    <div class="input-group">
-                      <input name="label" type="text" class="form-control" placeholder="input label">
-                    </div>
-                </td>
-                <td>
-                   <div class="input-group">
-                      <select name="type" class="">
-                        <option value="name">Name</option>
-                        <option value="text">Text</option>
-                        <option value="textarea">Textarea</option>
-                        <option value="number">Number</option>
-                        <option value="email">Email</option>
-                      </select>
-                   </div>
-                </td>
-                <td>
-                    <div class="input-group">
-                      <input name="placeholder" type="text" class="form-control" placeholder="text your reading now">
-                    </div>
-                </td>
-                <td>
-                    <div class="input-group">
-                      <input name="error_message" type="text" class="form-control">
-                    </div>
-                </td>
-                <td>
-                    <div class="input-group">
-                      <input name="order" type="text" class="form-control" value="{{@field.order+1}}">
-                    </div>
-                </td>
-                <td><a href="{{@BASE}}/"><button type="submit" class="btn btn-default">Add</button></a></td>
-            </tr>
-            </form>
-        </table>
+			<repeat group="{{@contact_fields}}" value="{{@field}}">
+				<form action="{{@BASE}}/admin/contact/update_field/{{@field.id}}" method="post">
+				<tr>
+					<td>
+						<div class="input-group">
+						  <input name="label" type="text" class="form-control" placeholder="input label" value="{{@field.label}}">
+						</div>
+					</td>
+					<td>
+					   <div class="input-group">
+						  <select name="type" class="">
+							<option value="name">Name</option>
+							<option value="text">Text</option>
+							<option value="textarea">Textarea</option>
+							<option value="number">Number</option>
+							<option value="email">Email</option>
+						  </select>
+					   </div>
+					</td>
+					<td>
+						<div class="input-group">
+						  <input name="placeholder" type="text" class="form-control" placeholder="text your reading now" value="{{@field.placeholder}}">
+						</div>
+					</td>
+					<td>
+						<div class="input-group">
+						  <input name="error_message" type="text" class="form-control" value="{{@field.error_message}}">
+						</div>
+					</td>
+					<td>
+						<div class="input-group">
+						  <input name="order" type="text" class="form-control" value="{{@field.order}}">
+						</div>
+					</td>
+					<td><a href="{{@BASE}}/admin/contact/delete_field/{{@field.id}}"><button type="button" class="btn btn-default">Delete</button></a></td>
+					<td><button type="submit" class="btn btn-default">Update</button></td>
+				</tr>
+				</form>
+			</repeat>
+			
+			<form action="{{@BASE}}/admin/contact/add_field" method="post">
+			<tr>
+				<td>
+					<div class="input-group">
+					  <input name="label" type="text" class="form-control" placeholder="input label">
+					</div>
+				</td>
+				<td>
+				   <div class="input-group">
+					  <select name="type" class="">
+						<option value="name">Name</option>
+						<option value="text">Text</option>
+						<option value="textarea">Textarea</option>
+						<option value="number">Number</option>
+						<option value="email">Email</option>
+					  </select>
+				   </div>
+				</td>
+				<td>
+					<div class="input-group">
+					  <input name="placeholder" type="text" class="form-control" placeholder="text your reading now">
+					</div>
+				</td>
+				<td>
+					<div class="input-group">
+					  <input name="error_message" type="text" class="form-control">
+					</div>
+				</td>
+				<td>
+					<div class="input-group">
+					  <input name="order" type="text" class="form-control" value="{{@field.order+1}}">
+					</div>
+				</td>
+				<td><a href="{{@BASE}}/"><button type="submit" class="btn btn-default">Add</button></a></td>
+			</tr>
+			</form>
+		</table>
 
-        <h2>Settings</h2>
-          
+			 <div class="row">
+			 <div class="col-xs-6">
+			<form class="form-horizontal" action="{{@BASE}}/admin/contact/settings" method="post">
+				<h2>Settings</h2>
 
-            <form class="form-horizontal" action="{{@BASE}}/admin/contact/settings" method="post">
-            <div class="row">
-            <div class="col-xs-6">
+				<!-- Text input-->
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="email">Email</label>  
+				  <div class="col-md-8">
+				  <input id="email" name="email" type="text" placeholder="email address" class="form-control input-md" required="" value="{{@contact_email}}">
+				  <span class="help-block">Where should contact form submit to?</span>  
+				  </div>
+				</div>
 
-                <!-- Text input-->
-                <div class="form-group">
-                  <label class="col-md-4 control-label" for="email">Email</label>  
-                  <div class="col-md-8">
-                  <input id="email" name="email" type="text" placeholder="email address" class="form-control input-md" required="" value="{{@contact_email}}">
-                  <span class="help-block">Where should contact form submit to?</span>  
-                  </div>
-                </div>
+				<!-- Text input-->
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="name">Name</label>  
+				  <div class="col-md-8">
+				  <input id="name" name="name" type="text" placeholder="your name" class="form-control input-md" required="" value="{{@contact_name}}">
+				  <span class="help-block">Who should contact form address</span>  
+				  </div>
+				</div>
 
-                <!-- Text input-->
-                <div class="form-group">
-                  <label class="col-md-4 control-label" for="name">Name</label>  
-                  <div class="col-md-8">
-                  <input id="name" name="name" type="text" placeholder="your name" class="form-control input-md" required="" value="{{@contact_name}}">
-                  <span class="help-block">Who should contact form address</span>  
-                  </div>
-                </div>
+				<!-- Text input-->
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="subject">Subject Line</label>  
+				  <div class="col-md-8">
+				  <input id="subject" name="subject" type="text" placeholder="" class="form-control input-md" required="" value="{{@contact_subject}}">
+				  <span class="help-block">eg: website enquiry</span>  
+				  </div>
+				</div>
+				<button type="submit" class="btn btn-default pull-right">Update Settings</button>                
+			  </div>
 
-                <!-- Text input-->
-                <div class="form-group">
-                  <label class="col-md-4 control-label" for="subject">Subject Line</label>  
-                  <div class="col-md-8">
-                  <input id="subject" name="subject" type="text" placeholder="" class="form-control input-md" required="" value="{{@contact_subject}}">
-                  <span class="help-block">eg: website enquiry</span>  
-                  </div>
-                </div>
-                <button type="submit" class="btn btn-default pull-right">Update Settings</button>                
-                </div>
-                </div>
+			</form>
 
-            </form>
+			  <div class="col-xs-6">
+				<h2>Test center</h2>
+				
+				<form class="form-horizontal" action="{{@BASE}}/contact" method="post">
+					<repeat group="{{@contact_fields}}" value="{{@field}}">
+						<switch expr="{{@field.type}}">
+							<case value="name">
+								<set value="John Smith">
+							</case>
+							<case value="number">
+								<set value="(03) 54444444">
+							</case>
+							<case value="email">
+								<set value="johnsmith@example.com">
+							</case>
+							<case value="textarea">
+								<set value="This is a test email from the admin panel">
+							</case>
+							<case value="text">
+								<set value="Dummy text">
+							</case>
+							<default>
+								<set value="">
+							</default>
+						</switch>
 
-        <h2>Email Template</h2>
-        
-        <iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/email_template"></iframe>
+						<div class="form-group">
+							<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
+							<div class="col-sm-9">
+								<input name="{{@field.label}}{{@field.id}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+							</div>
+						</div>
+
+					</repeat>
+					
+					<hr>
+					<div class="form-group">
+						<label for="sendto" class="col-sm-3 control-label">Send to:</label>
+						<div class="col-sm-9">
+							<input name="sendto" value="" type="input" class="form-control" placeholder="">
+						</div>
+					</div>
 
 
-      </div>
-    </div>
+					<div>After hitting submit please check your email. It may take up to 10 minutes to recieve.</div>
+					<button type="submit" class="btn btn-default pull-right">Submit Test Email</button>				
+				</form>
 
-    <script language="javascript" type="text/javascript">
-      function resizeIframe(obj) {
-        obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
-      }
-    </script>
+			  </div>
+			  </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="{{@BASE}}/admin/bootstrap.min.js"></script>
+		<h2>Email Template</h2>
+		
+		<iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/admin/contact/email_template"></iframe>
+
+
+	  </div>
+	</div>
+
+	<script language="javascript" type="text/javascript">
+	  function resizeIframe(obj) {
+		obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+	  }
+	</script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="{{@BASE}}/admin/bootstrap.min.js"></script>
   </body>
 </html>

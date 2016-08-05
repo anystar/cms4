@@ -1,0 +1,122 @@
+<form class="contact" action="{{@BASE}}/contact" method="post">
+    
+    <repeat group="{{ @form }}" value="{{ @field }}">
+
+      <switch expr="{{@field.type}}">
+
+        <case value="name">
+          <check if="{{@field.error}}">
+              <true>
+              <div class="form-group has-error has-feedback">
+                  <label for="name">{{@field.label}}</label>
+                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                  <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
+              </div>
+              </true>
+
+              <false>
+              <div class="form-group">
+                  <label for="name">{{@field.label}}</label>
+                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+              </div>
+              </false>
+          </check>
+        </case>
+
+        <case value="text">
+          <check if="{{@field.error}}">
+              <true>
+              <div class="form-group has-error has-feedback">
+                  <label for="name">{{@field.label}}</label>
+                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                  <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
+              </div>
+              </true>
+
+              <false>
+              <div class="form-group">
+                  <label for="name">{{@field.label}}</label>
+                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+              </div>
+              </false>
+          </check>
+        </case>
+
+        <case value="number">
+          <check if="{{@field.error}}">
+              <true>
+              <div class="form-group has-error has-feedback">
+                  <label for="name">{{@field.label}}</label>
+                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                  <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
+              </div>
+              </true>
+
+              <false>
+              <div class="form-group">
+                  <label for="name">{{@field.label}}</label>
+                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+              </div>
+              </false>
+          </check>
+        </case>
+
+        <case value="email">
+            <check if="{{@field.error}}">
+              <true>
+              <div class="form-group has-error has-feedback">
+                  <label for="name">{{@field.label}}</label>
+                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                  <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
+              </div>
+              </true>
+
+              <false>
+              <div class="form-group">
+                  <label for="name">{{@field.label}}</label>
+                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+              </div>
+              </false>
+            </check>
+        </case>
+
+        <case value="textarea">
+          <check if="{{@field.error}}">
+            <true>
+            <div class="form-group has-error has-feedback">
+                <label for="Comment">{{@field.label}}</label>
+                <textarea name="{{@field.label}}{{@field.id}}" class="form-control" rows="5">{{@field.value}}</textarea>
+                <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
+            </div>
+            </true>
+
+            <false>              
+            <div class="form-group">
+                <label for="Comment">{{@field.label}}</label>
+                <textarea name="{{@field.label}}{{@field.id}}" class="form-control" rows="5">{{@field.value}}</textarea>
+            </div>
+            </false>
+          </check>
+        </case>
+
+      </switch>
+    </repeat>                
+    
+    <check if="false">
+      <true>
+        <span id="helpBlock" class="help-block">Please check captcha.</span>
+      </true>
+    </check>
+    
+
+    <check if="{{@CONFIG[contact.page] == 'all'}}">
+      <input type="hidden" name="return" value="{{@PATH}}">
+    </check>
+    
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
