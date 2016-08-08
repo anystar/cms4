@@ -9,11 +9,14 @@ class admin extends prefab {
 
 		new \DB\SQL\Session($f3->DB);
 
-		if ($f3->SESSION["user"] == $f3->CONFIG["email"])
+
+		if ($f3->SESSION["user"] == $f3->CONFIG["email"] || $f3->SESSION["user"] == $f3->CONFIG["global_email"])
 		{
-
-
 			admin::$signed = true;
+
+			if ($f3->SESSION["root"]==true)
+				$f3->set("webmaster", true);
+
 			$this->dashboard_routes($f3);
 
 			$page = $f3->PATH;
@@ -98,6 +101,8 @@ class admin extends prefab {
 
 	static public function login ($f3) {
 		$post = $f3->get("POST");
+
+
 
 		// Check global user and pass
 		if ($post["user"] == $f3->get("CONFIG.global_email") && $post["pass"] == $f3->get("CONFIG.global_pass"))

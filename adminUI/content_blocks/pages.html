@@ -111,7 +111,9 @@
               </tr>
               </repeat>
             </table>
+            
 
+            <check if="{{@webmaster}}">
             <form class="well" method="post" action="{{@BASE}}/admin/page/add_content">
              <div class="row">
                 <div class="col-xs-3">
@@ -141,6 +143,7 @@
              </div><!-- /.row -->
               <input type="hidden" name="page" value="{{@name}}">
              </form>
+             </check>
          </div>
 
          </div>
