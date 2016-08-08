@@ -28,7 +28,6 @@ class contact extends prefab
 				$f3->set("contact_return_page", $f3->POST["return"]);
 			}
 
-
 			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all") {			
 				$this->load();
 			}
@@ -40,10 +39,18 @@ class contact extends prefab
 
 	function routes($f3) {
 
+		$f3->route("GET /captcha", function ($f3) {
+			contact::captcha($f3);
+		});
+
 		$f3->route("POST /contact", function ($f3, $params) {
 
-			if ($f3->get("CONFIG[contact.page]") == "all")
-				$mock = $f3->get("POST.return");
+			if ($f3->get("CONFIG[contact.page]") == "all") {
+				if ($f3->POST["return"])
+					$mock = $f3->get("POST.return");
+				else
+					$mock = "/contact";
+			}
 			else
 				$mock = $f3->get("CONFIG[contact.page]");
 
@@ -62,12 +69,37 @@ class contact extends prefab
 				}
 			}
 			else
+			{
+
+				$tmp = $f3->UI; $f3->UI = $f3->CMS;
+				$snippet = \Template::instance()->render("adminUI/contact_form/contact_form.html");
+				$f3->UI = $tmp;
+
+				$f3->set("contact_form", $snippet);
+				$f3->set("contact.html", $snippet);
+
 				$f3->mock("GET ". $mock);
+				die;
+			}
 		});
+
+	}
+
+	static function captcha($f3) {
+		$img = new Image();
+
+		$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+		$img->captcha('/contact_form/Abel-Regular.ttf',16,5,'SESSION.captcha_code');
+
+		$img->render();
 	}
 
 	function admin_routes ($f3)
 	{
+		$f3->route("GET /captcha_code", function ($f3) {
+			d($f3->SESSION);
+		});
+
 		$f3->route('GET /admin/contact', "contact::admin");
 		$f3->route('POST /admin/contact/generate', "contact::generate");
 		$f3->route('GET /admin/contact/email_template', function ($f3) {
@@ -91,16 +123,24 @@ class contact extends prefab
 	}
 
 	static function load()
-	{
+	{	
+
 		$f3 = f3::instance();
 		$db = $f3->get("DB");
 
-		$result = $db->exec("SELECT * FROM contact_form ORDER BY `order`");
 
-		foreach ($result as $r) 
-			$formcompiled[$r["id"]] = $r;
+		// Do not pass go
+		if ($f3->get("contact.html")) return;
 
-		$f3->set("form", $formcompiled);
+		if (!$f3->exists("form"))
+		{
+			$result = $db->exec("SELECT * FROM contact_form ORDER BY `order`");
+
+			foreach ($result as $r) 
+				$formcompiled[$r["id"]] = $r;
+
+			$f3->set("form", $formcompiled);
+		}
 
 		$result = $db->exec("SELECT value FROM settings WHERE setting=?", "contact-custom_html")[0]["value"];
 
@@ -108,10 +148,11 @@ class contact extends prefab
 		if ($result == 0) {
 			
 			$tmp = $f3->UI; $f3->UI = $f3->CMS;
-			$snippet = \Template::instance()->render("template_snippets/contactform.html");
+			$snippet = \Template::instance()->render("adminUI/contact_form/contact_form.html");
 			$f3->UI = $tmp;
 
 			$f3->set("contact_form", $snippet);
+			$f3->set("contact.html", $snippet);
 		}
 	}
 
@@ -123,6 +164,11 @@ class contact extends prefab
 		$post = $f3->get("POST");
 
 		$sendemail = true;
+
+		if ($post["captcha"] != $f3->SESSION["captcha_code"]) {
+			$sendemail = false;
+			$f3->set("contact.captcha_error", true);
+		}
 
 		foreach ($post as $key => $value)
 		{
@@ -140,24 +186,24 @@ class contact extends prefab
 			{
 				case "name":
 					if (strlen($value) == 0)
-						$field["error"] = true;
+						$field["has_error"] = "true";
 
 					$f3->set("fromName", $value);
 				break;
 
 				case "text":
 					if (strlen($value) == 0)
-						$field["error"] = true;
+						$field["has_error"] = "true";
 				break;
 
 				case "textarea":
 					if (strlen($value) < 5)
-						$field["error"] = true;
+						$field["has_error"] = "true";
 				break;
 
 				case "number":
 					if (strlen($value) < 5)
-						$field["error"] = true;
+						$field["has_error"] = "true";
 				break;
 
 				case "email":

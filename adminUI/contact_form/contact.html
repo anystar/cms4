@@ -184,7 +184,7 @@
 								<set value="">
 							</default>
 						</switch>
-
+						
 						<div class="form-group">
 							<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
 							<div class="col-sm-9">
@@ -194,6 +194,11 @@
 
 					</repeat>
 					
+					<div class="input-group pull-right" style="margin-bottom:15px;width:85%">
+						<div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
+						<input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
+					</div>
+
 					<hr>
 					<div class="form-group">
 						<label for="sendto" class="col-sm-3 control-label">Send test to:</label>
@@ -201,7 +206,6 @@
 							<input name="sendto" value="{{@contact_email}}" type="email" class="form-control" placeholder="">
 						</div>
 					</div>
-
 
 					<div>After hitting submit please check your email. It may take up to 10 minutes to recieve.</div>
 					<button type="submit" class="btn btn-default pull-right">Submit Test Email</button>				

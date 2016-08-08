@@ -1,14 +1,16 @@
+
+{{@HELLO}}
+
 <form class="contact" action="{{@BASE}}/contact" method="post">
     
     <repeat group="{{ @form }}" value="{{ @field }}">
 
       <switch expr="{{@field.type}}">
-
         <case value="name">
-          <check if="{{@field.error}}">
+          <check if="{{@field.has_error}}">
               <true>
               <div class="form-group has-error has-feedback">
-                  <label for="name">{{@field.label}}</label>
+                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
                   <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
                   <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                   <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
@@ -17,7 +19,7 @@
 
               <false>
               <div class="form-group">
-                  <label for="name">{{@field.label}}</label>
+                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}          {{@field.has_error}}</label>
                   <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
               </div>
               </false>
@@ -25,10 +27,10 @@
         </case>
 
         <case value="text">
-          <check if="{{@field.error}}">
+          <check if="{{@field.has_error}}">
               <true>
               <div class="form-group has-error has-feedback">
-                  <label for="name">{{@field.label}}</label>
+                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
                   <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
                   <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                   <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
@@ -37,7 +39,7 @@
 
               <false>
               <div class="form-group">
-                  <label for="name">{{@field.label}}</label>
+                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
                   <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
               </div>
               </false>
@@ -45,10 +47,10 @@
         </case>
 
         <case value="number">
-          <check if="{{@field.error}}">
+          <check if="{{@field.has_error}}">
               <true>
               <div class="form-group has-error has-feedback">
-                  <label for="name">{{@field.label}}</label>
+                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
                   <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
                   <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                   <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
@@ -57,7 +59,7 @@
 
               <false>
               <div class="form-group">
-                  <label for="name">{{@field.label}}</label>
+                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
                   <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
               </div>
               </false>
@@ -65,10 +67,10 @@
         </case>
 
         <case value="email">
-            <check if="{{@field.error}}">
+            <check if="{{@field.has_error}}">
               <true>
               <div class="form-group has-error has-feedback">
-                  <label for="name">{{@field.label}}</label>
+                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
                   <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
                   <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                   <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
@@ -77,7 +79,7 @@
 
               <false>
               <div class="form-group">
-                  <label for="name">{{@field.label}}</label>
+                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
                   <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
               </div>
               </false>
@@ -85,10 +87,10 @@
         </case>
 
         <case value="textarea">
-          <check if="{{@field.error}}">
+          <check if="{{@field.has_error}}">
             <true>
             <div class="form-group has-error has-feedback">
-                <label for="Comment">{{@field.label}}</label>
+                <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
                 <textarea name="{{@field.label}}{{@field.id}}" class="form-control" rows="5">{{@field.value}}</textarea>
                 <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                 <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
@@ -107,13 +109,24 @@
       </switch>
     </repeat>                
     
-    <check if="false">
+    <check if="{{@contact.captcha_error==1}}">
       <true>
-        <span id="helpBlock" class="help-block">Please check captcha.</span>
+      <div class="input-group has-error" style="margin-bottom:15px;">
+        <div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
+        <input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
+        <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+      </div>
+      <div id="helpBlock" style="color: #a94442;" class="help-block">Please check captcha.</div>
       </true>
+
+      <false>
+      <div class="input-group" style="margin-bottom:15px;">
+        <div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
+        <input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
+      </div>
+      </false>
     </check>
     
-
     <check if="{{@CONFIG[contact.page] == 'all'}}">
       <input type="hidden" name="return" value="{{@PATH}}">
     </check>
