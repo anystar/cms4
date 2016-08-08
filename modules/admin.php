@@ -7,8 +7,12 @@ class admin extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		if ($f3->exists("COOKIE.PHPSESSID"))
+		new \DB\SQL\Session($f3->DB);
+
+		if ($f3->SESSION["user"] == $f3->CONFIG["email"])
 		{
+
+
 			admin::$signed = true;
 			$this->dashboard_routes($f3);
 
@@ -96,21 +100,26 @@ class admin extends prefab {
 		$post = $f3->get("POST");
 
 		// Check global user and pass
-		if ($post["user"] != $f3->get("CONFIG.global_email") && $post["pass"] != $f3->get("CONFIG.global_pass"))
-		{
-			// Check client user and pass
-			if ($post["user"] != $f3->get("client.email") && $post["pass"] != $f3->get("client.pass"))
-			{
-				admin::login_render();
-				return;
-			}
+		if ($post["user"] == $f3->get("CONFIG.global_email") && $post["pass"] == $f3->get("CONFIG.global_pass"))
+		{	
+			new \DB\SQL\Session($f3->DB);
+			$f3->set("SESSION.user", $post["user"]);
+			$f3->set("SESSION.root", true);
 		}
 
-		new Session();
-		$f3->set("SESSION.user", $post["user"]);
+		// Check client user and pass
+		else if ($post["user"] == $f3->CONFIG["email"] && $post["pass"] == $f3->CONFIG["pass"])
+		{
+			new \DB\SQL\Session($f3->DB);
+			$f3->set("SESSION.user", $post["user"]);
+		}
+		else 
+		{
+			admin::login_render($f3);
+			return;
+		}
 
 		$f3->set('UI', $f3->CMS."adminUI/");
-
 		if ($f3->get("POST.redirectWhere") == "live")
 			$f3->reroute("/");
 		else
