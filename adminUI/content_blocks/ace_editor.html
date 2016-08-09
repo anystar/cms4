@@ -8,7 +8,7 @@
     <title>Web Works CMS</title>
 
     <!-- Bootstrap -->
-    <link href="{{ @BASE }}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
     <link href="{{ @BASE }}/admin/theme" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -19,6 +19,10 @@
     <![endif]-->
 
 <style type="text/css" media="screen">
+    .container {
+      margin: 0 auto;
+    }
+    
     .container, .col-xs-12 {
       padding: 0;
     }
@@ -55,9 +59,7 @@
       <div class="row">
         <div class="col-xs-12">
           
-          <div id="editor">
-              {{@block.content}}
-          </div>
+          <div id="editor">{{@block.content}}</div>
 
         </div>
       </div>
@@ -97,7 +99,7 @@
               $.ajax({
                   url: "{{@BASE}}/admin/page/htmlsave",
                   method: "POST",
-                  data: { id: {{@block.id}}, contents: ace.edit("editor").getValue() },
+                  data: { editorID: '{{@block.page}}_id-{{@block.id}}', editabledata: ace.edit("editor").getValue() },
               }).done(function (response) {
                   alert("Content Saved");
               });

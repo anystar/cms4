@@ -106,7 +106,9 @@
                   <td align="right">
                     <check if="{{@name != 'all'}}"><a href="{{@SCHEME}}://{{@HOST}}{{@BASE}}/{{@name}}" target="_blank"><button><span class="glyphicon glyphicon-pencil"></span> Live Edit</button></a></check>
                     <a href="{{@BASE}}/admin/page/html_edit/{{@content_block.id}}"><button><span class="glyphicon glyphicon-list-alt"></span> HTML Edit</button></a>
+                    <check if="{{@webmaster}}">
                     <a href="{{@BASE}}/admin/page/delete_content/{{@content_block.id}}"><button><span class="glyphicon glyphicon-remove-sign"></span> Delete</button></a>
+                    </check>
                   </td>
               </tr>
               </repeat>

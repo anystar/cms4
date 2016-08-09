@@ -23,6 +23,12 @@ class content_blocks extends prefab {
 
 			$page = ($page!="/") ? trim($page, "/") : "index";
 
+			// Are there sub pages?
+			$page = explode("/", $page);
+
+			if (count($page) == 1)
+				$page = $page[0];
+
 			$this->retreiveContent($f3, $page);
 		}
 
@@ -52,7 +58,9 @@ class content_blocks extends prefab {
 		});
 
 		$f3->route('POST /admin/page/htmlsave', function ($f3, $params) {
-			content_blocks::save_inline($f3, $f3->POST["id"], $f3->POST["contents"]);
+			if (!admin::$signed) { return; }
+
+			content_blocks::save_inline($f3);
 			die;
 		});
 
@@ -88,7 +96,6 @@ class content_blocks extends prefab {
 		});
 	}
 
-
 	static function createContent($name, $page=null, $type=null, $dummy_content=null)
 	{
 		$db = base::instance()->DB;
@@ -104,54 +111,82 @@ class content_blocks extends prefab {
 
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
-		
-		$blocksraw = $db->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page=""', $page);
 
+		// Are we dealing with sub pages?
+		if (is_array($page))
+		{
+			$rootPage = $page[0];
+			$page = implode("/", $page);
 
-		$bc = array(); // Blocks compiled
-		$ck_instances = array();
-		foreach ($blocksraw as $key=>$block) {
-			if ($block["contentName"] != "")
-			{
-				// Wrap in content editable
-				if (admin::$signed) {
-
-					if ($block["page"] == "") $block["page"] = "all";
-
-					switch ($block['type'])
-					{
-						case "header":
-							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
-						break;
-
-						case "none": break;
-
-						default:
-							$block["content"] = "<div contenteditable='true' id='".$block["page"]."_".$block["id"]."'>" . $block["content"] . "</div>";
-						break;
-					}
-
-
-					$ck_instances[$key]["id"] = $block["page"]."_".$block["id"];
-					$ck_instances[$key]["type"] = $block["type"];
-				}
-
-				$f3->set($block["contentName"], $block["content"]);
-			}
+			// Lets get the contents of the root page
+			// and then we'll just override contents..
+			$this->setBlocks($f3, $rootPage, $page);
 		}
+
+		$this->setBlocks($f3, $page);
 
 		if (admin::$signed)
 		{
-			$f3->set("ck_instances", $ck_instances);		
-
-			$tmp = $f3->get("UI");
-			$f3->set('UI', $f3->CMS."adminUI/");
+			// Load up the Editor
+			$tmp = $f3->get("UI"); $f3->set('UI', $f3->CMS."adminUI/");
 			$inlinecode = Template::instance()->render("ckeditor_inline.js");
 			$f3->set('UI', $tmp);
 
 			$f3->concat("ckeditor", $inlinecode);
 			$f3->concat("admin", $inlinecode);
 		}
+	}
+
+	function setBlocks ($f3, $page, $subpage=null) {
+		$blocksraw = $f3->DB->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page=""', $page);
+
+		// There are no blocks to process
+		if (!$blocksraw) return;
+
+		$compiled = array();
+		foreach ($blocksraw as $key=>$block) {
+			
+			// skip if we have no content name.
+			if ($block["contentName"] == "") continue;
+
+			// if there is no page, label as for all pages
+			if ($block["page"] == "") $block["page"] = "all";
+
+			// If we are admin call the editor function
+			if (admin::$signed) {
+				if ($subpage!=null)
+				{
+					$block = $this->wrapWithCKEDITOR($f3, $block, $subpage);
+				}
+				else
+					$block = $this->wrapWithCKEDITOR($f3, $block, $page);
+
+			}
+
+			// Insert into hive
+			$f3->set($block["contentName"], $block["content"]);
+		}
+	}
+
+	function wrapWithCKEDITOR($f3, $block, $page) {
+		
+		// Make safe for the editor
+		$block["page"] = str_replace('/', '_forwardslash_', $page);
+
+		// Yet to be reimplemented!
+		switch ($block['type'])
+		{
+			default:
+				$block["content"] = "<div contenteditable='true' id='".$block["page"]."_id-".$block["id"]."'>" . $block["content"] . "</div>";
+			break;
+		}
+
+		$f3->ck_instances[] = array(
+			"id"=>$block["page"]."_id-".$block["id"],
+			"type"=>$block["type"]
+		);
+
+		return $block;
 	}
 
 	function loadAll ($f3) {
@@ -188,20 +223,41 @@ class content_blocks extends prefab {
 
 	static function save_inline($f3, $id=null, $content=null) 
 	{
-		if ($id==null)
-		{
-			$pageID = filter_var($f3->get("POST.editorID"), FILTER_SANITIZE_NUMBER_INT);
-			$pageContent = $f3->get("POST.editabledata");
-		} else {
-			$pageID = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
-			$pageContent = $content;
-		}
+
+		// Get Page name and Page ID
+		$page = str_replace('_forwardslash_', '/', $f3->get("POST.editorID"));
+		$tmp = explode("_id-", $page);
+		$page = $tmp[0];
+		$blockID = $tmp[1];
+
+		if (!$content)
+			$content = $f3->get("POST.editabledata");
 
 		$db = $f3->get("DB");
 
-		$db->exec("UPDATE contentBlocks SET content=:content WHERE id=:id", array(
-			":id"=>$pageID,
-			":content"=>$pageContent
+		// Get content name
+		$contentName = $db->exec("SELECT contentName FROM contentBlocks WHERE id=?", $blockID)[0]["contentName"];
+
+		// Does the content block exist?
+		$id = $db->exec("SELECT id FROM contentBlocks WHERE page=? AND contentName=?", [$page, $contentName]);
+
+		if (!$id)
+		{
+			// Copy Row
+			$result = $db->exec("
+					INSERT INTO contentBlocks (page, contentName, type) 
+					select page, contentName, type
+					from contentBlocks
+					where id=?
+				", $blockID);
+
+			$blockID = $db->lastInsertId();
+			$db->exec("UPDATE contentBlocks SET page=? WHERE id=?", [$page, $blockID]);
+		}
+
+		$result = $db->exec("UPDATE contentBlocks SET content=:content WHERE id=:id", array(
+				":id"=>$blockID,
+				":content"=>$content
 		));
 	}
 

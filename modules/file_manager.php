@@ -2,8 +2,8 @@
 
 class file_manager extends prefab {
 
-	static $upload_path = "uploads/";
-	static $image_upload_path = "uploads/images/";
+	static $upload_path = "uploads";
+	static $image_upload_path = "uploads/images";
 
 	function __construct() {
 		$f3 = base::instance();
@@ -132,7 +132,7 @@ class file_manager extends prefab {
 					$files[] = array(
 						"name" => $f,
 						"type" => "file",
-						"path" => $dir . '/' . $f,
+						"path" => base::instance()->BASE.'/'.$dir . '/' . $f,
 						"size" => filesize($dir . '/' . $f) // Gets the size of this file
 					);
 				}
@@ -167,8 +167,8 @@ class file_manager extends prefab {
 			die("<strong>Fatel Error in file manager module:</strong> Trying to make image upload directory. Please ensure upload directory is writable by group. Perhaps chmod g+w uploads or chown www-data:www-data uploads.<br>Upload folder is: ".$upload_path);			
 		}
 
-		if (!file_exists(getcwd()."/".$upload_path.".htaccess"))
-			file_put_contents(getcwd()."/".$upload_path.".htaccess", "RewriteEngine off");
+		if (!file_exists(getcwd()."/".$upload_path."/.htaccess"))
+			file_put_contents(getcwd()."/".$upload_path."/.htaccess", "RewriteEngine off");
 
 		return true;
 	}

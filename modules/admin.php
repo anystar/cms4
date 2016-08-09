@@ -7,8 +7,8 @@ class admin extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		new \DB\SQL\Session($f3->DB);
-
+		if ($f3->CONFIG["email"] == "") $f3->CONFIG["email"] = $f3->CONFIG["global_email"];
+		if ($f3->CONFIG["pass"] == "") $f3->CONFIG["pass"] = $f3->CONFIG["global_pass"];
 
 		if ($f3->SESSION["user"] == $f3->CONFIG["email"] || $f3->SESSION["user"] == $f3->CONFIG["global_email"])
 		{
@@ -25,6 +25,10 @@ class admin extends prefab {
 
 			if ($page[0] == "admin")
 				$f3->set('UI', $f3->CMS."adminUI/");
+
+			$f3->route('GET|POST /admin/login', function ($f3) {
+				$f3->reroute("/admin");
+			});
 		}
 
 		$f3->route('GET /admin/imgs/logo.png', function ($f3) {
@@ -94,15 +98,13 @@ class admin extends prefab {
 		// 	$f3->CONFIG["global_email"] = "";
 		// 	$f3->CONFIG["global_pass"] = "";
 		// }
-		
+
 		$f3->set('UI', $f3->CMS."adminUI/");
 		echo Template::instance()->render("login.html");
 	}
 
 	static public function login ($f3) {
 		$post = $f3->get("POST");
-
-
 
 		// Check global user and pass
 		if ($post["user"] == $f3->get("CONFIG.global_email") && $post["pass"] == $f3->get("CONFIG.global_pass"))
