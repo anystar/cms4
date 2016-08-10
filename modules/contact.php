@@ -311,6 +311,8 @@ class contact extends prefab
 		// 	d("Fatel Error in contact module: Email template does not exsist. Please create a html file named".contact::$email_template);
 		// }
 
+		contact::patch_columns_add_system();
+
 		return true;
 	}
 
@@ -404,6 +406,20 @@ class contact extends prefab
 	static public function delete_field ($f3, $params) {
 		base::instance()->DB->exec("DELETE FROM contact_form WHERE id=?", $params["field"]);
 		$f3->reroute("/admin/contact");
+	}
+
+	static function patch_columns_add_system ()
+	{
+		$result = base::instance()->DB->exec("PRAGMA table_info(contact_form)");
+		
+		//Patch to ensure type column is added.
+		foreach ($result as $r) {
+			if ($r["name"] == "system") {
+				return;
+			}
+		}
+
+		base::instance()->DB->exec("ALTER TABLE contact_form ADD COLUMN system int");
 	}
 
 }

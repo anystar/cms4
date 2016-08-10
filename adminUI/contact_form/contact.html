@@ -35,6 +35,7 @@
 	  <div class="col-xs-12">        
 		<h2>Contact Form</h2>
 		
+		<div class="boxshadow">
 		<table class="table table-condensed table-responsive">
 			<thead>
 				<th>Label</th>
@@ -122,102 +123,108 @@
 			</tr>
 			</form>
 		</table>
+		</div>
 
 			 <div class="row">
 			 <div class="col-xs-6">
-			<form class="form-horizontal" action="{{@BASE}}/admin/contact/settings" method="post">
+
 				<h2>Settings</h2>
+			 	<div class="boxshadow row">
+				<form class="form-horizontal" action="{{@BASE}}/admin/contact/settings" method="post">
 
-				<!-- Text input-->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="email">Email</label>  
-				  <div class="col-md-8">
-				  <input id="email" name="email" type="text" placeholder="email address" class="form-control input-md" required="" value="{{@contact_email}}">
-				  <span class="help-block">Where should contact form submit to?</span>  
+					<!-- Text input-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="email">Email</label>  
+					  <div class="col-md-8">
+					  <input id="email" name="email" type="text" placeholder="email address" class="form-control input-md" required="" value="{{@contact_email}}">
+					  <span class="help-block">Where should contact form submit to?</span>  
+					  </div>
+					</div>
+
+					<!-- Text input-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="name">Name</label>  
+					  <div class="col-md-8">
+					  <input id="name" name="name" type="text" placeholder="your name" class="form-control input-md" required="" value="{{@contact_name}}">
+					  <span class="help-block">Who should contact form address</span>  
+					  </div>
+					</div>
+
+					<!-- Text input-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="subject">Subject Line</label>  
+					  <div class="col-md-8">
+					  <input id="subject" name="subject" type="text" placeholder="" class="form-control input-md" required="" value="{{@contact_subject}}">
+					  <span class="help-block">eg: website enquiry</span>  
+					  </div>
+					</div>
+					<button type="submit" class="btn btn-default pull-right">Update Settings</button>                
 				  </div>
-				</div>
 
-				<!-- Text input-->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="name">Name</label>  
-				  <div class="col-md-8">
-				  <input id="name" name="name" type="text" placeholder="your name" class="form-control input-md" required="" value="{{@contact_name}}">
-				  <span class="help-block">Who should contact form address</span>  
-				  </div>
+				</form>
 				</div>
-
-				<!-- Text input-->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="subject">Subject Line</label>  
-				  <div class="col-md-8">
-				  <input id="subject" name="subject" type="text" placeholder="" class="form-control input-md" required="" value="{{@contact_subject}}">
-				  <span class="help-block">eg: website enquiry</span>  
-				  </div>
-				</div>
-				<button type="submit" class="btn btn-default pull-right">Update Settings</button>                
-			  </div>
-
-			</form>
 
 			  <div class="col-xs-6">
 				<h2>Test center</h2>
-				
-				<form class="form-horizontal" action="{{@BASE}}/contact" method="post">
-					<repeat group="{{@contact_fields}}" value="{{@field}}">
-						<switch expr="{{@field.type}}">
-							<case value="name">
-								<set value="John Smith">
-							</case>
-							<case value="number">
-								<set value="(03) 54444444">
-							</case>
-							<case value="email">
-								<set value="johnsmith@example.com">
-							</case>
-							<case value="textarea">
-								<set value="This is a test email from the admin panel">
-							</case>
-							<case value="text">
-								<set value="Dummy text">
-							</case>
-							<default>
-								<set value="">
-							</default>
-						</switch>
+				<div class="boxshadow row">
+					<form class="form-horizontal" action="{{@BASE}}/contact" method="post">
+						<repeat group="{{@contact_fields}}" value="{{@field}}">
+							<switch expr="{{@field.type}}">
+								<case value="name">
+									<set value="John Smith">
+								</case>
+								<case value="number">
+									<set value="(03) 54444444">
+								</case>
+								<case value="email">
+									<set value="johnsmith@example.com">
+								</case>
+								<case value="textarea">
+									<set value="This is a test email from the admin panel">
+								</case>
+								<case value="text">
+									<set value="Dummy text">
+								</case>
+								<default>
+									<set value="">
+								</default>
+							</switch>
+							
+							<div class="form-group">
+								<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
+								<div class="col-sm-9">
+									<input name="{{@field.label}}{{@field.id}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+								</div>
+							</div>
+
+						</repeat>
 						
+						<div class="input-group pull-right" style="margin-bottom:15px;width:85%">
+							<div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
+							<input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
+						</div>
+
+						<hr>
 						<div class="form-group">
-							<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
+							<label for="sendto" class="col-sm-3 control-label">Send test to:</label>
 							<div class="col-sm-9">
-								<input name="{{@field.label}}{{@field.id}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+								<input name="sendto" value="{{@contact_email}}" type="email" class="form-control" placeholder="">
 							</div>
 						</div>
 
-					</repeat>
-					
-					<div class="input-group pull-right" style="margin-bottom:15px;width:85%">
-						<div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
-						<input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
-					</div>
-
-					<hr>
-					<div class="form-group">
-						<label for="sendto" class="col-sm-3 control-label">Send test to:</label>
-						<div class="col-sm-9">
-							<input name="sendto" value="{{@contact_email}}" type="email" class="form-control" placeholder="">
-						</div>
-					</div>
-
-					<div>After hitting submit please check your email. It may take up to 10 minutes to recieve.</div>
-					<button type="submit" class="btn btn-default pull-right">Submit Test Email</button>				
-				</form>
+						<div>After hitting submit please check your email. It may take up to 10 minutes to recieve.</div>
+						<button type="submit" class="btn btn-default pull-right">Submit Test Email</button>				
+					</form>
+				</div>
 
 			  </div>
 			  </div>
 
 		<h2>Email Template</h2>
 		
-		<iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/admin/contact/email_template"></iframe>
-
+		<div class="boxshadow row">
+			<iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/admin/contact/email_template"></iframe>
+		</div>
 
 	  </div>
 	</div>

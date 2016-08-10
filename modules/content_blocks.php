@@ -41,6 +41,7 @@ class content_blocks extends prefab {
 
 		$f3->route('GET /admin/pages', 'content_blocks::render_quick_view');
 		$f3->route('GET /admin/pages/@page', 'content_blocks::render_admin_page');
+		$f3->route('GET /admin/pages/@page/*', 'content_blocks::render_admin_page');
 
 		$f3->route('GET /admin/page/edit/@page', "content_blocks::admin_edit_render");
 		$f3->route('POST /admin/page/generate', function ($f3) {
@@ -210,12 +211,27 @@ class content_blocks extends prefab {
 		// Don't bother if there are no content blocks from DB
 		if (!$result) return;
 
+		$subpage_counter = array();
 		foreach ($result as $contentBlock)
 		{
-			if ($contentBlock["page"] == "all" || $contentBlock["page"] == "")
+			$page = $contentBlock["page"];
+
+			if ($page == "all" || $page == "")
 				$blocks["all"][] = $contentBlock;
 			else
-				$blocks[$contentBlock["page"]][] = $contentBlock;
+			{
+				$tmp = explode("/", $page);
+				if (count($tmp) > 1) {
+					$subpage_counter[$tmp[0]][$page] = 1;
+					continue; // Ignore sub pages
+				}
+
+				$blocks[$page][] = $contentBlock;
+			}
+		}
+
+		foreach ($subpage_counter as $key=>$value) {
+			$blocks[$key]["subpages"] = count($value);
 		}
 
 		$f3->set("pages", $blocks);

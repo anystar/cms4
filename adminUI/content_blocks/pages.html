@@ -60,13 +60,19 @@
     <div class="container">
     <h2>Content Manager</h2>
         <div class="col-xs-3">
-          <h3>Pages</h3>
-          <ul class="nav nav-pills nav-stacked">
-            <repeat group="{{ @pages }}" key="{{ @name }}" value="{{ @page }}">
-              <li><a href="{{@BASE}}/admin/pages/{{@name}}">{{ @name }}</a></li>
-            </repeat>
-          </ul>
-
+          <h2>Website Pages</h2>
+          <div class="boxshadow">
+            <ul class="nav nav-pills nav-stacked">
+              <repeat group="{{ @pages }}" key="{{ @name }}" value="{{ @page }}">
+                <li><a href="{{@BASE}}/admin/pages/{{@name}}">
+                  <span class="glyphicon glyphicon-list-alt"></span> {{ @name }}
+                  <check if="{{@page.subpages}}">
+                    ({{@page.subpages}})
+                  </check>
+                </a></li>
+              </repeat>
+            </ul>
+          </div>
         </div>
 
 
