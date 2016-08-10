@@ -38,29 +38,51 @@ class pages extends prefab {
 		});
 
 
-		// Handle sub pages
+		// Handle sub pages.
+		// 
+		// Please read:
+		// Sub pages are determined by folder structure. For example
+		// if there is a physical folder called "products" it will attempt
+		// to search for the file in that folder. If the file doesn't exsist
+		// it will look for a generic.html file.
 		$f3->route('GET /@page/*', function ($f3, $params) {
-		
-			// prevent running twice.
+
+			// prevent running route twice.
 			if (pages::$has_routed) exit;		
 			pages::$has_routed = true;
 
-				$page = $params["page"] . ".html";
-				$subpage = ltrim($params[0], '/');
+			$folder = $params["page"];
+			$page = ".".$params[0].".html";
 
-				$result = $f3->DB->exec("SELECT id FROM pages WHERE page=?", $subpage)[0]["id"];
+			// Is the root part of the address a folder?
+			if (!is_dir($params["page"]))
+			{
+				$f3->error("404");
+				return;
+			}
 
-				$f3->set('UI', getcwd()."/");
+			// Is there a page file?
+			if (is_file($page))
+				$fileToLoad = $page;		
+			else
+				// fdsfdsfds
+				$fileToLoad = $folder."/generic.html";
 
-				if (!$result)
-					$f3->error("404");
+			// Is there a record in the database about this page?
+			$path = ltrim($params[0], '/');
+			$result = $f3->DB->exec("SELECT id FROM pages WHERE page=?", $path)[0]["id"];
+
+
+			if (!$result)
+				$f3->error("404");
+			else
+			{
+				// One last check to ensure page exsists
+				if (file_exists($fileToLoad))
+					echo Template::instance()->render($fileToLoad);
 				else
-				{
-					if (file_exists($page))
-						echo Template::instance()->render($page);
-					else
-						$f3->error("404");
-				}
+					$f3->error("404");
+			}
 		});
 	}
 
