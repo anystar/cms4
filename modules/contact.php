@@ -2,12 +2,12 @@
 
 class contact extends prefab
 {
-
+	static $moduleName = "Contact Form";
 	static $email_template = "website-enquiry.html";
 	static $port = 25;
+	static $systemID = null;
 
-
-	function __construct() {
+	function __construct ($systemID=null) {
 		$f3 = base::instance();
 
 		$default = $f3->exists("CONFIG[contact.page]") ? $f3->get("CONFIG[contact.page]") : "/contact";
