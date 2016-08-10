@@ -310,7 +310,6 @@ class content_blocks extends prefab {
 
 	static public function render_quick_view($f3)
 	{
-
 		if (content_blocks::instance()->hasInit()) {
 			content_blocks::instance()->loadAll($f3);
 
@@ -321,8 +320,6 @@ class content_blocks extends prefab {
 			echo Template::instance()->render("content_blocks/nopages.html");	
 		}
 	}
-
-
 
 	static public function get_page ($f3, $page) {
 

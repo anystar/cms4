@@ -53,9 +53,10 @@ $(function() {
 
 	sg_div.append(save);
 
-	var adminlink = $('<a href="{{@BASE}}/admin" target="_cmswindow" type="button">CMS Panel</a>');
-
-	sg_div.append(adminlink);
+	<check if="{{@webmaster}}">
+	sg_div.append($('<a href="{{@BASE}}/admindb" target="_cmswindow" type="button">DB</a>'));
+	</check>
+	sg_div.append($('<a href="{{@BASE}}/admin" target="_cmswindow" type="button">CMS Panel</a>'));
 
 	$('body').css({
 		'transition': 'transform 0.4s ease'
