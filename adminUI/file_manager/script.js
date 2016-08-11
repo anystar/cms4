@@ -337,10 +337,30 @@ $(function(){
 
 					var file = $('<li class="files"><a title="'+ f.path +'" class="files">'+icon+'<span class="name">'+ name +'</span> <span class="details">'+fileSize+'</span></a></li>');
 					file.click({path: f.path}, function (data) {
-				        var funcNum = getUrlParam( 'CKEditorFuncNum' );
-				        window.opener.CKEDITOR.tools.callFunction( funcNum, data.data.path );
-				        window.close();
+				        try
+				        {
+					        var funcNum = getUrlParam( 'CKEditorFuncNum' );
+					        window.opener.CKEDITOR.tools.callFunction( funcNum, data.data.path );
+					        window.close();
+				    	} catch (err) {}
 					});
+
+					var del = $('<button style="z-index:1000;">Delete</button>');
+					del.click({path: f.path}, function(data) {
+						var c = confirm("Are you sure?");
+						if (c) {
+							$.ajax({
+								method: "POST",
+								url: "{{@BASE}}/admin/file_manager/delete",
+								data: { file: data.data.path }
+							});
+
+							$(data.currentTarget).parent().parent().parent().remove();
+						}
+						return false;
+					});
+
+					file.find(".details").append(del);
 
 					file.appendTo(fileList);
 				});

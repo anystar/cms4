@@ -32,6 +32,10 @@ class file_manager extends prefab {
 
 	function admin_routes($f3) {
 		
+		$f3->route("GET /admin/file_manager", function ($f3) {
+			echo Template::instance()->render("file_manager/file_manager.html");
+		});
+
 		$f3->route("POST /admin/file_manager/image_upload", function ($f3) {
 			$response = file_manager::upload_image($f3, $f3->FILES["upload"]["tmp_name"], $f3->FILES["upload"]["name"]);
 
@@ -70,6 +74,21 @@ class file_manager extends prefab {
 			echo Template::instance()->render("file_manager/script.js", "text/javascript");
 		});
 
+		$f3->route("POST /admin/file_manager/delete", function ($f3) {
+
+			$file = $f3->POST["file"];
+
+			// remove base path if it exsits
+			$file = ltrim($file, $f3->BASE);
+
+			if (file_exists(getcwd()."/".$file)) {
+				unlink(getcwd()."/".$file);
+				echo 1;
+			}
+
+			die;
+		});
+
 	}
 
 	static function upload_image($f3, $temp_path, $temp_name) {
@@ -94,7 +113,7 @@ class file_manager extends prefab {
 		echo json_encode(array(
 			"name" => basename(file_manager::$upload_path),
 			"type" => "folder",
-			"path" => file_manager::$upload_path,
+			"path" => file_manager::$upload_path."/",
 			"items" => $response
 		));
 	}
@@ -128,11 +147,10 @@ class file_manager extends prefab {
 				else {
 
 					// It is a file
-
 					$files[] = array(
 						"name" => $f,
 						"type" => "file",
-						"path" => base::instance()->BASE.'/'.$dir . '/' . $f,
+						"path" => base::instance()->BASE.'/'.$dir.'/'.$f,
 						"size" => filesize($dir . '/' . $f) // Gets the size of this file
 					);
 				}

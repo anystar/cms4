@@ -1,6 +1,8 @@
       <ul>
         <li><a href="{{ @BASE }}/admin/">Home</a></li>
-        <li><a href="{{ @BASE }}/admin/pages">Content</a></li>
+
+        <check if="{{@webmaster}}"><li><a href="{{ @BASE }}/admin/pages">Content</a></li></check>
+        <li><a href="{{ @BASE }}/admin/file_manager">File Manager</a></li>
         <li><a href="{{ @BASE }}/admin/banners">Banners</a></li>
         <li><a href="{{ @BASE }}/admin/gallery">Galleries</a></li>
         <li><a href="{{ @BASE }}/admin/contact">Contact Form</a></li>
