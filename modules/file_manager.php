@@ -38,7 +38,7 @@ class file_manager extends prefab {
 			echo json_encode([
 					"uploaded" => 1,
 					"fileName" => $response,
-					"url" => $f3->BASE . "/" . file_manager::$image_upload_path . $response
+					"url" => $f3->BASE . "/" . file_manager::$image_upload_path . "/" . $response
 				]);
 
 			exit;
@@ -47,7 +47,7 @@ class file_manager extends prefab {
 		$f3->route("POST /admin/file_manager/image_upload_via_dialog", function ($f3) {				
 			$response = file_manager::upload_image($f3, $f3->FILES["upload"]["tmp_name"], $f3->FILES["upload"]["name"]);
 			
-			$path = file_manager::$image_upload_path . $response;
+			$path = file_manager::$image_upload_path . "/" . $response;
 			$ck_func_number = $f3->GET["CKEditorFuncNum"];
 			echo "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('$ck_func_number', '$path', 'File uploaded successfully');</script>";
 			exit;
@@ -79,7 +79,7 @@ class file_manager extends prefab {
 		$new_name = str_replace(' ', '_', $new_name);
 		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
 
-		move_uploaded_file($file, file_manager::$image_upload_path . $new_name);
+		move_uploaded_file($file, file_manager::$image_upload_path . "/" . $new_name);
 
 		return $new_name;
 	}
