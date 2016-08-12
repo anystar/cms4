@@ -125,7 +125,8 @@ class banners extends prefab {
 
 	}
 
-	static function admin_render() {
+	static function admin_render($f3) {
+		$f3->set("max_upload_size", file_manager::file_upload_max_size());
 
 		//TODO: Create html files for admin display and generation
 		if (banners::hasInit())
@@ -237,5 +238,41 @@ class banners extends prefab {
 				imagegif($temp_image->data(banners::$file_type, 100), $save_as);
 			break;
 		}
+	}
+
+
+	// Drupal has this implemented fairly elegantly:
+	// http://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
+	static function file_upload_max_size () {
+	  static $max_size = -1;
+
+	  if ($max_size < 0) {
+	    // Start with post_max_size.
+	    $max_size = gallery::parse_size(ini_get('post_max_size'));
+
+	    // If upload_max_size is less, then reduce. Except if upload_max_size is
+	    // zero, which indicates no limit.
+	    $upload_max = gallery::parse_size(ini_get('upload_max_filesize'));
+	    if ($upload_max > 0 && $upload_max < $max_size) {
+	      $max_size = $upload_max;
+	    }
+	  }
+	  return $max_size;
+	}
+
+	static function parse_size($size) {
+		if ($size == 0) return "unlimted";
+		
+		return $size;
+
+	  $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
+	  $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+	  if ($unit) {
+	    // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
+	    return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+	  }
+	  else {
+	    return round($size);
+	  }
 	}
 }

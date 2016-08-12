@@ -79,18 +79,15 @@
 				</form>
 			</div>
 		</div>
-		
 	  </div>
 	</div>
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="{{ @BASE }}/admin/gallery/js/dropzone.js"></script>
 	<script src="{{ @BASE }}/admin/gallery/js/lity.min.js"></script>
-
 	<script>
 		$(function() {
 			$(".delete_image").click(function (d) {
-				
 				$.ajax(d.currentTarget.href);
 				$(this).parent().parent().remove();
 				

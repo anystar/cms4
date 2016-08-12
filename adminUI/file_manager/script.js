@@ -20,7 +20,10 @@ $(function(){
 
 		$(window).on('hashchange', function(){
 
-			goto(window.location.hash);
+			if (window.location.hash == "")
+				goto("#{{@CONFIG.file_upload_path}}");
+			else
+				goto(window.location.hash);
 
 			// We are triggering the event. This will execute 
 			// this function on page load, so that we show the correct folder:
@@ -143,6 +146,8 @@ $(function(){
 
 			hash = decodeURIComponent(hash).slice(1).split('=');
 
+			$("#location").val(hash);
+
 			if (hash.length) {
 				var rendered = '';
 
@@ -195,7 +200,6 @@ $(function(){
 		}
 
 		// Splits a file path and turns it into clickable breadcrumbs
-
 		function generateBreadcrumbs(nextDir){
 			var path = nextDir.split('/').slice(0);
 			for(var i=1;i<path.length;i++){

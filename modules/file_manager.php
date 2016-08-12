@@ -8,11 +8,15 @@ class file_manager extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		if ($f3->exists("config.file_upload_path"))
-			file_manager::$upload_path = $f3->get("config.file_upload_path");
+		if ($f3->exists("CONFIG.file_upload_path"))
+			file_manager::$upload_path = $f3->get("CONFIG.file_upload_path");
+		else
+			$f3->set("CONFIG.file_upload_path", file_manager::$upload_path);
 
-		if ($f3->exists("config.image_upload_path"))
-			file_manager::$upload_path = $f3->get("config.image_upload_path");
+		if ($f3->exists("CONFIG.image_upload_path"))
+			file_manager::$upload_path = $f3->get("CONFIG.image_upload_path");
+		else
+			$f3->set("CONFIG.image_upload_path", file_manager::$upload_path);
 
 		if ($this->hasInit())
 		{
@@ -33,7 +37,23 @@ class file_manager extends prefab {
 	function admin_routes($f3) {
 		
 		$f3->route("GET /admin/file_manager", function ($f3) {
+			$f3->set("max_upload_size", file_manager::file_upload_max_size());
+
 			echo Template::instance()->render("file_manager/file_manager.html");
+		});
+
+		$f3->route("POST /admin/file_manager/dropzone", function ($f3) {
+			
+			$uploadTo = $f3->POST["location"];
+
+			$file = $f3->FILES["file"]["tmp_name"];
+			$new_name = $f3->FILES["file"]["name"];
+			$new_name = str_replace(' ', '_', $new_name);
+			$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
+
+			echo  $uploadTo . "/" . $new_name;
+			move_uploaded_file($file, $uploadTo . "/" . $new_name);
+			exit;
 		});
 
 		$f3->route("POST /admin/file_manager/image_upload", function ($f3) {
@@ -205,5 +225,41 @@ class file_manager extends prefab {
 		// 	echo Template::instance()->render("module_name/module.html");
 		// else
 		// 	echo Template::instance()->render("module_name/module.html");
+	}
+
+
+	// Drupal has this implemented fairly elegantly:
+	// http://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
+	static function file_upload_max_size () {
+	  static $max_size = -1;
+
+	  if ($max_size < 0) {
+	    // Start with post_max_size.
+	    $max_size = gallery::parse_size(ini_get('post_max_size'));
+
+	    // If upload_max_size is less, then reduce. Except if upload_max_size is
+	    // zero, which indicates no limit.
+	    $upload_max = gallery::parse_size(ini_get('upload_max_filesize'));
+	    if ($upload_max > 0 && $upload_max < $max_size) {
+	      $max_size = $upload_max;
+	    }
+	  }
+	  return $max_size;
+	}
+
+	static function parse_size($size) {
+		if ($size == 0) return "unlimted";
+		
+		return $size;
+
+	  $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
+	  $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+	  if ($unit) {
+	    // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
+	    return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+	  }
+	  else {
+	    return round($size);
+	  }
 	}
 }
