@@ -28,7 +28,7 @@ class wizard_creator {
 		$f3->route("GET /cms.php", function ($f3) {
 			
 			$f3->linuxuser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
-			$f3->POST["password"] = "KRXPoErYxHgmZD7o6Ky0";
+			$f3->POST["password"] = "";
 
 			echo Template::instance()->render("wizard/step1.html");
 		});
@@ -38,14 +38,14 @@ class wizard_creator {
 			set_include_path("/home/phpseclib/");
 			include('Net/SSH2.php');
 
+			$dir = getcwd();
+			$user = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
+
 			$ssh = new Net_SSH2('localhost');
-			if (!$ssh->login('root', $f3->POST["password"])) {
+			if (!$ssh->login($user, $f3->POST["password"])) {
 			    $f3->mock("GET /cms.php");
 			    exit();
 			}
-
-			$dir = getcwd();
-			$user = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
 
 			define('NET_SSH2_LOGGING', 2);
 
@@ -53,9 +53,6 @@ class wizard_creator {
 			$ssh->exec("cd {$dir}");
 			$ssh->exec("unzip -o {$dir}/core.zip -d {$dir}/");
 
-			$
-
-			echo $ssh->getLog();
 			//$ssh->exec("rm -f {$dir}/core.zip");
 	
 			// $ssh->exec("chown www-data:www-data {$dir}/tmp");

@@ -10,6 +10,11 @@
     padding-top: 5px;
 }
 
+#webworkscms_admintoolbar .spacer {
+    display: inline-block;
+    width: 20px;
+}
+
 #webworkscms_admintoolbar input, #webworkscms_admintoolbar a  {
     display: inline-block;
     margin: 5px 0 5px 5px;
@@ -23,6 +28,15 @@
     color: #fff;
     font-size: 18px;
     font-weight: bold;
+}
+
+#webworkscms_admintoolbar .inputbox {
+    background-color: #fff;
+    color: #444;
+
+    &:active, &:hover {
+        background-color: #fff;
+    }
 }
 
 #webworkscms_admintoolbar input:hover, #webworkscms_admintoolbar a:hover {

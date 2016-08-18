@@ -36,11 +36,14 @@ function set_config($name, $value) {
 		base::instance()->DB->exec("INSERT INTO settings VALUES (?, ?)", [$name, $value]);
 }
 
-
- function d ($x=null) {
+function d ($x=null) {
 
         echo "<pre>";
-        if (f3) print_r((f3::instance()->DB->log()));
+ 		if (class_exists("f3"))
+ 		{
+ 			if (f3::instance()->DB)
+	 			print_r((f3::instance()->DB->log()));
+ 		}
         echo "</pre><br><br>";
         echo "<hr><br><br>";
         if ($x == null) {
@@ -52,9 +55,7 @@ function set_config($name, $value) {
         }
         echo "<br><br><hr><br><br>";
 
-        if (f3)
-	        f3::instance()->error(0);
-
+        if (class_exists("f3")) f3::instance()->error(0); 
         die;
 }
 

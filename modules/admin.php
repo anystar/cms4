@@ -61,6 +61,7 @@ class admin extends prefab {
 
 		$f3->route("POST /admin/login", function ($f3) {
 			$f3->set('UI', $f3->CMS."adminUI/");
+
 			admin::login($f3);
 		});
 	}
@@ -89,15 +90,15 @@ class admin extends prefab {
 	static public function login_render ($f3)
 	{
 		// Set default password for inhouse
-		// if ($f3->CONFIG["inhouse_ip"] == "110.140.119.209") {
-		// 	$f3->POST["email"] = $f3->CONFIG["global_email"];
-		// 	$f3->POST["pass"] = $f3->CONFIG["global_pass"];
-		// }
-		// else
-		// {
-		// 	$f3->CONFIG["global_email"] = "";
-		// 	$f3->CONFIG["global_pass"] = "";
-		// }
+		if ($f3->HOST == "localhost" || $f3->HOST == "dev.webworksau.com") {
+			$f3->POST["email"] = $f3->CONFIG["global_email"];
+			$f3->POST["pass"] = $f3->CONFIG["global_pass"];
+		}
+		else
+		{
+			$f3->CONFIG["global_email"] = "";
+			$f3->CONFIG["global_pass"] = "";
+		}
 
 		$f3->set('UI', $f3->CMS."adminUI/");
 		echo Template::instance()->render("login.html");
@@ -125,6 +126,8 @@ class admin extends prefab {
 			admin::login_render($f3);
 			return;
 		}
+
+
 
 		$f3->set('UI', $f3->CMS."adminUI/");
 		if ($f3->get("POST.redirectWhere") == "live")
