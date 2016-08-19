@@ -76,6 +76,19 @@ class content_blocks extends prefab {
 		$f3->route('GET /admin/page/html_edit/@content', "content_blocks::admin_render_htmledit");
 		$f3->route('GET /admin/page/ace.js', "content_blocks::ace_editor");
 
+		$f3->route('POST /admin/page/add_content [ajax]', function ($f3) {
+			$page = ltrim($f3->POST["page"], $f3->BASE);;
+			$content_name = str_replace(" ", "_", $f3->POST["content_name"]);
+
+			if (strlen($content_name) > 0)
+			{
+				$id = $f3->DB->exec("SELECT id FROM contentBlocks WHERE (page=? OR page='all' OR page IS NULL) AND contentName=?", [$page, $content_name]);
+
+				if (!$id)
+					content_blocks::createContent($content_name, $page, NULL, "Content Here");
+			}
+		});
+
 		$f3->route('POST /admin/page/add_content', function ($f3) {
 
 			if (strlen($f3->POST["content_name"]) == 0)
@@ -161,7 +174,6 @@ class content_blocks extends prefab {
 				}
 				else
 					$block = $this->wrapWithCKEDITOR($f3, $block, $page);
-
 			}
 
 			// Insert into hive
@@ -239,6 +251,7 @@ class content_blocks extends prefab {
 
 	static function save_inline($f3, $id=null, $content=null) 
 	{
+		$db = $f3->get("DB");
 
 		// Get Page name and Page ID
 		$page = str_replace('_forwardslash_', '/', $f3->get("POST.editorID"));
@@ -246,26 +259,24 @@ class content_blocks extends prefab {
 		$page = $tmp[0];
 		$blockID = $tmp[1];
 
-		if (!$content)
-			$content = $f3->get("POST.editabledata");
-
-		$db = $f3->get("DB");
+		// Get content
+		$content = $f3->get("POST.editabledata");
 
 		// Get content name
 		$contentName = $db->exec("SELECT contentName FROM contentBlocks WHERE id=?", $blockID)[0]["contentName"];
 
 		// Does the content block exist?
-		$id = $db->exec("SELECT id FROM contentBlocks WHERE page=? AND contentName=?", [$page, $contentName]);
+		$id = $db->exec("SELECT id FROM contentBlocks WHERE (page=? OR page='all' OR page IS NULL) AND contentName=?", [$page, $contentName]);
 
 		if (!$id)
 		{
+			// Get the orginal values from products
+			$orginalVals = $db->exec("SELECT page, contentName, type FROM contentBlocks WHERE id=?", $blockID)[0];
+
 			// Copy Row
 			$result = $db->exec("
-					INSERT INTO contentBlocks (page, contentName, type) 
-					select page, contentName, type
-					from contentBlocks
-					where id=?
-				", $blockID);
+					INSERT INTO contentBlocks (page, contentName, type) VALUES (?, ?, ?)
+				", [$orginalVals["page"], $orginalVals["contentName"], $orginalVals["type"]]);
 
 			$blockID = $db->lastInsertId();
 			$db->exec("UPDATE contentBlocks SET page=? WHERE id=?", [$page, $blockID]);

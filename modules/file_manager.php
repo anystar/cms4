@@ -170,7 +170,7 @@ class file_manager extends prefab {
 					$files[] = array(
 						"name" => $f,
 						"type" => "file",
-						"path" => base::instance()->BASE.'/'.$dir.'/'.$f,
+						"path" => $dir.'/'.$f,
 						"size" => filesize($dir . '/' . $f) // Gets the size of this file
 					);
 				}

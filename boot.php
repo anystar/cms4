@@ -1,9 +1,8 @@
 <?php
-require_once("tools/tools.php");
-
 ########################################
 ######## Default configuration #########
 ########################################
+require_once("tools/tools.php");
 
 // Merge config that may be coming from clients folder
 if (isset($config))
@@ -11,17 +10,20 @@ if (isset($config))
 else
 	$config = parse_ini_file("config.ini", true);
 
+###############################################
+## Run installation if config does not exist ##
+###############################################
+if (!file_exists(getcwd()."/.htaccess")) {
+	include("modules/wizard_creator.php");
+	new wizard_creator($config["paths"]["cms"], $config["paths"]["f3"]);
+}
+
 ########################################
 ## Check folder and file permissions  ##
 ########################################
-if (!file_exists(getcwd()."/.htaccess")) {
-	include("modules/wizard_creator.php");
-	new wizard_creator($config["paths"]["cms"], $f3_location);
-}
-
 // Required folders for operation
 if (!file_exists($config["paths"]["cms"])) d("Webworks CMS not found at". $config["paths"]["cms"].". Please update $\cms_location variable to point to CMS folder.");
-if(($f3 = include $config["paths"]["f3"]) === false) d("Fat free framework not found at $f3_location. Please download from http://fatfreeframework.com/");
+if(($f3 = include $config["paths"]["f3"]) === false) d("Fat free framework not found at ".$config["paths"]["f3"].". Please download from http://fatfreeframework.com/");
 if (!file_exists(getcwd()."/tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder with group writable permissions. (chmod g+w tmp or chmod 755 db)";exit; }
 if (!is_writable(getcwd()."/tmp/")) { echo "Please make <strong>tmp</strong> folder writable by group";exit; }
 if (!file_exists(getcwd()."/db")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder with group writable permissions. (chmod g+w db chmod 755 db)";exit; }
@@ -35,6 +37,9 @@ if (!file_exists(getcwd()."/.htaccess")) htaccess_example();
 
 if ($config['enable_phpliteadmin']) {
 	$db_sub_folder = "admindb";
+
+	if ($f3->HOST == "localhost" || $f3->HOST == "dev.webworksau.com")
+		$adminDBpassword = $config["global_pass"];
 
 	$url = pathinfo($_SERVER["REQUEST_URI"]);
 	$dir = basename($url["dirname"]);

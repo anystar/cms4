@@ -248,7 +248,7 @@ class contact extends prefab
 			$fromAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-from_address'")[0]["value"];
 
 		// Worst case just set it to admin@webworksau.com...
-		if (!$fromAddress) $fromAddress = "admin@webworksau.com";
+		$fromAddress = "admin@webworksau.com";
 
 		$smtp = new SMTP("127.0.0.1", contact::$port, "", "", "");
 
@@ -300,7 +300,7 @@ class contact extends prefab
 		$db = f3::instance()->get("DB");
 		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contact_form'");
 		
-		if (empty($result)) 
+		if (empty($result))
 			return false;
 
 		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");

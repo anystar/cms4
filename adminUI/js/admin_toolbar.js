@@ -1,9 +1,12 @@
 $(function() {
 
-	var sg_div = $('<div>').attr('id', 'webworkscms_admintoolbar');
-	$('body').append(sg_div);
+	var top_div = $('<div>').attr('id', 'webworkscms_admintoolbar');
+	$('body').append(top_div);
 
-	var save = $('<input id="savebutton" type="button" value="Save"/>');
+	var r_div = $('<span>').attr('id', 'right_div');
+	top_div.append(r_div);
+
+	var save = $('<input class="textinput" id="savebutton" type="button" value="Save"/>');
 	save.click(function () {
 
 		Object.keys(CKEDITOR.instances).forEach(function(key,index) {
@@ -51,15 +54,41 @@ $(function() {
 		return true;
 	});
 
-	sg_div.append(save);
-
-	<check if="{{@webmaster}}">
-	sg_div.append($('<a href="{{@BASE}}/admindb" target="_cmswindow" type="button">DB</a>'));
-	</check>
-	sg_div.append($('<a href="{{@BASE}}/admin" target="_cmswindow" type="button">CMS Panel</a>'));
-
-	$('body').css({
-		'transition': 'transform 0.4s ease'
+	var inputBox = $('<input id="addContentBoxInput" class="inputbox" placeholder="add content block" type="text">');
+	inputBox.keypress(function(e) {
+		if(e.which === 32) return false;
 	});
 
+	var add = $('<input id="addContentBoxBtn" class="textinput" type="button" value="+"/>');
+	add.click(function (data) {
+		var val = $("#addContentBoxInput").val();
+		if (val != "") {
+			$("#addContentBoxInput").prop('readonly', true);
+			$.ajax({
+				method: "POST",
+				url: "{{@BASE}}/admin/page/add_content",
+				data: { content_name: val, page:window.location.pathname }
+			}).done(function () {
+				$("#addContentBoxInput").val("");
+				$("#addContentBoxInput").prop('readonly', false);
+			});
+		}
+	});
+
+	<check if="{{@webmaster}}">
+	r_div.append(inputBox);
+	r_div.append(add);
+	</check>
+
+	r_div.append(save);
+	r_div.append($('<div class="spacer"></div>'));
+	<check if="{{@webmaster}}">r_div.append($('<a href="{{@BASE}}/admindb" target="_cmswindow" type="button">DB</a>'));</check>
+	r_div.append($('<a href="{{@BASE}}/admin" target="_cmswindow" type="button">CMS Panel</a>'));
+
+	var toggleBtn = $('<input class="textinput" type="button" value="~"/>');
+	toggleBtn.click(function () {
+		r_div.toggle();
+	});
+
+	top_div.append(toggleBtn);
 });
