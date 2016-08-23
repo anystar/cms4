@@ -48,14 +48,14 @@ if ($config['enable_phpliteadmin']) {
 
 	if ($url["filename"] == "phpliteadmin")
 	{
-		include("/home/cms/phpliteadmin/dynamic_myAdmin.php");
-		die;
+		include($config["paths"]["cms"]."/phpliteadmin/dynamic_myAdmin.php");
+		exit;
 	}
 
 	if ($dir == $db_sub_folder || $url["basename"] == $db_sub_folder || $dir2[0] == $db_sub_folder)
 	{
-		include("/home/cms/phpliteadmin/phpliteadmin.php");
-		die;
+		include($config["paths"]["cms"]."/phpliteadmin.php");
+		exit;
 	}
 }
 
