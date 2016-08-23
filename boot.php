@@ -54,7 +54,7 @@ if ($config['enable_phpliteadmin']) {
 
 	if ($dir == $db_sub_folder || $url["basename"] == $db_sub_folder || $dir2[0] == $db_sub_folder)
 	{
-		include($config["paths"]["cms"]."/phpliteadmin.php");
+		include($config["paths"]["cms"]."/phpliteadmin/phpliteadmin.php");
 		exit;
 	}
 }
