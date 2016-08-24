@@ -107,6 +107,9 @@ class admin extends prefab {
 	static public function login ($f3) {
 		$post = $f3->get("POST");
 
+		if ($f3->SETTINGS["admin-user"] != "") $f3->CONFIG["email"] = $f3->SETTINGS["admin-user"];
+		if ($f3->SETTINGS["admin-user"] != "") $f3->CONFIG["email"] = $f3->SETTINGS["admin-user"];
+
 		// Check global user and pass
 		if ($post["user"] == $f3->get("CONFIG.global_email") && $post["pass"] == $f3->get("CONFIG.global_pass"))
 		{	
@@ -159,6 +162,7 @@ class admin extends prefab {
 	}
 
 	static public function settings($f3) {
+
 		echo Template::instance()->render("settings.html");
 	}
 
