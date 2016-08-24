@@ -8,15 +8,15 @@ class file_manager extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		if ($f3->exists("CONFIG.file_upload_path"))
-			file_manager::$upload_path = $f3->get("CONFIG.file_upload_path");
+		if ($f3->exists("SETTINGS.file_upload_path"))
+			file_manager::$upload_path = $f3->get("SETTINGS.file_upload_path");
 		else
-			$f3->set("CONFIG.file_upload_path", file_manager::$upload_path);
+			$f3->set("SETTINGS.file_upload_path", file_manager::$upload_path);
 
-		if ($f3->exists("CONFIG.image_upload_path"))
-			file_manager::$upload_path = $f3->get("CONFIG.image_upload_path");
+		if ($f3->exists("SETTINGS.image_upload_path"))
+			file_manager::$upload_path = $f3->get("SETTINGS.image_upload_path");
 		else
-			$f3->set("CONFIG.image_upload_path", file_manager::$upload_path);
+			$f3->set("SETTINGS.image_upload_path", file_manager::$upload_path);
 
 		if ($this->hasInit())
 		{

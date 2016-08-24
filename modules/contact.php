@@ -10,17 +10,17 @@ class contact extends prefab
 	function __construct ($systemID=null) {
 		$f3 = base::instance();
 
-		$default = $f3->exists("CONFIG[contact.page]") ? $f3->get("CONFIG[contact.page]") : "/contact";
-		$f3->set("CONFIG[contact.page]", $default);
+		$default = $f3->exists("SETTINGS[contact.page]") ? $f3->get("SETTINGS[contact.page]") : "/contact";
+		$f3->set("SETTINGS[contact.page]", $default);
 
-		if ($f3->exists("CONFIG[contact.email_template]")) contact::$email_template = $f3->get("CONFIG[contact.email_template]");
-		if ($f3->exists("CONFIG[contact.port]")) contact::$port = $f3->get("CONFIG[contact.port]");
+		if ($f3->exists("SETTINGS[contact.email_template]")) contact::$email_template = $f3->get("SETTINGS[contact.email_template]");
+		if ($f3->exists("SETTINGS[contact.port]")) contact::$port = $f3->get("SETTINGS[contact.port]");
 
 		if (contact::hasInit())
 		{
 			$this->routes($f3);
 
-			$pageToLoadOn = $f3->get("CONFIG[contact.page]");
+			$pageToLoadOn = $f3->get("SETTINGS[contact.page]");
 
 			if ($f3->POST["return"] == null) {
 				$f3->set("contact_return_page", $f3->PATH);
@@ -45,14 +45,14 @@ class contact extends prefab
 
 		$f3->route("POST /contact", function ($f3, $params) {
 
-			if ($f3->get("CONFIG[contact.page]") == "all") {
+			if ($f3->get("SETTINGS[contact.page]") == "all") {
 				if ($f3->POST["return"])
 					$mock = $f3->get("POST.return");
 				else
 					$mock = "/contact";
 			}
 			else
-				$mock = $f3->get("CONFIG[contact.page]");
+				$mock = $f3->get("SETTINGS[contact.page]");
 
 			$result = contact::validate();
 
@@ -64,7 +64,7 @@ class contact extends prefab
 				else
 				{
 					$tmp = $f3->UI;
-					$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+					$f3->UI = $f3->SETTINGS["paths"]["cms"]."/adminUI/";
 					echo Template::instance()->render("contact_form/contact_success.html");
 				}
 			}
@@ -88,7 +88,7 @@ class contact extends prefab
 	static function captcha($f3) {
 		$img = new Image();
 
-		$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+		$f3->UI = $f3->SETTINGS["paths"]["cms"]."/adminUI/";
 		$img->captcha('/contact_form/Abel-Regular.ttf',16,5,'SESSION.captcha_code');
 
 		$img->render();
@@ -105,7 +105,7 @@ class contact extends prefab
 		$f3->route('GET /admin/contact/email_template', function ($f3) {
 			contact::load($f3);
 			$tmp = $f3->UI;
-			$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+			$f3->UI = $f3->SETTINGS["paths"]["cms"]."/adminUI/";
 			echo Template::instance()->render("contact_form/email_template/generic_email_template.html");
 		});
 
@@ -263,7 +263,7 @@ class contact extends prefab
 			$body = Template::instance()->render(contact::$email_template);
 		} else {
 			$tmp = $f3->UI;
-			$f3->UI = $f3->CONFIG["paths"]["cms"]."/adminUI/";
+			$f3->UI = $f3->SETTINGS["paths"]["cms"]."/adminUI/";
 			$body = Template::instance()->render("contact_form/email_template/generic_email_template.html");
 			$f3->UI = $tmp;
 		}
@@ -367,10 +367,10 @@ class contact extends prefab
 		{
 			contact::load();
 
-			// Get configurables
-			$f3->set("contact_email", config("contact-email"));
-			$f3->set("contact_name", config("contact-name"));
-			$f3->set("contact_subject", config("contact-subject"));
+			// Get settings
+			$f3->set("contact_email", setting("contact-email"));
+			$f3->set("contact_name", setting("contact-name"));
+			$f3->set("contact_subject", setting("contact-subject"));
 
 			$f3->contact_fields = base::instance()->DB->exec("SELECT * FROM contact_form ORDER BY `order`");
 

@@ -7,10 +7,10 @@ class admin extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		if ($f3->CONFIG["email"] == "") $f3->CONFIG["email"] = $f3->CONFIG["global_email"];
-		if ($f3->CONFIG["pass"] == "") $f3->CONFIG["pass"] = $f3->CONFIG["global_pass"];
+		if ($f3->SETTINGS["email"] == "") $f3->SETTINGS["email"] = $f3->SETTINGS["global_email"];
+		if ($f3->SETTINGS["pass"] == "") $f3->SETTINGS["pass"] = $f3->SETTINGS["global_pass"];
 
-		if ($f3->SESSION["user"] == $f3->CONFIG["email"] || $f3->SESSION["user"] == $f3->CONFIG["global_email"])
+		if ($f3->SESSION["user"] == $f3->SETTINGS["email"] || $f3->SESSION["user"] == $f3->SETTINGS["global_email"])
 		{
 			admin::$signed = true;
 
@@ -50,7 +50,7 @@ class admin extends prefab {
 		});
 
 		$f3->route('GET /remote-tools/dbhash', function ($f3) {
-			echo sha1_file($f3->get("CONFIG.dbname"));
+			echo sha1_file($f3->get("SETTINGS.dbname"));
 			exit;
 		});
 	}
@@ -91,13 +91,13 @@ class admin extends prefab {
 	{
 		// Set default password for inhouse
 		if ($f3->HOST == "localhost" || $f3->HOST == "dev.webworksau.com") {
-			$f3->POST["email"] = $f3->CONFIG["global_email"];
-			$f3->POST["pass"] = $f3->CONFIG["global_pass"];
+			$f3->POST["email"] = $f3->SETTINGS["global_email"];
+			$f3->POST["pass"] = $f3->SETTINGS["global_pass"];
 		}
 		else
 		{
-			$f3->CONFIG["global_email"] = "";
-			$f3->CONFIG["global_pass"] = "";
+			$f3->SETTINGS["global_email"] = "";
+			$f3->SETTINGS["global_pass"] = "";
 		}
 
 		$f3->set('UI', $f3->CMS."adminUI/");
@@ -111,7 +111,7 @@ class admin extends prefab {
 		if ($f3->SETTINGS["admin-user"] != "") $f3->CONFIG["email"] = $f3->SETTINGS["admin-user"];
 
 		// Check global user and pass
-		if ($post["user"] == $f3->get("CONFIG.global_email") && $post["pass"] == $f3->get("CONFIG.global_pass"))
+		if ($post["user"] == $f3->get("SETTINGS.global_email") && $post["pass"] == $f3->get("SETTINGS.global_pass"))
 		{	
 			new \DB\SQL\Session($f3->DB);
 			$f3->set("SESSION.user", $post["user"]);
@@ -119,7 +119,7 @@ class admin extends prefab {
 		}
 
 		// Check client user and pass
-		else if ($post["user"] == $f3->CONFIG["email"] && $post["pass"] == $f3->CONFIG["pass"])
+		else if ($post["user"] == $f3->SETTINGS["email"] && $post["pass"] == $f3->SETTINGS["pass"])
 		{
 			new \DB\SQL\Session($f3->DB);
 			$f3->set("SESSION.user", $post["user"]);
@@ -171,7 +171,7 @@ class admin extends prefab {
 
 		foreach ($settings as $setting=>$value) {
 			if (!empty($settings[$setting])) {
-				config($setting, $value);
+				setting($setting, $value);
 			}
 		}
 

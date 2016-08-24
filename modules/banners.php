@@ -12,19 +12,19 @@ class banners extends prefab {
 		$f3 = base::instance();
 
 		if ($f3->exists("SETTINGS.banners-upload_path"))
-			banners::$upload_path = $f3->get("CONFIG.banners-upload_path");
+			banners::$upload_path = $f3->get("SETTINGS.banners-upload_path");
 
 		if ($f3->exists("SETTINGS.banners-file_type"))
-			banners::$file_type = $f3->get("CONFIG.banners-file_type");
+			banners::$file_type = $f3->get("SETTINGS.banners-file_type");
 
 		if ($this->hasInit())
 		{
-			banners::$system = config("banners-system");
+			banners::$system = setting("banners-system");
 
 			// get system configuration
-			$f3->set("banners.system_config", config_json("banners-system_config"));
-			$f3->set("banners.width", config_json("banners-width"));
-			$f3->set("banners.height", config_json("banners-height"));
+			$f3->set("banners.system_config", setting_json("banners-system_config"));
+			$f3->set("banners.width", setting_json("banners-width"));
+			$f3->set("banners.height", setting_json("banners-height"));
 
 			banners::$system_path = "banners/systems/".banners::$system."/";
 
@@ -40,14 +40,14 @@ class banners extends prefab {
 	function routes($f3) {
 
 		$f3->route("GET /banners/slider.css", function ($f3) {
-			$f3->UI = $f3->CONFIG["paths"]["cms"]."/"."adminUI/";
+			$f3->UI = $f3->SETTINGS["paths"]["cms"]."/"."adminUI/";
 			echo Template::instance()->render(banners::$system_path."/"."slider.css", "text/css");
 			exit();
 		});
 
 		$f3->route("GET /banners/slider.js", function ($f3) {
-			$f3->UI = $f3->CONFIG["paths"]["cms"]."/"."adminUI/";
-			$f3->banner = config_json("banners-system_config");
+			$f3->UI = $f3->SETTINGS["paths"]["cms"]."/"."adminUI/";
+			$f3->banner = setting_json("banners-system_config");
 			echo Template::instance()->render(banners::$system_path."/"."slider.js", "text/javascript");
 			exit();
 		});
@@ -64,14 +64,14 @@ class banners extends prefab {
 
 		$f3->route('POST /admin/banners/update_settings', function ($f3) {
 
-			set_config("banners-width", filter_var($f3->POST["width"], FILTER_SANITIZE_NUMBER_INT));
-			set_config("banners-height", filter_var($f3->POST["height"], FILTER_SANITIZE_NUMBER_INT));
+			set_setting("banners-width", filter_var($f3->POST["width"], FILTER_SANITIZE_NUMBER_INT));
+			set_setting("banners-height", filter_var($f3->POST["height"], FILTER_SANITIZE_NUMBER_INT));
 
 			$f3->reroute("/admin/banners");
 		});
 
 		$f3->route('POST /admin/banners/update_javascript_settings', function ($f3) {
-			config_json("banners-system_config", $f3->POST);
+			setting_json("banners-system_config", $f3->POST);
 
 			$f3->reroute("/admin/banners");
 		});
@@ -103,7 +103,7 @@ class banners extends prefab {
 			]);
 		}
 
-		$tmp = $f3->UI; $f3->UI = $f3->CONFIG["paths"]["cms"]."/"."adminUI/banners/systems/".banners::$system."/";
+		$tmp = $f3->UI; $f3->UI = $f3->SETTINGS["paths"]["cms"]."/"."adminUI/banners/systems/".banners::$system."/";
 		$html = \Template::instance()->render("slider.html");
 		$f3->UI = $tmp;
 
@@ -114,7 +114,7 @@ class banners extends prefab {
 	static function hasInit() {
 		$db = base::instance()->get("DB");
 
-		$result = config("banners-system");
+		$result = setting("banners-system");
 
 		if (!$result) return false;
 
@@ -147,7 +147,7 @@ class banners extends prefab {
 		if (banners::hasInit()) return false;
 
 		$system = $f3->POST["system"];
-		$cms = $f3->CONFIG["paths"]["cms"];
+		$cms = $f3->SETTINGS["paths"]["cms"];
 		$systemPath = $cms."adminUI/banners/systems/".$system;
 
 		// Check to see if directory exists for javascript system
@@ -162,10 +162,10 @@ class banners extends prefab {
 
 		// Set the systems defaults
 		$defaults = file_get_contents($systemPath."/default_settings.json");
-		config("banners-system_config", $defaults);
-		config("banners-system", $system);
-		config("banners-width", $width);
-		config("banners-height", $height);
+		setting("banners-system_config", $defaults);
+		setting("banners-system", $system);
+		setting("banners-width", $width);
+		setting("banners-height", $height);
 
 		// Create uploads folder
 		if (!is_dir(getcwd()."/".banners::$upload_path))
@@ -193,7 +193,7 @@ class banners extends prefab {
 		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], banners::$upload_path."/temp_image_name"))
 			return;
 
-		banners::add_banner(getcwd()."/".banners::$upload_path, "temp_image_name", $f3->FILES["file"]["name"], config("banners-width"), config("banners-height"));
+		banners::add_banner(getcwd()."/".banners::$upload_path, "temp_image_name", $f3->FILES["file"]["name"], setting("banners-width"), setting("banners-height"));
 
 		unlink(getcwd()."/".banners::$upload_path."/temp_image_name");
 	}
