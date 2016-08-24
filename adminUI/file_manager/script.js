@@ -21,7 +21,7 @@ $(function(){
 		$(window).on('hashchange', function(){
 
 			if (window.location.hash == "")
-				goto("#{{@CONFIG.file_upload_path}}");
+				goto("#{{@SETTINGS.file_upload_path}}");
 			else
 				goto(window.location.hash);
 

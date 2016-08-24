@@ -5,7 +5,6 @@
 ########################################
 require_once("tools/tools.php");
 
-
 // Merge config that may be coming from clients folder
 if (isset($settings))
 	$GLOBALS["settings"] = arrmerge(parse_ini_file("config.ini", true), $settings);
@@ -42,7 +41,7 @@ if (!checkdir("tmp/")) { echo "<strong>tmp</strong> folder does not exist. Pleas
 if (!checkdir("db/")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder.";exit; }
 
 // Require files for operation
-checkhtaccess();
+checkfile(".htaccess");
 checkfile($settings["database"]);
 
 // Require php extentions for operation
@@ -87,7 +86,7 @@ if ($settings['enable_phpliteadmin']) {
 ########################################
 ########## Fatfree framework ###########
 ########################################
-$f3->set("SETTINGS", $settings);
+$f3->SETTINGS = $GLOBALS["settings"];
 
 if (isset($variables))
 	foreach ($variables as $key=>$v)
@@ -121,27 +120,21 @@ if (!file_exists(getcwd()."/".$settings['database'])) {
 // Connect to DB
 $f3->set('DB', new DB\SQL('sqlite:'.$settings['database']));
 
-####################################################
-########## Override config from Database ###########
-####################################################
+######################################################
+########## Override settings from Database ###########
+######################################################
 
 $check = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
 
 if ($check)
 {
-	$config_definition = parse_ini_file("config-definitions.ini", true);
-	
-	$settings = $f3->DB->exec("SELECT * FROM settings");
-	foreach ($settings as $config)
+	$fromDB = $f3->DB->exec("SELECT * FROM settings");
+	foreach ($fromDB as $c)
 	{	
-		$setting = $config["setting"];
-		$value   = $config["value"];
+		$setting = $c["setting"];
+		$value   = $c["value"];
 
-		if (isset($config_definition[$setting]))
-			if (!$config_definition[$setting]["permission"])
-				continue;
-
-		$f3->SETTINGS[$config["setting"]] = $config["value"];
+		$settings[$c["setting"]] = $c["value"];
 	}
 }
 
@@ -152,7 +145,10 @@ if ($check)
 
 new admin();
 
-foreach ($settings["enabled_modules"] as $module)
+$enabled_modules = $settings["enabled_modules"];
+unset($settings["enabled_modules"]);
+
+foreach ($enabled_modules as $module)
 	new $module();
 
 $f3->run();

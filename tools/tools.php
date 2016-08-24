@@ -85,6 +85,7 @@ function writable($path) {
 		echo "<br><br>";
 		echo "While we are trying to create files and folders as: " . $serverUser;;
 		echo "<br><br>";
+		die;
 	}
 
 	// Step 2: What does php respond with?
@@ -117,49 +118,8 @@ function checkdir($path) {
 }
 
 function checkfile($path, $hash=null) {
-
 	writable($path);
-
-	if (!$hash)
-		return true;
-
-	$tmpHash = sha1_file($path);
-
-	if ($tmpHash == $hash)
-		return true;
-	else
-	{
-		echo "<pre>";
-		echo "File is different than what is expected?";
-		echo "<br><br>";
-		echo $path;
-		echo "<br><br>";
-		echo "Expected sha1: ".$hash;
-		echo "<br><br>";
-		echo "Got sha1:      ".$tmpHash;
-		echo "</pre>";
-		die;
-	}
-}
-
-function checkhtaccess() {
-
-	$expectingHash = "f5122dec22bb87e67245acfad2882f4ab4772fea";
-	$tmpHash = sha1_file(".htaccess");
-
-	if ($tmpHash == $expectingHash)
-		return true;
-
-	echo "<pre>";
-	echo "File is different than what is expected?";
-	echo "<br><br>";
-	echo $path;
-	echo "<br><br>";
-	echo "Expected sha1: ".$hash;
-	echo "<br><br>";
-	echo "Got sha1:      ".$tmpHash;
-	echo "</pre>";
-	die;
+	return true;
 }
 
 function arrmerge($org, $merge) {
@@ -175,6 +135,13 @@ function arrmerge($org, $merge) {
 	return $org;
 }
 
+function htaccess () {
+return "RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule .* cms.php [L,QSA]";
+}
+
 
 function htaccess_example() {
 echo <<<EOF
@@ -185,7 +152,6 @@ echo <<<EOF
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
-RewriteRule .* cms.php [L,QSA]
 RewriteRule .* cms.php [L,QSA]
 </textarea>
 </p>

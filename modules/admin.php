@@ -4,13 +4,27 @@ class admin extends prefab {
 
 	static public $signed = false;
 
+	static public $webmasterEmail;
+	static public $webmasterPass; 
+
+	static public $clientEmail;
+	static public $clientPass;
+
 	function __construct() {
 		$f3 = base::instance();
 
-		if ($f3->SETTINGS["email"] == "") $f3->SETTINGS["email"] = $f3->SETTINGS["global_email"];
-		if ($f3->SETTINGS["pass"] == "") $f3->SETTINGS["pass"] = $f3->SETTINGS["global_pass"];
+		if (isset($f3->SETTINGS["admin_email"]))
+			admin::$email = $f3->SETTINGS["admin_email"];
 
-		if ($f3->SESSION["user"] == $f3->SETTINGS["email"] || $f3->SESSION["user"] == $f3->SETTINGS["global_email"])
+		if (isset($f3->SETTINGS["admin_email"]))
+			admin::$pass = $f3->SETTINGS["admin_email"];
+		
+		admin::$webmasterEmail = $f3->SETTINGS["webmaster_email"];
+		admin::$webmasterPass = $f3->SETTINGS["webmaster_pass"];
+
+		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["admin_email"], $f3->SETTINGS["admin_pass"]);
+
+		if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
 		{
 			admin::$signed = true;
 
@@ -91,13 +105,8 @@ class admin extends prefab {
 	{
 		// Set default password for inhouse
 		if ($f3->HOST == "localhost" || $f3->HOST == "dev.webworksau.com") {
-			$f3->POST["email"] = $f3->SETTINGS["global_email"];
-			$f3->POST["pass"] = $f3->SETTINGS["global_pass"];
-		}
-		else
-		{
-			$f3->SETTINGS["global_email"] = "";
-			$f3->SETTINGS["global_pass"] = "";
+			$f3->POST["email"] = admin::$webmasterEmail;
+			$f3->POST["pass"] = admin::$webmasterPass;
 		}
 
 		$f3->set('UI', $f3->CMS."adminUI/");
@@ -107,19 +116,16 @@ class admin extends prefab {
 	static public function login ($f3) {
 		$post = $f3->get("POST");
 
-		if ($f3->SETTINGS["admin-user"] != "") $f3->CONFIG["email"] = $f3->SETTINGS["admin-user"];
-		if ($f3->SETTINGS["admin-user"] != "") $f3->CONFIG["email"] = $f3->SETTINGS["admin-user"];
-
 		// Check global user and pass
-		if ($post["user"] == $f3->get("SETTINGS.global_email") && $post["pass"] == $f3->get("SETTINGS.global_pass"))
+		if ($post["user"] == admin::$webmasterEmail && $post["pass"] == admin::$webmasterPass)
 		{	
 			new \DB\SQL\Session($f3->DB);
-			$f3->set("SESSION.user", $post["user"]);
+			$f3->set("SESSION.user", admin::$webmasterEmail);
 			$f3->set("SESSION.root", true);
 		}
 
 		// Check client user and pass
-		else if ($post["user"] == $f3->SETTINGS["email"] && $post["pass"] == $f3->SETTINGS["pass"])
+		else if ($post["user"] == admin::$clientEmail && $post["pass"] == admin::$clientPass)
 		{
 			new \DB\SQL\Session($f3->DB);
 			$f3->set("SESSION.user", $post["user"]);
@@ -129,8 +135,6 @@ class admin extends prefab {
 			admin::login_render($f3);
 			return;
 		}
-
-
 
 		$f3->set('UI', $f3->CMS."adminUI/");
 		if ($f3->get("POST.redirectWhere") == "live")
