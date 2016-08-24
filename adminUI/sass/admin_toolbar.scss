@@ -1,3 +1,18 @@
+#webworkscms_testtoolbar {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    height: 100%;
+    width: 350px;
+    z-index: 9999999 !important;
+
+    border: 1px solid red;
+    background-color: #222;
+}
+
+
+
+
 #webworkscms_admintoolbar {
     position: fixed !important;
     top: 0 !important;

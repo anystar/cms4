@@ -1,5 +1,11 @@
 $(function() {
 
+
+	<exclude>
+	var side_toolbar = $('<div>').attr('id', 'webworkscms_testtoolbar');
+	$('body').append(side_toolbar);
+	</exclude>
+
 	var top_div = $('<div>').attr('id', 'webworkscms_admintoolbar');
 	$('body').append(top_div);
 
@@ -87,7 +93,28 @@ $(function() {
 
 	var toggleBtn = $('<input class="textinput" type="button" value="~"/>');
 	toggleBtn.click(function () {
-		r_div.toggle();
+		
+		if (r_div.is(":visible"))
+		{
+
+			Object.keys(CKEDITOR.instances).forEach(function(key,index) {
+				var editor = CKEDITOR.instances[key];
+				editor.destroy();
+				$(editor.container.$).attr('contenteditable',"false");
+			});
+
+			r_div.hide();
+		} else
+		{
+			r_div.show();
+			init_inline_ckeditors();
+			Object.keys(CKEDITOR.instances).forEach(function(key,index) {
+				var editor = CKEDITOR.instances[key];
+				editor.readOnly = false;
+				$(editor.element.$).attr('contenteditable',"true");
+				console.log(editor);
+			});
+		}
 	});
 
 	top_div.append(toggleBtn);
