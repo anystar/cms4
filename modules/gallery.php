@@ -11,18 +11,18 @@ class gallery extends prefab {
 
 		$f3 = base::instance();
 
-		$default = $f3->exists("CONFIG[gallery.page]") ? $f3->get("CONFIG[gallery.page]") : "/gallery";
-		$f3->set("CONFIG[gallery.page]", $default);
+		$default = $f3->exists("SETTINGS[gallery.page]") ? $f3->get("SETTINGS[gallery.page]") : "/gallery";
+		$f3->set("SETTINGS[gallery.page]", $default);
 
-		if ($f3->exists("config.gallery_upload_path"))
-			gallery::$upload_path = $f3->get("config.gallery_upload_path");
+		if ($f3->exists("SETTINGS.gallery_upload_path"))
+			gallery::$upload_path = $f3->get("SETTINGS.gallery_upload_path");
 
-		if ($f3->exists("config.gallery_thumb_path"))
-			gallery::$thumb_path = $f3->get("config.gallery_thumb_path");
+		if ($f3->exists("SETTINGS.gallery_thumb_path"))
+			gallery::$thumb_path = $f3->get("SETTINGS.gallery_thumb_path");
 
 		if ($this->hasInit()) {
 
-			$pageToLoadOn = $f3->get("CONFIG[gallery.page]");
+			$pageToLoadOn = $f3->get("SETTINGS[gallery.page]");
 
 			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all" || $pageToLoadOn == $f3->POST["return"])
 				$this->retreiveContent($page[1]);
