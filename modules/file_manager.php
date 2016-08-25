@@ -143,7 +143,6 @@ class file_manager extends prefab {
 		$files = array();
 
 		// Is there actually such a folder/file?
-
 		if(file_exists($dir)){
 		
 			foreach(scandir($dir) as $f) {
@@ -155,7 +154,6 @@ class file_manager extends prefab {
 				if(is_dir($dir . '/' . $f)) {
 
 					// The path is a folder
-
 					$files[] = array(
 						"name" => $f,
 						"type" => "folder",
@@ -170,7 +168,7 @@ class file_manager extends prefab {
 					$files[] = array(
 						"name" => $f,
 						"type" => "file",
-						"path" => $dir.'/'.$f,
+						"path" => base::instance()->BASE."/".$dir.'/'.$f,
 						"size" => filesize($dir . '/' . $f) // Gets the size of this file
 					);
 				}
@@ -185,46 +183,13 @@ class file_manager extends prefab {
 		$upload_path = file_manager::$upload_path;
 
 		if (!file_exists($upload_path))
-		{
-			// Attempt to make directory
-			if (is_writable(getcwd()))
-				if (mkdir($upload_path))
-					return;
-
-			die("<strong>Fatel Error in file manager module:</strong> Please create upload folder for uploading to work.<br>Upload folder is: ".$upload_path);
-		}
-
-		if (!is_writable($upload_path))
-			die("<strong>Fatel Error in file manager module:</strong> Please ensure upload folder is writable by PHP. Perhaps chmod g+w uploads or chown www-data:www-data uploads.<br>Upload folder is: ".$upload_path);
-
-		if (!file_exists(file_manager::$image_upload_path)) {
-			// Attempt to make directory
-			if (mkdir(file_manager::$image_upload_path))
-				return;
-			
-			die("<strong>Fatel Error in file manager module:</strong> Trying to make image upload directory. Please ensure upload directory is writable by group. Perhaps chmod g+w uploads or chown www-data:www-data uploads.<br>Upload folder is: ".$upload_path);			
-		}
+			return false;
 
 		if (!file_exists(getcwd()."/".$upload_path."/.htaccess"))
 			file_put_contents(getcwd()."/".$upload_path."/.htaccess", "RewriteEngine off");
 
+		base::instance()->file_manager["init"] = true;
 		return true;
-	}
-
-	static function generate() {
-		// $db = base::instance()->DB;
-
-		// //TODO: Insert sql to generate table structures
-		// $db->exec("");
-	}
-
-	static function admin_render() {
-
-		// //TODO: Create html files for admin display and generation
-		// if ($this::instance()->hasInit())
-		// 	echo Template::instance()->render("module_name/module.html");
-		// else
-		// 	echo Template::instance()->render("module_name/module.html");
 	}
 
 

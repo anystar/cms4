@@ -10,7 +10,7 @@ class banners extends prefab {
 
 	function __construct() {
 		$f3 = base::instance();
-
+		
 		if ($f3->exists("SETTINGS.banners-upload_path"))
 			banners::$upload_path = $f3->get("SETTINGS.banners-upload_path");
 
@@ -40,13 +40,11 @@ class banners extends prefab {
 	function routes($f3) {
 
 		$f3->route("GET /banners/slider.css", function ($f3) {
-			$f3->UI = $f3->SETTINGS["paths"]["cms"]."/"."adminUI/";
-			echo Template::instance()->render(banners::$system_path."/"."slider.css", "text/css");
+			echo Template::instance()->render(banners::$system_path."/slider.css", "text/css");
 			exit();
 		});
 
 		$f3->route("GET /banners/slider.js", function ($f3) {
-			$f3->UI = $f3->SETTINGS["paths"]["cms"]."/"."adminUI/";
 			$f3->banner = setting_json("banners-system_config");
 			echo Template::instance()->render(banners::$system_path."/"."slider.js", "text/javascript");
 			exit();
@@ -56,12 +54,31 @@ class banners extends prefab {
 
 	function admin_routes($f3) {
 
-		$f3->route('GET /admin/test', 'banners::test');		
+		#######################################################
+		################# Admin Panel Render ##################
+		#######################################################
+		// Render admin panel
 		$f3->route('GET /admin/banners', 'banners::admin_render');
+
+		// Render initilization page
 		$f3->route('POST /admin/banners/init', 'banners::init');
 
+
+		#######################################################
+		########### Delete, Upload, Update Settings ###########
+		#######################################################
+		
+		// Update system config of banner system
+		$f3->route('POST /admin/banners/update_javascript_settings', function ($f3) {
+			setting_json("banners-system_config", $f3->POST);
+
+			$f3->reroute("/admin/banners");
+		});
+
+		// Upload via drop zone
 		$f3->route('POST /admin/banners/dropzone', 'banners::upload');
 
+		// Update settings. COULD PROBABALLY BE REMOVED...
 		$f3->route('POST /admin/banners/update_settings', function ($f3) {
 
 			set_setting("banners-width", filter_var($f3->POST["width"], FILTER_SANITIZE_NUMBER_INT));
@@ -70,19 +87,16 @@ class banners extends prefab {
 			$f3->reroute("/admin/banners");
 		});
 
-		$f3->route('POST /admin/banners/update_javascript_settings', function ($f3) {
-			setting_json("banners-system_config", $f3->POST);
-
-			$f3->reroute("/admin/banners");
-		});
-
+		// Delete image
 		$f3->route('GET /admin/banners/delete/@image', function ($f3, $params) {
 			banners::delete_banner($f3, $params);
 
 			$f3->reroute("/admin/banners");
 		});
 
+		// Delete image via ajax
 		$f3->route('GET /admin/banners/delete/@image [ajax]', function ($f3, $params) {
+
 			banners::delete_banner($f3, $params);
 
 			echo $f3->get("banners.html");
@@ -91,7 +105,6 @@ class banners extends prefab {
 	}
 
 	static function retreive_content($f3) {
-		// Get slider configuration
 
 		// Get images URLs
 		$dir = array_diff(scandir(banners::$upload_path), array('..', '.'));
@@ -103,26 +116,26 @@ class banners extends prefab {
 			]);
 		}
 
-		$tmp = $f3->UI; $f3->UI = $f3->SETTINGS["paths"]["cms"]."/"."adminUI/banners/systems/".banners::$system."/";
-		$html = \Template::instance()->render("slider.html");
-		$f3->UI = $tmp;
+		$html = \Template::instance()->render("/".banners::$system_path."/slider.html");
 
 		$f3->set("banners.html", $html);
 	}
 
 
 	static function hasInit() {
+
 		$db = base::instance()->get("DB");
 
 		$result = setting("banners-system");
 
-		if (!$result) return false;
+		if (!$result)
+				return false;
+	
+		if (!is_dir(getcwd()."/".banners::$upload_path))
+			return false;
 
-		if (is_dir(getcwd()."/".banners::$upload_path))
-			return true;
-
-		return false;
-
+		base::instance()->banners["init"] = true;
+		return true;
 	}
 
 	static function admin_render($f3) {
@@ -130,25 +143,22 @@ class banners extends prefab {
 
 		//TODO: Create html files for admin display and generation
 		if (banners::hasInit())
-			echo Template::instance()->render("banners/banners.html");
+			echo Template::instance()->render("/banners/banners.html");
 		else
-			echo Template::instance()->render("banners/init.html");
+			echo Template::instance()->render("/banners/init.html");
 	}
 
-
-	static function test() {
-
-		echo Template::instance()->render("banners/test.html");
-
-	}
 
 	static function init($f3) {
+		if (!$f3->webmaster)
+			return;
 
 		if (banners::hasInit()) return false;
 
 		$system = $f3->POST["system"];
 		$cms = $f3->SETTINGS["paths"]["cms"];
-		$systemPath = $cms."adminUI/banners/systems/".$system;
+		$systemPath = $cms."modulesUI/banners/systems/".$system;
+
 
 		// Check to see if directory exists for javascript system
 		if (!is_dir($systemPath)) {
@@ -166,6 +176,10 @@ class banners extends prefab {
 		setting("banners-system", $system);
 		setting("banners-width", $width);
 		setting("banners-height", $height);
+
+		// Make sure uploads folder exists
+		if (!is_dir(getcwd()."/uploads"))
+			mkdir(getcwd()."/uploads");
 
 		// Create uploads folder
 		if (!is_dir(getcwd()."/".banners::$upload_path))

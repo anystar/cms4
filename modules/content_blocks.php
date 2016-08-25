@@ -65,9 +65,6 @@ class content_blocks extends prefab {
 			die;
 		});
 
-		$f3->route('GET /admin/css/admin_toolbar.css', "content_blocks::admin_toolbar_css");
-		$f3->route('GET /admin/js/admin_toolbar.js', "content_blocks::admin_toolbar_js");
-
 		$f3->route('GET /admin/ckeditor_config.js', "content_blocks::ckeditor_toolbar");
 		$f3->route('GET /admin/ckeditor_imgs_config.js', "content_blocks::ckeditor_imgs_toolbar");
 		$f3->route('GET /admin/ckeditor_header_config.js', "content_blocks::ckeditor_header_toolbar");
@@ -142,9 +139,7 @@ class content_blocks extends prefab {
 		if (admin::$signed)
 		{
 			// Load up the Editor
-			$tmp = $f3->get("UI"); $f3->set('UI', $f3->CMS."adminUI/");
-			$inlinecode = Template::instance()->render("ckeditor_inline.js");
-			$f3->set('UI', $tmp);
+			$inlinecode = Template::instance()->render("/content_blocks/js/ckeditor_inline.js");
 
 			$f3->concat("ckeditor", $inlinecode);
 			$f3->concat("admin", $inlinecode);
@@ -295,6 +290,7 @@ class content_blocks extends prefab {
 
 		if ($result)
 		{
+			base::instance()->content_blocks["init"] = true;
 			$this->patch_columns();
 			return true;
 		}
@@ -361,7 +357,7 @@ class content_blocks extends prefab {
 
 		$f3->set("editable", $editable);
 
-		echo Template::instance()->render("content_blocks/page_edit.html");
+		echo Template::instance()->render("/content_blocks/page_edit.html");
 	}
 
 	static public function admin_render_htmledit ($f3, $params) {
@@ -370,57 +366,27 @@ class content_blocks extends prefab {
 
 		base::instance()->set("block", $result[0]);
 
-		echo Template::instance()->render("content_blocks/ace_editor.html");
+		echo Template::instance()->render("/content_blocks/ace_editor.html");
 	}
-
-	static public function admin_toolbar_css($f3) 
-	{
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
-		echo Template::instance()->render("css/admin_toolbar.css", "text/css");
-		$f3->UI = $tmp;
-	}
-
-
-	static public function admin_toolbar_js($f3) 
-	{
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
-		echo Template::instance()->render("js/admin_toolbar.js", "text/javascript");
-		$f3->UI = $tmp;
-	}
-
 
 	static public function ckeditor_toolbar($f3) 
 	{
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
-		echo Template::instance()->render("ckeditor_config.js", "text/javascript");
-		$f3->UI = $tmp;
+		echo Template::instance()->render("/content_blocks/js/ckeditor_config.js", "text/javascript");
 	}
 
 	static public function ckeditor_imgs_toolbar($f3) 
 	{
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
-		echo Template::instance()->render("ckeditor_imgs_config.js", "text/javascript");
-		$f3->UI = $tmp;
+		echo Template::instance()->render("/content_blocks/js/ckeditor_imgs_config.js", "text/javascript");
 	}
 
 	static public function ckeditor_header_toolbar($f3) 
 	{
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
-		echo Template::instance()->render("ckeditor_header_config.js", "text/javascript");
-		$f3->UI = $tmp;
+		echo Template::instance()->render("/content_blocks/js/ckeditor_header_config.js", "text/javascript");
 	}
 
 	static public function ace_editor($f3) 
 	{
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
-		echo Template::instance()->render("content_blocks/additional.js", "text/javascript");
-		$f3->UI = $tmp;
+		echo Template::instance()->render("/content_blocks/js/additional.js", "text/javascript");
 	}
 
 	function patch_columns ()

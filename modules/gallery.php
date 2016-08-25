@@ -238,6 +238,8 @@ class gallery extends prefab {
 
 	static function hasInit()
 	{	
+		if (!base::instance()->webmaster) return;
+
 		if (!extension_loaded("gd")) return false;
 
 		$db = base::instance()->get("DB");
@@ -246,26 +248,13 @@ class gallery extends prefab {
 		if (empty($result)) 
 			return false;
 
+		// Create gallery folder
+		if (!is_dir(getcwd()."/".gallery::$upload_path))
+			return false;
 
-		$upload_path = gallery::$upload_path;
-		if (!file_exists($upload_path))
-		{
-			// Attempt to make directory
-			if (mkdir($upload_path))
-				return;
-
-			die("<strong>Fatel Error in gallery module:</strong> Please create upload folder for uploading to work.<br>Upload folder is: ".$upload_path);
-		}
-
-		$thumb_path = gallery::$thumb_path;
-		if (!file_exists($thumb_path))
-		{
-			// Attempt to make directory
-			if (mkdir($thumb_path))
-				return;
-
-			die("<strong>Fatel Error in gallery module:</strong> Please create thumb upload folder for uploading to work.<br>Upload folder is: ".$upload_path);
-		}
+		// Create gallery folder
+		if (!is_dir(getcwd()."/".gallery::$thumb_path))
+			return false;
 
 		if (admin::$signed) {
 			// Ensure settings are inserted
@@ -278,6 +267,7 @@ class gallery extends prefab {
 
 		gallery::patch_columns();
 
+		base::instance()->gallery["init"] = true;
 		return true;
 	}
 
@@ -287,9 +277,21 @@ class gallery extends prefab {
 
 		$db->exec("CREATE TABLE IF NOT EXISTS 'gallery' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'filename' TEXT, 'order' INTEGER, 'caption' TEXT,'section' TEXT)");
 
+		// Make sure uploads folder exists
+		if (!is_dir(getcwd()."/uploads"))
+			mkdir(getcwd()."/uploads");
+
+		// Create gallery folder
+		if (!is_dir(getcwd()."/".gallery::$upload_path))
+			mkdir(getcwd()."/".gallery::$upload_path);
+
+		// Create gallery folder
+		if (!is_dir(getcwd()."/".gallery::$thumb_path))
+			mkdir(getcwd()."/".gallery::$thumb_path);
+
 		gallery::hasInit();
 
-		base::instance()->mock('GET /admin/gallery');
+		base::instance()->reroute('/admin/gallery');
 	}
 
 	static function admin_render() {
@@ -299,7 +301,7 @@ class gallery extends prefab {
 		{
 			gallery::retreiveAllContent();
 			gallery::retreiveSettings();
-			echo Template::instance()->render("gallery/gallery.html");
+			echo Template::instance()->render("/gallery/gallery.html");
 		}
 		else
 		{
@@ -308,7 +310,7 @@ class gallery extends prefab {
 			if (!extension_loaded("gd"))
 				$f3->gd_not_loaded = true;
 
-			echo Template::instance()->render("gallery/nogallery.html");
+			echo Template::instance()->render("/gallery/nogallery.html");
 		}
 	}
 

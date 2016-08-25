@@ -39,6 +39,12 @@ h1 {
   background-color: #fff;
   color: #444;
   cursor: default; }
+.top_nav .modules {
+  font-size: 12px;
+  height: 30px; }
+.top_nav .modules li {
+  height: 30px;
+  line-height: 30px; }
 
 .container {
   width: 70%;

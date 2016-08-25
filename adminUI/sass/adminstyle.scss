@@ -54,6 +54,16 @@ h1 {
     cursor: default;
   }
 
+  .modules {
+    font-size: 12px;
+    height: 30px;
+  
+    li {
+      height: 30px;
+      line-height: 30px;
+    }
+  }
+
 }
 
 .container {

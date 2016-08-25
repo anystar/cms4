@@ -72,13 +72,13 @@ if ($settings['enable_phpliteadmin']) {
 
 	if ($url["filename"] == "phpliteadmin")
 	{
-		include($config["paths"]["cms"]."/phpliteadmin/dynamic_myAdmin.php");
+		include($settings["paths"]["cms"]."/phpliteadmin/dynamic_myAdmin.php");
 		exit;
 	}
 
 	if ($dir == $db_sub_folder || $url["basename"] == $db_sub_folder || $dir2[0] == $db_sub_folder)
 	{
-		include($config["paths"]["cms"]."/phpliteadmin/phpliteadmin.php");
+		include($settings["paths"]["cms"]."/phpliteadmin/phpliteadmin.php");
 		exit;
 	}
 }
@@ -93,7 +93,12 @@ if (isset($variables))
 		$f3->set($key, $v);
 
 $f3->set('AUTOLOAD', $settings["paths"]["cms"]."/modules/" . ";" . getcwd()."/modules/");
-$f3->set('UI', getcwd()."/");
+
+
+$f3->UI = getcwd()."/;"; // Client directory files
+$f3->UI .= $settings["paths"]["cms"] . "/adminUI/;";  // Admin panel UI
+$f3->UI .= $settings["paths"]["cms"] . "/modulesUI/"; // Modules UI
+
 $f3->set('CACHE', getcwd() . "/tmp/");
 $f3->set('ESCAPE',FALSE);
 $f3->set('DEBUG', $settings["debug"]);

@@ -13,14 +13,20 @@ class admin extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		if (isset($f3->SETTINGS["admin_email"]))
-			admin::$email = $f3->SETTINGS["admin_email"];
-
-		if (isset($f3->SETTINGS["admin_email"]))
-			admin::$pass = $f3->SETTINGS["admin_email"];
-		
 		admin::$webmasterEmail = $f3->SETTINGS["webmaster_email"];
 		admin::$webmasterPass = $f3->SETTINGS["webmaster_pass"];
+
+		if (isset($f3->SETTINGS["admin_email"]))
+			admin::$clientEmail = $f3->SETTINGS["admin_email"];
+		else
+			admin::$clientEmail = admin::$webmasterEmail;
+
+
+		if (isset($f3->SETTINGS["admin_pass"]))
+			admin::$clientPass = $f3->SETTINGS["admin_pass"];
+		else
+			admin::$clientPass = admin::$webmasterPass;
+
 
 		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["admin_email"], $f3->SETTINGS["admin_pass"]);
 
@@ -33,12 +39,12 @@ class admin extends prefab {
 
 			$this->dashboard_routes($f3);
 
-			$page = $f3->PATH;
-			$page = ($page!="/") ? trim($page, "/") : "index";
-			$page = explode("/", $page);
+			// $page = $f3->PATH;
+			// $page = ($page!="/") ? trim($page, "/") : "index";
+			// $page = explode("/", $page);
 
-			if ($page[0] == "admin")
-				$f3->set('UI', $f3->CMS."adminUI/");
+			// if ($page[0] == "admin")
+			// 	$f3->set('UI', $f3->CMS."adminUI/");
 
 			$f3->route('GET|POST /admin/login', function ($f3) {
 				$f3->reroute("/admin");
@@ -59,6 +65,7 @@ class admin extends prefab {
 		$f3->route('GET /admin/theme', "admin::theme");
 		$f3->route('GET /admin/bootstrap.min.css', "admin::bootstrap_css");
 		$f3->route('GET /admin/bootstrap.min.js', "admin::bootstrap_js");
+
 		$f3->route("GET /cms", function ($f3) {
 			$f3->reroute("/admin", true);
 		});
@@ -67,15 +74,23 @@ class admin extends prefab {
 			echo sha1_file($f3->get("SETTINGS.dbname"));
 			exit;
 		});
+
+		if (admin::$signed) {
+			$f3->route('GET /admin/css/admin_toolbar.css', function () {
+				echo Template::instance()->render("/css/admin_toolbar.css", "text/css");
+			});
+			$f3->route('GET /admin/js/admin_toolbar.js', function () {
+				echo Template::instance()->render("/js/admin_toolbar.js", "text/javascript");
+			});
+		}
 	}
+
 
 	function login_routes($f3) {
 
 		$f3->route('GET /admin', "admin::login_render");
 
 		$f3->route("POST /admin/login", function ($f3) {
-			$f3->set('UI', $f3->CMS."adminUI/");
-
 			admin::login($f3);
 		});
 	}
@@ -90,6 +105,10 @@ class admin extends prefab {
 
 		// Admin routes
 		$f3->route('GET /admin', "admin::dashboard_render");
+		$f3->route('GET /admin/webmaster', function () {
+			echo Template::instance()->render("webmaster.html");
+		});
+
 		$f3->route('GET /admin/help', "admin::help");
 		$f3->route('GET /admin/settings', "admin::settings");
 		$f3->route('POST /admin/update_settings', "admin::update_settings");
@@ -97,7 +116,6 @@ class admin extends prefab {
 
 	static public function dashboard_render ($f3)
 	{
-		$f3->set('UI', $f3->CMS."adminUI/");
 		echo Template::instance()->render("dashboard.html");
 	}
 
@@ -183,23 +201,14 @@ class admin extends prefab {
 	}
 
 	static public function theme($f3) {
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
 		echo Template::instance()->render("css/adminstyle.css", "text/css");
-		$f3->UI = $tmp;
 	}
 
 	static public function bootstrap_css($f3) {
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
 		echo Template::instance()->render("css/bootstrap.min.css", "text/css");
-		$f3->UI = $tmp;
 	}
 
 	static public function bootstrap_js($f3) {
-		$tmp = $f3->UI;
-		$f3->UI = $f3->CMS . "adminUI/";
 		echo Template::instance()->render("js/bootstrap.min.js", "text/javascript");
-		$f3->UI = $tmp;
 	}
 }

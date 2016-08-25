@@ -62,18 +62,11 @@ class contact extends prefab
 					$f3->reroute("/contact_success");
 				}
 				else
-				{
-					$tmp = $f3->UI;
-					$f3->UI = $f3->SETTINGS["paths"]["cms"]."/adminUI/";
-					echo Template::instance()->render("contact_form/contact_success.html");
-				}
+					echo Template::instance()->render("/contact/contact_success.html");
 			}
 			else
 			{
-
-				$tmp = $f3->UI; $f3->UI = $f3->CMS;
-				$snippet = \Template::instance()->render("adminUI/contact_form/contact_form.html");
-				$f3->UI = $tmp;
+				$snippet = \Template::instance()->render("/contact/contact_form.html");
 
 				$f3->set("contact_form", $snippet);
 				$f3->set("contact.html", $snippet);
@@ -86,10 +79,10 @@ class contact extends prefab
 	}
 
 	static function captcha($f3) {
+
 		$img = new Image();
 
-		$f3->UI = $f3->SETTINGS["paths"]["cms"]."/adminUI/";
-		$img->captcha('/contact_form/Abel-Regular.ttf',16,5,'SESSION.captcha_code');
+		$img->captcha('/contact/Abel-Regular.ttf',16,5,'SESSION.captcha_code');
 
 		$img->render();
 	}
@@ -104,9 +97,7 @@ class contact extends prefab
 		$f3->route('POST /admin/contact/generate', "contact::generate");
 		$f3->route('GET /admin/contact/email_template', function ($f3) {
 			contact::load($f3);
-			$tmp = $f3->UI;
-			$f3->UI = $f3->SETTINGS["paths"]["cms"]."/adminUI/";
-			echo Template::instance()->render("contact_form/email_template/generic_email_template.html");
+			echo Template::instance()->render("/contact/email_template/generic_email_template.html");
 		});
 
 		$f3->route('POST /admin/contact/settings', "contact::update_settings");		
@@ -117,9 +108,9 @@ class contact extends prefab
 
 	static public function contact ($f3) {
 		if (contact::exists())
-			echo Template::instance()->render("contactForm/contact.html");
+			echo Template::instance()->render("/contactForm/contact.html");
 		else
-			echo Template::instance()->render("contactForm/nocontact.html");
+			echo Template::instance()->render("/contactForm/nocontact.html");
 	}
 
 	static function load()
@@ -146,10 +137,8 @@ class contact extends prefab
 
 		// Use template snippet
 		if ($result == 0) {
-			
-			$tmp = $f3->UI; $f3->UI = $f3->CMS;
-			$snippet = \Template::instance()->render("adminUI/contact_form/contact_form.html");
-			$f3->UI = $tmp;
+
+			$snippet = \Template::instance()->render("/contact/contact_form.html");
 
 			$f3->set("contact_form", $snippet);
 			$f3->set("contact.html", $snippet);
@@ -262,10 +251,7 @@ class contact extends prefab
 		if (file_exists(contact::$email_template)) {
 			$body = Template::instance()->render(contact::$email_template);
 		} else {
-			$tmp = $f3->UI;
-			$f3->UI = $f3->SETTINGS["paths"]["cms"]."/adminUI/";
-			$body = Template::instance()->render("contact_form/email_template/generic_email_template.html");
-			$f3->UI = $tmp;
+			$body = Template::instance()->render("/contact/email_template/generic_email_template.html");
 		}
 
 		$smtp->send($body);
@@ -313,6 +299,7 @@ class contact extends prefab
 
 		contact::patch_columns_add_system();
 
+		base::instance()->contact["init"] = true;
 		return true;
 	}
 
@@ -374,10 +361,10 @@ class contact extends prefab
 
 			$f3->contact_fields = base::instance()->DB->exec("SELECT * FROM contact_form ORDER BY `order`");
 
-			echo Template::instance()->render("contact_form/contact.html");
+			echo Template::instance()->render("/contact/contact.html");
 		}
 		else
-			echo Template::instance()->render("contact_form/nocontact.html");
+			echo Template::instance()->render("/contact/nocontact.html");
 	}
 
 	static public function update_settings($f3) {
