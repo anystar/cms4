@@ -90,8 +90,7 @@ function writable($path) {
 
 	// Step 2: What does php respond with?
 	if (!file_exists($path)) {
-		echo $path . "does not exsist?";
-		exit;
+		touch($path);
 	}
 
 	if (!is_writable($path)) {
@@ -120,6 +119,11 @@ function checkdir($path) {
 function checkfile($path, $hash=null) {
 	writable($path);
 	return true;
+}
+
+function checkhtaccess() {
+	if (!is_file(getcwd()."/.htaccess"))
+		file_put_contents(".htaccess", htaccess());
 }
 
 function arrmerge($org, $merge) {

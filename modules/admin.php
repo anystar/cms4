@@ -21,14 +21,18 @@ class admin extends prefab {
 		else
 			admin::$clientEmail = admin::$webmasterEmail;
 
-
 		if (isset($f3->SETTINGS["admin_pass"]))
 			admin::$clientPass = $f3->SETTINGS["admin_pass"];
 		else
 			admin::$clientPass = admin::$webmasterPass;
 
-
 		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["admin_email"], $f3->SETTINGS["admin_pass"]);
+
+		if (admin::$clientEmail == null || admin::$clientPass == null)
+		{
+			echo "Warning, no email or password set to be able to login to admin panel.";
+			die;
+		}
 
 		if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
 		{
@@ -122,7 +126,7 @@ class admin extends prefab {
 	static public function login_render ($f3)
 	{
 		// Set default password for inhouse
-		if ($f3->HOST == "localhost" || $f3->HOST == "dev.webworksau.com") {
+		if ($f3->HOST == $f3->SETTINGS["dev_host"]) {
 			$f3->POST["email"] = admin::$webmasterEmail;
 			$f3->POST["pass"] = admin::$webmasterPass;
 		}

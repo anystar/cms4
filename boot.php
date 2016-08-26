@@ -21,14 +21,6 @@ $Did_F3_Load = (($f3 = include $settings["paths"]["f3"]) === false);
 if($Did_F3_Load) 
 	d("Fat free framework not found at ".$settings["paths"]["f3"].". Please download from http://fatfreeframework.com/");
 
-###############################################
-## Run installation if config does not exist ##
-###############################################
-if (!file_exists(getcwd()."/.htaccess")) {
-	include("modules/wizard_creator.php");
-	new wizard_creator($config["paths"]["cms"], $settings["paths"]["f3"]);
-}
-
 ########################################
 ## Check folder and file permissions  ##
 ########################################
@@ -40,8 +32,8 @@ writable(getcwd());
 if (!checkdir("tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder.";exit; }
 if (!checkdir("db/")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder.";exit; }
 
-// Require files for operation
-checkfile(".htaccess");
+// Require files for operations
+checkhtaccess(".htaccess");
 checkfile($settings["database"]);
 
 // Require php extentions for operation
@@ -53,6 +45,11 @@ if (!extension_loaded("SQLite3")) {
 if (!extension_loaded("gd")) {
 	echo "GD extention not loaded!";
 	die;
+}
+
+if ($f3->PATH == "/cms.php") {
+	$f3->reroute("/");
+	exit;
 }
 
 ########################################
