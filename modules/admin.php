@@ -16,17 +16,17 @@ class admin extends prefab {
 		admin::$webmasterEmail = $f3->SETTINGS["webmaster_email"];
 		admin::$webmasterPass = $f3->SETTINGS["webmaster_pass"];
 
-		if (isset($f3->SETTINGS["admin_email"]))
-			admin::$clientEmail = $f3->SETTINGS["admin_email"];
+		if (isset($f3->SETTINGS["email"]))
+			admin::$clientEmail = $f3->SETTINGS["email"];
 		else
 			admin::$clientEmail = admin::$webmasterEmail;
 
-		if (isset($f3->SETTINGS["admin_pass"]))
-			admin::$clientPass = $f3->SETTINGS["admin_pass"];
+		if (isset($f3->SETTINGS["pass"]))
+			admin::$clientPass = $f3->SETTINGS["pass"];
 		else
 			admin::$clientPass = admin::$webmasterPass;
 
-		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["admin_email"], $f3->SETTINGS["admin_pass"]);
+		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["email"], $f3->SETTINGS["pass"]);
 
 		if (admin::$clientEmail == null || admin::$clientPass == null)
 		{
