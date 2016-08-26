@@ -36,17 +36,19 @@
 
 				<div class="form-group">
 					<label class="control-label">CMS Login email</label>
-					<input type="email" class="form-control" name="admin-email" value="{{@SETTINGS.admin_email}}">
+					<input type="email" class="form-control" name="admin_email" value="{{@SETTINGS.admin_email}}">
 					<span id="helpBlock" class="help-block">Must be an email address.</span>
 				</div>
 
 				<div class="form-group">
 					<label class="control-label">CMS Login password</label>
-					<input type="password" class="form-control" name="admin-password">
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="button">Go!</button>
-					</span>
-					<span id="helpBlock" class="help-block">Make it complicated.</span>
+					<div class="input-group">
+						<input type="password" class="form-control password" name="admin_pass" placeholder="">
+						<span class="input-group-btn">
+						<button class="btn btn-default generaterandom" type="button">Generate Random</button>
+						</span>
+					</div>
+					<span id="helpBlock" class="help-block">Make it complicated and write it down.</span>
 				</div>
 			
 				<button type="submit" class="btn btn-primary pull-right">Update login</button>
@@ -125,5 +127,20 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	<script src="{{@BASE}}/admin/bootstrap.min.js"></script>
+	<script>
+		$( document ).ready(function() {
+			$(".generaterandom").click(function () {
+				var length = 8,
+					charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+					retVal = "";
+				for (var i = 0, n = charset.length; i < length; ++i) {
+					retVal += charset.charAt(Math.floor(Math.random() * n));
+				}
+
+				$(".password").val(retVal);
+				$(".password").attr("type", "text");
+			})
+		});
+	</script>
   </body>
 </html>

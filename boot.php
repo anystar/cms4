@@ -84,8 +84,6 @@ if ($settings['enable_phpliteadmin']) {
 ########################################
 ########## Fatfree framework ###########
 ########################################
-$f3->SETTINGS = $GLOBALS["settings"];
-
 if (isset($variables))
 	foreach ($variables as $key=>$v)
 		$f3->set($key, $v);
@@ -132,6 +130,7 @@ $check = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND na
 if ($check)
 {
 	$fromDB = $f3->DB->exec("SELECT * FROM settings");
+
 	foreach ($fromDB as $c)
 	{	
 		$setting = $c["setting"];
@@ -141,6 +140,7 @@ if ($check)
 	}
 }
 
+$f3->SETTINGS = $GLOBALS["settings"];
 
 ########################################
 ############ Load modules ##############
