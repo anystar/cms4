@@ -25,7 +25,7 @@ class admin extends prefab {
 			admin::$clientPass = $f3->SETTINGS["pass"];
 		else
 			admin::$clientPass = admin::$webmasterPass;
-
+	
 		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["email"], $f3->SETTINGS["pass"]);
 
 		if (admin::$clientEmail == null || admin::$clientPass == null)
@@ -33,7 +33,7 @@ class admin extends prefab {
 			echo "Warning, no email or password set to be able to login to admin panel.";
 			die;
 		}
-
+		
 		if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
 		{
 			admin::$signed = true;
@@ -42,13 +42,6 @@ class admin extends prefab {
 				$f3->set("webmaster", true);
 
 			$this->dashboard_routes($f3);
-
-			// $page = $f3->PATH;
-			// $page = ($page!="/") ? trim($page, "/") : "index";
-			// $page = explode("/", $page);
-
-			// if ($page[0] == "admin")
-			// 	$f3->set('UI', $f3->CMS."adminUI/");
 
 			$f3->route('GET|POST /admin/login', function ($f3) {
 				$f3->reroute("/admin");
@@ -164,7 +157,6 @@ class admin extends prefab {
 			return;
 		}
 
-		$f3->set('UI', $f3->CMS."adminUI/");
 		if ($f3->get("POST.redirectWhere") == "live")
 			$f3->reroute("/");
 		else
