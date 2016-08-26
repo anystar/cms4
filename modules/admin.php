@@ -179,8 +179,7 @@ class admin extends prefab {
 		    }
 		}
 		
-		admin::instance()->login_routes($f3);
-		$f3->mock("GET /admin");
+		$f3->reroute("/admin");
 	}
 
 	static public function help($f3) {
