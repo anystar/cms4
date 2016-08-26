@@ -127,7 +127,7 @@ class admin extends prefab {
 	{
 		// Set default password for inhouse
 		if ($f3->HOST == $f3->SETTINGS["dev_host"]) {
-			$f3->POST["email"] = admin::$webmasterEmail;
+			$f3->POST["user"] = admin::$webmasterEmail;
 			$f3->POST["pass"] = admin::$webmasterPass;
 		}
 
@@ -154,6 +154,12 @@ class admin extends prefab {
 		}
 		else 
 		{
+			if ($post["user"] != admin::$clientEmail && $post["user"] != admin::$webmasterEmail)
+				$f3->set("login.email_error", true);
+
+			if ($post["pass"] != admin::$clientPass && $post["pass"] != admin::$webmasterPass)
+				$f3->set("login.pass_error", true);
+
 			admin::login_render($f3);
 			return;
 		}

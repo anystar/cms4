@@ -35,6 +35,7 @@ if (!checkdir("db/")) { echo "<strong>db</strong> folder does not exist. Please 
 // Require files for operations
 checkhtaccess(".htaccess");
 checkfile($settings["database"]);
+checkdeny($settings["database"]);
 
 // Require php extentions for operation
 if (!extension_loaded("SQLite3")) {
