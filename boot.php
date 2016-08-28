@@ -42,15 +42,14 @@ if (!extension_loaded("SQLite3")) {
 	die;
 }
 
+// Require php extension gd for image operations
 if (!extension_loaded("gd")) {
 	echo "GD extention not loaded!";
 	die;
 }
 
-if ($f3->PATH == "/cms.php") {
-	$f3->reroute("/");
-	exit;
-}
+// If we are calling cms.php..
+if ($f3->PATH == "/cms.php") $f3->reroute("/");
 
 ########################################
 ####### phpLiteAdmin redirecting #######
