@@ -16,24 +16,31 @@ class admin extends prefab {
 		admin::$webmasterEmail = $f3->SETTINGS["webmaster_email"];
 		admin::$webmasterPass = $f3->SETTINGS["webmaster_pass"];
 
-		if (isset($f3->SETTINGS["admin_email"]))
-			admin::$clientEmail = $f3->SETTINGS["admin_email"];
+		if (isset($f3->SETTINGS["email"]))
+			admin::$clientEmail = $f3->SETTINGS["email"];
 		else
 			admin::$clientEmail = admin::$webmasterEmail;
 
-		if (isset($f3->SETTINGS["admin_pass"]))
-			admin::$clientPass = $f3->SETTINGS["admin_pass"];
+		if (isset($f3->SETTINGS["pass"]))
+			admin::$clientPass = $f3->SETTINGS["pass"];
 		else
 			admin::$clientPass = admin::$webmasterPass;
 
-		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["admin_email"], $f3->SETTINGS["admin_pass"]);
+
+		if ($f3->SETTINGS["admin_email"])
+			admin::$clientEmail = $f3->SETTINGS["admin_email"];
+
+		if ($f3->SETTINGS["admin_pass"])
+			admin::$clientPass = $f3->SETTINGS["admin_pass"];
+	
+		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["email"], $f3->SETTINGS["pass"], $f3->SETTINGS["admin_email"], $f3->SETTINGS["admin_pass"]);
 
 		if (admin::$clientEmail == null || admin::$clientPass == null)
 		{
 			echo "Warning, no email or password set to be able to login to admin panel.";
 			die;
 		}
-
+		
 		if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
 		{
 			admin::$signed = true;
@@ -42,13 +49,6 @@ class admin extends prefab {
 				$f3->set("webmaster", true);
 
 			$this->dashboard_routes($f3);
-
-			// $page = $f3->PATH;
-			// $page = ($page!="/") ? trim($page, "/") : "index";
-			// $page = explode("/", $page);
-
-			// if ($page[0] == "admin")
-			// 	$f3->set('UI', $f3->CMS."adminUI/");
 
 			$f3->route('GET|POST /admin/login', function ($f3) {
 				$f3->reroute("/admin");
@@ -127,7 +127,7 @@ class admin extends prefab {
 	{
 		// Set default password for inhouse
 		if ($f3->HOST == $f3->SETTINGS["dev_host"]) {
-			$f3->POST["email"] = admin::$webmasterEmail;
+			$f3->POST["user"] = admin::$webmasterEmail;
 			$f3->POST["pass"] = admin::$webmasterPass;
 		}
 
@@ -154,11 +154,16 @@ class admin extends prefab {
 		}
 		else 
 		{
+			if ($post["user"] != admin::$clientEmail && $post["user"] != admin::$webmasterEmail)
+				$f3->set("login.email_error", true);
+
+			if ($post["pass"] != admin::$clientPass && $post["pass"] != admin::$webmasterPass)
+				$f3->set("login.pass_error", true);
+
 			admin::login_render($f3);
 			return;
 		}
 
-		$f3->set('UI', $f3->CMS."adminUI/");
 		if ($f3->get("POST.redirectWhere") == "live")
 			$f3->reroute("/");
 		else
@@ -179,8 +184,7 @@ class admin extends prefab {
 		    }
 		}
 		
-		admin::instance()->login_routes($f3);
-		$f3->mock("GET /admin");
+		$f3->reroute("/admin");
 	}
 
 	static public function help($f3) {

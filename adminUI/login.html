@@ -64,11 +64,13 @@
       <form autocomplete="off" method="post" action="{{ @BASE }}/admin/login">
         <div class="form-group">
 
-          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@POST.email}}">
+          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@POST.user}}">
+          <check if="{{@login.email_error}}"><span id="helpBlock" class="help-block">Incorrect email address</span></check>
         </div>
         <div class="form-group">
 
           <input id="pass" name="pass" type="password" class="form-control" placeholder="Password" value="{{@POST.pass}}">
+          <check if="{{@login.pass_error}}"><span id="helpBlock" class="help-block">Incorrect password</span></check>
         </div>
 
         <div class="row">

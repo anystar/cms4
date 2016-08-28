@@ -123,8 +123,13 @@ function checkfile($path, $hash=null) {
 
 function checkhtaccess() {
 	if (!is_file(getcwd()."/.htaccess"))
-		file_put_contents(".htaccess", htaccess());
+		file_put_contents(".htaccess", redirect_htaccess());
 }
+
+function checkdeny () {
+
+}
+
 
 function arrmerge($org, $merge) {
 
@@ -139,36 +144,17 @@ function arrmerge($org, $merge) {
 	return $org;
 }
 
-function htaccess () {
+function redirect_htaccess () {
 return "RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
 RewriteRule .* cms.php [L,QSA]";
 }
 
+function redirect_off_htaccess() {
+return "RewriteEngine off";
+}
 
-function htaccess_example() {
-echo <<<EOF
-<strong>.htaccess does not exist. Please use this snippet to create a .htaccess folder in the client directory.</strong>
-
-<p>
-<textarea cols=50 rows=10>
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-l
-RewriteRule .* cms.php [L,QSA]
-</textarea>
-</p>
-
-<strong>This snippet redirects all requests to cms.php. If you want a folder accessable put this .htaccess file in each folder.</strong>
-<p>
-<textarea cols=50 rows=10>
-RewriteEngine off
-</textarea>
-</p>
-
-<strong>Hint: CMS modules will attempt to create .htaccess for you where they can.</strong>
-EOF;
-
-	exit;
+function deny_htaccess () {
+return "Deny from all";
 }

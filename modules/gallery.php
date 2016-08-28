@@ -19,10 +19,10 @@ class gallery extends prefab {
 
 		if ($f3->exists("SETTINGS.gallery_thumb_path"))
 			gallery::$thumb_path = $f3->get("SETTINGS.gallery_thumb_path");
+		
 
 		if ($this->hasInit()) {
-
-			$pageToLoadOn = $f3->get("SETTINGS[gallery.page]");
+			$pageToLoadOn = $f3->SETTINGS["gallery.page"];
 
 			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all" || $pageToLoadOn == $f3->POST["return"])
 				$this->retreiveContent($page[1]);
@@ -190,7 +190,7 @@ class gallery extends prefab {
 	}
 
 	static function retreiveContent($section="") {
-		
+
 		$db = base::instance()->DB;
 
 		$result = $db->exec("SELECT * FROM gallery WHERE section=?", ($section) ? $section : "");
@@ -238,7 +238,6 @@ class gallery extends prefab {
 
 	static function hasInit()
 	{	
-		if (!base::instance()->webmaster) return;
 
 		if (!extension_loaded("gd")) return false;
 
@@ -273,6 +272,7 @@ class gallery extends prefab {
 
 	static function generate() {
 
+		if (!base::instance()->webmaster) return;
 		$db = base::instance()->DB;
 
 		$db->exec("CREATE TABLE IF NOT EXISTS 'gallery' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'filename' TEXT, 'order' INTEGER, 'caption' TEXT,'section' TEXT)");
