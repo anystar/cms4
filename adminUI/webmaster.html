@@ -52,17 +52,50 @@
 
 							<h3>Creating a new CMS</h3>
 							<p>
-								Start by building the website. Feel free to lay it out however you like.
+								Start by building the website. Feel free to structure it however you like.
 								<br><br>
-								Once your ready simple create a file called "cms.php" and include the code below.
+								Once your ready simple create a file called "cms.php" and include the code below in it.
 								
 <pre>
 	&lt;?php
-	require_once("/home/cms/boot.php");
+	require "/home/cms/boot.php";
 </pre>
 				
-								Now browse to cms.php and it will automatically create any files or folders it needs. It'll also
-								give you error messages if it requires something that is missing or if something is mis-configured.
+								Change "/home/cms/boot.php" to the path where the cms is located. For example a windows machine may be "C:\\webserver\cms\boot.php".
+								<br><br>
+								In a web browser go to http://WEBSITE.com/cms.php
+								<br><br>
+								The cms.php script will execute once creating any necessary folders and files. Afterwards you'll be redirected back to
+								the index page of the website.
+								<br><br>
+								You can now login with to the cms with the webmaster user and pass.
+								<br><br>
+								If any issue should occure error messages will be displayed letting you know what went wrong.
+							</p>
+
+							<h3>Installing Webworks CMS on a new server</h3>
+							<p>
+								Webworks CMS requires a handful of dependencies.
+
+								<ul>
+									<li>Apache with mod_rewrite, sqlite, GD and PHP.</li>
+									<li>Fat Free Framework</li>
+									<li>ckeditor</li>
+								</ul>
+
+								<p>
+									The primary location that the CMS can be downloaded from is on the web works server.
+									<br><br>
+									/home/cms/stable or /home/cms/experimental
+									<br><br>
+									The folder containing the CMS can be download as is. For example one may download the stable version via FTP.
+									<br><br>
+									It is recommended to use git to download the cms to maintain the source code. One may download the stable version via git like this:-
+
+<pre>
+git clone root@webworksau.com:/home/cms/stable .
+</pre>								
+								</p>
 							</p>
 
 						</div>

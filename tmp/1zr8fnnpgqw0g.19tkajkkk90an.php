@@ -55,10 +55,12 @@ if ($f3->PATH == "/cms.php") $f3->reroute("/");
 ##########################################
 ############ Error handling ##############
 ##########################################
+
 $error_log = $settings["paths"]["cms"]."/error.log";
 checkfile($error_log);
+
 require_once("tools/error_handler.php");
-error::construct(new DB\SQL('sqlite:'.$error_log), $f3->HOST.$f3->PATH);
+error::construct(new DB\SQL('sqlite:'.$error_log), $f3->HOST);
 
 
 ########################################
@@ -68,8 +70,8 @@ error::construct(new DB\SQL('sqlite:'.$error_log), $f3->HOST.$f3->PATH);
 if ($settings['enable_phpliteadmin']) {
 	$db_sub_folder = "admindb";
 
-	if ($f3->HOST == $settings["dev_host"])
-		$settings["phpliteadmin_pass"] = $settings["webmaster_pass"];
+	if ($f3->HOST == "localhost" || $f3->HOST == "dev.webworksau.com")
+		$adminDBpassword = $settings["global_pass"];
 
 	$url = pathinfo($_SERVER["REQUEST_URI"]);
 	$dir = basename($url["dirname"]);

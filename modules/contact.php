@@ -3,19 +3,23 @@
 class contact extends prefab
 {
 	static $moduleName = "Contact Form";
-	static $email_template = "website-enquiry.html";
+	static $email_template = "generic_email_template.html";
 	static $port = 25;
 	static $systemID = null;
 
 	function __construct ($systemID=null) {
 		$f3 = base::instance();
 
+		// Sets the page for which this module loads on
 		$default = $f3->exists("SETTINGS[contact.page]") ? $f3->get("SETTINGS[contact.page]") : "/contact";
 		$f3->set("SETTINGS[contact.page]", $default);
 
+		// Sets the default email template
 		if ($f3->exists("SETTINGS[contact.email_template]")) contact::$email_template = $f3->get("SETTINGS[contact.email_template]");
 		if ($f3->exists("SETTINGS[contact.port]")) contact::$port = $f3->get("SETTINGS[contact.port]");
 
+
+		// Ensure contact module is initlized
 		if (contact::hasInit())
 		{
 			$this->routes($f3);
@@ -28,6 +32,7 @@ class contact extends prefab
 				$f3->set("contact_return_page", $f3->POST["return"]);
 			}
 
+			// Load contact form on this page.
 			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all") {			
 				$this->load();
 			}
@@ -82,7 +87,7 @@ class contact extends prefab
 
 		$img = new Image();
 
-		$img->captcha('/contact/Abel-Regular.ttf',16,5,'SESSION.captcha_code');
+		$img->captcha('/contact/Abel-Regular.ttf', 16, 5,'SESSION.captcha_code');
 
 		$img->render();
 	}
@@ -115,10 +120,8 @@ class contact extends prefab
 
 	static function load()
 	{	
-
 		$f3 = f3::instance();
 		$db = $f3->get("DB");
-
 
 		// Do not pass go
 		if ($f3->get("contact.html")) return;
@@ -248,11 +251,11 @@ class contact extends prefab
 
 		$f3->set("contact_subject", $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"]);
 
-		if (file_exists(contact::$email_template)) {
+		if (file_exists(contact::$email_template))
 			$body = Template::instance()->render(contact::$email_template);
-		} else {
-			$body = Template::instance()->render("/contact/email_template/generic_email_template.html");
-		}
+		else
+			error::log("No email template found!");
+
 
 		$smtp->send($body);
 
@@ -293,9 +296,6 @@ class contact extends prefab
 		if (empty($result)) 
 			return false;
 
-		// if (!file_exists(contact::$email_template)) {
-		// 	d("Fatel Error in contact module: Email template does not exsist. Please create a html file named".contact::$email_template);
-		// }
 
 		contact::patch_columns_add_system();
 

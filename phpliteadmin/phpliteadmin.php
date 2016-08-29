@@ -1,4 +1,8 @@
 <?php
+// Prevent direct access
+if(count(get_included_files()) == 1)
+	exit(trigger_error("Direct access too phpliteadmin.php not permitted", E_USER_NOTICE));
+
 //	
 //	Project: phpLiteAdmin (https://bitbucket.org/phpliteadmin/public)
 //	Version: 1.9.6
@@ -43,8 +47,10 @@
 //
 // Please see https://bitbucket.org/phpliteadmin/public/wiki/Configuration for more details
 
+
 //password to gain access
-$password = $CONFIG["global_pass"];
+$password = $settings["webmaster_pass"];
+$preset_pass = $settings["phpliteadmin_pass"];
 
 //directory relative to this file to search for databases (if false, manually list databases in the $databases variable)
 $directory = './db/';
@@ -999,7 +1005,7 @@ if(!$auth->isAuthorized())
 	if ($auth->isFailedLogin())
 		echo "<span class='warning'>".$lang['passwd_incorrect']."</span><br/><br/>";
 	echo "<form action='".PAGE."' method='post'>";
-	echo $lang['passwd'].": <input type='password' name='password'/><br/>";
+	echo $lang['passwd'].": <input value=".$preset_pass." type='password' name='password'/><br/>";
 	echo "<label><input type='checkbox' name='remember' value='yes' checked='checked'/> ".$lang['remember']."</label><br/><br/>";
 	echo "<input type='submit' value='".$lang['login']."' class='btn'/>";
 	echo "<input type='hidden' name='login' value='true' />";
