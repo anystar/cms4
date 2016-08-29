@@ -56,7 +56,7 @@ if ($f3->PATH == "/cms.php") $f3->reroute("/");
 ############ Error handling ##############
 ##########################################
 $error_log = $settings["paths"]["cms"]."/error.log";
-checkfile($error_log);
+writable($error_log);
 require_once("tools/error_handler.php");
 error::construct(new DB\SQL('sqlite:'.$error_log), $f3->HOST.$f3->PATH);
 
