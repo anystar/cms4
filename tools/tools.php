@@ -69,7 +69,7 @@ function writable($path) {
 		exit;
 	}
 
-	// Step 1: Lets make sure the server is running as the user
+	// Step 1: Lets make sure the directory owner and server own is the same
 	$serverUser = exec("whoami");
 	$directoryUser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
 
