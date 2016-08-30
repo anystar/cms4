@@ -332,6 +332,7 @@ $(function(){
 						icon = '<span class="icon file"></span>';
 
 					fileType = fileType[fileType.length-1];
+					fileType = fileType.toLowerCase();
 
 					if (fileType == "jpeg" || fileType == "jpg" || fileType == "png" || fileType == "bmp" || fileType == "targa") {
 						icon = '<span class="icon file f-'+fileType+'">.'+fileType+'</span>';
