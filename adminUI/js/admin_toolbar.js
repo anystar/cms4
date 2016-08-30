@@ -112,7 +112,6 @@ $(function() {
 				var editor = CKEDITOR.instances[key];
 				editor.readOnly = false;
 				$(editor.element.$).attr('contenteditable',"true");
-				console.log(editor);
 			});
 		}
 	});

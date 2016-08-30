@@ -25,18 +25,6 @@ if($Did_F3_Load)
 ## Check folder and file permissions  ##
 ########################################
 
-// Ensure we can write to client folder
-writable(getcwd());
-
-// Require folders for operation
-if (!checkdir("tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder.";exit; }
-if (!checkdir("db/")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder.";exit; }
-
-// Require files for operations
-checkhtaccess(".htaccess");
-checkfile($settings["database"]);
-checkdeny($settings["database"]);
-
 // Require php extentions for operation
 if (!extension_loaded("SQLite3")) {
 	echo "SQLite3 php extention not loaded!";
@@ -48,6 +36,18 @@ if (!extension_loaded("gd")) {
 	echo "GD extention not loaded!";
 	die;
 }
+
+// Ensure we can write to client folder
+writable(getcwd());
+
+// Require folders for operation
+if (!checkdir("tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder.";exit; }
+if (!checkdir("db/")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder.";exit; }
+
+// Require files for operations
+checkhtaccess(".htaccess");
+checkfile($settings["database"]);
+checkdeny($settings["database"]);
 
 // If we are calling cms.php..
 if ($f3->PATH == "/cms.php") $f3->reroute("/");

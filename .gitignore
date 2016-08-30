@@ -1,2 +1,4 @@
 adminUI/wizard/tmp
 config.ini
+php_errors.log
+error.log

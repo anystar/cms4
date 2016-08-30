@@ -70,7 +70,7 @@ class admin extends prefab {
 		$f3->route('GET /admin/bootstrap.min.css', "admin::bootstrap_css");
 		$f3->route('GET /admin/bootstrap.min.js', "admin::bootstrap_js");
 
-		$f3->route("GET /cms", function ($f3) {
+		$f3->route("GET /sdf", function ($f3) {
 			$f3->reroute("/admin", true);
 		});
 

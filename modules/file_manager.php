@@ -2,7 +2,7 @@
 
 class file_manager extends prefab {
 
-	static $upload_path = "uploads";
+	static $upload_path = "/uploads";
 	static $image_upload_path = "uploads/images";
 
 	function __construct() {
@@ -27,6 +27,22 @@ class file_manager extends prefab {
 			if (admin::$signed)
 				$this->admin_routes($f3);
 		}
+		else
+		{
+			$f3->route("GET /admin/file_manager", function ($f3) {
+				echo Template::instance()->render("/file_manager/init.html");
+			});
+
+			$f3->route("POST /admin/file_manager/init", function ($f3) {
+				
+				if (!file_exists(getcwd().file_manager::$upload_path))
+					mkdir(getcwd().file_manager::$upload_path);
+
+				file_put_contents(getcwd().file_manager::$upload_path."/.htaccess", "RewriteEngine off");
+
+				$f3->reroute("/admin/file_manager");
+			});
+		}
 	}
 
 	function routes($f3) {
@@ -39,7 +55,7 @@ class file_manager extends prefab {
 		$f3->route("GET /admin/file_manager", function ($f3) {
 			$f3->set("max_upload_size", file_manager::file_upload_max_size());
 
-			echo Template::instance()->render("file_manager/file_manager.html");
+			echo Template::instance()->render("/file_manager/file_manager.html");
 		});
 
 		$f3->route("POST /admin/file_manager/dropzone", function ($f3) {
@@ -180,13 +196,13 @@ class file_manager extends prefab {
 	}
 
 	static function hasInit() {
-		$upload_path = file_manager::$upload_path;
+		$upload_path = getcwd().file_manager::$upload_path;
 
 		if (!file_exists($upload_path))
 			return false;
 
-		if (!file_exists(getcwd()."/".$upload_path."/.htaccess"))
-			file_put_contents(getcwd()."/".$upload_path."/.htaccess", "RewriteEngine off");
+		if (!file_exists($upload_path."/.htaccess"))
+			file_put_contents($upload_path."/.htaccess", "RewriteEngine off");
 
 		base::instance()->file_manager["init"] = true;
 		return true;
