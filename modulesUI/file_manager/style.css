@@ -179,12 +179,11 @@ body {
 	transition: 0.3s background-color;
 }
 
-.filemanager .data li:hover {
-	background-color: #42424E;
-
+.filemanager .data li .click:hover {
+	background-color: rgba(255,255,255,0.5);
 }
 
-.filemanager .data li a {
+.filemanager .data li .click {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -192,9 +191,16 @@ body {
 	height: 100%;
 }
 
+.filemanager .data li .details a {
+	border: 0;
+	background: none;
+	color: #000;
+	padding: 0 3px;
+}
+
 .filemanager .data li .name {
 	color: #ffffff;
-	font-size: 15px;
+	font-size: 16px;
 	font-weight: 700;
 	line-height: 20px;
 	width: 150px;
@@ -203,11 +209,12 @@ body {
 	position: absolute;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	top: 40px;
+	top: 37px;
+	text-shadow: 2px 1px #000;
 }
 
 .filemanager .data li .details {
-	color: #b6c1c9;
+	color: #222;
 	font-size: 13px;
 	font-weight: 400;
 	width: 55px;

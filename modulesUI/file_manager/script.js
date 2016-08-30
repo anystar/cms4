@@ -333,13 +333,17 @@ $(function(){
 
 					fileType = fileType[fileType.length-1];
 
-					if (fileType == "jpg" || fileType == "png" || fileType == "bmp" || fileType == "targa") {
-						icon = '<div style="display:inline-block;margin:20px 30px 0px 25px;border-radius:8px;width:60px;height:70px;background-position: center center;background-size: cover; background-repeat:no-repeat;background-image: url(' + f.path + ');"></div>';
+					if (fileType == "jpeg" || fileType == "jpg" || fileType == "png" || fileType == "bmp" || fileType == "targa") {
+						icon = '<span class="icon file f-'+fileType+'">.'+fileType+'</span>';
+
+						var file = $('<li style="background-position: center center;background-size: cover; background-repeat:no-repeat;background-image: url(' + f.path + ');" class="files"><a class="click" title="'+ f.path +'" class="files">'+icon+'<span class="name">'+ name +'</span> <span class="view details">'+fileSize+'</span></a></li>');
 					} else {
 						icon = '<span class="icon file f-'+fileType+'">.'+fileType+'</span>';
+		
+						var file = $('<li class="files"><a class="click" title="'+ f.path +'" class="files">'+icon+'<span class="name">'+ name +'</span> <span class="details">'+fileSize+'</span></a></li>');
 					}
 
-					var file = $('<li class="files"><a title="'+ f.path +'" class="files">'+icon+'<span class="name">'+ name +'</span> <span class="details">'+fileSize+'</span></a></li>');
+
 					file.click({path: f.path}, function (data) {
 				        try
 				        {
@@ -349,7 +353,7 @@ $(function(){
 				    	} catch (err) {}
 					});
 
-					var del = $('<button style="z-index:1000;">Delete</button>');
+					var del = $('<a style="z-index:1000;">Delete</a>');
 					del.click({path: f.path}, function(data) {
 						var c = confirm("Are you sure?");
 						if (c) {
@@ -364,7 +368,9 @@ $(function(){
 						return false;
 					});
 
+					var view = $('<a target="_blank" href="'+ f.path +'" style="z-index:1000;">View</a>');
 					file.find(".details").append(del);
+					file.find(".view").append(view);
 
 					file.appendTo(fileList);
 				});
