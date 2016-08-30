@@ -13,6 +13,8 @@ class admin extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
+		admin::file_routes($f3);
+
 		admin::$webmasterEmail = $f3->SETTINGS["webmaster_email"];
 		admin::$webmasterPass = $f3->SETTINGS["webmaster_pass"];
 
@@ -66,9 +68,6 @@ class admin extends prefab {
 			$this->login_routes($f3);
 
 		$f3->route('GET /admin/logout', "admin::logout");
-		$f3->route('GET /admin/theme', "admin::theme");
-		$f3->route('GET /admin/bootstrap.min.css', "admin::bootstrap_css");
-		$f3->route('GET /admin/bootstrap.min.js', "admin::bootstrap_js");
 
 		$f3->route("GET /cms", function ($f3) {
 			$f3->reroute("/admin", true);
@@ -208,15 +207,31 @@ class admin extends prefab {
 		$f3->reroute("/admin/settings");
 	}
 
-	static public function theme($f3) {
-		echo Template::instance()->render("css/adminstyle.css", "text/css");
-	}
 
-	static public function bootstrap_css($f3) {
-		echo Template::instance()->render("css/bootstrap.min.css", "text/css");
-	}
+	static function file_routes($f3) {
+		$f3->route('GET /admin/theme', function () {
+			echo Template::instance()->render("css/adminstyle.css", "text/css");
+		});
 
-	static public function bootstrap_js($f3) {
-		echo Template::instance()->render("js/bootstrap.min.js", "text/javascript");
+		$f3->route('GET /admin/bootstrap.min.css', function () {
+			echo Template::instance()->render("css/bootstrap.min.css", "text/css");
+		});
+
+		$f3->route('GET /admin/bootstrap.min.js', function () {
+			echo Template::instance()->render("js/bootstrap.min.js", "text/javascript");
+		});
+
+		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
+			echo View::instance()->render("admin/fonts/glyphicons-halflings-regular.woff2", "application/font-woff");
+		});
+
+		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
+			echo View::instance()->render("admin/fonts/glyphicons-halflings-regular.woff", "application/font-woff");
+		});
+
+		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
+			echo View::instance()->render("admin/fonts/glyphicons-halflings-regular.ttf", "application/font-woff");
+		});
+
 	}
 }

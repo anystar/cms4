@@ -36,7 +36,7 @@ class banners extends prefab {
 		});
 
 		$f3->route("GET /banners/slider.js", function ($f3) {
-			echo Template::instance()->render(banners::$upload_path."/slider.js", "text/js");
+			echo Template::instance()->render(banners::$upload_path."/slider.js", "application/javascript");
 			exit();
 		});
 
