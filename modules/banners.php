@@ -96,7 +96,8 @@ class banners extends prefab {
 			}
 		}
 
-		$f3->banners["html"] = Template::instance()->render(banners::$upload_path."/slider.html");
+		if (file_exists(banners::$upload_path."/slider.html"))
+			$f3->banners["html"] = Template::instance()->render(banners::$upload_path."/slider.html");
 	}
 
 	static function update_settings($f3) {
