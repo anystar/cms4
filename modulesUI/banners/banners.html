@@ -106,7 +106,11 @@
 				</div>
 				
 				<div class="row">
-					<div class="col-md-8">			
+					<check if="{{@webmaster}}">
+						<true><set colwidth="col-md-8"></true>
+						<false><set colwidth="col-md-12"></false>
+					</check>
+					<div class="{{@colwidth}}">			
 						<table class="images-table table table-bordered">
 							<thead>
 								<th>Image</th>
@@ -152,28 +156,41 @@
 							</form>
 						</div>
 					</div>
+
+					<check if="{{@webmaster}}">
 					<div class="col-md-4">
-						
-						<check if="{{@banners.system_config}}">
+
 						<h2>Banner settings</h2>
 
-				        <form class="form-horizontal" method="post" action="{{@BASE}}/admin/banners/update_javascript_settings">
-
-							<repeat group="{{@banners.system_config}}" key="{{@name}}" value="{{@value}}">
+				        <form method="post" class="form-horizontal" action="{{@BASE}}/admin/banners/update_">
 							<div class="form-group">
-							<label for="{{@name}}" class="col-sm-3 control-label">{{@name}}</label>
-							<div class="col-sm-9">
-							  <input name="{{@name}}" type="text" class="form-control" id="{{@name}}" value="{{@value}}">
+								<label for="exampleTextarea">html <ignore>{{@banners.html}}</ignore></label>
+								<textarea name="html" class="form-control" id="exampleTextarea" rows="3">
+									{{@banners.html | raw}}
+								</textarea>
 							</div>
+
+							<div class="form-group">
+								<label for="exampleTextarea">css</label>
+								<input value='<link href="{{ @BASE }}/banners/slider.css" rel="stylesheet">'>
+								<textarea name="html" class="form-control" id="exampleTextarea" rows="3">
+									{{@banners.css | raw}}
+								</textarea>
 							</div>
-							</repeat>
 
-							<button type="submit" class="btn btn-primary pull-right">Update settings</button>
+							<div class="form-group">
+								<label for="exampleTextarea">js</label>
+								<input value='<link href="{{ @BASE }}/banners/slider.js" rel="stylesheet">'>
+								<textarea name="html" class="form-control" id="exampleTextarea" rows="3">
+									{{@banners.js | raw}}
+								</textarea>
+							</div>
 
-				        </form>
-				        </check>
+							
+						</form>
 
 					</div>
+					</check>
 				</div>
 
 			</div>

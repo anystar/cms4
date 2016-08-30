@@ -19,15 +19,6 @@ class banners extends prefab {
 
 		if ($this->hasInit())
 		{
-			banners::$system = setting("banners-system");
-
-			// get system configuration
-			$f3->set("banners.system_config", setting_json("banners-system_config"));
-			$f3->set("banners.width", setting_json("banners-width"));
-			$f3->set("banners.height", setting_json("banners-height"));
-
-			banners::$system_path = "banners/systems/".banners::$system."/";
-
 			banners::retreive_content($f3);
 
 			$this->routes(base::instance());
@@ -40,13 +31,12 @@ class banners extends prefab {
 	function routes($f3) {
 
 		$f3->route("GET /banners/slider.css", function ($f3) {
-			echo Template::instance()->render(banners::$system_path."/slider.css", "text/css");
+			echo Template::instance()->render(banners::$upload_path."/slider.css", "text/css");
 			exit();
 		});
 
 		$f3->route("GET /banners/slider.js", function ($f3) {
-			$f3->banner = setting_json("banners-system_config");
-			echo Template::instance()->render(banners::$system_path."/"."slider.js", "text/javascript");
+			echo Template::instance()->render(banners::$upload_path."/slider.js", "text/js");
 			exit();
 		});
 
@@ -78,15 +68,6 @@ class banners extends prefab {
 		// Upload via drop zone
 		$f3->route('POST /admin/banners/dropzone', 'banners::upload');
 
-		// Update settings. COULD PROBABALLY BE REMOVED...
-		$f3->route('POST /admin/banners/update_settings', function ($f3) {
-
-			set_setting("banners-width", filter_var($f3->POST["width"], FILTER_SANITIZE_NUMBER_INT));
-			set_setting("banners-height", filter_var($f3->POST["height"], FILTER_SANITIZE_NUMBER_INT));
-
-			$f3->reroute("/admin/banners");
-		});
-
 		// Delete image
 		$f3->route('GET /admin/banners/delete/@image', function ($f3, $params) {
 			banners::delete_banner($f3, $params);
@@ -110,26 +91,22 @@ class banners extends prefab {
 		$dir = array_diff(scandir(banners::$upload_path), array('..', '.'));
 
 		foreach ($dir as $img) {
-			$f3->push("banners.images", [
-				"url"=>banners::$upload_path.$img,
-				"filename"=>$img
-			]);
+			if ($img != "slider.html" && $img != "slider.css" && $img != "slider.js")
+			{
+				$f3->push("banners.images", [
+					"url"=>banners::$upload_path.$img,
+					"filename"=>$img
+				]);
+			}
 		}
 
-		$html = \Template::instance()->render("/".banners::$system_path."/slider.html");
-
-		$f3->set("banners.html", $html);
+		$f3->banners["html"] = Template::instance()->render(banners::$upload_path."/slider.html");
 	}
 
 
 	static function hasInit() {
 
 		$db = base::instance()->get("DB");
-
-		$result = setting("banners-system");
-
-		if (!$result)
-				return false;
 	
 		if (!is_dir(getcwd()."/".banners::$upload_path))
 			return false;
@@ -143,39 +120,43 @@ class banners extends prefab {
 
 		//TODO: Create html files for admin display and generation
 		if (banners::hasInit())
+		{
+			if (admin::$signed) {
+				$f3->banners["css"] = Template::instance()->render(banners::$upload_path."/slider.css");
+				$f3->banners["js"] = Template::instance()->render(banners::$upload_path."/slider.js");
+			}
+
 			echo Template::instance()->render("/banners/banners.html");
+		}
 		else
 			echo Template::instance()->render("/banners/init.html");
 	}
 
 
 	static function init($f3) {
+		if (banners::hasInit()) return false;
 		if (!$f3->webmaster)
 			return;
 
-		if (banners::hasInit()) return false;
+		// Default slider
+		$system = "wowslider";
+		$width = "1500";
+		$height = "300";
 
-		$system = $f3->POST["system"];
+		// Check to see if directory exists for javascript system
 		$cms = $f3->SETTINGS["paths"]["cms"];
 		$systemPath = $cms."modulesUI/banners/systems/".$system;
 
-
-		// Check to see if directory exists for javascript system
 		if (!is_dir($systemPath)) {
-			$f3->ERRORS["not_a_system"];
-			$f3->mock("GET /admin/banners");
+			error::log("A banner system was created where none exists at $systemPath");
+			$f3->rereoute("/admin/banners");
 			return;
 		}
 
-		$width = filter_var($f3->POST["bannerwidth"], FILTER_SANITIZE_NUMBER_INT);
-		$height = filter_var($f3->POST["bannerheight"], FILTER_SANITIZE_NUMBER_INT);
-
-		// Set the systems defaults
-		$defaults = file_get_contents($systemPath."/default_settings.json");
-		setting("banners-system_config", $defaults);
-		setting("banners-system", $system);
-		setting("banners-width", $width);
-		setting("banners-height", $height);
+		// Copy banner system to client folder
+		copy($systemPath."/slider.html", getcwd()."/".banners::$upload_path."/slider.html");
+		copy($systemPath."/slider.js", getcwd()."/".banners::$upload_path."/slider.js");
+		copy($systemPath."/slider.css", getcwd()."/".banners::$upload_path."/slider.css");
 
 		// Make sure uploads folder exists
 		if (!is_dir(getcwd()."/uploads"))
@@ -198,7 +179,6 @@ class banners extends prefab {
 
 		$f3->reroute("/admin/banners");
 	}
-
 
 
 	static function upload($f3) {
