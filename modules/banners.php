@@ -59,11 +59,7 @@ class banners extends prefab {
 		#######################################################
 		
 		// Update system config of banner system
-		$f3->route('POST /admin/banners/update_javascript_settings', function ($f3) {
-			setting_json("banners-system_config", $f3->POST);
-
-			$f3->reroute("/admin/banners");
-		});
+		$f3->route('POST /admin/banners/update_settings', "banners::update_settings");
 
 		// Upload via drop zone
 		$f3->route('POST /admin/banners/dropzone', 'banners::upload');
@@ -101,6 +97,20 @@ class banners extends prefab {
 		}
 
 		$f3->banners["html"] = Template::instance()->render(banners::$upload_path."/slider.html");
+	}
+
+	static function update_settings($f3) {
+
+		if (isset($f3->POST["html"]))
+			file_put_contents(getcwd()."/".banners::$upload_path."/slider.html", $f3->POST["html"]);
+
+		if (isset($f3->POST["css"]))
+			file_put_contents(getcwd()."/".banners::$upload_path."/slider.css", $f3->POST["css"]);
+
+		if (isset($f3->POST["js"]))
+			file_put_contents(getcwd()."/".banners::$upload_path."/slider.js", $f3->POST["js"]);
+
+		$f3->reroute("/admin/banners");
 	}
 
 
@@ -153,11 +163,6 @@ class banners extends prefab {
 			return;
 		}
 
-		// Copy banner system to client folder
-		copy($systemPath."/slider.html", getcwd()."/".banners::$upload_path."/slider.html");
-		copy($systemPath."/slider.js", getcwd()."/".banners::$upload_path."/slider.js");
-		copy($systemPath."/slider.css", getcwd()."/".banners::$upload_path."/slider.css");
-
 		// Make sure uploads folder exists
 		if (!is_dir(getcwd()."/uploads"))
 			mkdir(getcwd()."/uploads");
@@ -165,6 +170,11 @@ class banners extends prefab {
 		// Create uploads folder
 		if (!is_dir(getcwd()."/".banners::$upload_path))
 			mkdir(getcwd()."/".banners::$upload_path);
+
+		// Copy banner system to client folder
+		copy($systemPath."/slider.html", getcwd()."/".banners::$upload_path."/slider.html");
+		copy($systemPath."/slider.js", getcwd()."/".banners::$upload_path."/slider.js");
+		copy($systemPath."/slider.css", getcwd()."/".banners::$upload_path."/slider.css");
 
 		// Load default images
 		if (is_dir($systemPath."/default_images"))
@@ -233,7 +243,6 @@ class banners extends prefab {
 			break;
 		}
 	}
-
 
 	// Drupal has this implemented fairly elegantly:
 	// http://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size

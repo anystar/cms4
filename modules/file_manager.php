@@ -2,7 +2,7 @@
 
 class file_manager extends prefab {
 
-	static $upload_path = "/uploads";
+	static $upload_path = "uploads/";
 	static $image_upload_path = "uploads/images";
 
 	function __construct() {
@@ -35,10 +35,10 @@ class file_manager extends prefab {
 
 			$f3->route("POST /admin/file_manager/init", function ($f3) {
 				
-				if (!file_exists(getcwd().file_manager::$upload_path))
-					mkdir(getcwd().file_manager::$upload_path);
+				if (!file_exists(getcwd()."/".file_manager::$upload_path))
+					mkdir(getcwd()."/".file_manager::$upload_path);
 
-				file_put_contents(getcwd().file_manager::$upload_path."/.htaccess", "RewriteEngine off");
+				file_put_contents(getcwd()."/".file_manager::$upload_path."/.htaccess", "RewriteEngine off");
 
 				$f3->reroute("/admin/file_manager");
 			});
@@ -94,9 +94,6 @@ class file_manager extends prefab {
 		});
 
 		$f3->route(["GET /admin/file_manager/browse_files", "GET /browse_files/*"], function ($f3) {
-			
-			$f3->set('UI', $f3->CMS."adminUI/");
-
 			echo Template::instance()->render("file_manager/file_browser.html");
 		});
 
@@ -142,14 +139,14 @@ class file_manager extends prefab {
 	static function file_list() {
 		$files = array();
 
-		$response = file_manager::scan(file_manager::$upload_path);
+		$response = file_manager::scan(rtrim(file_manager::$upload_path, "/"));
 
 		header('Content-type: application/json');
 
 		echo json_encode(array(
 			"name" => basename(file_manager::$upload_path),
 			"type" => "folder",
-			"path" => file_manager::$upload_path."/",
+			"path" => file_manager::$upload_path,
 			"items" => $response
 		));
 	}
@@ -160,32 +157,30 @@ class file_manager extends prefab {
 
 		// Is there actually such a folder/file?
 		if(file_exists($dir)){
-		
+
 			foreach(scandir($dir) as $f) {
 			
 				if(!$f || $f[0] == '.') {
 					continue; // Ignore hidden files
 				}
 
-				if(is_dir($dir . '/' . $f)) {
-
-					// The path is a folder
+				// Is it a file or folder?
+				if(is_dir(getcwd()."/".$dir."/".$f)) {
 					$files[] = array(
 						"name" => $f,
 						"type" => "folder",
 						"path" => $dir . '/' . $f,
 						"items" => file_manager::scan($dir . '/' . $f) // Recursively get the contents of the folder
 					);
-				}
-				
-				else {
+				} else {
 
-					// It is a file
+
+					
 					$files[] = array(
 						"name" => $f,
 						"type" => "file",
-						"path" => base::instance()->BASE."/".$dir.'/'.$f,
-						"size" => filesize($dir . '/' . $f) // Gets the size of this file
+						"path" => base::instance()->BASE."/".$dir . "/" . $f,
+						"size" => filesize($dir . "/" . $f) // Gets the size of this file
 					);
 				}
 			}
@@ -196,7 +191,7 @@ class file_manager extends prefab {
 	}
 
 	static function hasInit() {
-		$upload_path = getcwd().file_manager::$upload_path;
+		$upload_path = getcwd()."/".file_manager::$upload_path;
 
 		if (!file_exists($upload_path))
 			return false;

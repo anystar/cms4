@@ -162,31 +162,52 @@
 
 						<h2>Banner settings</h2>
 
-				        <form method="post" class="form-horizontal" action="{{@BASE}}/admin/banners/update_">
+				        <form method="post" class="form-horizontal" action="{{@BASE}}/admin/banners/update_settings">
 							<div class="form-group">
-								<label for="exampleTextarea">html <ignore>{{@banners.html}}</ignore></label>
-								<textarea name="html" class="form-control" id="exampleTextarea" rows="3">
-									{{@banners.html | raw}}
-								</textarea>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">html</label>
+									<div class="col-sm-10">
+										<textarea name="html" class="form-control" rows="3">{{@banners.html | raw}}</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-10 col-sm-offset-2">
+										<input type="text" class="form-control" value='<ignore>{{@banners.html}}</ignore>'>
+									</div>
+								</div>
 							</div>
 
 							<div class="form-group">
-								<label for="exampleTextarea">css</label>
-								<input value='<link href="{{ @BASE }}/banners/slider.css" rel="stylesheet">'>
-								<textarea name="html" class="form-control" id="exampleTextarea" rows="3">
-									{{@banners.css | raw}}
-								</textarea>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">css</label>
+									<div class="col-sm-10">
+										<textarea name="css" class="form-control" rows="3">{{@banners.css | raw}}</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-10 col-sm-offset-2">
+										<input type="text" class="form-control" value='<link href="<ignore>{{@BASE}}</ignore>/banners/slider.css" rel="stylesheet">'>
+									</div>
+								</div>
 							</div>
 
 							<div class="form-group">
-								<label for="exampleTextarea">js</label>
-								<input value='<link href="{{ @BASE }}/banners/slider.js" rel="stylesheet">'>
-								<textarea name="html" class="form-control" id="exampleTextarea" rows="3">
-									{{@banners.js | raw}}
-								</textarea>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">js</label>
+									<div class="col-sm-10">
+										<textarea name="js" class="form-control" rows="3">{{@banners.js | raw}}</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-10 col-sm-offset-2">
+										<input type="text" class="form-control" value='<script src="<ignore>{{@BASE}}</ignore>/banners/slider.js"></script>'>
+									</div>
+								</div>
 							</div>
 
-							
+							<div class="form-group">
+								<button class="col-xs-10 col-xs-offset-2" type="submit" class="btn btn-default">Update settings</button>
+							</div>
 						</form>
 
 					</div>
