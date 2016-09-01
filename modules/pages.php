@@ -37,7 +37,6 @@ class pages extends prefab {
 					$f3->error("404");
 		});
 
-
 		// Handle sub pages.
 		// 
 		// Please read:
@@ -62,16 +61,23 @@ class pages extends prefab {
 			}
 
 			// Is there a page file?
+			$result = false;
 			if (is_file($page))
-				$fileToLoad = $page;		
+			{
+				$fileToLoad = $page;
+				$result = true;
+			}
 			else
-				// fdsfdsfds
+			{
 				$fileToLoad = $folder."/generic.html";
+				is_file($fileToLoad);
+				$result = true;
+			}
+
 
 			// Is there a record in the database about this page?
-			$path = ltrim($params[0], '/');
-			$result = $f3->DB->exec("SELECT id FROM pages WHERE page=?", $path)[0]["id"];
-
+			//$path = ltrim($params[0], '/');
+			//$result = $f3->DB->exec("SELECT id FROM pages WHERE page=?", $path)[0]["id"];
 
 			if (!$result)
 				$f3->error("404");

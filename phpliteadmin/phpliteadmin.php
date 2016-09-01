@@ -1005,7 +1005,7 @@ if(!$auth->isAuthorized())
 	if ($auth->isFailedLogin())
 		echo "<span class='warning'>".$lang['passwd_incorrect']."</span><br/><br/>";
 	echo "<form action='".PAGE."' method='post'>";
-	echo $lang['passwd'].": <input value=".$preset_pass." type='password' name='password'/><br/>";
+	echo $lang['passwd'].": <input value='".$preset_pass."' type='password' name='password'/><br/>";
 	echo "<label><input type='checkbox' name='remember' value='yes' checked='checked'/> ".$lang['remember']."</label><br/><br/>";
 	echo "<input type='submit' value='".$lang['login']."' class='btn'/>";
 	echo "<input type='hidden' name='login' value='true' />";

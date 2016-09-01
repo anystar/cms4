@@ -1,2 +1,0 @@
-[29-Aug-2016 09:01:10 UTC] PHP Fatal error:  Cannot redeclare class Prefab in /home/summer/webd/resources/f3/lib/base.php on line 24
-[29-Aug-2016 09:01:10 UTC] Fatal error: Cannot redeclare class Prefab

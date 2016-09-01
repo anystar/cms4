@@ -248,24 +248,27 @@ class content_blocks extends prefab {
 	{
 		$db = $f3->get("DB");
 
-		// Get Page name and Page ID
+		// Get Page name and Page ID from incoming post data
 		$page = str_replace('_forwardslash_', '/', $f3->get("POST.editorID"));
 		$tmp = explode("_id-", $page);
 		$page = $tmp[0];
 		$blockID = $tmp[1];
 
-		// Get content
-		$content = $f3->get("POST.editabledata");
-
-		// Get content name
+		// Get content name using page id supplied.
 		$contentName = $db->exec("SELECT contentName FROM contentBlocks WHERE id=?", $blockID)[0]["contentName"];
 
-		// Does the content block exist?
-		$id = $db->exec("SELECT id FROM contentBlocks WHERE (page=? OR page='all' OR page IS NULL) AND contentName=?", [$page, $contentName]);
+		if (!$contentName)
+			// ERROR: We are trying to save to a non existent content block??
+			error::log("Attempting to update a non-existant content block");
 
+
+		// Does the content block exist?
+		$id = $db->exec("SELECT id, page FROM contentBlocks WHERE (page=? OR page='all' OR page='' OR page IS NULL) AND contentName=?", [$page, $contentName]);
+
+		// The following is for sub-pages
 		if (!$id)
 		{
-			// Get the orginal values from products
+			// Lets try to clone
 			$orginalVals = $db->exec("SELECT page, contentName, type FROM contentBlocks WHERE id=?", $blockID)[0];
 
 			// Copy Row
@@ -277,6 +280,10 @@ class content_blocks extends prefab {
 			$db->exec("UPDATE contentBlocks SET page=? WHERE id=?", [$page, $blockID]);
 		}
 
+		// Get content
+		$content = $f3->get("POST.editabledata");
+
+		// Update the content block
 		$result = $db->exec("UPDATE contentBlocks SET content=:content WHERE id=:id", array(
 				":id"=>$blockID,
 				":content"=>$content
