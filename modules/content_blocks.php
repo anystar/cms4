@@ -26,9 +26,6 @@ class content_blocks extends prefab {
 			// Are there sub pages?
 			$page = explode("/", $page);
 
-			if (count($page) == 1)
-				$page = $page[0];
-
 			$this->retreiveContent($f3, $page);
 		}
 
@@ -123,79 +120,65 @@ class content_blocks extends prefab {
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
 
-		// Are we dealing with sub pages?
-		if (is_array($page))
-		{
-			$rootPage = $page[0];
-			$page = implode("/", $page);
 
-			// Lets get the contents of the root page
-			// and then we'll just override contents..
-			$this->setBlocks($f3, $rootPage, $page);
+		// Loop through for subpages
+		$previousPage = "";
+		$blocks = array();
+		foreach ($page as $p)
+		{
+			$rawblocks = $f3->DB->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page="" OR page IS NULL ORDER BY page', $previousPage.$p);
+
+			// Process each content block
+			foreach ($rawblocks as $raw)
+			{
+
+				// skip if we have no content name.
+				if ($raw["contentName"] == "") {
+					error::log("Content block with no name?");
+					continue;
+				}
+
+				// if there is no page name, label as for all pages
+				if ($blocks["page"] == "") $raw["page"] = "all";
+
+				$f3->set($raw["contentName"], $raw["content"]);
+				
+				$blocks[$raw["contentName"]] = $raw;
+				$blocks[$raw["contentName"]]["ckhash"] = substr(sha1($raw["contentName"]), 0, 8);
+			}
+
+			$previousPage = $p . "/";
 		}
 
-		$this->setBlocks($f3, $page);
-
 		if (admin::$signed)
-		{
+		{	
+			foreach ($blocks as $block) {
+
+				// Yet to be reimplemented!
+				switch ($block['type'])
+				{
+					default:
+						$f3->set($block["contentName"], "<div contenteditable='true' id='".$block["ckhash"]."_id_".$block["id"]."'>" . $block["content"] . "</div>");
+					break;
+				}
+
+				$f3->ck_instances[] = array(
+					"id"=>$block["ckhash"]."_id_".$block["id"],
+					"type"=>$block["type"],
+					"name"=>$block["contentName"]
+				);
+			}
+
 			// Load up the Editor
 			$inlinecode = Template::instance()->render("/content_blocks/js/ckeditor_inline.js");
+
+			d($inlinecode);
 
 			$f3->concat("ckeditor", $inlinecode);
 			$f3->concat("admin", $inlinecode);
 		}
 	}
 
-	function setBlocks ($f3, $page, $subpage=null) {
-		$blocksraw = $f3->DB->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page=""', $page);
-
-		// There are no blocks to process
-		if (!$blocksraw) return;
-
-		$compiled = array();
-		foreach ($blocksraw as $key=>$block) {
-			
-			// skip if we have no content name.
-			if ($block["contentName"] == "") continue;
-
-			// if there is no page, label as for all pages
-			if ($block["page"] == "") $block["page"] = "all";
-
-			// If we are admin call the editor function
-			if (admin::$signed) {
-				if ($subpage!=null)
-				{
-					$block = $this->wrapWithCKEDITOR($f3, $block, $subpage);
-				}
-				else
-					$block = $this->wrapWithCKEDITOR($f3, $block, $page);
-			}
-
-			// Insert into hive
-			$f3->set($block["contentName"], $block["content"]);
-		}
-	}
-
-	function wrapWithCKEDITOR($f3, $block, $page) {
-		
-		// Make safe for the editor
-		$block["page"] = str_replace('/', '_forwardslash_', $page);
-
-		// Yet to be reimplemented!
-		switch ($block['type'])
-		{
-			default:
-				$block["content"] = "<div contenteditable='true' id='".$block["page"]."_id-".$block["id"]."'>" . $block["content"] . "</div>";
-			break;
-		}
-
-		$f3->ck_instances[] = array(
-			"id"=>$block["page"]."_id-".$block["id"],
-			"type"=>$block["type"]
-		);
-
-		return $block;
-	}
 
 	function loadAll ($f3) {
 
@@ -249,8 +232,10 @@ class content_blocks extends prefab {
 		$db = $f3->get("DB");
 
 		// Get Page name and Page ID from incoming post data
-		$page = str_replace('_forwardslash_', '/', $f3->get("POST.editorID"));
-		$tmp = explode("_id-", $page);
+		$page = preg_replace('_forwardslash_', '/', $f3->get("POST.editorID"));
+
+
+		$tmp = explode("_id_", $page);
 		$page = $tmp[0];
 		$blockID = $tmp[1];
 
