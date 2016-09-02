@@ -236,7 +236,10 @@
 				
 				$.ajax(d.currentTarget.href);
 				
-				$(".admin_banner_display").html("<div id='message'>Please reload page to update banner system</div>");
+				var msg = $("<div id='message'>Please reload page to update banner system</div>");
+				msg.css("height", $(".admin_banner_display").height());
+
+				$(".admin_banner_display").html(msg);
 				$(this).parent().parent().remove();
 
 				return false;

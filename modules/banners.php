@@ -95,7 +95,6 @@ class banners extends prefab {
 		// Get images URLs
 		$dir = array_diff(scandir(banners::$upload_path), array('..', '.', "slider.html", "slider.css", "slider.js"));
 
-
 		$order = json_decode(setting("banners_order"));
 
 		// Validate order
@@ -106,10 +105,12 @@ class banners extends prefab {
 				$order[] = $img;
 				$update_order = true;
 			}
-
-			if (!in_array($img, $order)) {
-				$order[] = $img;
-				$update_order = true;
+			else 
+			{
+				if (!in_array($img, $order)) {
+					$order[] = $img;
+					$update_order = true;
+				}
 			}
 		}
 
