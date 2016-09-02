@@ -35,7 +35,9 @@ class error {
 	}
 
 	static function isInit() {
-		if (empty(error::$db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='errors'")))
+		$result = error::$db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='errors'");
+		
+		if (!$result)
 			return false;
 		else
 			return true;
