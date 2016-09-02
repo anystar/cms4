@@ -13,10 +13,21 @@ class ckeditor extends prefab {
 
 	function routes($f3) {
 
+		$f3->route('GET /ckeditor/images/inlinesave-color.svg', function () {
+			echo View::instance()->render("/ckeditor/images/save-color.png", "image/png");
+		});
+
+		$f3->route('GET /ckeditor/images/inlinesave-label.svg', function () {
+			echo View::instance()->render("/ckeditor/images/save-label.png", "image/png");
+		});
+
+		$f3->route('GET /ckeditor/cms_save.js', function () {
+			echo Template::instance()->render("/ckeditor/js/cms_save.js", "application/javascript");
+		});
+
 	}
 
 	function admin_routes($f3) {
-		
 		// TODO: Insert admin related routes for this module
 
 		$f3->route("GET /admin/ckeditor/contents.css", function () {
@@ -24,6 +35,9 @@ class ckeditor extends prefab {
 		});
 
 	}
+
+
+
 
 	// static function hasInit() {
 	// 	$db = base::instance()->get("DB");

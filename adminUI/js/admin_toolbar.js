@@ -22,6 +22,8 @@ $(function() {
 
 			postData.editabledata = editor.getData();
 			postData.editorID = editor.container.getId();
+			// postData.page = config.page;
+			// postData.contentBlock = config.contentBlock;
 
 			payload = JSON.stringify(postData);
 
@@ -51,7 +53,7 @@ $(function() {
 		        }
 		    };
 
-			xhttp.open("POST", "{{@BASE}}/admin/page/save", true);
+			xhttp.open("POST", "{{@BASE}}/admin/content/save", true);
 			// Send as form data encoded to handle special characters.
 			xhttp.setRequestHeader("Content-type", 'application/x-www-form-urlencoded');
 			xhttp.send(payload);

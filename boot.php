@@ -118,9 +118,6 @@ if (!file_exists(getcwd()."/".$settings['database'])) {
 	touch($settings["database"]);
 
 	$db = new DB\SQL('sqlite:'.$settings['database']);
-	$db->begin();
-	$db->exec("CREATE TABLE 'settings' ('setting' TEXT, 'value' TEXT);");
-	$db->commit();
 
 	if (!file_exists(getcwd()."/db/.htaccess"))
 		file_put_contents(getcwd()."/db/.htaccess", "Deny from all");
@@ -129,6 +126,10 @@ if (!file_exists(getcwd()."/".$settings['database'])) {
 // Connect to DB
 $f3->set('DB', new DB\SQL('sqlite:'.$settings['database']));
 
+// Ensure settings table exists
+$result = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
+if (!$result)
+	$f3->DB->exec("CREATE TABLE 'settings' ('setting' TEXT, 'value' TEXT);");
 
 ######################################################
 ########## Override settings from Database ###########

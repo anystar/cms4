@@ -23,9 +23,6 @@ class content_blocks extends prefab {
 
 			$page = ($page!="/") ? trim($page, "/") : "index";
 
-			// Are there sub pages?
-			$page = explode("/", $page);
-
 			$this->retreiveContent($f3, $page);
 		}
 
@@ -49,7 +46,7 @@ class content_blocks extends prefab {
 			$f3->reroute("/admin/pages");
 		});
 
-		$f3->route('POST /admin/page/save', function ($f3, $params) {
+		$f3->route('POST /admin/content/save', function ($f3, $params) {
 			if (!admin::$signed) { return; }
 
 			content_blocks::save_inline($f3);
@@ -121,9 +118,10 @@ class content_blocks extends prefab {
 		$db = $f3->get("DB");
 
 		// Loop through for subpages
+		$pages = explode("/", $page);
 		$previousPage = "";
 		$blocks = array();
-		foreach ($page as $p)
+		foreach ($pages as $p)
 		{
 			$rawblocks = $f3->DB->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page="" OR page IS NULL ORDER BY page', $previousPage.$p);
 
@@ -144,6 +142,7 @@ class content_blocks extends prefab {
 
 				$blocks[$raw["contentName"]] = $raw;
 				$blocks[$raw["contentName"]]["ckhash"] = "id_" . $raw["id"] . "_hash_" . substr(sha1($raw["contentName"].$previousPage.$p), 0, 12);
+				$blocks[$raw["contentName"]]["page"] = $page;
 			}
 
 			$previousPage = $p . "/";
@@ -227,49 +226,41 @@ class content_blocks extends prefab {
 
 	static function save_inline($f3, $id=null, $content=null) 
 	{
-		d($f3->get("POST"));
-
 		$db = $f3->get("DB");
 
-		//$id = explode("_id_", $f3->get("POST.editorID"))[1];
+		$contentID = $f3->POST["contentBlock"];
+		$page = $f3->POST["page"];
+		$content = $f3->POST["editabledata"];
 
-		preg_match('/id_(.*)_hash_(.*)/', $f3->get("POST.editorID"), $match);
-		$id = $match[1];
-		$hash = $match[2];
-
-		// Get content name using page id supplied.
-		$result = $db->exec("SELECT contentName, page FROM contentBlocks WHERE id=?", $id)[0];
-		$contentName = $result["contentName"];
-		$page = $result["page"];
-
-		if (!$contentName)
+		// Get content block from
+		$result = $db->exec("SELECT contentName, page FROM contentBlocks WHERE id=?", $contentID)[0];
+		
+		if (!$result)
 			// ERROR: We are trying to save to a non existent content block??
 			error::log("Attempting to update a non-existant content block");
 
-		// Does the content block exist?
-		$id = $db->exec("SELECT id, page FROM contentBlocks WHERE (page=? OR page='all' OR page='' OR page IS NULL) AND contentName=?", [$page, $contentName]);
-
-		// The following is for sub-pages
-		if (!$id)
+		// Don't worry about sub page business if its for all pages.
+		if ($result["page"] != "" && strtolower($result["page"]) != "all")
 		{
-			// Lets try to clone
-			$orginalVals = $db->exec("SELECT page, contentName, type FROM contentBlocks WHERE id=?", $blockID)[0];
+			// Check again incase we are using an outdated content ID because of subpage overwriting.
+			$result2 = $db->exec("SELECT id, contentName, page FROM contentBlocks WHERE page=? AND contentName=?", [$page, $result["contentName"]])[0];			
 
-			// Copy Row
-			$result = $db->exec("
-					INSERT INTO contentBlocks (page, contentName, type) VALUES (?, ?, ?)
-				", [$orginalVals["page"], $orginalVals["contentName"], $orginalVals["type"]]);
+			if ($result2)
+				$contentID = $result2["id"];
+			else
+			{
+				$orginalVals = $db->exec("SELECT page, contentName, type FROM contentBlocks WHERE id=?", $contentID)[0];
 
-			$blockID = $db->lastInsertId();
-			$db->exec("UPDATE contentBlocks SET page=? WHERE id=?", [$page, $blockID]);
+				// Copy Row
+				$result = $db->exec("INSERT INTO contentBlocks (page, contentName, type) VALUES (?, ?, ?)", [$page, $orginalVals["contentName"], $orginalVals["type"]]);
+
+				$contentID = $db->lastInsertId();
+			}
 		}
-
-		// Get content
-		$content = $f3->get("POST.editabledata");
 
 		// Update the content block
 		$result = $db->exec("UPDATE contentBlocks SET content=:content WHERE id=:id", array(
-				":id"=>$blockID,
+				":id"=>$contentID,
 				":content"=>$content
 		));
 	}

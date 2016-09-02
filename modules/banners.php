@@ -11,11 +11,11 @@ class banners extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 		
-		if ($f3->exists("SETTINGS.banners-upload_path"))
-			banners::$upload_path = $f3->get("SETTINGS.banners-upload_path");
+		if ($f3->exists("SETTINGS.banners_upload_path"))
+			banners::$upload_path = $f3->get("SETTINGS.banners_upload_path");
 
-		if ($f3->exists("SETTINGS.banners-file_type"))
-			banners::$file_type = $f3->get("SETTINGS.banners-file_type");
+		if ($f3->exists("SETTINGS.banners_file_type"))
+			banners::$file_type = $f3->get("SETTINGS.banners_file_type");
 
 		if ($this->hasInit())
 		{
@@ -59,7 +59,16 @@ class banners extends prefab {
 		#######################################################
 		
 		// Update system config of banner system
-		$f3->route('POST /admin/banners/update_settings', "banners::update_settings");
+		$f3->route('POST /admin/banners/update_settings', function ($f3) {
+			banners::update_settings($f3);
+			$f3->reroute("/admin/banners");
+		});
+
+		// Update system config of banner system
+		$f3->route('POST /admin/banners/update_settings [ajax]', function ($f3) {
+			banners::update_settings($f3);
+			exit();
+		});
 
 		// Upload via drop zone
 		$f3->route('POST /admin/banners/dropzone', 'banners::upload');
@@ -86,14 +95,23 @@ class banners extends prefab {
 		// Get images URLs
 		$dir = array_diff(scandir(banners::$upload_path), array('..', '.'));
 
+		$order = json_decode(setting("banners_order"));
+
+		// Validate order
 		foreach ($dir as $img) {
 			if ($img != "slider.html" && $img != "slider.css" && $img != "slider.js")
 			{
-				$f3->push("banners.images", [
-					"url"=>banners::$upload_path.$img,
-					"filename"=>$img
-				]);
+				if (!in_array($img, $order)) {
+					$order[] = $img;
+				}
 			}
+		}
+
+		foreach ($order as $img) {
+			$f3->push("banners.images", [
+				"url"=>banners::$upload_path.$img,
+				"filename"=>$img
+			]);
 		}
 
 		if (file_exists(banners::$upload_path."/slider.html"))
@@ -111,9 +129,15 @@ class banners extends prefab {
 		if (isset($f3->POST["js"]))
 			file_put_contents(getcwd()."/".banners::$upload_path."/slider.js", $f3->POST["js"]);
 
-		$f3->reroute("/admin/banners");
-	}
+		if (isset($f3->POST["width"]))
+			setting("banners_width", $f3->POST["width"]);
 
+		if (isset($f3->POST["height"]))
+			setting("banners_height", $f3->POST["height"]);
+
+		if (isset($f3->POST["banners_order"]))
+			setting("banners_order", $f3->POST["banners_order"]);
+	}
 
 	static function hasInit() {
 
@@ -177,6 +201,9 @@ class banners extends prefab {
 		copy($systemPath."/slider.js", getcwd()."/".banners::$upload_path."/slider.js");
 		copy($systemPath."/slider.css", getcwd()."/".banners::$upload_path."/slider.css");
 
+		setting("banners_width", $width);
+		setting("banners_height", $height);
+
 		// Load default images
 		if (is_dir($systemPath."/default_images"))
 		{	
@@ -198,7 +225,7 @@ class banners extends prefab {
 		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], banners::$upload_path."/temp_image_name"))
 			return;
 
-		banners::add_banner(getcwd()."/".banners::$upload_path, "temp_image_name", $f3->FILES["file"]["name"], setting("banners-width"), setting("banners-height"));
+		banners::add_banner(getcwd()."/".banners::$upload_path, "temp_image_name", $f3->FILES["file"]["name"], setting("banners_width"), setting("banners_height"));
 
 		unlink(getcwd()."/".banners::$upload_path."/temp_image_name");
 	}

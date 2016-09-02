@@ -25,9 +25,6 @@
 				margin-top: 20px;
 			}
 			
-			.banner_images {
-			}
-
 			.banner_images td {
 				width: 400px;
 				vertical-align: middle !important;
@@ -64,29 +61,26 @@
 				border-radius: 8px;
 			}
 
+			.orderbuttons {
+				width: 10%;
+			}
+
 			.image_upload_settings {
-
-				margin-top: 20px;
+			  margin-top: 20px; 
+			  width: 100%;
 			}
-
 			.image_upload_settings .form-group {
-				display: block;
-				margin-top: 5px;
-			}
-
+			  display: block;
+			  margin-top: 5px; }
 			.image_upload_settings .form-control {
-				width: 80px;
-			}
-
+			  width: 80px; }
 			.image_upload_settings label {
-				width: 150px;
-			}
-			
+			  width: 150px; }
 			.image_upload_settings button {
-				width: 100%;
-				margin: 20px 0;
-				font-weight: bold;
-			}
+			  width: 100%;
+			  margin: 20px 0;
+			  font-weight: bold; }
+
 
 		</style>
 	</head>
@@ -113,6 +107,7 @@
 					<div class="{{@colwidth}}">			
 						<table class="images-table table table-bordered">
 							<thead>
+								<th width="10%">Order</th>
 								<th>Image</th>
 								<th width="10%">Tools</th>
 							</thead>
@@ -120,7 +115,11 @@
 							<tbody>					
 								<repeat group="{{@banners.images}}" value="{{@image}}">
 								<tr class="banner_images">
-									<td width="100%"><a target="_blank" href="{{@BASE}}/{{@image.url}}"><img width="100%" src="{{@BASE}}/{{@image.url}}" /></a></td>
+									<td class="orderbuttons">
+										<button class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
+										<button class="down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+									</td>
+									<td width="100%"><a target="_blank" href="{{@BASE}}/{{@image.url}}"><img title="{{@image.filename}}" class="bannerimage" width="100%" src="{{@BASE}}/{{@image.url}}" /></a></td>
 									<td class="tools">
 										<a class="delete_image" href="{{@BASE}}/admin/banners/delete/{{@image.filename}}"><button>Delete</button></a>
 									</td>
@@ -136,25 +135,32 @@
 						  </div>
 						</form>
 					
+						<check if="{{@webmaster}}">
 						<h3>Upload settings</h3>
-						<p>These settings will</p>
-						<ul>
-							<li>Resize images when uploaded</li>
-							<li>Ignores aspect ratio. <br>(Shrinks and then crops from center)</li>
-							<li>Images will enlarge.</li>
-							<li>Leave blank to not resize.</li>
-							<li><strong>Settings need to be applied to take effect.</strong></li>
-						</ul>
-
 						<div class="container image_upload_settings">
-							<form  action="{{@BASE}}/admin/banners/update_settings" method="POST" class="form-inline">
-								<div class="form-group">
-								  <label for="b">Image size: </label>
-								  <input name="width" value="{{@banners.width}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="height" value="{{@banners.height}}" type="text" class="form-control" placeholder="Height">
-								</div>
-								<button type="submit" class="btn btn-default">Apply Settings</button>
-							</form>
+							<div class="col-sm-6 pull-right">
+							<p>These settings will</p>
+							<ul>
+								<li>Resize images when uploaded</li>
+								<li>Ignores aspect ratio. <br>(Shrinks and then crops from center)</li>
+								<li>Images will enlarge.</li>
+								<li>Leave blank to not resize.</li>
+								<li><strong>Settings need to be applied to take effect.</strong></li>
+							</ul>
+							</div>
+							
+							<div class="col-sm-6">
+								<form  action="{{@BASE}}/admin/banners/update_settings" method="POST" class="form-inline">
+									<div class="form-group">
+									  <label for="b">Image size: </label>
+									  <input name="width" value="{{@SETTINGS.banners_width}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="height" value="{{@SETTINGS.banners_height}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
+									</div>
+									<button type="submit" class="btn btn-default">Apply settings to take effect</button>
+								</form>
+							</div>
 						</div>
+						</check>
+
 					</div>
 
 					<check if="{{@webmaster}}">
@@ -234,6 +240,29 @@
 				$(this).parent().parent().remove();
 
 				return false;
+			});
+
+
+			$(".up,.down").click(function(){
+				var row = $(this).parents("tr:first");
+
+				if ($(this).is(".up")) {
+					row.insertBefore(row.prev());
+				} else {
+					row.insertAfter(row.next());
+				}
+
+
+				var order = [];
+				$(".bannerimage").each(function () {
+					order.push($(this).attr("title"));
+				});
+
+				$.ajax({
+					method: "POST",
+					url: "{{@BASE}}/admin/banners/update_settings",
+					data: { "banners_order": JSON.stringify(order) }
+				});
 			});
 		});
 

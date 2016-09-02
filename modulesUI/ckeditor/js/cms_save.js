@@ -1,11 +1,11 @@
-CKEDITOR.plugins.add( 'inlinesave',
+CKEDITOR.plugins.add( 'cmssave',
 {
 	init: function( editor )
 	{
 		var config = editor.config.inlinesave,
 		    iconName;
 
-		var postUrl = "{{@BASE}}/admin/page/save";
+		var postUrl = "{{@BASE}}/admin/content/save";
 
 		if (typeof config == "undefined") { // Give useful error message if user doesn't define config.inlinesave
 			config = {}; // default to empty object
