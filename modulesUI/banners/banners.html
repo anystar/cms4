@@ -257,6 +257,11 @@
 				$(".bannerimage").each(function () {
 					order.push($(this).attr("title"));
 				});
+				
+				var msg = $("<div id='message'>Please reload page to update banner system</div>");
+				msg.css("height", $(".admin_banner_display").height());
+
+				$(".admin_banner_display").html(msg);
 
 				$.ajax({
 					method: "POST",
