@@ -120,7 +120,6 @@ class content_blocks extends prefab {
 	function retreiveContent($f3, $page) {
 		$db = $f3->get("DB");
 
-
 		// Loop through for subpages
 		$previousPage = "";
 		$blocks = array();
@@ -139,12 +138,12 @@ class content_blocks extends prefab {
 				}
 
 				// if there is no page name, label as for all pages
-				if ($blocks["page"] == "") $raw["page"] = "all";
+				if ($raw["page"] == "") $raw["page"] = "all";
 
 				$f3->set($raw["contentName"], $raw["content"]);
-				
+
 				$blocks[$raw["contentName"]] = $raw;
-				$blocks[$raw["contentName"]]["ckhash"] = substr(sha1($raw["contentName"]), 0, 8);
+				$blocks[$raw["contentName"]]["ckhash"] = "id_" . $raw["id"] . "_hash_" . substr(sha1($raw["contentName"].$previousPage.$p), 0, 12);
 			}
 
 			$previousPage = $p . "/";
@@ -158,21 +157,20 @@ class content_blocks extends prefab {
 				switch ($block['type'])
 				{
 					default:
-						$f3->set($block["contentName"], "<div contenteditable='true' id='".$block["ckhash"]."_id_".$block["id"]."'>" . $block["content"] . "</div>");
+						$f3->set($block["contentName"], "<div page='test' contenteditable='true' id='".$block["ckhash"]."'>" . $block["content"] . "</div>");
 					break;
 				}
 
 				$f3->ck_instances[] = array(
-					"id"=>$block["ckhash"]."_id_".$block["id"],
+					"id"=>$block["ckhash"],
 					"type"=>$block["type"],
-					"name"=>$block["contentName"]
+					"contentID"=>$block["id"],
+					"page"=>$block["page"]
 				);
 			}
 
 			// Load up the Editor
 			$inlinecode = Template::instance()->render("/content_blocks/js/ckeditor_inline.js");
-
-			d($inlinecode);
 
 			$f3->concat("ckeditor", $inlinecode);
 			$f3->concat("admin", $inlinecode);
@@ -229,23 +227,24 @@ class content_blocks extends prefab {
 
 	static function save_inline($f3, $id=null, $content=null) 
 	{
+		d($f3->get("POST"));
+
 		$db = $f3->get("DB");
 
-		// Get Page name and Page ID from incoming post data
-		$page = preg_replace('_forwardslash_', '/', $f3->get("POST.editorID"));
+		//$id = explode("_id_", $f3->get("POST.editorID"))[1];
 
-
-		$tmp = explode("_id_", $page);
-		$page = $tmp[0];
-		$blockID = $tmp[1];
+		preg_match('/id_(.*)_hash_(.*)/', $f3->get("POST.editorID"), $match);
+		$id = $match[1];
+		$hash = $match[2];
 
 		// Get content name using page id supplied.
-		$contentName = $db->exec("SELECT contentName FROM contentBlocks WHERE id=?", $blockID)[0]["contentName"];
+		$result = $db->exec("SELECT contentName, page FROM contentBlocks WHERE id=?", $id)[0];
+		$contentName = $result["contentName"];
+		$page = $result["page"];
 
 		if (!$contentName)
 			// ERROR: We are trying to save to a non existent content block??
 			error::log("Attempting to update a non-existant content block");
-
 
 		// Does the content block exist?
 		$id = $db->exec("SELECT id, page FROM contentBlocks WHERE (page=? OR page='all' OR page='' OR page IS NULL) AND contentName=?", [$page, $contentName]);

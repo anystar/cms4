@@ -93,12 +93,6 @@ class pages extends prefab {
 	}
 
 	function hasInit($f3) {
-
-		$result = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='pages'");
-
-		if (!$result) {
-			$f3->DB->exec("CREATE TABLE 'pages' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'page' TEXT NOT NULL, 'settings' TEXT);");
-		}
 		
 		return true;
 	}

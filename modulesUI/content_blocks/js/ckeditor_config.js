@@ -1,3 +1,6 @@
+
+CKEDITOR.plugins.addExternal("inlinesave", "{{@BASE}}/ckeditor/save.js");
+
 CKEDITOR.editorConfig = function( config ) {
   config.toolbarGroups = [
     { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
@@ -15,13 +18,8 @@ CKEDITOR.editorConfig = function( config ) {
 
   config.removeButtons = 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
 
-  config.inlinesave = {
-    postUrl: '{{@BASE}}/admin/page/save',
-    useJSON: false,
-    useColorIcon: true
-  };
 
-  config.extraPlugins = 'uploadimage,ckeditor-gwf-plugin';
+  config.extraPlugins = "inlinesave";
   config.removePlugins = 'scayt';
   config.uploadUrl = '{{@BASE}}/admin/file_manager/image_upload';
 

@@ -213,12 +213,28 @@ class admin extends prefab {
 			echo Template::instance()->render("css/adminstyle.css", "text/css");
 		});
 
+		$f3->route('GET /ckeditor/images/inlinesave-color.svg', function () {
+			echo View::instance()->render("/ckeditor/images/save-color.png", "image/png");
+		});
+
+		$f3->route('GET /ckeditor/images/inlinesave-label.svg', function () {
+			echo View::instance()->render("/ckeditor/images/save-label.png", "image/png");
+		});
+
+		$f3->route('GET /ckeditor/save.js', function () {
+			echo Template::instance()->render("/ckeditor/plugins/inlinesave/plugin.js", "application/javascript");
+		});
+
+		$f3->route('GET /admin/js/jquery.1.12.4.js', function () {
+			echo Template::instance()->render("/admin/js/jquery.1.12.4.js", "text/css");
+		});
+
 		$f3->route('GET /admin/bootstrap.min.css', function () {
 			echo Template::instance()->render("css/bootstrap.min.css", "text/css");
 		});
 
 		$f3->route('GET /admin/bootstrap.min.js', function () {
-			echo Template::instance()->render("js/bootstrap.min.js", "text/javascript");
+			echo Template::instance()->render("js/bootstrap.min.js", "application/javascript");
 		});
 
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
