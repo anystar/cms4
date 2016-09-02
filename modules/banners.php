@@ -93,17 +93,23 @@ class banners extends prefab {
 	static function retreive_content($f3) {
 
 		// Get images URLs
-		$dir = array_diff(scandir(banners::$upload_path), array('..', '.'));
+		$dir = array_diff(scandir(banners::$upload_path), array('..', '.', "slider.html", "slider.css", "slider.js"));
+
 
 		$order = json_decode(setting("banners_order"));
 
 		// Validate order
+		$update_order = false;
 		foreach ($dir as $img) {
-			if ($img != "slider.html" && $img != "slider.css" && $img != "slider.js")
+			if (!$order)
 			{
-				if (!in_array($img, $order)) {
-					$order[] = $img;
-				}
+				$order[] = $img;
+				$update_order = true;
+			}
+
+			if (!in_array($img, $order)) {
+				$order[] = $img;
+				$update_order = true;
 			}
 		}
 
@@ -113,6 +119,9 @@ class banners extends prefab {
 				"filename"=>$img
 			]);
 		}
+
+		if ($update_order)
+			setting("banners_order", json_encode($order));
 
 		if (file_exists(banners::$upload_path."/slider.html"))
 			$f3->banners["html"] = Template::instance()->render(banners::$upload_path."/slider.html");
