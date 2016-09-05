@@ -167,8 +167,11 @@ class banners extends prefab {
 		if (banners::hasInit())
 		{
 			if (admin::$signed) {
-				$f3->banners["css"] = Template::instance()->render(banners::$upload_path."/slider.css");
-				$f3->banners["js"] = Template::instance()->render(banners::$upload_path."/slider.js");
+				if (file_exists(banners::$upload_path."/slider.css"))
+					$f3->banners["css"] = Template::instance()->render(banners::$upload_path."/slider.css");
+
+				if (file_exists(banners::$upload_path."/slider.js"))
+					$f3->banners["js"] = Template::instance()->render(banners::$upload_path."/slider.js");
 			}
 
 			echo Template::instance()->render("/banners/banners.html");
