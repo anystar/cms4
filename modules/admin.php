@@ -214,7 +214,7 @@ class admin extends prefab {
 		});
 
 		$f3->route('GET /admin/js/jquery.1.12.4.js', function () {
-			echo Template::instance()->render("/admin/js/jquery.1.12.4.js", "text/css");
+			echo Template::instance()->render("/admin/js/jquery.1.12.4.js", "application/javascript");
 		});
 
 		$f3->route('GET /admin/bootstrap.min.css', function () {
