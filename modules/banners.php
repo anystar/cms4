@@ -84,8 +84,6 @@ class banners extends prefab {
 		$f3->route('GET /admin/banners/delete/@image [ajax]', function ($f3, $params) {
 
 			banners::delete_banner($f3, $params);
-
-			echo $f3->get("banners.html");
 			exit;
 		});
 	}
