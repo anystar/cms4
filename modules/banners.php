@@ -93,15 +93,15 @@ class banners extends prefab {
 		// Get images URLs
 		$dir = array_diff(scandir(banners::$upload_path), array('..', '.', "slider.html", "slider.css", "slider.js"));
 
+		// No images to display
 		if (empty($dir))
-		{
-			setting("banners_order", json_encode([]));
 			return;
-		}
 
 		$order = json_decode(setting("banners_order"));
 
-		if ($order)
+		// If there is a difference between whats in the directory
+		// and what is in the order string... 
+		if (count($order) != count($dir))
 		{
 			// Remove any images in order that do not exist
 			foreach ($order as $x) {
@@ -111,19 +111,21 @@ class banners extends prefab {
 				}
 			}
 
+			// Add any images into order that are not there
 			foreach ($dir as $x) {
 				if (!in_array($x, $order)) {
 					$keep[] = $x;
 					$update_order = true;
 				}
 			}
-
-			$dir = $keep;
+			
+			// Update dir array with new array
+			$order = $keep;
 		}
 
-		if ($dir)
+		if ($order)
 		{
-			foreach ($dir as $x) {
+			foreach ($order as $x) {
 				$f3->push("banners.images", [
 					"url"=>banners::$upload_path.$x,
 					"filename"=>$x
@@ -243,27 +245,6 @@ class banners extends prefab {
 	}
 
 
-	static function upload($f3) {
-
-		// Something happened and couldn't move image file..
-		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], banners::$upload_path."/temp_image_name"))
-			return;
-
-		banners::add_banner(getcwd()."/".banners::$upload_path, "temp_image_name", $f3->FILES["file"]["name"], setting("banners_width"), setting("banners_height"));
-
-		unlink(getcwd()."/".banners::$upload_path."/temp_image_name");
-	}
-
-	static function add_banner($path, $image, $name, $x, $y) {
-
-		$new_name = str_replace(' ', '_', $name);
-		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
-		$new_name = preg_replace('/\.[^.]+$/','',$new_name);
-		$new_name .= ".".banners::$file_type;
-
-		banners::resize_image($path, $image, $x, $y, getcwd()."/".banners::$upload_path.$new_name);
-	}
-
 	static function delete_banner($f3, $params) {
 
 		$path = getcwd()."/".banners::$upload_path;
@@ -272,28 +253,66 @@ class banners extends prefab {
 			unlink($path.$params['image']);
 	}
 
+
+	static function upload($f3) {
+
+		// Create a safer file name
+		$new_name = str_replace(' ', '_', $f3->FILES["file"]["name"]);
+		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
+		$new_name = preg_replace('/\.[^.]+$/','',$new_name);
+		$new_name .= ".".banners::$file_type;
+
+		// 
+		$tmpImage = getcwd()."/".banners::$upload_path."/".$new_name;
+
+		// Something happened and couldn't move image file..
+		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], $tmpImage))
+		{
+			exit("couldn't move uploaded file?");
+		}
+
+		// Get width and height settings
+		$width = setting("banners_width");
+		$height = setting("banners_height");
+
+		// Make sure that width and height are set before resizing image
+		if (($width*$height) > 0)
+		{
+			// Pull image off the disk into memor
+			$temp_image = new Image($new_name, false, getcwd() . "/" . banners::$upload_path . "/"); // Image(filename, filehistory, path)
+
+			// Resize image using F3's image plugin
+			$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
+
+			// Save image depending on user selected file type
+			switch (banners::$file_type)
+			{
+				case "jpeg":
+					imagejpeg($temp_image->data(banners::$file_type, 100), getcwd()."/".banners::$upload_path."/".$new_name);
+				break;
+				case "png":
+					imagepng($temp_image->data(banners::$file_type, 100), getcwd()."/".banners::$upload_path."/".$new_name);
+				break;
+				case "gif":
+					imagegif($temp_image->data(banners::$file_type, 100), getcwd()."/".banners::$upload_path."/".$new_name);
+				break;
+			}
+		}
+	}
+
+	static function add_banner($path, $image, $name, $x, $y) {
+
+
+		banners::resize_image($path, $image, $x, $y, getcwd()."/".banners::$upload_path.$new_name);
+	}
+
 	static function resize_image ($path, $image, $x, $y, $save_as) {
 
 		if (!file_exists($path."/".$image)) exit("no file?");
 
-		// Pull image off the disk into memory
-		$temp_image = new Image($image, false, $path."/");
-		
-		// Resize image using F3's image plugin
-		$temp_image->resize($x, $y, true, true);
 
-		switch (banners::$file_type)
-		{
-			case "jpeg":
-				imagejpeg($temp_image->data(banners::$file_type, 100), $save_as);
-			break;
-			case "png":
-				imagepng($temp_image->data(banners::$file_type, 100), $save_as);
-			break;
-			case "gif":
-				imagegif($temp_image->data(banners::$file_type, 100), $save_as);
-			break;
-		}
+		
+
 	}
 
 	// Drupal has this implemented fairly elegantly:

@@ -51,7 +51,7 @@ checkfile($settings["database"]);
 checkdeny($settings["database"]);
 
 // If we are calling cms.php..
-if ($f3->PATH == "/cms.php") $f3->reroute("/");
+if ($f3->PATH == "/cms.php") $f3->reroute("/admin");
 
 ##########################################
 ############ Error handling ##############
@@ -164,4 +164,6 @@ unset($settings["enabled_modules"]);
 foreach ($enabled_modules as $module)
 	new $module();
 
+
 $f3->run();
+

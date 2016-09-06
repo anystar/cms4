@@ -4,7 +4,7 @@ function setting($name, $value=null) {
 	$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
 	if (!$result) return false; // There is no settings table..
 
-	if (!$value)
+	if ($value === null)
 		return base::instance()->DB->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
 	else
 		set_setting($name, $value);
@@ -27,7 +27,7 @@ function setting_json($name, $value=null) {
 
 function set_setting($name, $value) {
 
-	$result = setting($name);
+	$result = base::instance()->DB->exec("SELECT setting FROM settings WHERE setting=?", $name);
 
 	if ($result)
 		base::instance()->DB->exec("UPDATE settings SET value=? WHERE setting=?", [$value, $name]);
