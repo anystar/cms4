@@ -164,4 +164,6 @@ unset($settings["enabled_modules"]);
 foreach ($enabled_modules as $module)
 	new $module();
 
+
 $f3->run();
+
