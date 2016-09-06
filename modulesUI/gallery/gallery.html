@@ -55,13 +55,10 @@
 		<h3>Upload settings</h3>
 		<div class="container image_upload_settings">
 			<div class="col-sm-6 pull-right">
-			<p>These settings will</p>
+			<p><strong>These settings will</strong></p>
 			<ul>
-				<li>Resize images when uploaded</li>
-				<li>Respect Aspect ratio. <br>(fit image with its longest side into the resize dimensions)</li>
-				<li>Images are not enlarged.</li>
-				<li>Leave blank to not resize.</li>
-				<li><strong>Settings need to be applied to take effect.</strong></li>
+				<li>resize images when uploaded</li>
+				<li>respect aspect ratio. <br>(fit image with its longest side into the resize dimensions)</li>
 			</ul>
 			</div>
 			
@@ -76,6 +73,10 @@
 					  <input name="image_size_x" value="{{@gallery.settings.image_size_x}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="image_size_y" value="{{@gallery.settings.image_size_y}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
 					</div>
 					<button type="submit" class="btn btn-default">Apply Settings</button>
+						<ul>
+							<li>leave blank to not resize.</li>
+							<li><strong>Settings need to be applied to take effect.</strong></li>
+						</ul>
 				</form>
 			</div>
 		</div>

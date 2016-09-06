@@ -141,11 +141,9 @@
 							<div class="col-sm-6 pull-right">
 							<p>These settings will</p>
 							<ul>
-								<li>Resize images when uploaded</li>
-								<li>Ignores aspect ratio. <br>(Shrinks and then crops from center)</li>
-								<li>Images will enlarge.</li>
-								<li>Leave blank to not resize.</li>
-								<li><strong>Settings need to be applied to take effect.</strong></li>
+								<li>resize images when uploaded</li>
+								<li>ignores aspect ratio. <br>(shrinks and then crops from center)</li>
+								<li>images will enlarge.</li>
 							</ul>
 							</div>
 							
@@ -156,6 +154,10 @@
 									  <input name="width" value="{{@SETTINGS.banners_width}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="height" value="{{@SETTINGS.banners_height}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
 									</div>
 									<button type="submit" class="btn btn-default">Apply settings to take effect</button>
+									<ul>
+										<li>Leave blank to not resize.</li>
+										<li><strong>Settings need to be applied to take effect.</strong></li>
+									</ul>
 								</form>
 							</div>
 						</div>

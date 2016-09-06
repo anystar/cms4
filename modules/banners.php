@@ -84,8 +84,6 @@ class banners extends prefab {
 		$f3->route('GET /admin/banners/delete/@image [ajax]', function ($f3, $params) {
 
 			banners::delete_banner($f3, $params);
-
-			echo $f3->get("banners.html");
 			exit;
 		});
 	}
@@ -95,37 +93,50 @@ class banners extends prefab {
 		// Get images URLs
 		$dir = array_diff(scandir(banners::$upload_path), array('..', '.', "slider.html", "slider.css", "slider.js"));
 
+		if (empty($dir))
+		{
+			setting("banners_order", json_encode([]));
+			return;
+		}
+
 		$order = json_decode(setting("banners_order"));
 
-		// Validate order
-		$update_order = false;
-		foreach ($dir as $img) {
-			if (!$order)
-			{
-				$order[] = $img;
-				$update_order = true;
-			}
-			else 
-			{
-				if (!in_array($img, $order)) {
-					$order[] = $img;
+		if ($order)
+		{
+			// Remove any images in order that do not exist
+			foreach ($order as $x) {
+				if (in_array($x, $dir)) {
+					$keep[] = $x;
 					$update_order = true;
 				}
 			}
+
+			foreach ($dir as $x) {
+				if (!in_array($x, $order)) {
+					$keep[] = $x;
+					$update_order = true;
+				}
+			}
+
+			$dir = $keep;
 		}
 
-		foreach ($order as $img) {
-			$f3->push("banners.images", [
-				"url"=>banners::$upload_path.$img,
-				"filename"=>$img
-			]);
+		if ($dir)
+		{
+			foreach ($dir as $x) {
+				$f3->push("banners.images", [
+					"url"=>banners::$upload_path.$x,
+					"filename"=>$x
+				]);
+			}
 		}
+
+		if (file_exists(banners::$upload_path."/slider.html"))
+			$f3->banners["html"] = Template::instance()->render(banners::$upload_path."/slider.html");
 
 		if ($update_order)
 			setting("banners_order", json_encode($order));
 
-		if (file_exists(banners::$upload_path."/slider.html"))
-			$f3->banners["html"] = Template::instance()->render(banners::$upload_path."/slider.html");
 	}
 
 	static function update_settings($f3) {
@@ -167,8 +178,11 @@ class banners extends prefab {
 		if (banners::hasInit())
 		{
 			if (admin::$signed) {
-				$f3->banners["css"] = Template::instance()->render(banners::$upload_path."/slider.css");
-				$f3->banners["js"] = Template::instance()->render(banners::$upload_path."/slider.js");
+				if (file_exists(banners::$upload_path."/slider.css"))
+					$f3->banners["css"] = Template::instance()->render(banners::$upload_path."/slider.css");
+
+				if (file_exists(banners::$upload_path."/slider.js"))
+					$f3->banners["js"] = Template::instance()->render(banners::$upload_path."/slider.js");
 			}
 
 			echo Template::instance()->render("/banners/banners.html");
