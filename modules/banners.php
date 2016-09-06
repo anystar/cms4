@@ -93,24 +93,32 @@ class banners extends prefab {
 		// Get images URLs
 		$dir = array_diff(scandir(banners::$upload_path), array('..', '.', "slider.html", "slider.css", "slider.js"));
 
+		$order = json_decode(setting("banners_order"), true);
+
 		// No images to display
 		if (empty($dir))
-			return;
+		{
+			if ($order)
+				setting("banners_order", "");
 
-		$order = json_decode(setting("banners_order"));
+			return;
+		}
+
+		if (count($order) == 0)
+		{
+			$order = $dir;
+			setting("banners_order", json_encode($order));
+		}
 
 		// If there is a difference between whats in the directory
 		// and what is in the order string... 
 		if (count($order) != count($dir))
 		{
 			// Remove any images in order that do not exist
-			if (is_array($order))
-			{
-				foreach ($order as $x) {
-					if (in_array($x, $dir)) {
-						$keep[] = $x;
-						$update_order = true;
-					}
+			foreach ($order as $x) {
+				if (in_array($x, $dir)) {
+					$keep[] = $x;
+					$update_order = true;
 				}
 			}
 
