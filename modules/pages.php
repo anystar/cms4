@@ -56,6 +56,14 @@ class pages extends prefab {
 			// Is the root part of the address a folder?
 			if (!is_dir($params["page"]))
 			{
+				// Redirect back to login if user is trying to access admin panel
+				if (!admin::$signed)
+					if (preg_match("/\/admin\/(?!login)(.*)/", $f3->PATH))
+					{
+						$f3->reroute("/admin");
+						exit;
+					}
+
 				$f3->error("404");
 				return;
 			}
