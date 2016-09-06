@@ -35,7 +35,7 @@ class admin extends prefab {
 		if ($f3->SETTINGS["admin_pass"])
 			admin::$clientPass = $f3->SETTINGS["admin_pass"];
 	
-		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["email"], $f3->SETTINGS["pass"], $f3->SETTINGS["admin_email"], $f3->SETTINGS["admin_pass"]);
+		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["pass"],$f3->SETTINGS["admin_pass"]);
 
 		if (admin::$clientEmail == null || admin::$clientPass == null)
 		{
