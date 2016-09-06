@@ -26,7 +26,6 @@ function setting_json($name, $value=null) {
 }
 
 function set_setting($name, $value) {
-	// Lets create a settings table..
 
 	$result = setting($name);
 
