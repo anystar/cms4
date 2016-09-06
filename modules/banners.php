@@ -104,10 +104,13 @@ class banners extends prefab {
 		if (count($order) != count($dir))
 		{
 			// Remove any images in order that do not exist
-			foreach ($order as $x) {
-				if (in_array($x, $dir)) {
-					$keep[] = $x;
-					$update_order = true;
+			if (is_array($order))
+			{
+				foreach ($order as $x) {
+					if (in_array($x, $dir)) {
+						$keep[] = $x;
+						$update_order = true;
+					}
 				}
 			}
 
