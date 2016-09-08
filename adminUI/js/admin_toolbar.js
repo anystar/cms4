@@ -18,28 +18,29 @@ $(function() {
 		Object.keys(CKEDITOR.instances).forEach(function(key,index) {
 			
 			var editor = CKEDITOR.instances[key];
-			var postData = {};
+			if (!editor.checkDirty()) return;
+
+			var postData = {},
+			    payload = '',
+			    contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
 
 			postData.editabledata = editor.getData();
 			postData.editorID = editor.container.getId();
-			// postData.page = config.page;
-			// postData.contentBlock = config.contentBlock;
+			postData.page = editor.cms.page;
+			postData.contentBlock = editor.cms.contentBlock;
 
-			payload = JSON.stringify(postData);
-
+			// Convert postData object to multi-part form data query string for post like jQuery does by default.
 			var formData = '';
-			
 			for (var key in postData) { // Must encode data to handle special characters
 					formData += '&' + key + '=' + encodeURIComponent(postData[key]);
 			}
-
 			payload = formData.slice(1); // Remove initial '&'
-			
-			// Use pure javascript (no dependencies) and send the data in json format...
+
+			// Use pure javascript (no dependencies) and send the data in json format
 			var xhttp = new XMLHttpRequest();
 
-		    xhttp.onreadystatechange = function() {
-		        if (xhttp.readyState == 1) { 
+			xhttp.onreadystatechange = function() {
+			    if (xhttp.readyState == 1) { 
 					$("#savebutton").val("saving...");
 					
 					setTimeout(
@@ -50,13 +51,13 @@ $(function() {
 						setTimeout(
 						  function() { $("#savebutton").val("Save"); }, 1500);
 					  	}, 2000);
-		        }
-		    };
+			    }
+			};
 
 			xhttp.open("POST", "{{@BASE}}/admin/content/save", true);
-			// Send as form data encoded to handle special characters.
 			xhttp.setRequestHeader("Content-type", 'application/x-www-form-urlencoded');
 			xhttp.send(payload);
+			editor.resetDirty()
 		});
 
 		return true;

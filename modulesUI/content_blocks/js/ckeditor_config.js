@@ -16,11 +16,11 @@ CKEDITOR.editorConfig = function( config ) {
     { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
   ];
 
-  config.removeButtons = 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
+  config.removeButtons = 'Inlinesave,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
 
 
   config.extraPlugins = "cmssave";
-  config.removePlugins = 'scayt';
+  config.removePlugins = 'scayt,inlinesave';
   config.uploadUrl = '{{@BASE}}/admin/file_manager/image_upload';
 
   config.filebrowserBrowseUrl = '{{@BASE}}/admin/file_manager/browse_files';

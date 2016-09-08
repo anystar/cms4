@@ -2,42 +2,30 @@ CKEDITOR.plugins.add( 'cmssave',
 {
 	init: function( editor )
 	{
-		var config = editor.config.inlinesave,
+		var config = editor.config.cmssave,
 		    iconName;
+
+		editor.cms = {
+			page : config.page,
+			contentBlock : config.contentBlock
+		};
 
 		var postUrl = "{{@BASE}}/admin/content/save";
 
-		if (typeof config == "undefined") { // Give useful error message if user doesn't define config.inlinesave
+		if (typeof config == "undefined") { // Give useful error message if user doesn't define config.cmssave
 			config = {}; // default to empty object
 		}
 
 		iconName = 'inlinesave-color.svg';
 
-		editor.addCommand( 'inlinesave',
-			{
+		editor.addCommand( 'cmssave',
+		{
 				exec : function( editor )
 				{
 					var postData = {},
 					    payload = '',
 					    contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
 
-					if (typeof config.onSave == "function") {
-						var sendDataOk = config.onSave(editor); // Allow showing 'loading' spinner or aborting
-
-						if (typeof sendDataOk != "undefined" && !sendDataOk) {  // Explicit return false?
-							if (typeof config.onFailure == "function") {
-								config.onFailure(editor, -1, null);  	// -1 means "Save aborted"
-							}
-							else {
-								throw new Error("CKEditor inlinesave: Saving Disable by return of onSave function = false");
-							}
-							return;
-						}
-
-					}
-
-					// Clone postData object from config and add editabledata and editorID properties
-					CKEDITOR.tools.extend(postData, config.postData || {}, true); // Clone config.postData to prevent changing the config.
 					postData.editabledata = editor.getData();
 					postData.editorID = editor.container.getId();
 					postData.page = config.page;
@@ -52,30 +40,18 @@ CKEDITOR.plugins.add( 'cmssave',
 
 					// Use pure javascript (no dependencies) and send the data in json format...
 					var xhttp = new XMLHttpRequest();
-					xhttp.onreadystatechange = function () {
-						if (xhttp.readyState == 4) {
-							// If success, call onSuccess callback if defined
-							if (typeof config.onSuccess == "function" && xhttp.status == 200) {
-								// Allow server to return data via xhttp.response
-								config.onSuccess(editor, xhttp.response);
-							}
-							// If error, call onFailure callback if defined
-							else if (typeof config.onFailure == "function") {
-								config.onFailure(editor, xhttp.status, xhttp);
-							}
-						}
-					};
 					xhttp.open("POST", postUrl, true);
 					// Send as form data encoded to handle special characters.
 					xhttp.setRequestHeader("Content-type", contentType);
 					xhttp.send(payload);
 				}
-			});
-		editor.ui.addButton( 'Inlinesave',
+		});
+		
+		editor.ui.addButton( 'cmssave',
 		{
 			toolbar: 'document',
 			label: 'Save',
-			command: 'inlinesave',
+			command: 'cmssave',
 			icon: this.path + 'images/' + iconName
 		} );
 	}

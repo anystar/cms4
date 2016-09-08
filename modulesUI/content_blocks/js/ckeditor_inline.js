@@ -14,7 +14,7 @@
 				<switch expr="{{@instance.type}}">
 					<default>
 					var editor = CKEDITOR.inline( '{{@instance.id}}', { customConfig: '{{ @BASE }}/admin/ckeditor_config.js' } );
-					editor.config.inlinesave = {
+					editor.config.cmssave = {
 						page: "{{@instance.page}}",
 						contentBlock: {{@instance.contentID}}
 					}
