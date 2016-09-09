@@ -58,8 +58,7 @@ class admin extends prefab {
 		}
 
 		$f3->route('GET /admin/imgs/logo.png', function ($f3) {
-			$f3->UI = $f3->CMS.'adminUI/imgs/';
-			$img = new Image('logo.png');
+			$img = new Image('/admin/imgs/logo.png');
 			$img->render();
 			exit;
 		});
@@ -80,10 +79,10 @@ class admin extends prefab {
 
 		if (admin::$signed) {
 			$f3->route('GET /admin/css/admin_toolbar.css', function () {
-				echo Template::instance()->render("/css/admin_toolbar.css", "text/css");
+				echo Template::instance()->render("/admin/css/admin_toolbar.css", "text/css");
 			});
 			$f3->route('GET /admin/js/admin_toolbar.js', function () {
-				echo Template::instance()->render("/js/admin_toolbar.js", "text/javascript");
+				echo Template::instance()->render("/admin/js/admin_toolbar.js", "text/javascript");
 			});
 		}
 	}
@@ -109,7 +108,7 @@ class admin extends prefab {
 		// Admin routes
 		$f3->route('GET /admin', "admin::dashboard_render");
 		$f3->route('GET /admin/webmaster', function () {
-			echo Template::instance()->render("webmaster.html");
+			echo Template::instance()->render("/admin/webmaster.html");
 		});
 
 		$f3->route('GET /admin/help', "admin::help");
@@ -119,7 +118,7 @@ class admin extends prefab {
 
 	static public function dashboard_render ($f3)
 	{
-		echo Template::instance()->render("dashboard.html");
+		echo Template::instance()->render("/admin/dashboard.html");
 	}
 
 	static public function login_render ($f3)
@@ -130,8 +129,7 @@ class admin extends prefab {
 			$f3->POST["pass"] = admin::$webmasterPass;
 		}
 
-		$f3->set('UI', $f3->CMS."adminUI/");
-		echo Template::instance()->render("login.html");
+		echo Template::instance()->render("/admin/login.html");
 	}
 
 	static public function login ($f3) {
@@ -187,12 +185,12 @@ class admin extends prefab {
 	}
 
 	static public function help($f3) {
-		echo Template::instance()->render("help.html");
+		echo Template::instance()->render("/admin/help.html");
 	}
 
 	static public function settings($f3) {
 
-		echo Template::instance()->render("settings.html");
+		echo Template::instance()->render("/admin/settings.html");
 	}
 
 	static public function update_settings($f3) {
@@ -210,7 +208,7 @@ class admin extends prefab {
 
 	static function file_routes($f3) {
 		$f3->route('GET /admin/theme', function () {
-			echo Template::instance()->render("css/adminstyle.css", "text/css");
+			echo Template::instance()->render("/admin/css/adminstyle.css", "text/css");
 		});
 
 		$f3->route('GET /admin/js/jquery.1.12.4.js', function () {
@@ -218,23 +216,23 @@ class admin extends prefab {
 		});
 
 		$f3->route('GET /admin/bootstrap.min.css', function () {
-			echo Template::instance()->render("css/bootstrap.min.css", "text/css");
+			echo Template::instance()->render("/admin/css/bootstrap.min.css", "text/css");
 		});
 
 		$f3->route('GET /admin/bootstrap.min.js', function () {
-			echo Template::instance()->render("js/bootstrap.min.js", "application/javascript");
+			echo Template::instance()->render("/admin/js/bootstrap.min.js", "application/javascript");
 		});
 
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
-			echo View::instance()->render("admin/fonts/glyphicons-halflings-regular.woff2", "application/font-woff");
+			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.woff2", "application/font-woff");
 		});
 
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
-			echo View::instance()->render("admin/fonts/glyphicons-halflings-regular.woff", "application/font-woff");
+			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.woff", "application/font-woff");
 		});
 
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
-			echo View::instance()->render("admin/fonts/glyphicons-halflings-regular.ttf", "application/font-woff");
+			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.ttf", "application/font-woff");
 		});
 
 	}

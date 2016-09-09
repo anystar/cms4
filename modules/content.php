@@ -4,16 +4,42 @@
 
 // Sub folders are not supported at the current time.
 
-class pages extends prefab {
+class content extends prefab {
 
 	static $has_routed = false;
+	static $page;
 
 	function __construct() {
 		$f3 = base::instance();
 
+		// content::$page = content::determine_page($f3);
+
+		// d(content::$page);
+
+
 		if ($this->hasInit($f3))
 			$this->routes(base::instance());
 	}
+
+
+
+	function determine_page ($f3) {
+
+		$path = ltrim($f3->PATH, "/");
+
+		if (is_file(getcwd()."/".$path.".html"))
+			return $path;
+
+		// Check for file
+		if (is_file(getcwd()."/".$path))
+			return $path;
+
+
+
+		die;
+
+	}
+
 
 	function routes($f3) {
 
@@ -21,20 +47,21 @@ class pages extends prefab {
 		$f3->route(['GET /', 'GET /@page'], function ($f3, $params) {
 
 			// prevent running twice.
-			if (pages::$has_routed) exit;
-			pages::$has_routed = true;
+			if (content::$has_routed) exit;
+			
+			content::$has_routed = true;
 
-				$f3->set('UI', getcwd()."/");
+			$f3->set('UI', getcwd()."/");
 
-				if (!file_exists($params["page"]))
-					$page = ($params[0]=="/") ? "index.html" : $params["page"].".html";
-				else
-					$page = $params["page"];
+			if (!file_exists($params["page"]))
+				$page = ($params[0]=="/") ? "index.html" : $params["page"].".html";
+			else
+				$page = $params["page"];
 
-				if (file_exists($page))
-					echo Template::instance()->render($page);
-				else
-					$f3->error("404");
+			if (file_exists($page))
+				echo Template::instance()->render($page);
+			else
+				$f3->error("404");
 		});
 
 		// Handle sub pages.
@@ -47,8 +74,8 @@ class pages extends prefab {
 		$f3->route('GET /@page/*', function ($f3, $params) {
 
 			// prevent running route twice.
-			if (pages::$has_routed) exit;		
-			pages::$has_routed = true;
+			if (content::$has_routed) exit;		
+			content::$has_routed = true;
 
 			$folder = $params["page"];
 			$page = ".".$params[0].".html";
@@ -99,6 +126,9 @@ class pages extends prefab {
 			}
 		});
 	}
+
+
+
 
 	function hasInit($f3) {
 		

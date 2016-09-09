@@ -26,6 +26,8 @@ class content_blocks extends prefab {
 			$this->retreiveContent($f3, $page);
 		}
 
+		
+
 		if (admin::$signed)
 			$this->admin_routes($f3);
 	}
@@ -156,7 +158,7 @@ class content_blocks extends prefab {
 				switch ($block['type'])
 				{
 					default:
-						$f3->set($block["contentName"], "<div page='test' contenteditable='true' id='".$block["ckhash"]."'>" . $block["content"] . "</div>");
+						$f3->set($block["contentName"], "<div title='' page='test' contenteditable='true' id='".$block["ckhash"]."'>" . $block["content"] . "</div>");
 					break;
 				}
 
