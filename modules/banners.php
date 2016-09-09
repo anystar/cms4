@@ -74,7 +74,7 @@ class banners extends prefab {
 		$f3->route('POST /admin/banners/dropzone', 'banners::upload');
 
 		// Delete image
-		$f3->route('GET /admin/banners/delete/@image', function ($f3, $params) {
+		$f3->route('GET /admin/bannersajax/delete/@image', function ($f3, $params) {
 			banners::delete_banner($f3, $params);
 
 			$f3->reroute("/admin/banners");
@@ -187,7 +187,6 @@ class banners extends prefab {
 	static function admin_render($f3) {
 		$f3->set("max_upload_size", file_manager::file_upload_max_size());
 
-		//TODO: Create html files for admin display and generation
 		if (banners::hasInit())
 		{
 			if (admin::$signed) {
@@ -309,21 +308,6 @@ class banners extends prefab {
 				break;
 			}
 		}
-	}
-
-	static function add_banner($path, $image, $name, $x, $y) {
-
-
-		banners::resize_image($path, $image, $x, $y, getcwd()."/".banners::$upload_path.$new_name);
-	}
-
-	static function resize_image ($path, $image, $x, $y, $save_as) {
-
-		if (!file_exists($path."/".$image)) exit("no file?");
-
-
-		
-
 	}
 
 	// Drupal has this implemented fairly elegantly:

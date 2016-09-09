@@ -24,9 +24,7 @@ class content_blocks extends prefab {
 			$page = ($page!="/") ? trim($page, "/") : "index";
 
 			$this->retreiveContent($f3, $page);
-		}
-
-		
+		}	
 
 		if (admin::$signed)
 			$this->admin_routes($f3);
