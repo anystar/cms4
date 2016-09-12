@@ -1,9 +1,6 @@
 body {
-  background: rgb(0,46,98);
-  background: -moz-linear-gradient(left,  rgba(0,46,98,1) 0%, rgba(0,72,153,1) 100%);
-  background: -webkit-linear-gradient(left,  rgba(0,46,98,1) 0%,rgba(0,72,153,1) 100%);
-  background: linear-gradient(to right,  rgba(0,46,98,1) 0%,rgba(0,72,153,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#002e62', endColorstr='#004899',GradientType=1 );
+  background: #00356B;
+
 
   padding-top: 20px;
 }
@@ -66,23 +63,39 @@ h1 {
 
 }
 
-.container {
+body > .container {
   width: 70%;
   background-color: #fff;
   padding-bottom: 20px;
+  background-color: rgb(241, 241, 241);
+  padding: 10px;
 }
 
-.boxshadow {
-    margin: 0 0 30px 0;
+.boxshadow, .box {
+    margin: 0 0 10px 0;
     padding: 10px;
     border: 1px solid #cce;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    -webkit-box-shadow: 2px 2px 1px 1px rgba(179,179,179,1);
-    -moz-box-shadow: 2px 2px 1px 1px rgba(179,179,179,1);
-    box-shadow: 2px 2px 1px 1px rgba(179,179,179,1);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    background-color: #fff;
 }
+
+.box h2 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 22.4px;
+  font-weight: bold;
+
+  background-color: #E6E6E6;
+  padding: 5px 0 2px 5px;
+  margin: -10px;
+  color: #333;
+
+}
+
 
 @media screen and (max-width: 1500px) {
   .container, .nav, h1 {

@@ -28,7 +28,6 @@ class admin extends prefab {
 		else
 			admin::$clientPass = admin::$webmasterPass;
 
-
 		if ($f3->SETTINGS["admin_email"])
 			admin::$clientEmail = $f3->SETTINGS["admin_email"];
 
@@ -76,15 +75,6 @@ class admin extends prefab {
 			echo sha1_file($f3->get("SETTINGS.dbname"));
 			exit;
 		});
-
-		if (admin::$signed) {
-			$f3->route('GET /admin/css/admin_toolbar.css', function () {
-				echo Template::instance()->render("/admin/css/admin_toolbar.css", "text/css");
-			});
-			$f3->route('GET /admin/js/admin_toolbar.js', function () {
-				echo Template::instance()->render("/admin/js/admin_toolbar.js", "text/javascript");
-			});
-		}
 	}
 
 
@@ -114,6 +104,11 @@ class admin extends prefab {
 		$f3->route('GET /admin/help', "admin::help");
 		$f3->route('GET /admin/settings', "admin::settings");
 		$f3->route('POST /admin/update_settings', "admin::update_settings");
+
+
+		$f3->route('GET /admin/template', function () {
+			echo Template::instance()->render("/admin/admin_template.html");
+		});
 	}
 
 	static public function dashboard_render ($f3)
@@ -206,7 +201,7 @@ class admin extends prefab {
 	}
 
 
-	static function file_routes($f3) {
+	static function file_routes($f3) {	
 		$f3->route('GET /admin/theme', function () {
 			echo Template::instance()->render("/admin/css/adminstyle.css", "text/css");
 		});
@@ -223,6 +218,10 @@ class admin extends prefab {
 			echo Template::instance()->render("/admin/js/bootstrap.min.js", "application/javascript");
 		});
 
+		$f3->route('GET /admin/imgs/help_pdf_screenshot.png', function () {
+			echo View::instance()->render("/admin/imgs/help_pdf_screenshot.png", "image/png");
+		});
+
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
 			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.woff2", "application/font-woff");
 		});
@@ -234,6 +233,17 @@ class admin extends prefab {
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
 			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.ttf", "application/font-woff");
 		});
+
+		if (admin::$signed) {
+			
+			$f3->route('GET /admin/css/admin_toolbar.css', function () {
+				echo Template::instance()->render("/admin/css/admin_toolbar.css", "text/css");
+			});
+
+			$f3->route('GET /admin/js/admin_toolbar.js', function () {
+				echo Template::instance()->render("/admin/js/admin_toolbar.js", "text/javascript");
+			});
+		}
 
 	}
 }
