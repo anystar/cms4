@@ -13,8 +13,6 @@ class admin extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		admin::file_routes($f3);
-
 		admin::$webmasterEmail = $f3->SETTINGS["webmaster_email"];
 		admin::$webmasterPass = $f3->SETTINGS["webmaster_pass"];
 
@@ -61,6 +59,8 @@ class admin extends prefab {
 			$img->render();
 			exit;
 		});
+
+		admin::file_routes($f3);
 
 		if (!admin::$signed)
 			$this->login_routes($f3);
@@ -235,7 +235,7 @@ class admin extends prefab {
 		});
 
 		if (admin::$signed) {
-			
+
 			$f3->route('GET /admin/css/admin_toolbar.css', function () {
 				echo Template::instance()->render("/admin/css/admin_toolbar.css", "text/css");
 			});
