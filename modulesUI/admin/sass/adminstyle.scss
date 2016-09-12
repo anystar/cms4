@@ -38,7 +38,7 @@ h1 {
     text-align: center;
   }
   
-   @media screen and (max-width: 800px) {
+  @media screen and (max-width: 800px) {
     .pull-right {
       float: none !important;
     }
@@ -85,7 +85,7 @@ body > .container {
 }
 
 @media screen and (max-width: 1500px) {
-  body > .container {
+  body > .container, .top_nav {
     width: 97%;
   }
 }
@@ -124,7 +124,7 @@ body>.container>.row>.box {
 
 
 @media screen and (max-width: 1500px) {
-  body>.container, .nav, h1 {
+  body>.container, h1 {
     width: 97%;
   }
 }
