@@ -23,31 +23,23 @@
 		<div class="nav top_nav">
 			<include href="/admin/navigation.html" with="{{nav_active_webmaster=active}}"  />
 		</div>
-
+		
 		<div class="container">
-			<div class="col-xs-12">
-				
-				<h2>Webmaster dashboard</h2>
-				
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="boxshadow">
-							<h2>Unused Modules</h2>
-							<ul>
-								<check if="!{{@content_blocks.init}}"><li><a href="{{ @BASE }}/admin/pages">Content</a></li></check>
-								<check if="!{{@file_manager.init}}"><li><a href="{{ @BASE }}/admin/file_manager">File Manager</a></li></check>
+			<div class="col-xs-6 col-md-4">
+				<div class="box">
+					<h2>Unused Modules</h2>
+					<ul>
+						<check if="!{{@content_blocks.init}}"><li><a href="{{ @BASE }}/admin/pages">Content</a></li></check>
+						<check if="!{{@file_manager.init}}"><li><a href="{{ @BASE }}/admin/file_manager">File Manager</a></li></check>
+						<check if="!{{@banners.init}}"><li><a href="{{ @BASE }}/admin/banners">Banners</a></li></check>
+						<check if="!{{@gallery.init}}"><li><a href="{{ @BASE }}/admin/gallery">Galleries</a></li></check>
+						<check if="!{{@contact.init}}"><li><a href="{{ @BASE }}/admin/contact">Contact Form</a></li></check>
+					</ul>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-8">
+				<div class="box">
 
-
-								<check if="!{{@banners.init}}"><li><a href="{{ @BASE }}/admin/banners">Banners</a></li></check>
-
-								<check if="!{{@gallery.init}}"><li><a href="{{ @BASE }}/admin/gallery">Galleries</a></li></check>
-								<check if="!{{@contact.init}}"><li><a href="{{ @BASE }}/admin/contact">Contact Form</a></li></check>
-							</ul>
-						</div>
-					</div>
-
-					<div class="col-sm-8">
-						<div class="boxshadow">
 							<h2>Documentation</h2>
 
 							<h3>Creating a new CMS</h3>
@@ -97,10 +89,7 @@ git clone root@webworksau.com:/home/cms/stable .
 								</p>
 							</p>
 
-						</div>
-					</div>
 				</div>
-
 			</div>
 		</div>
 

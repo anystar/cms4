@@ -90,21 +90,27 @@
 		<div class="nav top_nav">
 			<include href="/admin/navigation.html" with="{{nav_active_banners=active}}"  />
 		</div>
-
+		
 		<div class="container">
-			<div class="col-xs-12">
-				<h2>Banner Manager</h2>  
-				
+			<div class="box">
+				<h2>Banner example</h2> 
+			
 				<div class="admin_banner_display">
 					{{@banners.html}}
 				</div>
-				
-				<div class="row">
-					<check if="{{@webmaster}}">
-						<true><set colwidth="col-md-8"></true>
-						<false><set colwidth="col-md-12"></false>
-					</check>
-					<div class="{{@colwidth}}">			
+			</div>
+		
+
+			<div class="row">
+				<check if="{{@webmaster}}">
+					<true><set colwidth="col-xs-12 col-md-8"></true>
+					<false><set colwidth="col-md-12"></false>
+				</check>
+
+				<div class="{{@colwidth}}">	
+					<div class="box">
+						<h2>Banner images</h2>
+
 						<table class="images-table table table-bordered">
 							<thead>
 								<th width="10%">Order</th>
@@ -134,40 +140,41 @@
 			 				<div>Max file size: {{@max_upload_size}}</div>
 						  </div>
 						</form>
-					
+
 						<check if="{{@webmaster}}">
-						<h3>Upload settings</h3>
-						<div class="container image_upload_settings">
-							<div class="col-sm-6 pull-right">
-							<p>These settings will</p>
-							<ul>
-								<li>resize images when uploaded</li>
-								<li>ignores aspect ratio. <br>(shrinks and then crops from center)</li>
-								<li>images will enlarge.</li>
-							</ul>
-							</div>
-							
-							<div class="col-sm-6">
-								<form  action="{{@BASE}}/admin/banners/update_settings" method="POST" class="form-inline">
-									<div class="form-group">
-									  <label for="b">Image size: </label>
-									  <input name="width" value="{{@SETTINGS.banners_width}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="height" value="{{@SETTINGS.banners_height}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
-									</div>
-									<button type="submit" class="btn btn-default">Apply settings to take effect</button>
-									<ul>
-										<li>Leave blank to not resize.</li>
-										<li><strong>Settings need to be applied to take effect.</strong></li>
-									</ul>
-								</form>
+						<div class="box">
+							<h2>Upload settings</h2>
+							<div class="container image_upload_settings">
+								<div class="col-sm-6 pull-right">
+								<p>These settings will</p>
+								<ul>
+									<li>resize images when uploaded</li>
+									<li>ignores aspect ratio. <br>(shrinks and then crops from center)</li>
+									<li>images will enlarge.</li>
+								</ul>
+								</div>
+								
+								<div class="col-sm-6">
+									<form  action="{{@BASE}}/admin/banners/update_settings" method="POST" class="form-inline">
+										<div class="form-group">
+										  <label for="b">Image size: </label>
+										  <input name="width" value="{{@SETTINGS.banners_width}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="height" value="{{@SETTINGS.banners_height}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
+										</div>
+										<button type="submit" class="btn btn-default">Apply settings to take effect</button>
+										<ul>
+											<li>Leave blank to not resize.</li>
+											<li><strong>Settings need to be applied to take effect.</strong></li>
+										</ul>
+									</form>
+								</div>
 							</div>
 						</div>
 						</check>
 
 					</div>
-
-					<check if="{{@webmaster}}">
-					<div class="col-md-4">
-
+				</div>
+				<div class="col-md-4">
+					<div class="box">
 						<h2>Banner settings</h2>
 
 				        <form method="post" class="form-horizontal" action="{{@BASE}}/admin/banners/update_settings">
@@ -219,11 +226,11 @@
 						</form>
 
 					</div>
-					</check>
 				</div>
-
 			</div>
+
 		</div>
+		
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

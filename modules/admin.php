@@ -34,6 +34,7 @@ class admin extends prefab {
 	
 		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["pass"],$f3->SETTINGS["admin_pass"]);
 
+
 		if (admin::$clientEmail == null || admin::$clientPass == null)
 		{
 			echo "Warning, no email or password set to be able to login to admin panel.";
@@ -75,6 +76,7 @@ class admin extends prefab {
 			echo sha1_file($f3->get("SETTINGS.dbname"));
 			exit;
 		});
+
 	}
 
 
