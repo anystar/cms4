@@ -236,6 +236,14 @@ class admin extends prefab {
 			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.ttf", "application/font-woff");
 		});
 
+		$f3->route('GET /admin/fonts/Jaldi-Regular.ttf', function () {
+			echo View::instance()->render("/admin/fonts/Jaldi-Regular.ttf", "application/font-woff");
+		});
+
+		$f3->route('GET /admin/fonts/Oswald-Regular.ttf', function () {
+			echo View::instance()->render("/admin/fonts/Oswald-Regular.ttf", "application/font-woff");
+		});
+
 		if (admin::$signed) {
 
 			$f3->route('GET /admin/css/admin_toolbar.css', function () {

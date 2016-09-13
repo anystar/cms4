@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "Oswald";
+  src: url("{{@BASE}}/admin/fonts/Oswald-Regular.ttf"); }
+@font-face {
+  font-family: "Jaldi";
+  src: url("{{@BASE}}/admin/fonts/Jaldi-Regular.ttf"); }
 body {
   background: #00356B;
   padding-top: 20px; }
