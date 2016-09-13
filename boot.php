@@ -69,8 +69,8 @@ error::construct(new DB\SQL('sqlite:'.$error_log), $f3->HOST.$f3->PATH);
 if ($settings['enable_phpliteadmin']) {
 	$db_sub_folder = "admindb";
 
-	if ($f3->HOST == $settings["dev_host"])
-		$settings["phpliteadmin_pass"] = $settings["webmaster_pass"];
+	//if ($f3->HOST == $settings["dev_host"])
+		//$settings["phpliteadmin_pass"] = $settings["webmaster_pass"];
 
 	$url = pathinfo($_SERVER["REQUEST_URI"]);
 	$dir = basename($url["dirname"]);

@@ -247,11 +247,11 @@ class admin extends prefab {
 
 			$f3->route('GET /admin/css/admin_toolbar.css', function () {
 				echo Template::instance()->render("/admin/css/admin_toolbar.css", "text/css");
-			}, 604800);
+			};
 
 			$f3->route('GET /admin/js/admin_toolbar.js', function () {
 				echo Template::instance()->render("/admin/js/admin_toolbar.js", "text/javascript");
-			}, 604800);
+			});
 		}
 
 	}
