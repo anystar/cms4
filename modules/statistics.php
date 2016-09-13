@@ -11,7 +11,13 @@ class statistics extends prefab {
 	function __construct() {
 
 		if (!$this->hasInit())
+		{
+			base::instance()->route("GET /admin/statistics/install", function ($f3) {
+				$this->install();				
+			});
+
 			return;
+		}
 
 		// Do not record if on admin path
 		if (preg_match("/\/admin(.*)/", base::instance()->PATH))
@@ -62,6 +68,7 @@ class statistics extends prefab {
 
 		$db = $this->db = new DB\SQL('sqlite:'.getcwd()."/db/statistics");
 		
+		base::instance()->statistics["init"] = true;
 		return true;
 	}
 
@@ -80,5 +87,16 @@ class statistics extends prefab {
 			echo Template::instance()->render("module_name/module.html");
 		else
 			echo Template::instance()->render("module_name/module.html");
+	}
+
+	function install () { 
+		
+		if (!is_file(getcwd()."/db/statistics"))
+			touch(getcwd()."/db/statistics");
+
+		$db = new DB\SQL('sqlite:'.getcwd()."/db/statistics");
+		$db->exec("CREATE TABLE 'hits' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'ip' TEXT, 'page' TEXT, 'date'  INTEGER DEFAULT CURRENT_TIMESTAMP  );");
+		$db->exec("CREATE TABLE 'visits' ('ip' INTEGER PRIMARY KEY NOT NULL, 'date' DATETIME DEFAULT CURRENT_TIMESTAMP, 'hits' INTEGER DEFAULT 0 )");
+
 	}
 }

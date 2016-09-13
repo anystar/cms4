@@ -28,13 +28,47 @@
 			<div class="col-xs-6 col-md-4">
 				<div class="box">
 					<h2>Unused Modules</h2>
-					<ul>
-						<check if="!{{@content_blocks.init}}"><li><a href="{{ @BASE }}/admin/pages">Content</a></li></check>
-						<check if="!{{@file_manager.init}}"><li><a href="{{ @BASE }}/admin/file_manager">File Manager</a></li></check>
-						<check if="!{{@banners.init}}"><li><a href="{{ @BASE }}/admin/banners">Banners</a></li></check>
-						<check if="!{{@gallery.init}}"><li><a href="{{ @BASE }}/admin/gallery">Galleries</a></li></check>
-						<check if="!{{@contact.init}}"><li><a href="{{ @BASE }}/admin/contact">Contact Form</a></li></check>
-					</ul>
+
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered">
+							<check if="!{{@content_blocks.init}}">
+							<tr>
+								<td>Content</td>
+								<td><a href="{{ @BASE }}/admin/pages"><button>Install</button></a></td>
+							</tr>
+							</check>
+							<check if="!{{@file_manager.init}}">
+							<tr>
+								<td>File Manager</td>
+								<td><a href="{{ @BASE }}/admin/file_manager"><button>Install</button></a></td>
+							</tr>
+							</check>
+							<check if="!{{@banners.init}}">
+								<tr>
+									<td>Banners</td>
+									<td><a href="{{ @BASE }}/admin/banners"><button>Install</button></a></td>
+								</tr>
+							</check>
+							<check if="!{{@gallery.init}}">
+								<tr>
+									<td>Galleries</td>
+									<td><a href="{{ @BASE }}/admin/gallery"><button>Install</button></a></td>
+								</tr>
+							</check>
+							<check if="!{{@contact.init}}">
+								<tr>
+									<td>Contact For</td>
+									<td><a href="{{ @BASE }}/admin/contact"><button>Install</button></a></td>
+								</tr>
+							</check>
+							<check if="!{{@statistics.init}}">
+								<tr>
+									<td>Statistics</td>
+									<td><a href="{{ @BASE }}/admin/statistics/install"><button>Install</button></a></td>
+								</tr>
+							</check>
+						</table>
+					</div>
 				</div>
 			</div>
 			<div class="col-xs-12 col-md-8">

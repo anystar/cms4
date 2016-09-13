@@ -12,11 +12,6 @@ class content extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		// content::$page = content::determine_page($f3);
-
-		// d(content::$page);
-
-
 		if ($this->hasInit($f3))
 			$this->routes(base::instance());
 	}
@@ -33,8 +28,6 @@ class content extends prefab {
 		// Check for file
 		if (is_file(getcwd()."/".$path))
 			return $path;
-
-
 
 		die;
 
