@@ -56,6 +56,7 @@
 			</div>
 
 			<div class="col-xs-12 col-md-4">
+				<check if="{{@webmaster}}">
 				<div class="box">
 					<h2>Mailbox information</h2>
 					<div class="table-responsive">
@@ -73,7 +74,9 @@
 						</table>
 					</div>
 				</div>
-
+				</check>
+			
+				<check if="{{@webmaster}}">
 				<div class="box">
 					<h2>Website statistics</h2>
 					<div class="table-responsive">
@@ -91,7 +94,16 @@
 						</table>
 					</div>
 				</div>
+
+				<div class="box">
+					<h2>Available features</h2>
+				</div>
+
+				<div class="box">
+					<h2>Installed features</h2>
+				</div>
 			</div>
+			</check>
 
 		</div>
 
