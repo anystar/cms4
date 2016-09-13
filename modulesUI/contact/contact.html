@@ -180,6 +180,7 @@
 						</form>
 					</repeat>
 					
+					<check if="{{@webmaster}}">
 					<form action="{{@BASE}}/admin/contact/add_field" method="post">
 					<tr>
 						<td>
@@ -216,6 +217,7 @@
 						<td><a href="{{@BASE}}/"><button type="submit" class="btn btn-default">Add</button></a></td>
 					</tr>
 					</form>
+					</check>
 				</table>
 			</div>
 
@@ -231,7 +233,7 @@
 		</div>
 	</div>
 
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 	  function resizeIframe(obj) {
 		obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
 	  }
