@@ -116,8 +116,8 @@ class admin extends prefab {
 	{
 		// Set default password for inhouse
 		if ($f3->HOST == $f3->SETTINGS["dev_host"]) {
-			$f3->POST["user"] = admin::$webmasterEmail;
-			$f3->POST["pass"] = admin::$webmasterPass;
+			//$f3->POST["user"] = admin::$webmasterEmail;
+			//$f3->POST["pass"] = admin::$webmasterPass;
 		}
 
 		echo Template::instance()->render("/admin/login.html");
