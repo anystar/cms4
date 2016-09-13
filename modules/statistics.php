@@ -98,5 +98,6 @@ class statistics extends prefab {
 		$db->exec("CREATE TABLE 'hits' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'ip' TEXT, 'page' TEXT, 'date'  INTEGER DEFAULT CURRENT_TIMESTAMP  );");
 		$db->exec("CREATE TABLE 'visits' ('ip' INTEGER PRIMARY KEY NOT NULL, 'date' DATETIME DEFAULT CURRENT_TIMESTAMP, 'hits' INTEGER DEFAULT 0 )");
 
+		base::instance()->reroute("/admin/webmaster/");
 	}
 }
