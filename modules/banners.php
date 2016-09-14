@@ -29,14 +29,11 @@ class banners extends prefab {
 
 		$f3->route("GET /banners/slider.css", function ($f3) {
 			echo Template::instance()->render(banners::$upload_path."/slider.css", "text/css");
-			exit();
 		});
 
 		$f3->route("GET /banners/slider.js", function ($f3) {
 			echo Template::instance()->render(banners::$upload_path."/slider.js", "application/javascript");
-			exit();
 		});
-
 	}
 
 	function admin_routes($f3) {
@@ -47,8 +44,12 @@ class banners extends prefab {
 		// Render admin panel
 		$f3->route('GET /admin/banners', 'banners::admin_render');
 
-		// Render initilization page
+		// Render install page
 		$f3->route('POST /admin/banners/install', 'banners::install');
+
+		$f3->route("GET /admin/banners/documentation", function ($f3) {
+			echo Template::instance()->render("/banners/documentation.html");
+		});
 
 
 		#######################################################
