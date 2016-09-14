@@ -30,62 +30,88 @@
 			<include href="/admin/navigation.html" with="{{nav_active_galleries=active}}"  />
 	</div>
 
+
+
 	<div class="container">
-		<div class="box">
-			<h2>Gallery Manager</h2>
+		<check if="{{@webmaster}}">
+			<div class="row box module-bar">
+				<div class="col-xs-8">
+					<header>Gallery</header>
+				</div>
 
-			<check if="{{@gallery_images}}">
-			  <true>
-				<include href="gallery/table_of_images.html">
-			  </true>
-			</check>
+				<div class="col-xs-4" style="text-align:right;">
+					<button>Uninstall</button>
+					<button>Documentation</button>
+				</div>
+			</div>
+		</check>
 
-			<check if="{{@gallery_images}}">
-			  <false>
-				<form method="post" action="{{@BASE}}/admin/gallery/dropzone" class="dropzone" id="gallerydropzone">
-				  <div class="dz-message">
-					<div>Drop some photos (or click) to create first gallery.</div>
-					<div>Max file size: {{@max_upload_size}}</div>
-				  </div>
-				</form>
-			  </false>
-			</check>
+		<div class="row">
+			
+				<check if="{{@webmaster}}">
+					<true><set colwidth="col-xs-12 col-md-8"></true>
+					<false><set colwidth="col-md-12"></false>
+				</check>
 
-			<div class="box">
-				<h2>Upload settings</h2>
+				<div class="{{@colwidth}}">	
+				<div class="box">
+					<h2>Images</h2>
 
-				<div class="row image_upload_settings">
-					<div class="col-sm-6 pull-right">
-					<p><strong>These settings will</strong></p>
-					<ul>
-						<li>resize images when uploaded</li>
-						<li>respect aspect ratio. <br>(fit image with its longest side into the resize dimensions)</li>
-					</ul>
-					</div>
-					
-					<div class="col-sm-6">
-						<form  action="{{@BASE}}/admin/gallery/upload_settings" method="POST" class="form-inline">
-							<div class="form-group">
-							  <label for="a">Thumbnail size: </label>
-							  <input name="thumb_size_x" value="{{@gallery.settings.thumb_size_x}}" type="text" class="form-control" id="a" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="thumb_size_y" value="{{@gallery.settings.thumb_size_x}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
-							</div>
-							<div class="form-group">
-							  <label for="b">Image size: </label>
-							  <input name="image_size_x" value="{{@gallery.settings.image_size_x}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="image_size_y" value="{{@gallery.settings.image_size_y}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
-							</div>
-							<button type="submit" class="btn btn-default">Apply Settings</button>
-								<ul>
-									<li>leave blank to not resize.</li>
-									<li><strong>Settings need to be applied to take effect.</strong></li>
-								</ul>
+					<check if="{{@gallery_images}}">
+					  <true>
+						<include href="gallery/table_of_images.html">
+					  </true>
+					</check>
+
+					<check if="{{@gallery_images}}">
+					  <false>
+						<form method="post" action="{{@BASE}}/admin/gallery/dropzone" class="dropzone" id="gallerydropzone">
+						  <div class="dz-message">
+							<div>Drop some photos (or click) to create first gallery.</div>
+							<div>Max file size: {{@max_upload_size}}</div>
+						  </div>
 						</form>
+					  </false>
+					</check>
+				</div>
+			</div>
+			
+			<check if="{{@webmaster}}">
+			<div class="col-md-4">
+				<div class="box">
+					<h2>Upload settings</h2>
+
+					<div class="image_upload_settings">				
+							<form  action="{{@BASE}}/admin/gallery/upload_settings" method="POST" class="form-inline">
+								<div class="form-group">
+								  <label for="a">Thumbnail size: </label>
+								  <input name="thumb_size_x" value="{{@gallery.settings.thumb_size_x}}" type="text" class="form-control" id="a" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="thumb_size_y" value="{{@gallery.settings.thumb_size_x}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
+								</div>
+								<div class="form-group">
+								  <label for="b">Image size: </label>
+								  <input name="image_size_x" value="{{@gallery.settings.image_size_x}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="image_size_y" value="{{@gallery.settings.image_size_y}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
+								</div>
+								<button type="submit">Apply Settings to take effect</button>
+									<p><strong>These settings will</strong></p>
+									<ul>
+										<li>resize images when uploaded</li>
+										<li>respect aspect ratio. <br>(fit image with its longest side into the resize dimensions)</li>
+									</ul>
+
+									<ul>
+										<li>leave blank to not resize.</li>
+										<li><strong>Settings need to be applied to take effect.</strong></li>
+									</ul>
+
+
+							</form>
 					</div>
 				</div>
 			</div>
-
+			</check>
 		</div>
-
 	</div>
+
 
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>

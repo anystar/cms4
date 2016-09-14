@@ -108,6 +108,51 @@ body > .container > .row > .box {
     height: 50px;
     line-height: 50px;
     font-size: 1.4em; } }
+.module-bar {
+  margin-bottom: 10px;
+  background-color: #444;
+  padding: 5px 0;
+  color: #fff; }
+.module-bar button {
+  margin-left: 5px; }
+.module-bar header {
+  font-size: 23px;
+  position: relative;
+  top: 2px; }
+
+.table > tbody > tr > td {
+  vertical-align: middle !important; }
+
+table .actions {
+  text-align: right;
+  white-space: nowrap;
+  width: 20%; }
+
+table .order {
+  width: 133px; }
+
+button {
+  background-color: #444444;
+  border: 1px solid #141414;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 0 1px rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 4px 20px;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.89); }
+
+button:hover {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 0 1px rgba(0, 0, 0, 0.9);
+  border: 1px solid #000;
+  color: #fff; }
+
+button:active {
+  border: 1px solid #141414 !important;
+  box-shadow: none;
+  outline: medium none !important; }
+
+.button-fullwidth {
+  width: 100%; }
+
 #pages {
   width: 90%;
   margin: 10px auto 10px auto;

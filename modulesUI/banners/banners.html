@@ -92,6 +92,19 @@
 		</div>
 		
 		<div class="container">
+			<check if="{{@webmaster}}">
+				<div class="row box module-bar">
+					<div class="col-xs-8">
+						<header>Banners</header>
+					</div>
+
+					<div class="col-xs-4" style="text-align:right;">
+						<button>Uninstall</button>
+						<button>Documentation</button>
+					</div>
+				</div>
+			</check>
+
 			<div class="box">
 				<h2>Banner example</h2> 
 			
@@ -141,36 +154,6 @@
 						  </div>
 						</form>
 
-						<check if="{{@webmaster}}">
-						<div class="box">
-							<h2>Upload settings</h2>
-							<div class="container image_upload_settings">
-								<div class="col-sm-6 pull-right">
-								<p>These settings will</p>
-								<ul>
-									<li>resize images when uploaded</li>
-									<li>ignores aspect ratio. <br>(shrinks and then crops from center)</li>
-									<li>images will enlarge.</li>
-								</ul>
-								</div>
-								
-								<div class="col-sm-6">
-									<form  action="{{@BASE}}/admin/banners/update_settings" method="POST" class="form-inline">
-										<div class="form-group">
-										  <label for="b">Image size: </label>
-										  <input name="width" value="{{@SETTINGS.banners_width}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="height" value="{{@SETTINGS.banners_height}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
-										</div>
-										<button type="submit" class="btn btn-default">Apply settings to take effect</button>
-										<ul>
-											<li>Leave blank to not resize.</li>
-											<li><strong>Settings need to be applied to take effect.</strong></li>
-										</ul>
-									</form>
-								</div>
-							</div>
-						</div>
-						</check>
-
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -178,7 +161,7 @@
 						<h2>Banner settings</h2>
 
 				        <form method="post" class="form-horizontal" action="{{@BASE}}/admin/banners/update_settings">
-							<div class="form-group">
+							<div class="f">
 								<div class="form-group">
 									<label class="col-sm-2 control-label">html</label>
 									<div class="col-sm-10">
@@ -192,7 +175,7 @@
 								</div>
 							</div>
 
-							<div class="form-group">
+							<div class="">
 								<div class="form-group">
 									<label class="col-sm-2 control-label">css</label>
 									<div class="col-sm-10">
@@ -206,7 +189,7 @@
 								</div>
 							</div>
 
-							<div class="form-group">
+							<div class="">
 								<div class="form-group">
 									<label class="col-sm-2 control-label">js</label>
 									<div class="col-sm-10">
@@ -220,12 +203,37 @@
 								</div>
 							</div>
 
-							<div class="form-group">
-								<button class="col-xs-10 col-xs-offset-2" type="submit" class="btn btn-default">Update settings</button>
-							</div>
+							<button class="col-xs-10 col-xs-offset-2" type="submit" class="btn btn-default">Apply settings</button>
+							<div class="clearfix"></div>
 						</form>
 
 					</div>
+
+					<check if="{{@webmaster}}">
+					<div class="box">
+						<h2>Upload settings</h2>
+						<div class="container image_upload_settings">
+						
+							<form  action="{{@BASE}}/admin/banners/update_settings" method="POST" class="form-inline">
+								<div class="form-group">
+								  <label for="b">Image size: </label>
+								  <input name="width" value="{{@SETTINGS.banners_width}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="height" value="{{@SETTINGS.banners_height}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
+								</div>
+								<button type="submit">Apply settings to take effect</button>
+
+								<p>These settings will</p>
+								<ul>
+									<li>resize images when uploaded</li>
+									<li>ignores aspect ratio. <br>(shrinks and then crops from center)</li>
+									<li>images will enlarge.</li>
+								</ul>
+								<ul>
+									<li>Leave blank to not resize.</li>
+								</ul>
+							</form>
+						</div>
+					</div>
+					</check>
 				</div>
 			</div>
 

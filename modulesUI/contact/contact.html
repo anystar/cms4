@@ -32,125 +32,177 @@
 	</div>
 	
 	<div class="container">
-		<div class="col-xs-12 col-md-6">
-			<div class="box">
-				<h2>Settings</h2>
-				<form class="form-horizontal" action="{{@BASE}}/admin/contact/settings" method="post">
+		<check if="{{@webmaster}}">
+			<div class="row box module-bar">
+				<div class="col-xs-8">
+					<header>Contact Form</header>
+				</div>
 
-					<!-- Text input-->
-					<div class="form-group">
-					  <label class="col-md-4 control-label" for="email">Email</label>  
-					  <div class="col-md-8">
-					  <input id="email" name="email" type="text" placeholder="email address" class="form-control input-md" required="" value="{{@contact_email}}">
-					  <span class="help-block">What address do we send too? (eg: business owner's email)</span>  
-					  </div>
-					</div>
-
-					<!-- Text input-->
-					<div class="form-group">
-					  <label class="col-md-4 control-label" for="name">Name</label>  
-					  <div class="col-md-8">
-					  <input id="name" name="name" type="text" placeholder="your name" class="form-control input-md" required="" value="{{@contact_name}}">
-					  <span class="help-block">Who should the email address? (eg: business owner's name)</span>  
-					  </div>
-					</div>
-
-					<!-- Text input-->
-					<div class="form-group">
-					  <label class="col-md-4 control-label" for="subject">Subject Line</label>  
-					  <div class="col-md-8">
-					  <input id="subject" name="subject" type="text" placeholder="" class="form-control input-md" required="" value="{{@contact_subject}}">
-					  <span class="help-block">eg: &lt;business name&gt; website enquiry</span>  
-					  </div>
-					</div>
-					<button type="submit" class="btn btn-default pull-right">Update Settings</button>
-					<div class="clearfix"></div>
-				</form>
+				<div class="col-xs-4" style="text-align:right;">
+					<button>Uninstall</button>
+					<button>Documentation</button>
+				</div>
 			</div>
-		</div>
-		<div class="col-xs-12 col-md-6">
-			<div class="box">
-				<h2>Test center</h2>
+		</check>
 
-				<form class="form-horizontal" action="{{@BASE}}/contact" method="post">
-					<repeat group="{{@contact_fields}}" value="{{@field}}">
-						<switch expr="{{@field.type}}">
-							<case value="name">
-								<set value="John Smith">
-							</case>
-							<case value="number">
-								<set value="(03) 54444444">
-							</case>
-							<case value="email">
-								<set value="johnsmith@example.com">
-							</case>
-							<case value="textarea">
-								<set value="This is a test email from the admin panel">
-							</case>
-							<case value="text">
-								<set value="Dummy text">
-							</case>
-							<default>
-								<set value="">
-							</default>
-						</switch>
-						
+
+		<div class="row">
+			<div class="col-xs-12 col-md-5">
+				<div class="box">
+					<h2>Settings</h2>
+
+					<form action="{{@BASE}}/admin/contact/settings" method="post">
 						<div class="form-group">
-							<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
+							<label>Email</label>
+							<input name="email" type="text" class="form-control" placeholder="Placeholder text">
+							<span class="help-block">What address do we send too? (eg: business owner's email)</span>  
+						</div>
+
+						<div class="form-group">
+							<label>Name</label>
+							<input name="name" type="text" class="form-control" placeholder="Placeholder text">
+							<span class="help-block">Who should the email address? (eg: business owner's name)</span> 
+						</div>
+
+						<div class="form-group">
+							<label>Subject Line</label>
+							<input name="subject" type="text" class="form-control" placeholder="Placeholder text">
+							<span class="help-block">eg: &lt;business name&gt; website enquiry</span>
+						</div>
+
+
+						<div style="text-align:right;">
+							<button>Apply settings <span class="glyphicon glyphicon-saved"></span></button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-7">
+				<div class="box">
+					<h2>Test center</h2>
+
+					<form class="form-horizontal" action="{{@BASE}}/contact" method="post">
+						<repeat group="{{@contact_fields}}" value="{{@field}}">
+							<switch expr="{{@field.type}}">
+								<case value="name">
+									<set value="John Smith">
+								</case>
+								<case value="number">
+									<set value="(03) 54444444">
+								</case>
+								<case value="email">
+									<set value="johnsmith@example.com">
+								</case>
+								<case value="textarea">
+									<set value="This is a test email from the admin panel">
+								</case>
+								<case value="text">
+									<set value="Dummy text">
+								</case>
+								<default>
+									<set value="">
+								</default>
+							</switch>
+							
+							<div class="form-group">
+								<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
+								<div class="col-sm-9">
+									<input name="{{@field.label}}{{@field.id}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+								</div>
+							</div>
+
+						</repeat>
+						
+						<div class="input-group pull-right" style="margin-bottom:15px;width:85%">
+							<div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
+							<input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
+						</div>
+						<div class="clearfix"></div>
+						
+						<hr>
+						<div class="form-group">
+							<label for="sendto" class="col-sm-3 control-label">Send test to:</label>
 							<div class="col-sm-9">
-								<input name="{{@field.label}}{{@field.id}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+								<input name="sendto" value="{{@contact_email}}" type="email" class="form-control" placeholder="">
 							</div>
 						</div>
 
-					</repeat>
-					
-					<div class="input-group pull-right" style="margin-bottom:15px;width:85%">
-						<div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
-						<input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
-					</div>
-					<div class="clearfix"></div>
-					
-					<hr>
-					<div class="form-group">
-						<label for="sendto" class="col-sm-3 control-label">Send test to:</label>
-						<div class="col-sm-9">
-							<input name="sendto" value="{{@contact_email}}" type="email" class="form-control" placeholder="">
-						</div>
-					</div>
+						<div style="text-align: center;padding:10px 0;">After hitting submit please check your email. It may take up to 10 minutes to receive.</div>
 
-					<div style="text-align: center;padding:10px 0;">After hitting submit please check your email. It may take up to 10 minutes to receive.</div>
-					<button type="submit" class="btn btn-default pull-right">Submit Test Email</button>
-					<div class="clearfix"></div>		
-				</form>
+						<div style="text-align:right">
+							<button type="submit">Submit Test Email</button>
+						</div>
+					</form>
+				</div>
 			</div>
 		</div>
 
 		<div class="col-md-12">
+			<div class="row">
+				<div class="box">
+					<h2>Contact Form</h2>
+					
+					<table class="table table-condensed table-responsive">
+						<thead>
+							<th>Label</th>
+							<th>Type</th>
+							<th>Placeholder</th>
+							<th>Error Message</th>
+							<th>Order</th>
+							<th></th>
+						</thead>
 
-			<div class="box">
-				<h2>Contact Form</h2>
-				
-				<table class="table table-condensed table-responsive">
-					<thead>
-						<th>Label</th>
-						<th>Type</th>
-						<th>Placeholder</th>
-						<th>Error Message</th>
-						<th>Order</th>
-						<th></th>
-					</thead>
-
-					<repeat group="{{@contact_fields}}" value="{{@field}}">
-						<form action="{{@BASE}}/admin/contact/update_field/{{@field.id}}" method="post">
+						<repeat group="{{@contact_fields}}" value="{{@field}}">
+							<form action="{{@BASE}}/admin/contact/update_field/{{@field.id}}" method="post">
+							<tr>
+								<td>
+									<div class="input-group">
+									  <input name="label" type="text" class="form-control" placeholder="input label" value="{{@field.label}}">
+									</div>
+								</td>
+								<td>
+								   <div class="input-group">
+									  <select name="type" class="">
+										<option value="name">Name</option>
+										<option value="text">Text</option>
+										<option value="textarea">Textarea</option>
+										<option value="number">Number</option>
+										<option value="email">Email</option>
+									  </select>
+								   </div>
+								</td>
+								<td>
+									<div class="input-group">
+									  <input name="placeholder" type="text" class="form-control" placeholder="text you're reading now" value="{{@field.placeholder}}">
+									</div>
+								</td>
+								<td>
+									<div class="input-group">
+									  <input name="error_message" type="text" class="form-control" value="{{@field.error_message}}">
+									</div>
+								</td>
+								<td>
+									<div class="input-group">
+									  <input name="order" type="text" class="form-control" value="{{@field.order}}">
+									</div>
+								</td>
+								<td><a href="{{@BASE}}/admin/contact/delete_field/{{@field.id}}"><button type="button">Delete</button></a></td>
+								<td><button type="submit">Update</button></td>
+							</tr>
+							</form>
+						</repeat>
+						
+						<check if="{{@webmaster}}">
+						<form action="{{@BASE}}/admin/contact/add_field" method="post">
 						<tr>
 							<td>
 								<div class="input-group">
-								  <input name="label" type="text" class="form-control" placeholder="input label" value="{{@field.label}}">
+								  <input name="label" type="text" class="form-control" placeholder="input label">
 								</div>
 							</td>
 							<td>
 							   <div class="input-group">
-								  <select name="type" class="">
+								  <select name="type">
 									<option value="name">Name</option>
 									<option value="text">Text</option>
 									<option value="textarea">Textarea</option>
@@ -161,73 +213,37 @@
 							</td>
 							<td>
 								<div class="input-group">
-								  <input name="placeholder" type="text" class="form-control" placeholder="text you're reading now" value="{{@field.placeholder}}">
+								  <input name="placeholder" type="text" class="form-control" placeholder="text you're reading now">
 								</div>
 							</td>
 							<td>
 								<div class="input-group">
-								  <input name="error_message" type="text" class="form-control" value="{{@field.error_message}}">
+								  <input name="error_message" type="text" class="form-control">
 								</div>
 							</td>
 							<td>
 								<div class="input-group">
-								  <input name="order" type="text" class="form-control" value="{{@field.order}}">
+								  <input name="order" type="text" class="form-control" value="{{@field.order+1}}">
 								</div>
 							</td>
-							<td><a href="{{@BASE}}/admin/contact/delete_field/{{@field.id}}"><button type="button" class="btn btn-default">Delete</button></a></td>
-							<td><button type="submit" class="btn btn-default">Update</button></td>
+							<td><a href="{{@BASE}}/"><button type="submit">Add</button></a></td>
 						</tr>
 						</form>
-					</repeat>
-					
-					<check if="{{@webmaster}}">
-					<form action="{{@BASE}}/admin/contact/add_field" method="post">
-					<tr>
-						<td>
-							<div class="input-group">
-							  <input name="label" type="text" class="form-control" placeholder="input label">
-							</div>
-						</td>
-						<td>
-						   <div class="input-group">
-							  <select name="type" class="">
-								<option value="name">Name</option>
-								<option value="text">Text</option>
-								<option value="textarea">Textarea</option>
-								<option value="number">Number</option>
-								<option value="email">Email</option>
-							  </select>
-						   </div>
-						</td>
-						<td>
-							<div class="input-group">
-							  <input name="placeholder" type="text" class="form-control" placeholder="text you're reading now">
-							</div>
-						</td>
-						<td>
-							<div class="input-group">
-							  <input name="error_message" type="text" class="form-control">
-							</div>
-						</td>
-						<td>
-							<div class="input-group">
-							  <input name="order" type="text" class="form-control" value="{{@field.order+1}}">
-							</div>
-						</td>
-						<td><a href="{{@BASE}}/"><button type="submit" class="btn btn-default">Add</button></a></td>
-					</tr>
-					</form>
-					</check>
-				</table>
+						</check>
+					</table>
+				</div>
 			</div>
 
 		</div>
-		<div class="col-md-12">
-			<div class="box">
-				<h2>Email Template</h2>
-				
-				<div class="container">
-					<iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/admin/contact/email_template"></iframe>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="box">
+					<h2>Email Template</h2>
+					
+					<div class="container">
+						<iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/admin/contact/email_template"></iframe>
+					</div>
 				</div>
 			</div>
 		</div>

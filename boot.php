@@ -104,7 +104,9 @@ $f3->UI = getcwd()."/;"; 								// Client directory files
 $f3->UI .= $settings["paths"]["cms"] . "/adminUI/;";    // Admin panel UI
 $f3->UI .= $settings["paths"]["cms"] . "/modulesUI/";   // Modules UI
 
-$f3->set('CACHE', getcwd() . "/tmp/");
+if ($settings["cache"])
+	$f3->set('CACHE', getcwd() . "/tmp/");
+
 $f3->set('ESCAPE',FALSE);
 
 $f3->set("CMS", $settings["paths"]["cms"]);

@@ -5,9 +5,6 @@ class banners extends prefab {
 	static $upload_path = "uploads/slider/";
 	static $file_type = "jpeg";
 
-	static $system;
-	static $system_path;
-
 	function __construct() {
 		$f3 = base::instance();
 		
@@ -51,7 +48,7 @@ class banners extends prefab {
 		$f3->route('GET /admin/banners', 'banners::admin_render');
 
 		// Render initilization page
-		$f3->route('POST /admin/banners/init', 'banners::init');
+		$f3->route('POST /admin/banners/install', 'banners::install');
 
 
 		#######################################################
@@ -200,11 +197,11 @@ class banners extends prefab {
 			echo Template::instance()->render("/banners/banners.html");
 		}
 		else
-			echo Template::instance()->render("/banners/init.html");
+			echo Template::instance()->render("/banners/install.html");
 	}
 
 
-	static function init($f3) {
+	static function install ($f3) {
 		if (banners::hasInit()) return false;
 		if (!$f3->webmaster)
 			return;
@@ -247,7 +244,7 @@ class banners extends prefab {
 			$dir = array_diff(scandir($p), array('..', '.'));
 
 			foreach ($dir as $img) {
-				banners::add_banner($p, $img, $img, $width, $height);
+				copy($p."/".$img, getcwd()."/".banners::$upload_path."/".$img);
 			}
 		}
 

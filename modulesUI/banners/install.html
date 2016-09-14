@@ -40,19 +40,21 @@
       <include href="/admin/navigation.html" />
     </div>
 
+    
     <div class="container">
-      <div class="col-xs-12">
-        
-        <h2>Initialize Banner System</h2>
-      
-         <form action="{{@BASE}}/admin/banners/init" method="post" class="form-horizontal">
-          <fieldset>
+      <div class="col-sm-4 col-sm-offset-4">
+        <div class="box">
+          <h2>Install banner module</h2>
 
-          <button type="submit">Initilize banner system</button>
+            <form action="{{@BASE}}/admin/banners/install" method="post">
+              <div class="form-group">
+                  <label>Banner name</label>
+                  <input type="email" class="form-control" placeholder="Unique name for this module">
+              </div>
+              <button class="button-fullwidth" type="submit">Install banner</button>
+            </form>
 
-          </fieldset>
-        </form>
-
+        </div>
       </div>
     </div>
 
