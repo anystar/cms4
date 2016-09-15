@@ -70,6 +70,45 @@
 						</table>
 					</div>
 				</div>
+
+				<div class="box">
+					<h2>Template code reference</h2>
+					Extensive templating reference can be found in Fat Free Framework documentation.
+					<br><br>
+					<a target="_blank" href="https://fatfreeframework.com/views-and-templates">Templating system overview</a>
+					<br>
+					<a target="_blank" href="https://fatfreeframework.com/quick-reference#TemplateDirectives">Templating quick reference</a>
+
+					<h3>Quick reference</h3>
+					<h4>Variables</h4>
+					
+					
+<pre><ignore>
+<var>{{@variable_name}}
+</var></ignore></pre>
+
+<h4>Conditional Structures</h4>
+<pre>
+<ignore>&lt;check if="<var>{{@variable_name}}</var>"&gt;
+	Html in here
+&lt;/check&gt;
+
+&lt;check if="<var>{{@variable_name}}</var>"&gt;
+    &lt;true&gt;true-block&lt;/true&gt;
+    &lt;false&gt;false-block&lt;/false&gt;
+&lt;/check&gt;
+</ignore></pre>
+
+<h4>Iterating over arrays</h4>
+<pre><ignore>&lt;repeat group="<var>{{@fruits}}</var>" value="<var>{{@fruit}}</var>"&gt;
+    &lt;p&gt;<var>{{@fruit}}</var>&lt;/p&gt;
+&lt;/repeat&gt;
+
+
+</ignore></pre>
+
+					
+				</div>
 			</div>
 			<div class="col-xs-12 col-md-8">
 				<div class="box">

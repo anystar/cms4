@@ -104,6 +104,14 @@ Place the template variable <ignore><var>{{@banners.html}}</var></ignore> where 
 											<td><ignore><var>{{@banners.html}}</var></ignore></td>
 											<td>Contains compiled html markup</td>
 										</tr>
+										<tr>
+											<td><ignore><var>{{@banners.images}}</var></ignore></td>
+											<td>An array of images</td>
+										</tr>
+										<tr>
+											<td><ignore><var>{{@banners.images.(x).url}}</var></ignore></td>
+											<td>Address of image. <br>Eg: <ignore>&lt;img src="{{@BASE}}/{{@image.url}}" /&gt;</ignore></td>
+										</tr>
 									</tbody>
 								</table>
 							</div>
