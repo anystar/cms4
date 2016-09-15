@@ -243,6 +243,12 @@ class admin extends prefab {
 			$img->render();
 		}, 604800);
 
+		$f3->route('GET /admin/imgs/login_bg.png', function ($f3) {
+			$img = new Image('/admin/imgs/login_bg.png');
+			$img->render();
+		}, 604800);
+
+
 		if (admin::$signed) {
 
 			$f3->route('GET /admin/css/admin_toolbar.css', function () {

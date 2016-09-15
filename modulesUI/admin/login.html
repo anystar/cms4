@@ -14,6 +14,20 @@
     <link href="{{ @BASE }}/admin/theme" rel="stylesheet">
   
     <style>
+
+
+      body::after {
+        content: "";
+        background: url("{{@BASE}}/admin/imgs/login_bg.png");
+        opacity: 0.3;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        position: absolute;
+        z-index: -1;   
+      }
+
       #login {
         background-color: #fff;
         width: 400px;
@@ -24,6 +38,11 @@
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;
         border-radius: 5px;
+        -webkit-box-shadow: 2px 2px 1px 1px rgba(0,0,0,0.34);
+        -moz-box-shadow: 2px 2px 1px 1px rgba(0,0,0,0.34);
+        box-shadow: 2px 2px 1px 1px rgba(0,0,0,0.34);
+
+        border: 1px solid rgba(0,0,0,0.4);
       }
 
       #login img {
@@ -58,7 +77,7 @@
   <body>
 
     
-    <div id="login">
+    <div class="box" id="login">
       <img width="100%" src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login">
 
       <form autocomplete="off" method="post" action="{{ @BASE }}/admin/login">
@@ -75,10 +94,10 @@
 
         <div class="row">
           <div class="col-xs-6">
-            <button type="submit" name="redirectWhere" value="live"><span class="glyphicon glyphicon-list-alt"></span> Live Edit</button>
+            <button class="btn-primary" type="submit" name="redirectWhere" value="live"><span class="glyphicon glyphicon-list-alt"></span> Live Edit</button>
           </div>
           <div class="col-xs-6">
-            <button type="submit" name="redirectWhere" value="admin"><span class="glyphicon glyphicon-wrench"></span> Admin Panel</button>
+            <button class="btn-primary" type="submit" name="redirectWhere" value="admin"><span class="glyphicon glyphicon-wrench"></span> Admin Panel</button>
           </div>
         </div>
          
