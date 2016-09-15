@@ -217,6 +217,31 @@ button:active {
 }
 
 
+.box pre {
+  -webkit-user-select: all;
+  -moz-user-select: all;
+  -ms-user-select: all;
+  user-select: all;
+}
+
+.box var {
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 12px;
+  letter-spacing: -0.3px;
+  -webkit-user-select: all;
+  -moz-user-select: all;
+  -ms-user-select: all;
+  user-select: all;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+.box p {
+  line-height: 24px;
+  font-size: 14px;
+}
+
 #pages {
   width: 90%;
   margin: 10px auto 10px auto;

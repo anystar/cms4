@@ -21,7 +21,7 @@
 		<h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
 
 		<div class="nav top_nav">
-			<include href="/admin/navigation.html" />
+			<include href="/admin/navigation.html" with="{{nav_active_banners=active}}" />
 		</div>
 	
 		<div class="container">
@@ -39,32 +39,54 @@
 
 				<div class="row">
 					<div class="col-md-6">
-						<div class="box">
-							<h2>Quick use</h2>
+<div class="box">
+	<h2>How the module works</h2>
 
-							<p>
-								Place the link tag in the header of the html file.
-								<br>
-								Place the script tag just before the body's end tag.
-								<br>
-								Place the template variable <ignore>{{@banners.html}}</ignore> where you want the banner to display.
-							</p>
-						</div>
+	<p>
+		The dependant files for this module are located in a single folder in the clients direct under uploads. This folder contains the banner images plus three
+		text files. A script file, stylesheet file and a html file for the mark up.
+	</p>
+	<p>
+		Traditionally banner systems will require a stylesheet, a javascript file, some javascript to initilize the banner with correct settings and the html markup to list out all the images
+		for the banner system to use. Generally the html markup is a simple unordered list.
+	</p>
+	<p>		
+		In this module we have merged the core javascript file and initlization code into a single file. This is located under clients upload folder
+		as slider.js. We have also put the css in a slider.css and html markup in slider.html. You can edit these files directly through the admin panel
+		or through a text editor. Nothing special happens through the admin panel, all it does is replaces the contents of each file.
+	</p>
+</div>
 
-						<div class="box">
-							<h2>How to works</h2>
+<div class="box">
+<h2>Quick use</h2>
 
-							<p>
-								The banner system is located in a single folder under uploads. It contains three important files that contains
-								the css, javascript and html for the banner system. Traditionally banner systems will require a stylesheet,
-								a javascript file, some javascript to initilize the banner with correct settings and the html to list out all the images
-								for the banner system to use. Generally in an unordered list.
-							</p>
-							<p>		
-								Here we have merged the core javascript file and initlization code into one file. This is located under clients upload folder
-								as slider.js.
-							</p>
-						</div>
+<p>
+	Place the link tag in the header of the html file.
+								
+<ignore>
+<pre>
+&lt;link href="{{@BASE}}/banners/slider.css" rel="stylesheet"&gt;
+</pre>
+</ignore>
+
+<br>
+Place the script tag just before the body's end tag.
+<ignore>
+<pre>
+&lt;script src="{{@BASE}}/banners/slider.js"&gt;&lt;/script&gt;
+</pre>
+</ignore>
+
+<br>
+Place the template variable <ignore><var>{{@banners.html}}</var></ignore> where you want the banner to display.
+</p>
+</div>
+
+<div class="box">
+<h2>Advanced use</h2>
+
+
+</div>
 					</div>
 
 					<div class="col-md-6">
@@ -79,20 +101,8 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td><ignore>{{@banners.html}}</ignore></td>
-											<td>Contains compiled html</td>
-										</tr>
-										<tr>
-											<td><ignore>{{@banners.css}}</ignore></td>
-											<td>Includes the stylesheet link</td>
-										</tr>
-										<tr>
-											<td><ignore>{{@banners.js}}</ignore></td>
-											<td>Includes the javascript link</td>
-										</tr>
-										<tr>
-											<td><ignore>{{@banners.js}}</ignore></td>
-											<td>Includes the javascript link</td>
+											<td><ignore><var>{{@banners.html}}</var></ignore></td>
+											<td>Contains compiled html markup</td>
 										</tr>
 									</tbody>
 								</table>
