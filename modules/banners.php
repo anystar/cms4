@@ -147,7 +147,6 @@ class banners extends prefab {
 
 		if ($update_order)
 			setting("banners_order", json_encode($order));
-
 	}
 
 	static function update_settings($f3) {

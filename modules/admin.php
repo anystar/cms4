@@ -220,23 +220,23 @@ class admin extends prefab {
 
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
 			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.woff2", "application/font-woff");
-		}, 604800);
+		});
 
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
 			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.woff", "application/font-woff");
-		}, 604800);
+		});
 
 		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
 			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.ttf", "application/font-woff");
-		}, 604800);
+		});
 
 		$f3->route('GET /admin/fonts/Jaldi-Regular.ttf', function () {
 			echo View::instance()->render("/admin/fonts/Jaldi-Regular.ttf", "application/font-woff");
-		}, 604800);
+		});
 
 		$f3->route('GET /admin/fonts/Oswald-Regular.ttf', function () {
 			echo View::instance()->render("/admin/fonts/Oswald-Regular.ttf", "application/font-woff");
-		}, 604800);
+		});
 
 		$f3->route('GET /admin/imgs/logo.png', function ($f3) {
 			$img = new Image('/admin/imgs/logo.png');
