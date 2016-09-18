@@ -4,11 +4,51 @@ class ckeditor extends prefab {
 
 	function __construct() {
 
-		$this->routes(base::instance());
+		if (!$this->installed())
+			return;
 
+		$this->routes(base::instance());
+		$this->assets(base::instance());
+
+		Template::instance()->extend("ckeditor", function ($args) {
+
+			$hash = sha1($args[0]);
+			$file = Template::instance()->file;
+			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
+
+			$out .= '<?php if (admin::$signed) {?>';
+			$out .= "<div file='$file' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
+			$out .= "<?php } ?>";
+			$out .= $args[0];
+			$out .= '<?php if (admin::$signed) {?>';
+			$out .= "</div>";
+			$out .= "<?php } ?>";
+
+			return  $out;
+		});
+
+
+		base::instance()->set("index.content", "Some test content");
+
+
+		Template::instance()->filter("ckeditor", function ($content, $contentID, $type="full") {
+
+			if ($content == "") $content = "Dummy text";
+
+			$out .= "<div type='".$type."' id='".$contentID."' class='ckeditor' contenteditable='true'>";
+			$out .= $content;
+			$out .= "</div>";
+
+			return $out;
+		});
 
 		if (admin::$signed)
+		{
 			$this->admin_routes(base::instance());
+
+			$inlinecode = Template::instance()->render("/ckeditor/inline_init.html");
+			base::instance()->concat("admin", $inlinecode);
+		}
 	}
 
 	function routes($f3) {
@@ -28,40 +68,94 @@ class ckeditor extends prefab {
 	}
 
 	function admin_routes($f3) {
-		// TODO: Insert admin related routes for this module
+
+		$f3->route("GET /admin/ckeditor", function () {
+			echo Template::instance()->render("/ckeditor/ckeditor.html");
+		});
 
 		$f3->route("GET /admin/ckeditor/contents.css", function () {
 			echo Template::instance()->render("/ckeditor/css/contents.css", "text/stylesheet");
 		});
 
+		$f3->route("POST /admin/ckeditor/save", function ($f3) {
+
+			$filename = $f3->POST["file"];
+			$id = $f3->POST["id"];
+			$sentHash = $f3->POST["hash"];
+			$contents = $f3->POST["contents"];
+
+			// No filename supplied, update the database instead.
+			// Hand this role over to content as its his data.
+			if ($filename == 'null' || !is_file(getcwd()."/".$filename))
+			{
+				$tmp = explode("/", $id);
+				$name = end($tmp);	
+				array_pop($tmp);
+				$path = implode("/", $tmp);
+
+				content::set($name, $path, $contents);
+
+				return;
+			}
+
+			// Load in to replace contents with
+			$file = file_get_contents(getcwd()."/".$filename);
+
+			// Determine hash
+			preg_match_all("#(<ckeditor id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
+			$checkHash = sha1($output_array[2][0]);
+
+			// If sent hash and check hash are the same,
+			// then we know for absolutly sure we are updating
+			// the right content.
+			if ($sentHash == $checkHash) {
+
+				$file = preg_replace_callback("#(<ckeditor id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents) {
+
+					$return .= $matches[1];
+					$return .= $contents;
+					$return .= $matches[3];
+
+					return $return;
+				}, $file);
+
+				file_put_contents(getcwd()."/".$filename, $file);
+			}
+
+			// echo "Sent: " .$sentHash. "\n";
+			// echo "Check: ".$checkHash . "\n";
+			// echo "New Hash: ".sha1($content) . "\n";
+			// echo "Contents: " .$contents;
+
+			echo sha1($contents);
+
+			return;
+		});
 	}
 
+	function assets($f3) {
 
+		$f3->route("GET /admin/ckeditor/js/full.js", function () {
+			echo Template::instance()->render("/ckeditor/js/full.js", "text/javascript");
+		});
 
+		$f3->route("GET /admin/ckeditor/js/header.js", function () {
+			echo Template::instance()->render("/ckeditor/js/header.js", "text/javascript");
+		});
 
-	// static function hasInit() {
-	// 	$db = base::instance()->get("DB");
+		$f3->route('GET /admin/ckeditor_imgs_config.js', function ($f3) {
+			echo Template::instance()->render("/content_blocks/js/ckeditor_imgs_config.js", "text/javascript");	
+		});
 
-	// 	// TODO: replace TABLE_NAME
-	// 	$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='TABLE_NAME'");
-		
-	// 	if (empty($result))
-	// 		return false;
-	// }
+		$f3->route('GET /admin/ckeditor_header_config.js', function ($f3) {
+			echo Template::instance()->render("/content_blocks/js/ckeditor_header_config.js", "text/javascript");
+		});
+	}
 
-	// static function generate() {
-	// 	$db = base::instance()->DB;
+	function installed () {
+		base::instance()->set("ckeditor.installed", true);
+		// Lets ensure content table has been created
 
-	// 	//TODO: Insert sql to generate table structures
-	// 	$db->exec("");
-	// }
-
-	// static function admin_render() {
-
-	// 	//TODO: Create html files for admin display and generation
-	// 	if ($this::instance()->hasInit())
-	// 		echo Template::instance()->render("module_name/module.html");
-	// 	else
-	// 		echo Template::instance()->render("module_name/module.html");
-	// }
+		return true;
+	}
 }

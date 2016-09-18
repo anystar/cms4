@@ -2,6 +2,7 @@
 
       <ul class="nav nav-tabs nav-stacked">
         <li class="{{@nav_active_dashboard}}"><a href="{{ @BASE }}/admin/">Dashboard</a></li>
+        <li class="{{@nav_active_content}}"><a href="{{ @BASE }}/admin/">Content</a></li>
         <li class="{{@nav_active_help}}"><a href="{{ @BASE }}/admin/help">Help</a></li>
         <check if="{{@webmaster}}"><li class="{{@nav_active_webmaster}}"><a href="{{ @BASE }}/admin/webmaster">Webmaster</a></li></check>
         <li class="pull-right"><a href="{{ @BASE }}/admin/logout">Logout</a></li>
@@ -11,7 +12,7 @@
 
 
       <ul class="modules nav nav-tabs nav-stacked">
-        <check if="{{@webmaster}}"><check if="{{@content_blocks.init}}"><li class="{{@nav_active_content}}"><a href="{{ @BASE }}/admin/pages">Content</a></li></check></check>
+        <check if="{{@webmaster}}"><check if="{{@ckeditor.installed}}"><li class="{{@nav_active_ckeditor}}"><a href="{{ @BASE }}/admin/ckeditor/">CKEditor</a></li></check></check>
         <check if="{{@file_manager.init}}"><li class="{{@nav_active_file_manager}}"><a href="{{ @BASE }}/admin/file_manager">File Manager</a></li></check>
         <check if="{{@banners.init}}"><li class="{{@nav_active_banners}}"><a href="{{ @BASE }}/admin/banners">Banners</a></li></check>
         <check if="{{@gallery.init}}"><li class="{{@nav_active_galleries}}"><a href="{{ @BASE }}/admin/gallery">Galleries</a></li></check>

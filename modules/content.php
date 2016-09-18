@@ -12,15 +12,49 @@ class content extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		if ($this->hasInit($f3))
-			$this->routes(base::instance());
+
+		$path = $this->determine_path();
+
+
+		// Lets get the special "all" content for all paths and then override
+		// if there are unique entries for current path
+		$result = $f3->DB->exec("SELECT * FROM contents WHERE path='all'");
+		foreach ($result as $content)
+			$f3->set($content["name"], $content["content"]);
+
+		// Get content for this current path
+		$result = $f3->DB->exec("SELECT * FROM contents WHERE path=?", $path);
+		foreach ($result as $content)
+			$f3->set($content["name"], $content["content"]);
+
+		$this->routes(base::instance());
 	}
 
+	static function set ($name, $path, $content) {
+		$db = base::instance()->DB;
 
+		// Do we update or insert?
+		if ($id = $db->exec("SELECT id FROM contents WHERE name=? AND path=?", [$name, $path])[0]["id"])
+		{
+			$db->exec("UPDATE contents SET content=? WHERE id=?", [$content, $id]);
+		} else {
+			$db->exec("INSERT INTO contents (name, path, content) VALUES (?, ?, ?)", [$name, $path, $content]);
+		}
 
-	function determine_page ($f3) {
+		return;
+	}
 
-		$path = ltrim($f3->PATH, "/");
+	function determine_path () {
+
+		$path = ltrim(base::instance()->PATH, "/");
+		$cwd = getcwd();
+
+		if ($path == "") {
+			if (is_file(getcwd()."/index.html"))
+				return "index";
+			else if (is_file($cwd."/index.htm"))
+				return "index";
+		}
 
 		if (is_file(getcwd()."/".$path.".html"))
 			return $path;
@@ -29,7 +63,6 @@ class content extends prefab {
 		if (is_file(getcwd()."/".$path))
 			return $path;
 
-		die;
 
 	}
 
@@ -39,20 +72,12 @@ class content extends prefab {
 		// Handle generic pages
 		$f3->route(['GET /', 'GET /@page'], function ($f3, $params) {
 
-			// prevent running twice.
-			if (content::$has_routed) exit;
-			
-			content::$has_routed = true;
-
 			$f3->set('UI', getcwd()."/");
+			
+			$path = $this->determine_path();
 
-			if (!file_exists($params["page"]))
-				$page = ($params[0]=="/") ? "index.html" : $params["page"].".html";
-			else
-				$page = $params["page"];
-
-			if (file_exists($page))
-				echo Template::instance()->render($page);
+			if (file_exists($path))
+				echo Template::instance()->render($path);
 			else
 				$f3->error("404");
 		});
@@ -65,10 +90,6 @@ class content extends prefab {
 		// to search for the file in that folder. If the file doesn't exsist
 		// it will look for a generic.html file.
 		$f3->route('GET /@page/*', function ($f3, $params) {
-
-			// prevent running route twice.
-			if (content::$has_routed) exit;		
-			content::$has_routed = true;
 
 			$folder = $params["page"];
 			$page = ".".$params[0].".html";
@@ -124,7 +145,7 @@ class content extends prefab {
 
 
 	function hasInit($f3) {
-		
+		base::instance()->set("content.init", true);
 		return true;
 	}
 }

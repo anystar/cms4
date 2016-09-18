@@ -59,9 +59,6 @@ class content_blocks extends prefab {
 			die;
 		});
 
-		$f3->route('GET /admin/ckeditor_config.js', "content_blocks::ckeditor_toolbar");
-		$f3->route('GET /admin/ckeditor_imgs_config.js', "content_blocks::ckeditor_imgs_toolbar");
-		$f3->route('GET /admin/ckeditor_header_config.js', "content_blocks::ckeditor_header_toolbar");
 
 		$f3->route('GET /admin/page/delete_content/@content', "content_blocks::deleteContent");
 		$f3->route('GET /admin/page/html_edit/@content', "content_blocks::admin_render_htmledit");
@@ -351,20 +348,7 @@ class content_blocks extends prefab {
 		echo Template::instance()->render("/content_blocks/ace_editor.html");
 	}
 
-	static public function ckeditor_toolbar($f3) 
-	{
-		echo Template::instance()->render("/content_blocks/js/ckeditor_config.js", "text/javascript");
-	}
 
-	static public function ckeditor_imgs_toolbar($f3) 
-	{
-		echo Template::instance()->render("/content_blocks/js/ckeditor_imgs_config.js", "text/javascript");
-	}
-
-	static public function ckeditor_header_toolbar($f3) 
-	{
-		echo Template::instance()->render("/content_blocks/js/ckeditor_header_config.js", "text/javascript");
-	}
 
 	static public function ace_editor($f3) 
 	{
