@@ -159,6 +159,7 @@ $f3->SETTINGS = $GLOBALS["settings"];
 ########################################
 
 new admin();
+new content();
 
 $enabled_modules = $settings["enabled_modules"];
 unset($settings["enabled_modules"]);

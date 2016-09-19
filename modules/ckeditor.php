@@ -9,6 +9,12 @@ class ckeditor extends prefab {
 
 		if (admin::$signed)
 			$this->admin_routes(base::instance());
+
+		// Don't load if on admin path
+		if (!preg_match("/\/admin(.*)/", base::instance()->PATH))
+		{
+			$this->inject_inline_editor();
+		}
 	}
 
 	function routes($f3) {
@@ -33,6 +39,14 @@ class ckeditor extends prefab {
 		$f3->route("GET /admin/ckeditor/contents.css", function () {
 			echo Template::instance()->render("/ckeditor/css/contents.css", "text/stylesheet");
 		});
+
+	}
+
+	function inject_inline_editor () {
+		$f3 = base::instance();
+
+		// Get list of template variables
+		
 
 	}
 
