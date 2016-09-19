@@ -157,3 +157,25 @@ return "RewriteEngine off";
 function deny_htaccess () {
 return "Deny from all";
 }
+
+function mime_content_type2($filename) {
+
+	include("mime_types.php");
+
+	$tmp = explode('.',$filename);
+	$tmp = array_pop($tmp);
+    $ext = strtolower($tmp);
+    
+    if (array_key_exists($ext, $mime_types)) {
+        return $mime_types[$ext];
+    }
+    elseif (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME);
+        $mimetype = finfo_file($finfo, $filename);
+        finfo_close($finfo);
+        return $mimetype;
+    }
+    else {
+        return 'application/octet-stream';
+    }
+}
