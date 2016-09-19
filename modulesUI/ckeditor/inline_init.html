@@ -1,0 +1,9 @@
+<script src="http://webw.dev/ckeditor/ckeditor.js"></script>
+<script>
+	var editors = document.getElementsByClassName("ckeditor");
+	for (var i = editors.length - 1; i >= 0; i--)
+	{
+		var type = editors[i].getAttribute("type");
+		var editor_instance = CKEDITOR.inline(editors[i].getAttribute("id"), { customConfig: '{{@BASE}}/admin/ckeditor/js/'+type+".js" } );
+	}
+</script>

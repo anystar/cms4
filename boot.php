@@ -106,6 +106,8 @@ $f3->UI .= $settings["paths"]["cms"] . "/modulesUI/";   // Modules UI
 
 if ($settings["cache"])
 	$f3->set('CACHE', getcwd() . "/tmp/");
+else
+	$f3->set('CACHE', false);
 
 $f3->set('ESCAPE',FALSE);
 

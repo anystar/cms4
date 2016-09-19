@@ -8,20 +8,56 @@ class content extends prefab {
 
 	static $has_routed = false;
 	static $page;
-	static $file;
-
-
 
 	function __construct() {
 		$f3 = base::instance();
 
-		content::$page = $this->determine_page($f3);
+		$path = $this->determine_path();
 
+		// Lets get the special "all" content for all paths and then override
+		// if there are unique entries for current path
+		$result = $f3->DB->exec("SELECT * FROM contents WHERE path='all'");
+		foreach ($result as $content)
+			$f3->set($content["name"], $content["content"]);
+
+		// Get content for this current path
+		$result = $f3->DB->exec("SELECT * FROM contents WHERE path=?", $path);
+		foreach ($result as $content)
+			$f3->set($content["name"], $content["content"]);
+
+		$this->routes(base::instance());
+	}
+
+	static function set ($name, $path, $content) {
+		$db = base::instance()->DB;
+
+		// Do we update or insert?
+		if ($id = $db->exec("SELECT id FROM contents WHERE name=? AND path=?", [$name, $path])[0]["id"])
+		{
+			$db->exec("UPDATE contents SET content=? WHERE id=?", [$content, $id]);
+		} else {
+			$db->exec("INSERT INTO contents (name, path, content) VALUES (?, ?, ?)", [$name, $path, $content]);
+		}
+
+		return;
+	}
+
+	function determine_path () {
+
+		$path = ltrim(base::instance()->PATH, "/");
+		$cwd = getcwd();
+
+		if ($path == "") {
+			if (is_file(getcwd()."/index.html"))
+				return "index";
+			else if (is_file($cwd."/index.htm"))
+				return "index";
+		}
 
 		$f3->route(['GET /', 'GET /@page', 'GET /@page/*'], function ($f3, $params) {
 
 			d($f3->UI);
-
+	
 			// Render as a template file
 			if (mime_content_type(getcwd()."/".content::$page) == "text/plain") {
 				echo Template::instance()->render(content::$page);
@@ -29,37 +65,8 @@ class content extends prefab {
 		});
 	}
 
-
-
-	function determine_page ($f3) {
-
-		$path = ltrim($f3->PATH, "/");
-		$cwd = getcwd();
-
-		if ($path == "") {
-			if (is_file($cwd."/index.html"))
-				return "index.html";
-
-			if (is_file($cwd."/index.htm"))
-				return "index.html";
-
-			return;
-		}
-
-		// Check if file is html
-		if (is_file($cwd."/".$path.".html"))
-			return $path;
-
-		// Check for file
-		if (is_file($cwd."/".$path))
-			return $path;
-
-		// Check for a generic file
-		if (is_file($cwd."/".dirname($path)."/generic.html"))
-			return dirname($path)."/generic.html";
-	}
-
-	function load_template () {
-
+	function hasInit($f3) {
+		base::instance()->set("content.init", true);
+		return true;
 	}
 }
