@@ -23,8 +23,21 @@
 		<div class="nav top_nav">
 			<include href="/admin/navigation.html" with="{{nav_active_ckeditor=active}}" />
 		</div>
-	
+
 		<div class="container">
+			<check if="{{@webmaster}}">
+				<div class="row box module-bar">
+					<div class="col-xs-8">
+						<header>CKEditor</header>
+					</div>
+
+					<div class="col-xs-4" style="text-align:right;">
+						<button>Uninstall</button>
+						<button>Documentation</button>
+					</div>
+				</div>
+			</check>
+			
 			<div class="box">
 				<h2>Themes</h2>
 
