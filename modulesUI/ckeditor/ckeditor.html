@@ -16,6 +16,12 @@
 			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
+
+		<style>
+			.selected {
+				border: 1px solid red;
+			}
+		</style>
 	</head>
 	<body>
 		<h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
@@ -40,8 +46,16 @@
 			
 			<div class="box">
 				<h2>Themes</h2>
+				<div class="row">
+					<repeat group="{{@ckeditor.skins}}" value="{{@skin}}">
+						<set selected="">
+						<check if="{{@skin == @SETTINGS.ckeditor_skin}}"><set selected="selected"></check>
 
-				Theme selection goes here.
+						<div class="col-md-4 col-sm-6 col-xs-12">
+							<a href="{{@BASE}}/admin/ckeditor/select-skin/{{@skin}}"><img class="{{@selected}}" width="100%" src="{{@BASE}}/admin/ckeditor/skins/{{@skin}}.png"></a>
+						</div>
+					</repeat>
+				</div>
 			</div>
 		</div>
 

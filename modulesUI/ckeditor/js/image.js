@@ -4,16 +4,12 @@ CKEDITOR.plugins.addExternal("cmssave", "{{@BASE}}/ckeditor/cms_save.js");
 CKEDITOR.editorConfig = function( config ) {
   config.toolbarGroups = [
 
-    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-    { name: 'paragraph', groups: [ 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-    { name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing', 'others', 'tools' ] },
-    '/',
-    { name: 'styles', groups: [ 'styles' ] },
-    { name: 'colors', groups: [ 'colors' ] },
+    { name: 'insert', groups: [ 'insert' ] },
+    { name: 'paragraph', groups: [ 'align' ] },
     { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
   ];
 
-  config.removeButtons = 'Inlinesave,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
+  config.removeButtons = 'Justify,Table,Inlinesave,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About';
 
   config.extraPlugins = "cmssave";
   config.removePlugins = 'scayt,inlinesave';
