@@ -7,14 +7,16 @@
 class content extends prefab {
 
 	static $has_routed = false;
-	static $page;
+	static $path;
+	static $file;
 
 	function __construct() {
 		$f3 = base::instance();
 
+		$this->installed();
 
-		$path = $this->determine_path();
-
+		// Sets static variables Path and File
+		$this->determine_path();
 
 		// Lets get the special "all" content for all paths and then override
 		// if there are unique entries for current path
@@ -23,7 +25,7 @@ class content extends prefab {
 			$f3->set($content["name"], $content["content"]);
 
 		// Get content for this current path
-		$result = $f3->DB->exec("SELECT * FROM contents WHERE path=?", $path);
+		$result = $f3->DB->exec("SELECT * FROM contents WHERE path=?", content::$path);
 		foreach ($result as $content)
 			$f3->set($content["name"], $content["content"]);
 
@@ -51,101 +53,62 @@ class content extends prefab {
 
 		if ($path == "") {
 			if (is_file(getcwd()."/index.html"))
-				return "index";
+			{
+				content::$path = "index";
+				content::$file = "index.html";
+			}
 			else if (is_file($cwd."/index.htm"))
-				return "index";
+			{
+				content::$path = "index";
+				content::$file = "index.htm";
+			}
 		}
 
-		if (is_file(getcwd()."/".$path.".html"))
-			return $path;
-
-		// Check for file
-		if (is_file(getcwd()."/".$path))
-			return $path;
-
-
+		if (is_file($path)) {
+			content::$file = content::$path = $path;
+		}
 	}
 
+	function routes ($f3) {
 
-	function routes($f3) {
+		$f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 
-		// Handle generic pages
-		$f3->route(['GET /', 'GET /@page'], function ($f3, $params) {
+			$accepted_mimetypes = [
+				"text/html",
+				"text/css",
+				"text/plain",
+				"application/javascript",
+				"application/x-javascript",
+			];
 
-			$f3->set('UI', getcwd()."/");
-			
-			$path = $this->determine_path();
-
-			if (file_exists($path))
-				echo Template::instance()->render($path);
-			else
+			if (!content::$file)
 				$f3->error("404");
-		});
 
-		// Handle sub pages.
-		// 
-		// Please read:
-		// Sub pages are determined by folder structure. For example
-		// if there is a physical folder called "products" it will attempt
-		// to search for the file in that folder. If the file doesn't exsist
-		// it will look for a generic.html file.
-		$f3->route('GET /@page/*', function ($f3, $params) {
+			$mime_type = mime_content_type2(getcwd()."/".content::$file);
 
-			$folder = $params["page"];
-			$page = ".".$params[0].".html";
+			if (in_array($mime_type, $accepted_mimetypes)) {
 
-			// Is the root part of the address a folder?
-			if (!is_dir($params["page"]))
-			{
-				// Redirect back to login if user is trying to access admin panel
-				if (!admin::$signed)
-					if (preg_match("/\/admin\/(?!login)(.*)/", $f3->PATH))
-					{
-						$f3->reroute("/admin");
-						exit;
-					}
-
-				$f3->error("404");
-				return;
-			}
-
-			// Is there a page file?
-			$result = false;
-			if (is_file($page))
-			{
-				$fileToLoad = $page;
-				$result = true;
+				// Render as a template file
+				echo Template::instance()->render(content::$file, $mime_type);
 			}
 			else
 			{
-				$fileToLoad = $folder."/generic.html";
-				is_file($fileToLoad);
-				$result = true;
-			}
-
-
-			// Is there a record in the database about this page?
-			//$path = ltrim($params[0], '/');
-			//$result = $f3->DB->exec("SELECT id FROM pages WHERE page=?", $path)[0]["id"];
-
-			if (!$result)
-				$f3->error("404");
-			else
-			{
-				// One last check to ensure page exsists
-				if (file_exists($fileToLoad))
-					echo Template::instance()->render($fileToLoad);
-				else
-					$f3->error("404");
+				// Render as binary file
+				d("binary file");
 			}
 		});
 	}
 
+	function installed () {
 
+		if (!base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contents'"))
+			$this->install();
 
-
-	function hasInit($f3) {
 		base::instance()->set("content.init", true);
 		return true;
+	}
+
+	function install () {
+		base::instance()->DB->exec("CREATE TABLE 'contents' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' TEXT, 'path' TEXT, 'content' TEXT)");
 	}
 }

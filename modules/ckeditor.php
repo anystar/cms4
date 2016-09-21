@@ -14,6 +14,7 @@ class ckeditor extends prefab {
 
 			$hash = sha1($args[0]);
 			$file = Template::instance()->file;
+
 			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
 
 			$out .= '<?php if (admin::$signed) {?>';
@@ -35,7 +36,7 @@ class ckeditor extends prefab {
 
 			if ($content == "") $content = "Dummy text";
 
-			$out .= "<div type='".$type."' id='".$contentID."' class='ckeditor' contenteditable='true'>";
+			$out .= "<div file='database' type='".$type."' id='".$contentID."' class='ckeditor' contenteditable='true'>";
 			$out .= $content;
 			$out .= "</div>";
 
@@ -88,9 +89,9 @@ class ckeditor extends prefab {
 
 			// No filename supplied, update the database instead.
 			// Hand this role over to content as its his data.
-			if ($filename == 'null' || !is_file(getcwd()."/".$filename))
+			if ($filename == 'database' || $filename == 'null' || !is_file(getcwd()."/".$filename))
 			{
-				$tmp = explode("/", $id);
+				$tmp = explode("-", $id);
 				$name = end($tmp);	
 				array_pop($tmp);
 				$path = implode("/", $tmp);

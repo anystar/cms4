@@ -29,6 +29,10 @@
 				<div class="box">
 
 					<h2>Welcome to Web Works CMS</h2>
+
+					<p>
+						This is your control panel administration area where you can edit the modules and settings of your website. Click the help tab above to access the help documents.
+					</p>
 					<check if="{{@webmaster}}">
 					<p>This dashboard will be filled up with useful features soon to help you customize your website.</p>
 					
@@ -48,11 +52,13 @@
 
 				</div>
 
+				<check if="{{@webmaster}}">
 				<div class="box">
 
 					<h2>Web Works Communication</h2>
 
 				</div>
+				</check>
 			</div>
 
 			<div class="col-xs-12 col-md-4">
