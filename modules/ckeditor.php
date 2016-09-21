@@ -28,9 +28,7 @@ class ckeditor extends prefab {
 			return  $out;
 		});
 
-
 		base::instance()->set("index.content", "Some test content");
-
 
 		Template::instance()->filter("ckeditor", function ($content, $contentID, $type="full") {
 

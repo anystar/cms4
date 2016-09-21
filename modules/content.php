@@ -64,9 +64,26 @@ class content extends prefab {
 			}
 		}
 
-		if (is_file($path)) {
-			content::$file = content::$path = $path;
+		// No extension detected
+		if (!preg_match("/\.[^\.]+$/i", $path, $ext))
+		{
+
+			if (is_file($cwd."/".$path.".html"))
+			{
+				content::$file = $path.".html";
+				content::$path = $path;
+			}
+
+			else if (is_file($cwd."/".$path.".htm"))
+			{
+				content::$file = $path.".html";
+				content::$path = $path;
+			}
 		}
+
+
+		if (is_file($path))
+			content::$file = content::$path = $path;
 	}
 
 	function routes ($f3) {
@@ -96,6 +113,10 @@ class content extends prefab {
 				// Render as binary file
 				d("binary file");
 			}
+		});
+
+		$f3->route("GET /admin/content", function ($f3) {
+			echo Template::instance()->render("/content/content.html");
 		});
 	}
 
