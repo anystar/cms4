@@ -43,6 +43,10 @@ class ckeditor extends prefab {
 
 		if (admin::$signed)
 		{
+			if (!base::instance()->SETTINGS["ckeditor_skin"])
+				base::instance()->SETTINGS["ckeditor_skin"] = "minimalist";
+			//if ($f3->SETTINGS[""])
+
 			$this->admin_routes(base::instance());
 
 			$inlinecode = Template::instance()->render("/ckeditor/inline_init.html");
