@@ -68,7 +68,9 @@ class ckeditor extends prefab {
 
 	function admin_routes($f3) {
 
-		$f3->route("GET /admin/ckeditor", function () {
+		$f3->route("GET /admin/ckeditor", function ($f3) {
+			$f3->ckeditor["skins"] = parse_ini_file($GLOBALS["settings"]["paths"]["cms"]."/modulesUI/ckeditor/settings.ini", true)["skins"];
+
 			echo Template::instance()->render("/ckeditor/ckeditor.html");
 		});
 
@@ -130,6 +132,15 @@ class ckeditor extends prefab {
 
 			return;
 		});
+
+		$f3->route("GET /admin/ckeditor/select-skin/@skin", function ($f3, $p) {
+			$skins = parse_ini_file($GLOBALS["settings"]["paths"]["cms"]."/modulesUI/ckeditor/settings.ini", true)["skins"];
+
+			if (in_array($p["skin"], $skins))
+				setting("ckeditor_skin", $p["skin"]);
+
+			$f3->reroute("/admin/ckeditor/");
+		});
 	}
 
 	function assets($f3) {
@@ -142,6 +153,10 @@ class ckeditor extends prefab {
 			echo Template::instance()->render("/ckeditor/js/header.js", "text/javascript");
 		});
 
+		$f3->route("GET /admin/ckeditor/js/image.js", function () {
+			echo Template::instance()->render("/ckeditor/js/image.js", "text/javascript");
+		});
+
 		$f3->route('GET /admin/ckeditor_imgs_config.js', function ($f3) {
 			echo Template::instance()->render("/content_blocks/js/ckeditor_imgs_config.js", "text/javascript");	
 		});
@@ -149,6 +164,13 @@ class ckeditor extends prefab {
 		$f3->route('GET /admin/ckeditor_header_config.js', function ($f3) {
 			echo Template::instance()->render("/content_blocks/js/ckeditor_header_config.js", "text/javascript");
 		});
+
+		$f3->route('GET /admin/ckeditor/skins/flat.png', function () { echo View::instance()->render("/ckeditor/skins/flat.png", "image/png"); });
+		$f3->route('GET /admin/ckeditor/skins/kama.png', function () { echo View::instance()->render("/ckeditor/skins/kama.png", "image/png"); });
+		$f3->route('GET /admin/ckeditor/skins/moonocolor.png', function () { echo View::instance()->render("/ckeditor/skins/moonocolor.png", "image/png"); });
+		$f3->route('GET /admin/ckeditor/skins/moono-dark.png', function () { echo View::instance()->render("/ckeditor/skins/moono-dark.png", "image/png"); });
+		$f3->route('GET /admin/ckeditor/skins/office2013.png', function () { echo View::instance()->render("/ckeditor/skins/office2013.png", "image/png"); });
+
 	}
 
 	function installed () {

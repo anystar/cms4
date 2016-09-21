@@ -18,7 +18,11 @@
 
       body::after {
         content: "";
-        background: url("{{@BASE}}/admin/imgs/login_bg.png");
+        background: url("{{@BASE}}/admin/imgs/login_bg.png") no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
         opacity: 0.3;
         top: 0;
         left: 0;
