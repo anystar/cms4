@@ -25,92 +25,93 @@
 		</div>
 
 		<div class="container">
-			<div class="col-xs-12 col-md-8">
-				<div class="box">
+			<div class="row">
+				<div class="col-xs-12 col-md-8">
+					<div class="box">
 
-					<h2>Welcome to Web Works CMS</h2>
+						<h2>Welcome to Web Works CMS</h2>
 
-					<p>
-						This is your control panel administration area where you can edit the modules and settings of your website. Click the help tab above to access the help documents.
-					</p>
+						<p>
+							This is your control panel administration area where you can edit the modules and settings of your website. Click the help tab above to access the help documents.
+						</p>
+						<check if="{{@webmaster}}">
+						<p>This dashboard will be filled up with useful features soon to help you customize your website.</p>
+						
+						<h3>Planned features coming soon!</h3>
+						<ul>
+							<li>Customer Help built in</li>
+							<li>Website backup system</li>
+							<li>Easy navigation customizor</li>
+							<li>Comprehensive documentation and help videos</li>
+							<li>Client focused help center</li>
+							<li>Built-in statistical tracker</li>
+							<li>Payment gateway and client invoicing built in</li>
+							<li>Shopping system</li>
+							<li>And whatever else you request!!</li>
+						</ul>
+						</check>
+
+					</div>
+
 					<check if="{{@webmaster}}">
-					<p>This dashboard will be filled up with useful features soon to help you customize your website.</p>
-					
-					<h3>Planned features coming soon!</h3>
-					<ul>
-						<li>Customer Help built in</li>
-						<li>Website backup system</li>
-						<li>Easy navigation customizor</li>
-						<li>Comprehensive documentation and help videos</li>
-						<li>Client focused help center</li>
-						<li>Built-in statistical tracker</li>
-						<li>Payment gateway and client invoicing built in</li>
-						<li>Shopping system</li>
-						<li>And whatever else you request!!</li>
-					</ul>
+					<div class="box">
+
+						<h2>Web Works Communication</h2>
+
+					</div>
 					</check>
-
 				</div>
 
-				<check if="{{@webmaster}}">
-				<div class="box">
+				<div class="col-xs-12 col-md-4">
+					<check if="{{@webmaster}}">
+					<div class="box">
+						<h2>Mailbox information</h2>
+						<div class="table-responsive">
+							<table class="table table-striped table-bordered">
+								<thead>
+									<th>Address</th>
+									<th>Usage</th>
+								</thead>
+								<tbody>
+									<tr>
+										<td>alan@webworksau.com</td>
+										<td>250mb / 1gb</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					</check>
+				
+					<check if="{{@webmaster}}">
+					<div class="box">
+						<h2>Website statistics</h2>
+						<div class="table-responsive">
+							<table class="table table-striped table-bordered">
+								<tbody>
+									<tr>
+										<td>Visits this month:</td>
+										<td>{{@statistics.visits_this_month}}</td>
+									</tr>
+									<tr>
+										<td>Total visits this year:</td>
+										<td>{{@statistics.visits_this_year}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
 
-					<h2>Web Works Communication</h2>
+					<div class="box">
+						<h2>Available features</h2>
+					</div>
 
-				</div>
-				</check>
-			</div>
-
-			<div class="col-xs-12 col-md-4">
-				<check if="{{@webmaster}}">
-				<div class="box">
-					<h2>Mailbox information</h2>
-					<div class="table-responsive">
-						<table class="table table-striped table-bordered">
-							<thead>
-								<th>Address</th>
-								<th>Usage</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td>alan@webworksau.com</td>
-									<td>250mb / 1gb</td>
-								</tr>
-							</tbody>
-						</table>
+					<div class="box">
+						<h2>Installed features</h2>
 					</div>
 				</div>
 				</check>
-			
-				<check if="{{@webmaster}}">
-				<div class="box">
-					<h2>Website statistics</h2>
-					<div class="table-responsive">
-						<table class="table table-striped table-bordered">
-							<tbody>
-								<tr>
-									<td>Visits this month:</td>
-									<td>{{@statistics.visits_this_month}}</td>
-								</tr>
-								<tr>
-									<td>Total visits this year:</td>
-									<td>{{@statistics.visits_this_year}}</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				<div class="box">
-					<h2>Available features</h2>
-				</div>
-
-				<div class="box">
-					<h2>Installed features</h2>
-				</div>
 			</div>
-			</check>
-
 		</div>
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

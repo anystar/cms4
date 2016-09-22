@@ -67,7 +67,6 @@ class content extends prefab {
 		// No extension detected
 		if (!preg_match("/\.[^\.]+$/i", $path, $ext))
 		{
-
 			if (is_file($cwd."/".$path.".html"))
 			{
 				content::$file = $path.".html";
@@ -80,7 +79,6 @@ class content extends prefab {
 				content::$path = $path;
 			}
 		}
-
 
 		if (is_file($path))
 			content::$file = content::$path = $path;
@@ -98,9 +96,10 @@ class content extends prefab {
 				"application/x-javascript",
 			];
 
+
 			if (!content::$file)
 				$f3->error("404");
-
+	
 			$mime_type = mime_content_type2(getcwd()."/".content::$file);
 
 			if (in_array($mime_type, $accepted_mimetypes))
@@ -108,7 +107,7 @@ class content extends prefab {
 				// Render as a template file
 				echo Template::instance()->render(content::$file, $mime_type);
 			else
-				echo View::instance()->render($file);
+				echo View::instance()->render(content::$file, "image/png");
 		});
 
 		$f3->route("GET /admin/content", function ($f3) {
@@ -121,8 +120,6 @@ class content extends prefab {
 	function load_sitemap ($f3) {
 		
 		$directory = $this->scan(new DirectoryIterator(getcwd()));
-
-
 
 		$directory = json_encode($directory);
 

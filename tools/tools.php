@@ -160,8 +160,8 @@ return "Deny from all";
 
 function mime_content_type2($filename) {
 
-	include("mime_types.php");
-
+	require("mime_types.php");
+		
 	$tmp = explode('.',$filename);
 	$tmp = array_pop($tmp);
     $ext = strtolower($tmp);

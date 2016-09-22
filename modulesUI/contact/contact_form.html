@@ -1,6 +1,6 @@
 <form class="contact" action="{{@BASE}}/contact" method="post">
     
-    <repeat group="{{ @form }}" value="{{ @field }}">
+    <repeat group="{{ @contact.form }}" value="{{ @field }}">
 
       <switch expr="{{@field.type}}">
         <case value="name">

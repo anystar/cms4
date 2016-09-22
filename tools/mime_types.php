@@ -1,4 +1,3 @@
-
 <?php
 $mime_types = array(
    '123' => 'application/vnd.lotus-1-2-3',

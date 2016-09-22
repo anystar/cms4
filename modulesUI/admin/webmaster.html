@@ -25,50 +25,12 @@
 		</div>
 		
 		<div class="container">
+			<div class="row">
 			<div class="col-xs-6 col-md-4">
 				<div class="box">
 					<h2>Unused Modules</h2>
 
-					<div class="table-responsive">
-						<table class="table table-striped table-bordered">
-							<check if="!{{@ckeditor.installed}}">
-							<tr>
-								<td>CKEditor</td>
-								<td width="10%"><a href="{{ @BASE }}/admin/ckeditor/install"><button>Install</button></a></td>
-							</tr>
-							</check>
-							<check if="!{{@file_manager.init}}">
-							<tr>
-								<td>File Manager</td>
-								<td width="10%"><a href="{{ @BASE }}/admin/file_manager"><button>Install</button></a></td>
-							</tr>
-							</check>
-							<check if="!{{@banners.init}}">
-							<tr>
-								<td>Banners</td>
-								<td width="10%"><a href="{{ @BASE }}/admin/banners"><button>Install</button></a></td>
-							</tr>
-							</check>
-							<check if="!{{@gallery.init}}">
-							<tr>
-								<td>Galleries</td>
-								<td width="10%"><a href="{{ @BASE }}/admin/gallery"><button>Install</button></a></td>
-							</tr>
-							</check>
-							<check if="!{{@contact.init}}">
-							<tr>
-								<td>Contact Form</td>
-								<td width="10%"><a href="{{ @BASE }}/admin/contact"><button>Install</button></a></td>
-							</tr>
-							</check>
-							<check if="!{{@statistics.init}}">
-							<tr>
-								<td>Statistics</td>
-								<td width="10%"><a href="{{ @BASE }}/admin/statistics/install"><button>Install</button></a></td>
-							</tr>
-							</check>
-						</table>
-					</div>
+
 				</div>
 
 				<div class="box">
@@ -164,6 +126,7 @@ git clone root@webworksau.com:/home/cms/stable .
 							</p>
 
 				</div>
+			</div>
 			</div>
 		</div>
 

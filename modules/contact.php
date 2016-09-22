@@ -99,10 +99,15 @@ class contact extends prefab
 		});
 
 		$f3->route('GET /admin/contact', "contact::admin");
+
 		$f3->route('POST /admin/contact/generate', "contact::generate");
 		$f3->route('GET /admin/contact/email_template', function ($f3) {
 			contact::load($f3);
 			echo Template::instance()->render("/contact/email_template/generic_email_template.html");
+		});
+
+		$f3->route('GET /admin/contact/documentation', function ($f3) {
+			echo Template::instance()->render("/contact/documentation.html");
 		});
 
 		$f3->route('POST /admin/contact/settings', "contact::update_settings");		
@@ -126,14 +131,14 @@ class contact extends prefab
 		// Do not pass go
 		if ($f3->get("contact.html")) return;
 
-		if (!$f3->exists("form"))
+		if (!$f3->exists("contact.form"))
 		{
 			$result = $db->exec("SELECT * FROM contact_form ORDER BY `order`");
 
 			foreach ($result as $r) 
 				$formcompiled[$r["id"]] = $r;
 
-			$f3->set("form", $formcompiled);
+			$f3->set("contact.form", $formcompiled);
 		}
 
 		$result = $db->exec("SELECT value FROM settings WHERE setting=?", "contact-custom_html")[0]["value"];
@@ -143,7 +148,6 @@ class contact extends prefab
 
 			$snippet = \Template::instance()->render("/contact/contact_form.html");
 
-			$f3->set("contact_form", $snippet);
 			$f3->set("contact.html", $snippet);
 		}
 	}
