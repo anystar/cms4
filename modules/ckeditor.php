@@ -45,7 +45,6 @@ class ckeditor extends prefab {
 		{
 			if (!base::instance()->SETTINGS["ckeditor_skin"])
 				base::instance()->SETTINGS["ckeditor_skin"] = "minimalist";
-			//if ($f3->SETTINGS[""])
 
 			$this->admin_routes(base::instance());
 
@@ -76,10 +75,6 @@ class ckeditor extends prefab {
 			$f3->ckeditor["skins"] = parse_ini_file($GLOBALS["settings"]["paths"]["cms"]."/modulesUI/ckeditor/settings.ini", true)["skins"];
 
 			echo Template::instance()->render("/ckeditor/ckeditor.html");
-		});
-
-		$f3->route("GET /admin/ckeditor/contents.css", function () {
-			echo Template::instance()->render("/ckeditor/css/contents.css", "text/stylesheet");
 		});
 
 		$f3->route("POST /admin/ckeditor/save", function ($f3) {
@@ -178,9 +173,20 @@ class ckeditor extends prefab {
 	}
 
 	function installed () {
+		if (!setting("ckeditor_installed")) {
+				base::instance()->route("GET /admin/ckeditor/install", function () {
+					$this->install();
+				});
+				return false;
+		}
+
 		base::instance()->set("ckeditor.installed", true);
-		// Lets ensure content table has been created
 
 		return true;
+	}
+
+	function install () {
+		setting("ckeditor_installed", true);
+		base::instance()->reroute("/admin/ckeditor");
 	}
 }

@@ -31,10 +31,10 @@
 
 					<div class="table-responsive">
 						<table class="table table-striped table-bordered">
-							<check if="!{{@content_blocks.init}}">
+							<check if="!{{@ckeditor.installed}}">
 							<tr>
-								<td>Content</td>
-								<td width="10%"><a href="{{ @BASE }}/admin/pages"><button>Install</button></a></td>
+								<td>CKEditor</td>
+								<td width="10%"><a href="{{ @BASE }}/admin/ckeditor/install"><button>Install</button></a></td>
 							</tr>
 							</check>
 							<check if="!{{@file_manager.init}}">
@@ -57,7 +57,7 @@
 							</check>
 							<check if="!{{@contact.init}}">
 							<tr>
-								<td>Contact For</td>
+								<td>Contact Form</td>
 								<td width="10%"><a href="{{ @BASE }}/admin/contact"><button>Install</button></a></td>
 							</tr>
 							</check>

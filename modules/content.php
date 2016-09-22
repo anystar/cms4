@@ -103,22 +103,52 @@ class content extends prefab {
 
 			$mime_type = mime_content_type2(getcwd()."/".content::$file);
 
-			if (in_array($mime_type, $accepted_mimetypes)) {
-
+			if (in_array($mime_type, $accepted_mimetypes))
+				
 				// Render as a template file
 				echo Template::instance()->render(content::$file, $mime_type);
-			}
 			else
-			{
-				// Render as binary file
-				d("binary file");
-			}
+				echo View::instance()->render($file);
 		});
 
 		$f3->route("GET /admin/content", function ($f3) {
+			$this->load_sitemap($f3);
+
 			echo Template::instance()->render("/content/content.html");
 		});
 	}
+
+	function load_sitemap ($f3) {
+		
+		$directory = $this->scan(new DirectoryIterator(getcwd()));
+
+
+
+		$directory = json_encode($directory);
+
+		$f3->set("content.site_map", $directory);
+	}
+
+	function scan( DirectoryIterator $dir )
+	{
+	  $data = array();
+	  foreach ( $dir as $node )
+	  {
+	  	if ($node->getFilename()[0] == "." || $node->getFilename() == "tmp" || $node->getFilename() == "cms.php")
+	  		continue;
+
+	    if ( $node->isDir() && !$node->isDot() )
+	    {
+	    	$data["dir"][$node->getFilename()] = $this->scan( new DirectoryIterator( $node->getPathname() ) );
+	    }
+	    else if ( $node->isFile() )
+	    {
+	    	$data["file"] = $node->getFilename();
+	    }
+	  }
+	  return $data;
+	}
+
 
 	function installed () {
 

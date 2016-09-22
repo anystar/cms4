@@ -6,366 +6,366 @@ class content_blocks extends prefab {
 
 	function __construct() {
 
-		$f3 = base::instance();
+		// $f3 = base::instance();
 
-		if ($this->hasInit())
-		{
-			content_blocks::$hasInit = true;
+		// if ($this->hasInit())
+		// {
+		// 	content_blocks::$hasInit = true;
 
-			// "return" is used in forms which
-			// return back to the same page.
-			// The main example of this is the contact
-			// module which can be used on the same page.
-			if ($f3->POST["return"])
-				$page = $f3->POST["return"];
-			else
-				$page = $f3->PATH;
+		// 	// "return" is used in forms which
+		// 	// return back to the same page.
+		// 	// The main example of this is the contact
+		// 	// module which can be used on the same page.
+		// 	if ($f3->POST["return"])
+		// 		$page = $f3->POST["return"];
+		// 	else
+		// 		$page = $f3->PATH;
 
-			$page = ($page!="/") ? trim($page, "/") : "index";
+		// 	$page = ($page!="/") ? trim($page, "/") : "index";
 
-			$this->retreiveContent($f3, $page);
-		}	
+		// 	$this->retreiveContent($f3, $page);
+		// }	
 
-		if (admin::$signed)
-			$this->admin_routes($f3);
+		// if (admin::$signed)
+		// 	$this->admin_routes($f3);
 	}
 
 
 	function admin_routes($f3) {
 
-		$f3->route('GET /admin/pages', 'content_blocks::render_quick_view');
-		$f3->route('GET /admin/pages/@page', 'content_blocks::render_admin_page');
-		$f3->route('GET /admin/pages/@page/*', 'content_blocks::render_admin_page');
+		// $f3->route('GET /admin/pages', 'content_blocks::render_quick_view');
+		// $f3->route('GET /admin/pages/@page', 'content_blocks::render_admin_page');
+		// $f3->route('GET /admin/pages/@page/*', 'content_blocks::render_admin_page');
 
-		$f3->route('GET /admin/page/edit/@page', "content_blocks::admin_edit_render");
-		$f3->route('POST /admin/page/generate', function ($f3) {
+		// $f3->route('GET /admin/page/edit/@page', "content_blocks::admin_edit_render");
+		// $f3->route('POST /admin/page/generate', function ($f3) {
 
-			if (!content_blocks::$hasInit)
-				content_blocks::generate();
+		// 	if (!content_blocks::$hasInit)
+		// 		content_blocks::generate();
 
-			$f3->reroute("/admin/pages");
-		});
+		// 	$f3->reroute("/admin/pages");
+		// });
 
-		$f3->route('POST /admin/content/save', function ($f3, $params) {
-			if (!admin::$signed) { return; }
+		// $f3->route('POST /admin/content/save', function ($f3, $params) {
+		// 	if (!admin::$signed) { return; }
 
-			content_blocks::save_inline($f3);
-		});
+		// 	content_blocks::save_inline($f3);
+		// });
 
-		$f3->route('POST /admin/page/htmlsave', function ($f3, $params) {
-			if (!admin::$signed) { return; }
+		// $f3->route('POST /admin/page/htmlsave', function ($f3, $params) {
+		// 	if (!admin::$signed) { return; }
 
-			content_blocks::save_inline($f3);
-			die;
-		});
+		// 	content_blocks::save_inline($f3);
+		// 	die;
+		// });
 
 
-		$f3->route('GET /admin/page/delete_content/@content', "content_blocks::deleteContent");
-		$f3->route('GET /admin/page/html_edit/@content', "content_blocks::admin_render_htmledit");
-		$f3->route('GET /admin/page/ace.js', "content_blocks::ace_editor");
+		// $f3->route('GET /admin/page/delete_content/@content', "content_blocks::deleteContent");
+		// $f3->route('GET /admin/page/html_edit/@content', "content_blocks::admin_render_htmledit");
+		// $f3->route('GET /admin/page/ace.js', "content_blocks::ace_editor");
 
-		$f3->route('POST /admin/page/add_content [ajax]', function ($f3) {
-			$page = ltrim($f3->POST["page"], $f3->BASE);;
-			$content_name = str_replace(" ", "_", $f3->POST["content_name"]);
+		// $f3->route('POST /admin/page/add_content [ajax]', function ($f3) {
+		// 	$page = ltrim($f3->POST["page"], $f3->BASE);;
+		// 	$content_name = str_replace(" ", "_", $f3->POST["content_name"]);
 
-			if (strlen($content_name) > 0)
-			{
-				$id = $f3->DB->exec("SELECT id FROM contentBlocks WHERE (page=? OR page='all' OR page IS NULL) AND contentName=?", [$page, $content_name]);
+		// 	if (strlen($content_name) > 0)
+		// 	{
+		// 		$id = $f3->DB->exec("SELECT id FROM contentBlocks WHERE (page=? OR page='all' OR page IS NULL) AND contentName=?", [$page, $content_name]);
 
-				if (!$id)
-					content_blocks::createContent($content_name, $page, NULL, "Content Here");
-			}
-		});
+		// 		if (!$id)
+		// 			content_blocks::createContent($content_name, $page, NULL, "Content Here");
+		// 	}
+		// });
 
-		$f3->route('POST /admin/page/add_content', function ($f3) {
+		// $f3->route('POST /admin/page/add_content', function ($f3) {
 
-			if (strlen($f3->POST["content_name"]) == 0)
-			{
-				$f3->mock("GET /admin/pages");
-			} else {
+		// 	if (strlen($f3->POST["content_name"]) == 0)
+		// 	{
+		// 		$f3->mock("GET /admin/pages");
+		// 	} else {
 
-				// Ensure no duplicate content names are used
-				$result = base::instance()->DB->exec("SELECT id FROM contentBlocks WHERE contentName=? AND page LIKE ?", [$f3->POST["content_name"], "%".$f3->POST["page"]."%"]);
+		// 		// Ensure no duplicate content names are used
+		// 		$result = base::instance()->DB->exec("SELECT id FROM contentBlocks WHERE contentName=? AND page LIKE ?", [$f3->POST["content_name"], "%".$f3->POST["page"]."%"]);
 
-				if ($result)
-				{
-					$f3->mock("GET /admin/pages");
-				} else {
-					content_blocks::createContent($f3->POST["content_name"], $f3->POST["page"], $f3->POST["type"], $f3->POST["dummy_content"]);
-					$f3->mock("GET /admin/pages");
-				}
-			}
-		});
+		// 		if ($result)
+		// 		{
+		// 			$f3->mock("GET /admin/pages");
+		// 		} else {
+		// 			content_blocks::createContent($f3->POST["content_name"], $f3->POST["page"], $f3->POST["type"], $f3->POST["dummy_content"]);
+		// 			$f3->mock("GET /admin/pages");
+		// 		}
+		// 	}
+		// });
 	}
 
 	static function createContent($name, $page=null, $type=null, $dummy_content=null)
 	{
-		$db = base::instance()->DB;
+		// $db = base::instance()->DB;
 
-		$db->exec("INSERT INTO contentBlocks (page, content, type, contentName) VALUES (?,?,?,?)", [$page, $dummy_content, $type, $name]);
+		// $db->exec("INSERT INTO contentBlocks (page, content, type, contentName) VALUES (?,?,?,?)", [$page, $dummy_content, $type, $name]);
 	}
 
 	static function deleteContent($f3, $params) {
-		base::instance()->DB->exec("DELETE FROM contentBlocks WHERE id=?", $params["content"]);
+		// base::instance()->DB->exec("DELETE FROM contentBlocks WHERE id=?", $params["content"]);
 
-		$f3->mock("GET /admin/pages");
+		// $f3->mock("GET /admin/pages");
 	}
 
 	function retreiveContent($f3, $page) {
-		$db = $f3->get("DB");
+		// $db = $f3->get("DB");
 
-		// Loop through for subpages
-		$pages = explode("/", $page);
-		$previousPage = "";
-		$blocks = array();
-		foreach ($pages as $p)
-		{
-			$rawblocks = $f3->DB->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page="" OR page IS NULL ORDER BY page', $previousPage.$p);
+		// // Loop through for subpages
+		// $pages = explode("/", $page);
+		// $previousPage = "";
+		// $blocks = array();
+		// foreach ($pages as $p)
+		// {
+		// 	$rawblocks = $f3->DB->exec('SELECT * FROM contentBlocks WHERE page=? OR page="all" OR page="" OR page IS NULL ORDER BY page', $previousPage.$p);
 
-			// Process each content block
-			foreach ($rawblocks as $raw)
-			{
+		// 	// Process each content block
+		// 	foreach ($rawblocks as $raw)
+		// 	{
 
-				// skip if we have no content name.
-				if ($raw["contentName"] == "") {
-					error::log("Content block with no name?");
-					continue;
-				}
+		// 		// skip if we have no content name.
+		// 		if ($raw["contentName"] == "") {
+		// 			error::log("Content block with no name?");
+		// 			continue;
+		// 		}
 
-				// if there is no page name, label as for all pages
-				if ($raw["page"] == "") $raw["page"] = "all";
+		// 		// if there is no page name, label as for all pages
+		// 		if ($raw["page"] == "") $raw["page"] = "all";
 
-				$f3->set($raw["contentName"], $raw["content"]);
+		// 		$f3->set($raw["contentName"], $raw["content"]);
 
-				$blocks[$raw["contentName"]] = $raw;
-				$blocks[$raw["contentName"]]["ckhash"] = "id_" . $raw["id"] . "_hash_" . substr(sha1($raw["contentName"].$previousPage.$p), 0, 12);
-				$blocks[$raw["contentName"]]["page"] = $page;
-			}
+		// 		$blocks[$raw["contentName"]] = $raw;
+		// 		$blocks[$raw["contentName"]]["ckhash"] = "id_" . $raw["id"] . "_hash_" . substr(sha1($raw["contentName"].$previousPage.$p), 0, 12);
+		// 		$blocks[$raw["contentName"]]["page"] = $page;
+		// 	}
 
-			$previousPage = $p . "/";
-		}
+		// 	$previousPage = $p . "/";
+		// }
 
-		if (admin::$signed)
-		{	
-			foreach ($blocks as $block) {
+		// if (admin::$signed)
+		// {	
+		// 	foreach ($blocks as $block) {
 
-				// Yet to be reimplemented!
-				switch ($block['type'])
-				{
-					default:
-						$f3->set($block["contentName"], "<div title='' page='test' contenteditable='true' id='".$block["ckhash"]."'>" . $block["content"] . "</div>");
-					break;
-				}
+		// 		// Yet to be reimplemented!
+		// 		switch ($block['type'])
+		// 		{
+		// 			default:
+		// 				$f3->set($block["contentName"], "<div title='' page='test' contenteditable='true' id='".$block["ckhash"]."'>" . $block["content"] . "</div>");
+		// 			break;
+		// 		}
 
-				$f3->ck_instances[] = array(
-					"id"=>$block["ckhash"],
-					"type"=>$block["type"],
-					"contentID"=>$block["id"],
-					"page"=>$block["page"]
-				);
-			}
+		// 		$f3->ck_instances[] = array(
+		// 			"id"=>$block["ckhash"],
+		// 			"type"=>$block["type"],
+		// 			"contentID"=>$block["id"],
+		// 			"page"=>$block["page"]
+		// 		);
+		// 	}
 
-			// Load up the Editor
-			$inlinecode = Template::instance()->render("/content_blocks/js/ckeditor_inline.js");
+		// 	// Load up the Editor
+		// 	$inlinecode = Template::instance()->render("/content_blocks/js/ckeditor_inline.js");
 
-			$f3->concat("ckeditor", $inlinecode);
-			$f3->concat("admin", $inlinecode);
-		}
+		// 	$f3->concat("ckeditor", $inlinecode);
+		// 	$f3->concat("admin", $inlinecode);
+		// }
 	}
 
 
 	function loadAll ($f3) {
 
-		$pages = glob("*.html");
+		// $pages = glob("*.html");
 
-		$blocks["all"] = array();
+		// $blocks["all"] = array();
 
-		foreach ($pages as $page) {
-			if ($page[0] == "_") continue;
+		// foreach ($pages as $page) {
+		// 	if ($page[0] == "_") continue;
 
-			$pageName = str_replace(".html", "", $page);
-			$blocks[$pageName] = array();
-		}	
+		// 	$pageName = str_replace(".html", "", $page);
+		// 	$blocks[$pageName] = array();
+		// }	
 		
-		$f3->set("pages", $blocks);
+		// $f3->set("pages", $blocks);
 
-		$db = $f3->get("DB");
-		$result = $db->exec('SELECT * FROM contentBlocks ORDER BY page');
+		// $db = $f3->get("DB");
+		// $result = $db->exec('SELECT * FROM contentBlocks ORDER BY page');
 
-		// Don't bother if there are no content blocks from DB
-		if (!$result) return;
+		// // Don't bother if there are no content blocks from DB
+		// if (!$result) return;
 
-		$subpage_counter = array();
-		foreach ($result as $contentBlock)
-		{
-			$page = $contentBlock["page"];
+		// $subpage_counter = array();
+		// foreach ($result as $contentBlock)
+		// {
+		// 	$page = $contentBlock["page"];
 
-			if ($page == "all" || $page == "")
-				$blocks["all"][] = $contentBlock;
-			else
-			{
-				$tmp = explode("/", $page);
-				if (count($tmp) > 1) {
-					$subpage_counter[$tmp[0]][$page] = 1;
-					continue; // Ignore sub pages
-				}
+		// 	if ($page == "all" || $page == "")
+		// 		$blocks["all"][] = $contentBlock;
+		// 	else
+		// 	{
+		// 		$tmp = explode("/", $page);
+		// 		if (count($tmp) > 1) {
+		// 			$subpage_counter[$tmp[0]][$page] = 1;
+		// 			continue; // Ignore sub pages
+		// 		}
 
-				$blocks[$page][] = $contentBlock;
-			}
-		}
+		// 		$blocks[$page][] = $contentBlock;
+		// 	}
+		// }
 
-		foreach ($subpage_counter as $key=>$value) {
-			$blocks[$key]["subpages"] = count($value);
-		}
+		// foreach ($subpage_counter as $key=>$value) {
+		// 	$blocks[$key]["subpages"] = count($value);
+		// }
 
-		$f3->set("pages", $blocks);
+		// $f3->set("pages", $blocks);
 	}
 
 	static function save_inline($f3, $id=null, $content=null) 
 	{
-		$db = $f3->get("DB");
+		// $db = $f3->get("DB");
 
-		$contentID = $f3->POST["contentBlock"];
-		$page = $f3->POST["page"];
-		$content = $f3->POST["editabledata"];
+		// $contentID = $f3->POST["contentBlock"];
+		// $page = $f3->POST["page"];
+		// $content = $f3->POST["editabledata"];
 
-		// Get content block from
-		$result = $db->exec("SELECT contentName, page FROM contentBlocks WHERE id=?", $contentID)[0];
+		// // Get content block from
+		// $result = $db->exec("SELECT contentName, page FROM contentBlocks WHERE id=?", $contentID)[0];
 		
-		if (!$result)
-			// ERROR: We are trying to save to a non existent content block??
-			error::log("Attempting to update a non-existant content block");
+		// if (!$result)
+		// 	// ERROR: We are trying to save to a non existent content block??
+		// 	error::log("Attempting to update a non-existant content block");
 
-		// Don't worry about sub page business if its for all pages.
-		if ($result["page"] != "" && strtolower($result["page"]) != "all")
-		{
-			// Check again incase we are using an outdated content ID because of subpage overwriting.
-			$result2 = $db->exec("SELECT id, contentName, page FROM contentBlocks WHERE page=? AND contentName=?", [$page, $result["contentName"]])[0];			
+		// // Don't worry about sub page business if its for all pages.
+		// if ($result["page"] != "" && strtolower($result["page"]) != "all")
+		// {
+		// 	// Check again incase we are using an outdated content ID because of subpage overwriting.
+		// 	$result2 = $db->exec("SELECT id, contentName, page FROM contentBlocks WHERE page=? AND contentName=?", [$page, $result["contentName"]])[0];			
 
-			if ($result2)
-				$contentID = $result2["id"];
-			else
-			{
-				$orginalVals = $db->exec("SELECT page, contentName, type FROM contentBlocks WHERE id=?", $contentID)[0];
+		// 	if ($result2)
+		// 		$contentID = $result2["id"];
+		// 	else
+		// 	{
+		// 		$orginalVals = $db->exec("SELECT page, contentName, type FROM contentBlocks WHERE id=?", $contentID)[0];
 
-				// Copy Row
-				$result = $db->exec("INSERT INTO contentBlocks (page, contentName, type) VALUES (?, ?, ?)", [$page, $orginalVals["contentName"], $orginalVals["type"]]);
+		// 		// Copy Row
+		// 		$result = $db->exec("INSERT INTO contentBlocks (page, contentName, type) VALUES (?, ?, ?)", [$page, $orginalVals["contentName"], $orginalVals["type"]]);
 
-				$contentID = $db->lastInsertId();
-			}
-		}
+		// 		$contentID = $db->lastInsertId();
+		// 	}
+		// }
 
-		// Update the content block
-		$result = $db->exec("UPDATE contentBlocks SET content=:content WHERE id=:id", array(
-				":id"=>$contentID,
-				":content"=>$content
-		));
+		// // Update the content block
+		// $result = $db->exec("UPDATE contentBlocks SET content=:content WHERE id=:id", array(
+		// 		":id"=>$contentID,
+		// 		":content"=>$content
+		// ));
 	}
 
 	function hasInit() {
-		$db = base::instance()->DB;
+		// $db = base::instance()->DB;
 
-		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contentBlocks'");
+		// $result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contentBlocks'");
 
-		if ($result)
-		{
-			base::instance()->content_blocks["init"] = true;
-			$this->patch_columns();
-			return true;
-		}
-		else
-			return false;
+		// if ($result)
+		// {
+		// 	base::instance()->content_blocks["init"] = true;
+		// 	$this->patch_columns();
+		// 	return true;
+		// }
+		// else
+		// 	return false;
 	}
 
 	function generate() {
-		$f3 = base::instance();
+		// $f3 = base::instance();
 
-		$db = base::instance()->DB;
+		// $db = base::instance()->DB;
 
-		$db->exec("CREATE TABLE IF NOT EXISTS 'contentBlocks' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'page' TEXT, 'content' TEXT, 'lastUpdated' DATETIME DEFAULT CURRENT_TIMESTAMP,'contentName' TEXT);");
+		// $db->exec("CREATE TABLE IF NOT EXISTS 'contentBlocks' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'page' TEXT, 'content' TEXT, 'lastUpdated' DATETIME DEFAULT CURRENT_TIMESTAMP,'contentName' TEXT);");
 
-		// $pages = $f3->POST["pages"];
-		// $pages = explode(",", $pages);
-		// $pages = array_unique($pages);
+		// // $pages = $f3->POST["pages"];
+		// // $pages = explode(",", $pages);
+		// // $pages = array_unique($pages);
 		
-		// foreach ($pages as $page) {
+		// // foreach ($pages as $page) {
 			
-		// }
+		// // }
 
 	}
 
 	static public function render_quick_view($f3)
 	{
-		if (content_blocks::instance()->hasInit()) {
-			content_blocks::instance()->loadAll($f3);
+		// if (content_blocks::instance()->hasInit()) {
+		// 	content_blocks::instance()->loadAll($f3);
 
-			echo Template::instance()->render("content_blocks/pages.html");
-		} 
-		else 
-		{
-			echo Template::instance()->render("content_blocks/nopages.html");	
-		}
+		// 	echo Template::instance()->render("content_blocks/pages.html");
+		// } 
+		// else 
+		// {
+		// 	echo Template::instance()->render("content_blocks/nopages.html");	
+		// }
 	}
 
 	static public function get_page ($f3, $page) {
 
-		$f3->page_name = $page;
-		$f3->contentBlocks = $f3->DB->exec("SELECT * FROM contentBlocks WHERE page=?", $page);
+		// $f3->page_name = $page;
+		// $f3->contentBlocks = $f3->DB->exec("SELECT * FROM contentBlocks WHERE page=?", $page);
 
 	}
 
 
 	static public function render_admin_page($f3, $params) {
 
-		content_blocks::instance()->loadAll($f3);
-		content_blocks::get_page($f3, $params["page"]);
+		// content_blocks::instance()->loadAll($f3);
+		// content_blocks::get_page($f3, $params["page"]);
 
-		echo Template::instance()->render("content_blocks/page.html");
+		// echo Template::instance()->render("content_blocks/page.html");
 
 	}
 
 
 	static public function admin_edit_render($f3, $params)
 	{
-		content_blocks::instance()->loadAll($f3);
+		// content_blocks::instance()->loadAll($f3);
 
-		foreach ($f3->get("pages") as $pagename=>$page) {
-			if ($pagename == $params["page"])
-				$editable = $page;
-		}
+		// foreach ($f3->get("pages") as $pagename=>$page) {
+		// 	if ($pagename == $params["page"])
+		// 		$editable = $page;
+		// }
 
-		$f3->set("editable", $editable);
+		// $f3->set("editable", $editable);
 
-		echo Template::instance()->render("/content_blocks/page_edit.html");
+		// echo Template::instance()->render("/content_blocks/page_edit.html");
 	}
 
 	static public function admin_render_htmledit ($f3, $params) {
-		$result = base::instance()->DB->exec("SELECT * FROM contentBlocks WHERE id=?", $params["content"]);
-		$result[0]["content"] = htmlspecialchars($result[0]["content"]);
+		// $result = base::instance()->DB->exec("SELECT * FROM contentBlocks WHERE id=?", $params["content"]);
+		// $result[0]["content"] = htmlspecialchars($result[0]["content"]);
 
-		base::instance()->set("block", $result[0]);
+		// base::instance()->set("block", $result[0]);
 
-		echo Template::instance()->render("/content_blocks/ace_editor.html");
+		// echo Template::instance()->render("/content_blocks/ace_editor.html");
 	}
 
 
 
 	static public function ace_editor($f3) 
 	{
-		echo Template::instance()->render("/content_blocks/js/additional.js", "text/javascript");
+		// echo Template::instance()->render("/content_blocks/js/additional.js", "text/javascript");
 	}
 
 	function patch_columns ()
 	{
-		$result = base::instance()->DB->exec("PRAGMA table_info(contentBlocks)");
+		// $result = base::instance()->DB->exec("PRAGMA table_info(contentBlocks)");
 		
-		//Patch to ensure type column is added.
-		foreach ($result as $r) {
-			if ($r["name"] == "type") {
-				return;
-			}
-		}
+		// //Patch to ensure type column is added.
+		// foreach ($result as $r) {
+		// 	if ($r["name"] == "type") {
+		// 		return;
+		// 	}
+		// }
 
-		base::instance()->DB->exec("ALTER TABLE contentBlocks ADD COLUMN type char(100)");
+		// base::instance()->DB->exec("ALTER TABLE contentBlocks ADD COLUMN type char(100)");
 	}
 }
