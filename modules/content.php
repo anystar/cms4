@@ -136,11 +136,11 @@ class content extends prefab {
 
 	    if ( $node->isDir() && !$node->isDot() )
 	    {
-	    	$data["dir"][$node->getFilename()] = $this->scan( new DirectoryIterator( $node->getPathname() ) );
+	    	$data["directories"][$node->getFilename()] = $this->scan( new DirectoryIterator( $node->getPathname() ) );
 	    }
 	    else if ( $node->isFile() )
 	    {
-	    	$data["file"] = $node->getFilename();
+	    	$data["files"][] = $node->getFilename();
 	    }
 	  }
 	  return $data;

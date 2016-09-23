@@ -75,30 +75,7 @@
 <div class="just-padding">
 
 	<div class="list-group list-group-root well">
-	  
-	  <a href="#item-1" class="list-group-item" data-toggle="collapse">
-		 <i class="glyphicon glyphicon-chevron-right"></i>Item 1
-	  </a>
-	  <div class="list-group collapse" id="item-1">
-		 
-		 <a href="#item-1-1" class="list-group-item" data-toggle="collapse">
-			<i class="glyphicon glyphicon-chevron-right"></i>Item 1.1
-		 </a>
-		 <div class="list-group collapse" id="item-1-1">
-			<a href="#" class="list-group-item">Item 1.1.1</a>
-			<a href="#" class="list-group-item">Item 1.1.2</a>
-			<a href="#" class="list-group-item">Item 1.1.3</a>
-		 </div>
-		 
-		 
-	  </div>
-	  
-	  <a href="" class="list-group-item" data-toggle="collapse">
-		 <i class="glyphicon glyphicon-chevron-right"></i>Item 1
-	  </a>
-	  
-
-	  
+	   	  
 	</div>
   
 </div>
@@ -127,17 +104,20 @@
 
 			dir = JSON.parse('{{@content.site_map}}');
 
-			jQuery.each(dir, function (i, val) {
-				if (i == "file")
-				{
-					element = $('<a href="#" class="list-group-item">Test</a>');
+			append_files(dir["files"]);
+
+			function scan(directoryList) {
+					element = $('<a href="#item-1" class="list-group-item" data-toggle="collapse"><i class="glyphicon glyphicon-chevron-right"></i>Test B</a>');
 					$(".list-group-root").append(element);
-				}
-				else {
-					element = $('<a href="#" class="list-group-item">Test</a>');
+			}
+
+
+			function append_files (files) {
+				jQuery.each(files, function (i, v) {
+					element = $('<a href="#" class="list-group-item">'+v+'</a>');
 					$(".list-group-root").append(element);
-				}
-			})
+				});
+			}
 
 		</script>
 		
