@@ -115,6 +115,11 @@ class content extends prefab {
 
 			echo Template::instance()->render("/content/content.html");
 		});
+
+		$f3->route("GET /admin/content/load-section", function ($f3) {
+			echo "hello!";
+			die;
+		});
 	}
 
 	function load_sitemap ($f3) {

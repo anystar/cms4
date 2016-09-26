@@ -82,6 +82,10 @@
 		<div class="col-sm-9">
 		  <div class="box">
 			<h2>Contents</h2>
+
+			<div id="section">
+
+			</div>
 		  </div>
 		</div>
 	  </div>
@@ -101,27 +105,36 @@
 
 	  function scan(element, directoryList) {
 
-		jQuery.each(directoryList.directories, function (i, v) {
-
-			element.append($('<a href="#'+i+'" class="list-group-item" data-toggle="collapse"><i class="glyphicon glyphicon-chevron-right"></i>'+i+' </a>'));
-
-			if (v.directories !== undefined) { 
+		if (directoryList.directories !== undefined) 
+		{ 
+			jQuery.each(directoryList.directories, function (i, v) {
+				element.append($('<a href="#'+i+'" class="list-group-item" data-toggle="collapse"><i class="glyphicon glyphicon-chevron-right"></i>'+i+' </a>'));
 				element.append(scan($('<div class="list-group collapse" id="'+i+'"></div>'), v)); 
-			}
+			});
+		}
 
-
-
-		});
-
-		// if (v.files !== undefined)
-		// {
-		// 	jQuery.each(v.files, function (i, v) {
-		// 		element.append($('<a class="list-group-item">'+v+'</a>'));
-		// 	});
-		// }
+		if (directoryList.files != undefined)
+		{
+			jQuery.each(directoryList.files, function (i, v) {
+				element.append($('<a class="list-group-item file">'+v+'</a>'));
+			});
+		}
 
 		return element;
 	  }
+
+	$( document ).ready(function() {
+		$(".file").click(function () {
+			//$("#section")
+
+			$.ajax({
+				url : "{{@BASE}}/admin/content/load-section",
+				data : {
+					"file" : $(this).html()
+				}
+			});
+		});
+	});
 
 	</script>
 	
