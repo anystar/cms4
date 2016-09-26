@@ -121,6 +121,7 @@ class content extends prefab {
 		
 		$directory = $this->scan(new DirectoryIterator(getcwd()));
 
+		$directory = ["root"=>$directory];
 		$directory = json_encode($directory);
 
 		$f3->set("content.site_map", $directory);
@@ -143,6 +144,10 @@ class content extends prefab {
 	    	$data["files"][] = $node->getFilename();
 	    }
 	  }
+
+	  if ($data["files"])
+		  sort($data["files"]);
+
 	  return $data;
 	}
 
