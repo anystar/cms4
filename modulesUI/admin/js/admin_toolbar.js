@@ -1,11 +1,5 @@
 $(function() {
 
-
-	<exclude>
-	var side_toolbar = $('<div>').attr('id', 'webworkscms_testtoolbar');
-	$('body').append(side_toolbar);
-	</exclude>
-
 	var top_div = $('<div>').attr('id', 'webworkscms_admintoolbar');
 	$('body').append(top_div);
 
@@ -63,35 +57,10 @@ $(function() {
 		return true;
 	});
 
-	var inputBox = $('<input id="addContentBoxInput" class="inputbox" placeholder="add content block" type="text">');
-	inputBox.keypress(function(e) {
-		if(e.which === 32) return false;
-	});
 
-	var add = $('<input id="addContentBoxBtn" class="textinput" type="button" value="+"/>');
-	add.click(function (data) {
-		var val = $("#addContentBoxInput").val();
-		if (val != "") {
-			$("#addContentBoxInput").prop('readonly', true);
-			$.ajax({
-				method: "POST",
-				url: "{{@BASE}}/admin/page/add_content",
-				data: { content_name: val, page:window.location.pathname }
-			}).done(function () {
-				$("#addContentBoxInput").val("");
-				$("#addContentBoxInput").prop('readonly', false);
-			});
-		}
-	});
+	//r_div.append(save);
+	//r_div.append($('<div class="spacer"></div>'));
 
-	<check if="{{@webmaster}}">
-	r_div.append(inputBox);
-	r_div.append(add);
-	</check>
-
-	r_div.append(save);
-	r_div.append($('<div class="spacer"></div>'));
-	<check if="{{@webmaster}}">r_div.append($('<a href="{{@BASE}}/admindb" target="_cmswindow" type="button">DB</a>'));</check>
 	r_div.append($('<a href="{{@BASE}}/admin" target="_cmswindow" type="button">CMS Panel</a>'));
 
 	var toggleBtn = $('<input class="textinput" type="button" value="~"/>');
