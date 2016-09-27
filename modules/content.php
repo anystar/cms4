@@ -116,9 +116,19 @@ class content extends prefab {
 			echo Template::instance()->render("/content/content.html");
 		});
 
-		$f3->route("GET /admin/content/load-section", function ($f3) {
-			echo "hello!";
-			die;
+		$f3->route("POST /admin/content/load-section", function ($f3) {
+
+			$file = getcwd()."/".$f3->POST["file"];
+
+			if (file_exists($file)) {
+				echo file_get_contents($file);
+				exit;
+				$mime_type = mime_content_type2($file);
+				
+				$mime_type =  preg_replace("/(.*)\/(.*)/", "$1-$2", $mime_type);
+
+				
+			}
 		});
 	}
 

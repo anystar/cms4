@@ -69,23 +69,18 @@
 		  <div class="box">
 			<h2>Site map</h2>
 			
-
-
-
-  <div class="list-group list-group-root well">
-
-  </div>
- 
+			<div class="list-group list-group-root well"></div>
 
 		  </div>
 		</div>
 		<div class="col-sm-9">
-		  <div class="box">
+		  <div class="box" style="padding-bottom: 0;">
 			<h2>Contents</h2>
-
-			<div id="section">
-
+			<div>
+				<button>Save</button> <button>Duplicate</button> <button>Delete</button>
 			</div>
+
+			<div id="editor" style="margin: 20px -10px 0 -10px;padding-top:30px"></div>
 		  </div>
 		</div>
 	  </div>
@@ -94,47 +89,73 @@
 
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="{{ @SETTINGS.cdn.ace }}" type="text/javascript" charset="utf-8"></script>
+
 	<script src="{{@BASE}}/admin/bootstrap.min.js"></script>
 	<script>
+		var editor = ace.edit("editor");
+		editor.getSession().setMode("ace/mode/html");
+		editor.setTheme("ace/theme/chrome");
+		editor.setOptions({
+		    showGutter: true,
+		    vScrollBarAlwaysVisible: false,
+		    printMargin: false,
+		    fontSize: 12,
+		    minLines: 30,
+		    maxLines: 1000
+		});
+		editor.container.style.lineHeight = 1.4;
+		editor.renderer.updateFontSize()
+		editor.commands.addCommand({
+		    name: 'save',
+		    bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
+		    exec: function(editor) {
+		        console.log("saving");
+		    }
+		})
 
-	  dir = JSON.parse('{{@content.site_map}}');
+		dir = JSON.parse('{{@content.site_map}}');
 
-	  
-	  scan($(".list-group-root"), dir.root);
-
-	  function scan(element, directoryList) {
-
-		if (directoryList.directories !== undefined) 
-		{ 
-			jQuery.each(directoryList.directories, function (i, v) {
-				element.append($('<a href="#'+i+'" class="list-group-item" data-toggle="collapse"><i class="glyphicon glyphicon-chevron-right"></i>'+i+' </a>'));
-				element.append(scan($('<div class="list-group collapse" id="'+i+'"></div>'), v)); 
-			});
-		}
-
-		if (directoryList.files != undefined)
-		{
-			jQuery.each(directoryList.files, function (i, v) {
-				element.append($('<a class="list-group-item file">'+v+'</a>'));
-			});
-		}
-
-		return element;
-	  }
-
-	$( document ).ready(function() {
-		$(".file").click(function () {
-			//$("#section")
-
-			$.ajax({
-				url : "{{@BASE}}/admin/content/load-section",
-				data : {
-					"file" : $(this).html()
-				}
+		$( document ).ready(function() {
+			$(".file").click(function () {
+				
+				$.post("{{@BASE}}/admin/content/load-section", { file : $(this).html() }, openDocument);
+				
+				//$("#editor").load(, { file : $(this).html() });
 			});
 		});
-	});
+
+		function openDocument (data) {
+			
+			//console.log(editor.getSession());
+
+			editor.setValue(data, -1);
+
+		}
+
+
+
+		scan($(".list-group-root"), dir.root);
+
+		function scan(element, directoryList) {
+
+			if (directoryList.directories !== undefined) 
+			{ 
+				jQuery.each(directoryList.directories, function (i, v) {
+					element.append($('<a href="#'+i+'" class="list-group-item" data-toggle="collapse"><i class="glyphicon glyphicon-chevron-right"></i>'+i+' </a>'));
+					element.append(scan($('<div class="list-group collapse" id="'+i+'"></div>'), v)); 
+				});
+			}
+
+			if (directoryList.files != undefined)
+			{
+				jQuery.each(directoryList.files, function (i, v) {
+					element.append($('<a class="list-group-item file">'+v+'</a>'));
+				});
+			}
+
+			return element;
+		}
 
 	</script>
 	
