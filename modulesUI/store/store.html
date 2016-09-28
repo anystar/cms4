@@ -37,46 +37,27 @@
 
 				<div class="col-md-12">
 					<div class="box">
-						<h2>Plugins</h2>
+						<h2>Modules (plugins / addons)</h2>
 						
 						<div class="table-responsive">
 							<table class="table table-striped table-bordered">
-								<check if="!{{@ckeditor.installed}}">
+								<repeat group="{{@store.modules}}" value="{{@module}}">
 								<tr>
-									<td>CKEditor</td>
-									<td width="10%"><a href="{{ @BASE }}/admin/ckeditor/install"><button>Install</button></a></td>
+									<td>
+										<h3>{{@module.name}}</h3>
+										<p>{{@module.description}}</p>
+									</td>
+									
+									<check if="{{@module.price > 0}}">
+										<true>
+											<td width="13%"><a href="{{ @BASE }}/admin/store/install"><button>${{@module.price}} Install</button></a></td>
+										</true>
+										<false>
+											<td width="13%"><a href="{{ @BASE }}/admin/store/install"><button>Free Install</button></a></td>
+										</false>
+									</check>
 								</tr>
-								</check>
-								<check if="!{{@file_manager.init}}">
-								<tr>
-									<td>File Manager</td>
-									<td width="10%"><a href="{{ @BASE }}/admin/file_manager"><button>Install</button></a></td>
-								</tr>
-								</check>
-								<check if="!{{@banners.init}}">
-								<tr>
-									<td>Banners</td>
-									<td width="10%"><a href="{{ @BASE }}/admin/banners"><button>Install</button></a></td>
-								</tr>
-								</check>
-								<check if="!{{@gallery.init}}">
-								<tr>
-									<td>Galleries</td>
-									<td width="10%"><a href="{{ @BASE }}/admin/gallery"><button>Install</button></a></td>
-								</tr>
-								</check>
-								<check if="!{{@contact.init}}">
-								<tr>
-									<td>Contact Form</td>
-									<td width="10%"><a href="{{ @BASE }}/admin/contact"><button>Install</button></a></td>
-								</tr>
-								</check>
-								<check if="!{{@statistics.init}}">
-								<tr>
-									<td>Statistics</td>
-									<td width="10%"><a href="{{ @BASE }}/admin/statistics/install"><button>Install</button></a></td>
-								</tr>
-								</check>
+								</repeat>
 							</table>
 						</div>
 

@@ -1,15 +1,7 @@
 <link rel="stylesheet" type="text/css" href="{{@BASE}}/admin/css/admin_toolbar.css">
-<script src="{{@BASE}}/admin/js/admin_toolbar.js"></script>
 <script src="{{@SETTINGS.cdn.ckeditor}}"></script>
 <style>div[contenteditable]:hover { outline: 1px dashed #777; }</style>
 <script>
-	function init_inline_ckeditors() {
-		var editors = document.getElementsByClassName("ckeditor");
-		for (var i = editors.length - 1; i >= 0; i--)
-		{
-			var type = editors[i].getAttribute("type");
-			var editor_instance = CKEDITOR.inline(editors[i].getAttribute("id"), { customConfig: '{{@BASE}}/admin/ckeditor/js/'+type+".js" } );
-		}
-	}
-	init_inline_ckeditors();
+	ckeditor_skin = "{{@SETTINGS.ckeditor_skin}}";
 </script>
+<script src="{{@BASE}}/admin/ckeditor/js/init.js"></script>

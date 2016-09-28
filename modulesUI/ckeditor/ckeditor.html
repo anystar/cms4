@@ -19,7 +19,15 @@
 
 		<style>
 			.selected {
-				border: 1px solid red;
+				border: 1px dotted red;
+			}
+
+			.themes img {
+				display: block;
+				width: 90%;
+				margin: 0 auto;
+				margin-top: 10px;
+
 			}
 		</style>
 	</head>
@@ -44,17 +52,23 @@
 				</div>
 			</check>
 			
-			<div class="box">
-				<h2>Themes</h2>
-				<div class="row">
-					<repeat group="{{@ckeditor.skins}}" value="{{@skin}}">
-						<set selected="">
-						<check if="{{@skin == @SETTINGS.ckeditor_skin}}"><set selected="selected"></check>
-
-						<div class="col-md-4 col-sm-6 col-xs-12">
-							<a href="{{@BASE}}/admin/ckeditor/select-skin/{{@skin}}"><img class="{{@selected}}" width="100%" src="{{@BASE}}/admin/ckeditor/skins/{{@skin}}.png"></a>
-						</div>
-					</repeat>
+			<div class="row">
+				<div class="col-md-8">
+					<div class="box">
+						<h2>Test</h2>
+					</div>
+				</div>
+				<div class="col-md-4">
+				<div class="box themes">
+					<h2>Themes</h2>
+					<div class="row">
+						<repeat group="{{@ckeditor.skins}}" value="{{@skin}}">
+							<set selected="">
+							<check if="{{@skin == @SETTINGS.ckeditor_skin}}"><set selected="selected"></check>
+							
+								<a title="{{@skin}}" href="{{@BASE}}/admin/ckeditor/select-skin/{{@skin}}"><img class="{{@selected}}" src="{{@BASE}}/admin/ckeditor/skins/{{@skin}}.png"></a>
+						</repeat>
+					</div>
 				</div>
 			</div>
 		</div>

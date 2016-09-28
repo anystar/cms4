@@ -156,6 +156,13 @@ if ($check)
 
 $f3->SETTINGS = $GLOBALS["settings"];
 
+###############################################
+############ Get brought modules ##############
+###############################################
+
+// Get modules from licensing table
+$f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses");
+
 ########################################
 ############ Load modules ##############
 ########################################
@@ -163,11 +170,13 @@ $f3->SETTINGS = $GLOBALS["settings"];
 new admin();
 new content();
 
-$enabled_modules = $settings["enabled_modules"];
-unset($settings["enabled_modules"]);
+	foreach ($f3->installed_modules as $module)
+		new $module["module"]($module["namespace"]);
 
-foreach ($enabled_modules as $module)
-	new $module();
+if (admin::$signed) {
+	new store();
+	new debug();
+}
 
 $f3->run();
 
