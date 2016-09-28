@@ -48,14 +48,21 @@
 										<p>{{@module.description}}</p>
 									</td>
 									
-									<check if="{{@module.price > 0}}">
-										<true>
-											<td width="13%"><a href="{{ @BASE }}/admin/store/install"><button>${{@module.price}} Install</button></a></td>
-										</true>
-										<false>
-											<td width="13%"><a href="{{ @BASE }}/admin/store/install"><button>Free Install</button></a></td>
-										</false>
+									<form method="post" action="{{@BASE}}/admin/store/install">
+									<input type="hidden" name="module" value="{{@module.module}}">
+
+									<check if="{{@module.dev_status != 1}}">
+									<true>
+										<check if="{{@module.price > 0}}">
+											<true><td width="13%"><button>${{@module.price}} Install</button></td></true>
+											<false><td width="13%"><button>Free Install</button></td></false>
+										</check>
+									</true>
+									<false>
+										<td width="13%">in developement</td>
+									</false>
 									</check>
+									</form>
 								</tr>
 								</repeat>
 							</table>
