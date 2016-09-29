@@ -12,10 +12,8 @@
 	</ul>
 
 
-	<ul class="modules nav nav-tabs nav-stacked">
-		<check if="{{@webmaster}}"><check if="{{@ckeditor.installed}}"><li class="{{@nav_active_ckeditor}}"><a href="{{ @BASE }}/admin/ckeditor/">CKEditor</a></li></check></check>
-		<check if="{{@file_manager.init}}"><li class="{{@nav_active_file_manager}}"><a href="{{ @BASE }}/admin/file_manager">File Manager</a></li></check>
-		<check if="{{@banners.init}}"><li class="{{@nav_active_banners}}"><a href="{{ @BASE }}/admin/banners">Banners</a></li></check>
-		<check if="{{@gallery.init}}"><li class="{{@nav_active_galleries}}"><a href="{{ @BASE }}/admin/gallery">Galleries</a></li></check>
-		<check if="{{@contact.init}}"><li class="{{@nav_active_contact_form}}"><a href="{{ @BASE }}/admin/contact">Contact Form</a></li></check>
+	<ul class="modules nav nav-tabs nav-stacked">	
+	<repeat group="{{@installed_modules}}" value="{{@module}}">
+		<li><a href="{{ @BASE }}/admin/{{@module.namespace}}">{{@module.name}}</a></li>
+	</repeat>
 	</ul>

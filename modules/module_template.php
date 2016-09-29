@@ -1,15 +1,11 @@
 <?php
 
-class module_template extends prefab {
+class module_name extends prefab {
 
 	function __construct() {
 
-		if ($this->hasInit())
-		{
+		if ($this->installed())
 			$this->routes(base::instance());
-
-			// TODO: Load up other things
-		}
 
 		if (admin::$signed)
 			$this->admin_routes(base::instance());
@@ -17,39 +13,26 @@ class module_template extends prefab {
 
 	function routes($f3) {
 
-		// TODO: Insert routes for this module
+		// Insert routes for this module
 
 	}
 
 	function admin_routes($f3) {
 		
-		// TODO: Insert admin related routes for this module
+		// Render admin panel
+		//$f3->route('GET /admin/module_name', '');
 
+		// Render install page
+		$f3->route('POST /admin/module_name/install', 'module_name::install');
+
+		$f3->route("GET /admin/module_name/documentation", function ($f3) {
+			echo Template::instance()->render("/module_name/documentation.html");
+		});
 	}
 
-	static function hasInit() {
-		$db = base::instance()->get("DB");
+	function asset_routes ($f3) {
+		// Insert any assets in here
 
-		// TODO: replace TABLE_NAME
-		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='TABLE_NAME'");
-		
-		if (empty($result))
-			return false;
-	}
-
-	static function generate() {
-		$db = base::instance()->DB;
-
-		//TODO: Insert sql to generate table structures
-		$db->exec("");
-	}
-
-	static function admin_render() {
-
-		//TODO: Create html files for admin display and generation
-		if ($this::instance()->hasInit())
-			echo Template::instance()->render("module_name/module.html");
-		else
-			echo Template::instance()->render("module_name/module.html");
+		// EG: $f3->route('GET /test/path', function () { echo Template::instance()->render("/module_name/test_file.html", "text/html"); });
 	}
 }

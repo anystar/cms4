@@ -34,9 +34,13 @@ class ckeditor extends prefab {
 
 			if ($content == "") $content = "Dummy text";
 
-			$out .= "<div file='database' type='".$type."' id='".$contentID."' class='ckeditor' contenteditable='true'>";
+			if (admin::$signed) 
+				$out .= "<div file='database' type='".$type."' id='".$contentID."' class='ckeditor' contenteditable='true'>";
+			
 			$out .= $content;
-			$out .= "</div>";
+			
+			if (admin::$signed) 
+				$out .= "</div>";
 
 			return $out;
 		});
@@ -144,24 +148,8 @@ class ckeditor extends prefab {
 
 	function assets($f3) {
 
-		$f3->route("GET /admin/ckeditor/js/full.js", function () {
-			echo Template::instance()->render("/ckeditor/js/full.js", "text/javascript");
-		});
-
-		$f3->route("GET /admin/ckeditor/js/header.js", function () {
-			echo Template::instance()->render("/ckeditor/js/header.js", "text/javascript");
-		});
-
-		$f3->route("GET /admin/ckeditor/js/image.js", function () {
-			echo Template::instance()->render("/ckeditor/js/image.js", "text/javascript");
-		});
-
-		$f3->route('GET /admin/ckeditor_imgs_config.js', function ($f3) {
-			echo Template::instance()->render("/content_blocks/js/ckeditor_imgs_config.js", "text/javascript");	
-		});
-
-		$f3->route('GET /admin/ckeditor_header_config.js', function ($f3) {
-			echo Template::instance()->render("/content_blocks/js/ckeditor_header_config.js", "text/javascript");
+		$f3->route("GET /admin/ckeditor/js/init.js", function () {
+			echo Template::instance()->render("/ckeditor/js/init.js", "text/javascript");
 		});
 
 		$f3->route('GET /admin/ckeditor/skins/flat.png', function () { echo View::instance()->render("/ckeditor/skins/flat.png", "image/png"); });

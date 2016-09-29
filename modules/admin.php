@@ -13,64 +13,39 @@ class admin extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		admin::$webmasterEmail = $f3->SETTINGS["webmaster_email"];
-		admin::$webmasterPass = $f3->SETTINGS["webmaster_pass"];
-
-		if (isset($f3->SETTINGS["email"]))
-			admin::$clientEmail = $f3->SETTINGS["email"];
-		else
-			admin::$clientEmail = admin::$webmasterEmail;
-
-		if (isset($f3->SETTINGS["pass"]))
-			admin::$clientPass = $f3->SETTINGS["pass"];
-		else
-			admin::$clientPass = admin::$webmasterPass;
-
-		if ($f3->SETTINGS["admin_email"])
-			admin::$clientEmail = $f3->SETTINGS["admin_email"];
-
-		if ($f3->SETTINGS["admin_pass"])
-			admin::$clientPass = $f3->SETTINGS["admin_pass"];
-	
-		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["pass"],$f3->SETTINGS["admin_pass"]);
-
-
-		if (admin::$clientEmail == null || admin::$clientPass == null)
-		{
-			echo "Warning, no email or password set to be able to login to admin panel.";
-			die;
-		}
-		
-		if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
-		{
-			admin::$signed = true;
-
-			if ($f3->SESSION["root"]==true)
-				$f3->set("webmaster", true);
-
-			$this->dashboard_routes($f3);
-
-			$f3->route('GET|POST /admin/login', function ($f3) {
-				$f3->reroute("/admin");
-			});
-		}
-
-		admin::file_routes($f3);
-
-		if (!admin::$signed)
-			$this->login_routes($f3);
-
-		$f3->route('GET /admin/logout', "admin::logout");
-
+		// Redirect cms to admin
 		$f3->route("GET /cms", function ($f3) {
 			$f3->reroute("/admin", true);
 		});
 
-		$f3->route('GET /remote-tools/dbhash', function ($f3) {
-			echo sha1_file($f3->get("SETTINGS.dbname"));
-			exit;
-		});
+		$this->load_settings($f3);
+		
+		// Are we logged in?
+		if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
+		{
+			admin::$signed = true;
 
+			// Load dashboard routes
+			$this->dashboard_routes($f3);
+
+			// Lets redirect away from login screen
+			$f3->route('GET|POST /admin/login', function ($f3) {
+				$f3->reroute("/admin");
+			});
+
+			if ($f3->SESSION["root"]==true)
+				$f3->set("webmaster", true);
+
+			// Load admin scripts
+			$inlinecode = Template::instance()->render("/admin/toolbar.html");
+			$f3->concat("admin", $inlinecode);
+		}
+
+		admin::file_routes($f3);
+
+		// Expose login screen
+		if (!admin::$signed)
+			$this->login_routes($f3);
 	}
 
 
@@ -101,10 +76,40 @@ class admin extends prefab {
 		$f3->route('GET /admin/settings', "admin::settings");
 		$f3->route('POST /admin/update_settings', "admin::update_settings");
 
-
 		$f3->route('GET /admin/template', function () {
 			echo Template::instance()->render("/admin/admin_template.html");
 		});
+
+		$f3->route('GET /admin/logout', "admin::logout");
+	}
+
+	function load_settings ($f3) {
+		admin::$webmasterEmail = $f3->SETTINGS["webmaster_email"];
+		admin::$webmasterPass = $f3->SETTINGS["webmaster_pass"];
+
+		if (isset($f3->SETTINGS["email"]))
+			admin::$clientEmail = $f3->SETTINGS["email"];
+		else
+			admin::$clientEmail = admin::$webmasterEmail;
+
+		if (isset($f3->SETTINGS["pass"]))
+			admin::$clientPass = $f3->SETTINGS["pass"];
+		else
+			admin::$clientPass = admin::$webmasterPass;
+
+		if ($f3->SETTINGS["admin_email"])
+			admin::$clientEmail = $f3->SETTINGS["admin_email"];
+
+		if ($f3->SETTINGS["admin_pass"])
+			admin::$clientPass = $f3->SETTINGS["admin_pass"];
+	
+		unset($f3->SETTINGS["webmaster_email"], $f3->SETTINGS["webmaster_pass"], $f3->SETTINGS["pass"],$f3->SETTINGS["admin_pass"]);
+
+		if (admin::$clientEmail == null || admin::$clientPass == null)
+		{
+			echo "Warning, no email or password set to be able to login to admin panel.";
+			die;
+		}
 	}
 
 	static public function dashboard_render ($f3)
@@ -247,7 +252,6 @@ class admin extends prefab {
 			$img = new Image('/admin/imgs/login_bg.png');
 			$img->render();
 		}, 604800);
-
 
 		if (admin::$signed) {
 
