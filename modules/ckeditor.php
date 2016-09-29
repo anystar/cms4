@@ -174,7 +174,6 @@ class ckeditor extends prefab {
 	}
 
 	function install () {
-		setting("ckeditor_installed", true);
 		base::instance()->reroute("/admin/ckeditor");
 	}
 }

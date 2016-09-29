@@ -141,6 +141,11 @@ $result = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND n
 if (!$result)
 	$f3->DB->exec("CREATE TABLE 'settings' ('setting' TEXT, 'value' TEXT);");
 
+// Ensure license table exists
+$result = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='licenses'");
+if (!$result)
+	$f3->DB->exec("CREATE TABLE 'licenses' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'module' TEXT, 'name' TEXT, 'namespace' TEXT, 'key' TEXT)");
+
 ######################################################
 ########## Override settings from Database ###########
 ######################################################

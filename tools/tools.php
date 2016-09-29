@@ -1,13 +1,25 @@
 <?php
 
-function setting($name, $value=null) {
-	$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
+function setting($name, $value=null, $overwrite=true) {
+	$db = base::instance()->DB;
+
+	$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
 	if (!$result) return false; // There is no settings table..
 
 	if ($value === null)
-		return base::instance()->DB->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
+		return $db->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
 	else
-		set_setting($name, $value);
+	{
+		if ($overwrite)
+			set_setting($name, $value);
+		else
+		{
+			$result = $db->exec("SELECT value FROM settigns WHERE setting=?", $name)[0]["value"];
+
+			if (!$result)
+				set_setting($name, $value);
+		}
+	}
 }
 
 function setting_json($name, $value=null) {
@@ -64,7 +76,7 @@ function writable($path) {
 
 	// Step 0: is even something
 	if (strlen($path)  == 0) {
-		echo "No path given";
+		d("No path given");
 		exit;
 	}
 
