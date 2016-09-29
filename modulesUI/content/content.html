@@ -77,7 +77,10 @@
 		  <div class="box" style="padding-bottom: 0;">
 			<h2>Contents</h2>
 			<div>
-				<button>Save</button> <button>Duplicate</button> <button>Delete</button>
+				<button id="save">Save</button> 
+				<button id="duplicate">Duplicate</button> 
+				<button id="delete">Delete</button>
+				<button id="lock">Lock</button>
 			</div>
 
 			<div id="editor" style="margin: 20px -10px 0 -10px;padding-top:30px"></div>
@@ -100,7 +103,7 @@
 		    showGutter: true,
 		    vScrollBarAlwaysVisible: false,
 		    printMargin: false,
-		    fontSize: 12,
+		    fontSize: 14,
 		    minLines: 30,
 		    maxLines: 1000
 		});
@@ -110,29 +113,43 @@
 		    name: 'save',
 		    bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
 		    exec: function(editor) {
-		        console.log("saving");
+				$.post("{{@BASE}}/admin/content/save-file", {file : editor.file, contents : editor.getValue()}, function (data) {
+
+				});
 		    }
 		})
 
 		dir = JSON.parse('{{@content.site_map}}');
 
 		$( document ).ready(function() {
+
+			// Open file
 			$(".file").click(function () {
-				
-				$.post("{{@BASE}}/admin/content/load-section", { file : $(this).html() }, openDocument);
-				
-				//$("#editor").load(, { file : $(this).html() });
+				$.post("{{@BASE}}/admin/content/load-file", { path : $(this).attr("path") }, function (data) {
+					
+					editor.path = this.data.substring(5, this.data.length);
+					editor.setValue(data, -1);
+
+				});
 			});
+
+			$("#save").click(function () {
+				$.post("{{@BASE}}/admin/content/save-file", {file : editor.path, contents : editor.getValue()}, function (data) {
+
+				});
+			});
+
+			$("#delete").click(function () {
+				$.post("{{@BASE}}/admin/content/delete-file", {file : editor.path}, function (data) {
+					
+				});
+			});
+
+			$("#duplicate").click(function () {
+				console.log("Duplicate");
+			});
+
 		});
-
-		function openDocument (data) {
-			
-			//console.log(editor.getSession());
-
-			editor.setValue(data, -1);
-
-		}
-
 
 
 		scan($(".list-group-root"), dir.root);
@@ -150,7 +167,8 @@
 			if (directoryList.files != undefined)
 			{
 				jQuery.each(directoryList.files, function (i, v) {
-					element.append($('<a class="list-group-item file">'+v+'</a>'));
+
+					element.append($('<a path="'+v.path+'" class="list-group-item file">'+v.filename+'</a>'));
 				});
 			}
 

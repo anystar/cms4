@@ -31,4 +31,5 @@ CKEDITOR.editorConfig = function( config ) {
   config.enterMode = CKEDITOR.ENTER_BR;
   config.skin = '{{@SETTINGS.ckeditor_skin}}';
   config.title = '';
+  config.allowedContent = true;
 };

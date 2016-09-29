@@ -96,7 +96,6 @@ class content extends prefab {
 				"application/x-javascript",
 			];
 
-
 			if (!content::$file)
 				$f3->error("404");
 	
@@ -116,19 +115,29 @@ class content extends prefab {
 			echo Template::instance()->render("/content/content.html");
 		});
 
-		$f3->route("POST /admin/content/load-section", function ($f3) {
+		$f3->route("POST /admin/content/load-file [ajax]", function ($f3) {
 
-			$file = getcwd()."/".$f3->POST["file"];
+			$file = $f3->POST["path"];
 
 			if (file_exists($file)) {
 				echo file_get_contents($file);
 				exit;
-				$mime_type = mime_content_type2($file);
-				
-				$mime_type =  preg_replace("/(.*)\/(.*)/", "$1-$2", $mime_type);
-
-				
 			}
+		});
+
+		$f3->route("POST /admin/content/save-file [ajax]", function ($f3) {
+			$file = $f3->POST["path"];
+			$data = $f3->POST["contents"];
+
+			if (file_exists($file))
+				file_put_contents($file, $data);
+		});
+
+		$f3->route("POST /admin/content/delete-file [ajax]", function ($f3) {
+			$file = $f3->POST["path"];
+
+			if (file_exists($file))
+				unlink($file);
 		});
 	}
 
@@ -156,7 +165,7 @@ class content extends prefab {
 	    }
 	    else if ( $node->isFile() )
 	    {
-	    	$data["files"][] = $node->getFilename();
+	    	$data["files"][] = [ "filename" => $node->getFilename(), "path" => $node->getPath()."/".$node->getFilename() ];
 	    }
 	  }
 
