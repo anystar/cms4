@@ -38,6 +38,12 @@ if (!extension_loaded("gd")) {
 	die;
 }
 
+// Require random compat for random_byte not available in php <7
+if (!checkfile($settings["paths"]["random_compat"])) {
+	echo "Random compatability library not found. Please download it from https://github.com/paragonie/random_compat";
+	exit;
+}
+
 // Ensure we can write to client folder
 writable(getcwd());
 

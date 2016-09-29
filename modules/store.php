@@ -37,18 +37,28 @@ class store extends prefab {
 					return;
 				}
 
-				// If we don't allow multiple, make sure they don't already have it installed
+				// If we don't allow multiples of this module, 
+				// make sure they don't already have it installed
 				if ($result['allow_multiple'] == 0)
 				{
 					// todo..
 				}
 
 				// Lets generate a license ID
+				// First 8 is thie client, // next 8 is the module name // next 16 is a randomly generated set
+				
+				// For backward compatability so we can use random_bytes
+				require_once $f3->SETTINGS["paths"]["random_compat"];
+
+				$client = substr(sha1("darklocker@gmail.com"), 0, 8);
+				$module = substr(sha1($module), 0, 8);
+				$random = bin2hex(random_bytes(8));
+
+				$key = $client."-".$module."-".substr($random, 0, 8)."-".substr($random, 8, 8);
 
 
 				// Store license in our records
 
-				// First 8 is the client, // next 8 is the module name // next 16 is a randomly generated set
 
 				// Store license in clients database
 
