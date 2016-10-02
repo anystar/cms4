@@ -3,61 +3,52 @@
 
 class gallery extends prefab {
 
-	static $upload_path = "uploads/gallery/";
-	static $thumb_path = "uploads/gallery/thumbs/";
-	static $thumb_prefix = "thumb_";
+	private $namespace;
+	private $route = "/gallery";
 
-	public function __construct() {
+	private $upload_path = "uploads/gallery";
+	private $thumb_path = "uploads/gallery/thumbs";
+	private $thumb_prefix = "thumb_";
 
+	function __construct($namespace) {
+		$this->namespace = $namespace;
 		$f3 = base::instance();
 
-		$default = $f3->exists("SETTINGS[gallery.page]") ? $f3->get("SETTINGS[gallery.page]") : "/gallery";
-		$f3->set("SETTINGS[gallery.page]", $default);
+		// Set an upload path from settings or leave as default
+		if ($value = setting($namespace."_upload_path"))
+			$this->upload_path = $value;
+	
+		// Set a thumb path from settings or leave as default
+		if ($value = setting($namespace."_thumb_path"))
+			$this->thumb_path = $value;
 
-		if ($f3->exists("SETTINGS.gallery_upload_path"))
-			gallery::$upload_path = $f3->get("SETTINGS.gallery_upload_path");
+		// Which route to load on
+		if ($value = setting($namespace."_route"))
+			$this->route = $value;
 
-		if ($f3->exists("SETTINGS.gallery_thumb_path"))
-			gallery::$thumb_path = $f3->get("SETTINGS.gallery_thumb_path");
-		
+		// Retreive contents based on route
+		if ($this->route == $f3->PATH || $this->route == "all")
+			$this->retreiveContent();
 
-		if ($this->hasInit()) {
-			$pageToLoadOn = $f3->SETTINGS["gallery.page"];
-
-			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all" || $pageToLoadOn == $f3->POST["return"])
-				$this->retreiveContent($page[1]);
-
-			base::instance()->set("gallery_path", gallery::$upload_path);
-			base::instance()->set("gallery_thumb_path", gallery::$thumb_path);
-		}
-
+		// Load admin routes if signed in
 		if (admin::$signed)
 			$this->admin_routes($f3);
-
 	}
 
-	public function admin_routes($f3) {
-		$f3->route('GET /admin/gallery', "gallery::admin_render");
-		$f3->route('POST /admin/gallery/generate', "gallery::generate");
+	function admin_routes($f3) {
+		$f3->route('GET /admin/gallery', function ($f3) {
 
-		$f3->route('GET /admin/gallery/js/dropzone.js', function ($f3) {
-			echo View::instance()->render("gallery/js/dropzone.js", "text/javascript");
-			exit;
+			$this->retreiveContent();
+			$this->retreiveSettings();
+
+			$temp_hive = $f3->hive();
+			$temp_hive["gallery"] = $f3->get($this->namespace);
+
+			echo Template::instance()->render("/gallery/gallery.html", "text/html", $temp_hive);
 		});
 
-		$f3->route('GET /admin/gallery/css/dropzone.css', function ($f3) {
-			echo View::instance()->render("gallery/css/dropzone.css", "text/css");
-			exit;
-		});
-
-		$f3->route('GET /admin/gallery/css/lity.min.css', function ($f3) {
-			echo View::instance()->render("gallery/css/lity.min.css", "text/css");
-			exit;
-		});
-
-		$f3->route('GET /admin/gallery/js/lity.min.js', function ($f3) {
-			echo View::instance()->render("gallery/js/lity.min.js", "text/javascript");
-			exit;
+		$f3->route('POST /admin/gallery/generate', function () {
+			$this->generate($f3);
 		});
 
 		$f3->route('GET /admin/gallery/css/gallery.css', function ($f3) {
@@ -66,33 +57,33 @@ class gallery extends prefab {
 		});
 
 		$f3->route('POST /admin/gallery/dropzone', function ($f3) {
-			gallery::upload($f3);
+			$this->upload($f3);
 			exit;
 		});
 
 
 		$f3->route('GET /admin/gallery/delete/@id [ajax]', function ($f3, $params) {
-			gallery::ajaxDelete($f3, $params["id"]);			
+			$this->jaxDelete($f3, $params["id"]);			
 		});
 
 		$f3->route('GET /admin/gallery/delete/@id', function ($f3, $params) {
-			gallery::delete($f3, $params["id"]);
+			$this->elete($f3, $params["id"]);
 		});
 
 		$f3->route('POST /admin/gallery/upload_settings', function ($f3) {
-			gallery::update_settings($f3->POST);
+			$this->pdate_settings($f3->POST);
 		});
 	}
 
-	static function ajaxDelete($f3, $id) {
+	function ajaxDelete($f3, $id) {
 		$db = $f3->DB;
 		$result = $db->exec("SELECT * FROM gallery WHERE id=?", $id)[0];
 
-		if (file_exists(gallery::$upload_path . $result["filename"]))
-			unlink(gallery::$upload_path . $result["filename"]);
+		if (file_exists($this->upload_path . $result["filename"]))
+			unlink($this->upload_path . $result["filename"]);
 
-		if (file_exists(gallery::$thumb_path . $result["thumb"]))
-			unlink(gallery::$thumb_path . $result["thumb"]);
+		if (file_exists($this->thumb_path . $result["thumb"]))
+			unlink($this->thumb_path . $result["thumb"]);
 
 		$db->exec("DELETE FROM gallery WHERE id=?", $id);
 
@@ -100,7 +91,7 @@ class gallery extends prefab {
 		exit;
 	}
 
-	static function delete($f3, $id, $ajax=false) {
+	function delete($f3, $id, $ajax=false) {
 		$db = $f3->DB;
 		$result = $db->exec("SELECT * FROM gallery WHERE id=?", $id)[0];
 
@@ -110,13 +101,13 @@ class gallery extends prefab {
 			return;
 		}
 
-		if (file_exists(gallery::$upload_path . $result["filename"]))
-			unlink(gallery::$upload_path . $result["filename"]);
+		if (file_exists($this->upload_path . $result["filename"]))
+			unlink($this->upload_path . $result["filename"]);
 		else
 			$f3->mock("GET /admin/gallery");
 
-		if (file_exists(gallery::$thumb_path . $result["thumb"]))
-			unlink(gallery::$thumb_path . $result["thumb"]);
+		if (file_exists($this->thumb_path . $result["thumb"]))
+			unlink($this->thumb_path . $result["thumb"]);
 		else
 			$f3->mock("GET /admin/gallery");
 
@@ -125,13 +116,13 @@ class gallery extends prefab {
 		$f3->mock("GET /admin/gallery");
 	}
 
-	static function upload($f3) {
+	function upload($f3) {
 
 		$new_name = str_replace(' ', '_', $f3->FILES["file"]["name"]);
 		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
 
 		// Something happened and couldn't move image file..
-		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], gallery::$upload_path.$new_name))
+		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], $this->upload_path.$new_name))
 			return;
 
 		// Get settings for image size
@@ -140,7 +131,7 @@ class gallery extends prefab {
 
 		// Resize image
 		if ($image_size[0] > 0 && $image_size[1] > 0)
-			gallery::resize_image(gallery::$upload_path.$new_name, $image_size[0], $image_size[1], gallery::$upload_path.$new_name);
+			$this->resize_image($this->upload_path.$new_name, $image_size[0], $image_size[1], $this->upload_path.$new_name);
 
 		// Get settings for thumb nail
 		$thumb_size = $f3->DB->exec("SELECT value FROM settings WHERE setting='gallery-default-thumb-size'")[0]['value'];
@@ -148,15 +139,15 @@ class gallery extends prefab {
 
 		// Resize to thumbnail
 		if ($thumb_size[0] > 0 && $thumb_size[1] > 0)
-			gallery::resize_image(gallery::$upload_path.$new_name ,$thumb_size[0], $thumb_size[1], gallery::$thumb_path.gallery::$thumb_prefix.$new_name);
+			$this->resize_image($this->upload_path.$new_name ,$thumb_size[0], $thumb_size[1], $this->thumb_path.$this->thumb_prefix.$new_name);
 		
 		// If thumbnail settings are not set just resize as image size
 		else if ($image_size[0] > 0 && $image_size[1] > 0)
-			gallery::resize_image(gallery::$upload_path.$new_name ,$image_size[0], $image_size[1], gallery::$thumb_path.gallery::$thumb_prefix.$new_name);
+			$this->resize_image($this->upload_path.$new_name ,$image_size[0], $image_size[1], $this->thumb_path.$this->thumb_prefix.$new_name);
 
 		// If image settings not set lets just copy the raw file
 		else
-			copy(gallery::$upload_path.$new_name, gallery::$thumb_path.gallery::$thumb_prefix.$new_name);
+			copy($this->upload_path.$new_name, $this->thumb_path.$this->thumb_prefix.$new_name);
 
 
 		// Record into database
@@ -164,7 +155,7 @@ class gallery extends prefab {
 					   VALUES (?, ?, ?, ?, ?)", [$new_name, 0, '', '', "thumb_".$new_name]);
 	}
 
-	static function resize_image ($image, $x, $y, $save_as) {
+	function resize_image ($image, $x, $y, $save_as) {
 
 		// Pull image off the disk into memory
 		$temp_image = new Image($image, false, getcwd()."/");
@@ -176,7 +167,7 @@ class gallery extends prefab {
 		imagejpeg($temp_image->data(), $save_as);
 	}
 
-	static function update_settings($data) {
+	function update_settings($data) {
 
 		$db = base::instance()->DB;
 
@@ -189,16 +180,7 @@ class gallery extends prefab {
 		base::instance()->mock("GET /admin/gallery");
 	}
 
-	static function retreiveContent($section="") {
-
-		$db = base::instance()->DB;
-
-		$result = $db->exec("SELECT * FROM gallery WHERE section=?", ($section) ? $section : "");
-
-		base::instance()->set("gallery_images", $result);
-	}
-
-	static function retreiveAllContent() {
+	function retreiveContent() {
 		$db = base::instance()->DB;
 
 		$result = $db->exec("SELECT * FROM gallery");
@@ -206,8 +188,8 @@ class gallery extends prefab {
 		// Lets do some file validation..
 		foreach ($result as $key=>$image)
 		{
-			// If the file does not exist. Lets remove this from the DB
-			if (!file_exists(gallery::$upload_path.$image["filename"]))
+			// If the file does not exist lets remove it from the DB
+			if (!file_exists($this->upload_path."/".$image["filename"]))
 			{
 				$db->exec("DELETE FROM gallery WHERE id=?", $image["id"]);
 				unset($result[$key]);
@@ -217,7 +199,8 @@ class gallery extends prefab {
 		base::instance()->set("gallery_images", $result);
 	}
 
-	static function retreiveSettings () {
+
+	function retreiveSettings () {
 		$f3 = base::instance();
 		$db = base::instance()->get("DB");
 
@@ -233,10 +216,10 @@ class gallery extends prefab {
 		$f3->set("gallery.settings.image_size_x", $result[0]);
 		$f3->set("gallery.settings.image_size_y", $result[1]);
 
-		$f3->set("max_upload_size", gallery::file_upload_max_size());
+		$f3->set("max_upload_size", file_upload_max_size());
 	}
 
-	static function hasInit()
+	function hasInit()
 	{	
 
 		if (!extension_loaded("gd")) return false;
@@ -248,11 +231,11 @@ class gallery extends prefab {
 			return false;
 
 		// Create gallery folder
-		if (!is_dir(getcwd()."/".gallery::$upload_path))
+		if (!is_dir(getcwd()."/".$this->upload_path))
 			return false;
 
 		// Create gallery folder
-		if (!is_dir(getcwd()."/".gallery::$thumb_path))
+		if (!is_dir(getcwd()."/".$this->thumb_path))
 			return false;
 
 		if (admin::$signed) {
@@ -264,13 +247,10 @@ class gallery extends prefab {
 			if (!$result) $db->exec("INSERT INTO settings VALUES ('gallery-default-image-size', '512x512')");
 		}
 
-		gallery::patch_columns();
-
-		base::instance()->gallery["init"] = true;
 		return true;
 	}
 
-	static function generate() {
+	function generate() {
 
 		if (!base::instance()->webmaster) return;
 		$db = base::instance()->DB;
@@ -282,86 +262,15 @@ class gallery extends prefab {
 			mkdir(getcwd()."/uploads");
 
 		// Create gallery folder
-		if (!is_dir(getcwd()."/".gallery::$upload_path))
-			mkdir(getcwd()."/".gallery::$upload_path);
+		if (!is_dir(getcwd()."/".$this->upload_path))
+			mkdir(getcwd()."/".$this->upload_path);
 
 		// Create gallery folder
-		if (!is_dir(getcwd()."/".gallery::$thumb_path))
-			mkdir(getcwd()."/".gallery::$thumb_path);
+		if (!is_dir(getcwd()."/".$this->thumb_path))
+			mkdir(getcwd()."/".$this->thumb_path);
 
-		gallery::hasInit();
+		$this->hasInit();
 
 		base::instance()->reroute('/admin/gallery');
-	}
-
-	static function admin_render() {
-		$f3 = base::instance();
-
-		if (gallery::hasInit())
-		{
-			gallery::retreiveAllContent();
-			gallery::retreiveSettings();
-			echo Template::instance()->render("/gallery/gallery.html");
-		}
-		else
-		{
-
-			$f3->gd_not_loaded = false;
-			if (!extension_loaded("gd"))
-				$f3->gd_not_loaded = true;
-
-			echo Template::instance()->render("/gallery/nogallery.html");
-		}
-	}
-
-	static function patch_columns ()
-	{
-		$result = base::instance()->DB->exec("PRAGMA table_info(gallery)");
-
-		$patch_thumb=true;
-		//Patch to ensure type column is added.
-		foreach ($result as $r) {
-			if ($r["name"] == "thumb")
-				$patch_thumb = false;
-		}
-
-		if ($patch_thumb)
-			base::instance()->DB->exec("ALTER TABLE gallery ADD COLUMN thumb TEXT DEFAULT NULL");
-	}
-
-
-	// Drupal has this implemented fairly elegantly:
-	// http://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
-	static function file_upload_max_size() {
-	  static $max_size = -1;
-
-	  if ($max_size < 0) {
-	    // Start with post_max_size.
-	    $max_size = gallery::parse_size(ini_get('post_max_size'));
-
-	    // If upload_max_size is less, then reduce. Except if upload_max_size is
-	    // zero, which indicates no limit.
-	    $upload_max = gallery::parse_size(ini_get('upload_max_filesize'));
-	    if ($upload_max > 0 && $upload_max < $max_size) {
-	      $max_size = $upload_max;
-	    }
-	  }
-	  return $max_size;
-	}
-
-	static function parse_size($size) {
-		if ($size == 0) return "unlimted";
-		
-		return $size;
-
-	  $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
-	  $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
-	  if ($unit) {
-	    // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
-	    return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
-	  }
-	  else {
-	    return round($size);
-	  }
 	}
 }

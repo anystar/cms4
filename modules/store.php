@@ -58,6 +58,10 @@ class store extends prefab {
 					}
 				}
 
+
+				$f3->POST["module_name"] = $module["name"];
+				$f3->POST["namespace"] = $module["module"];
+
 				echo Template::instance()->render("/store/purchase.html");
 
 			});
@@ -145,11 +149,13 @@ class store extends prefab {
 		// Store license in clients database
 		$f3->DB->exec("INSERT INTO licenses (module, name, namespace, key) VALUES (?, ?, ?, ?)", [$module, $module_name, $namespace, $key]);
 
-		// Initiate install for module.
-		$m = new $module($namespace);
-		
-		// Install and let install handle routing behaviour.
-		$m->install();
+		// Redirect to modules' install screen
+		$f3->reroute("/admin/".$namespace."/install");
+	}
+
+	function uninstall ($module, $module_name, $namespace) {
+
+		$this->storeDB("DELETE FROM licenses WHERE module=? AND namespace=?");
 	}
 
 	function check_if_already_owned ($module) {

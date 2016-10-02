@@ -3,18 +3,25 @@
 function setting($name, $value=null, $overwrite=true) {
 	$db = base::instance()->DB;
 
+	// Ensure settings table exists
 	$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
 	if (!$result) return false; // There is no settings table..
 
+	// We only want the setting
 	if ($value === null)
+	{
+		if ($v = base::instance()->get("SETTINGS.".$name))
+			return $v;
+
 		return $db->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
+	}
 	else
 	{
 		if ($overwrite)
 			set_setting($name, $value);
 		else
 		{
-			$result = $db->exec("SELECT value FROM settigns WHERE setting=?", $name)[0]["value"];
+			$result = $db->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
 
 			if (!$result)
 				set_setting($name, $value);
@@ -190,4 +197,40 @@ function mime_content_type2($filename) {
     else {
         return 'application/octet-stream';
     }
+}
+
+
+// Drupal has this implemented fairly elegantly:
+// http://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
+function file_upload_max_size() {
+  $max_size = -1;
+
+  if ($max_size < 0) {
+    // Start with post_max_size.
+    $max_size = parse_file_size(ini_get('post_max_size'));
+
+    // If upload_max_size is less, then reduce. Except if upload_max_size is
+    // zero, which indicates no limit.
+    $upload_max = parse_file_size(ini_get('upload_max_filesize'));
+    if ($upload_max > 0 && $upload_max < $max_size) {
+      $max_size = $upload_max;
+    }
+  }
+  return $max_size;
+}
+
+function parse_file_size($size) {
+	if ($size == 0) return "unlimted";
+	
+	return $size;
+
+  $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
+  $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+  if ($unit) {
+    // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
+    return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+  }
+  else {
+    return round($size);
+  }
 }

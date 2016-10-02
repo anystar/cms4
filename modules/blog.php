@@ -44,4 +44,9 @@ class blog extends prefab {
 		// EG: $f3->route('GET /test/path', function () { echo Template::instance()->render("/blog/test_file.html", "text/html"); });
 	}
 
+	function install () {
+
+		$f3->reroute("/admin/".$this->namespace);
+	}
+
 }

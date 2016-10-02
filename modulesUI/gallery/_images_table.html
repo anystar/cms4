@@ -7,15 +7,15 @@
 						<th width="10%">Tools</th>
 					</tr>
 					
-					<repeat group="{{@gallery_images}}" value="{{@img}}">
+					<repeat group="{{@gallery.images}}" value="{{@image}}">
 					<tr>
 							<td>
-								<img data-lity data-lity-target="{{@BASE}}/{{@gallery_path}}{{@img.filename}}" width="250" src="{{@BASE}}/{{@gallery_thumb_path}}{{@img.thumb}}" />
+								<img data-lity data-lity-target="{{@BASE}}/{{@gallery.upload_path}}/{{@image.filename}}" width="250" src="{{@BASE}}/{{@gallery.thumb_path}}/{{@image.thumb}}" />
 							</td>
-							<td class="filename">{{@img.filename}}</td>
-							<td>{{@img.caption}}</td>
+							<td class="filename">{{@image.filename}}</td>
+							<td>{{@image.caption}}</td>
 							<td>
-								<a class="delete_image" href="{{@BASE}}/admin/gallery/delete/{{@img.id}}"><button>Delete</button></a>
+								<a class="delete_image" href="{{@BASE}}/admin/gallery/delete/{{@image.id}}"><button>Delete</button></a>
 							</td>
 					</tr>
 					</repeat>
