@@ -1,5 +1,19 @@
 <?php
 
+class setting_config {
+	static $namespace = "";
+}
+
+function setting_use_namespace($namespace)
+{
+	setting_config::$namespace = $namespace."_";
+}
+
+function setting_clear_namespace()
+{
+	setting_config::$namespace = "";
+}
+
 function setting($name, $value=null, $overwrite=true) {
 	$db = base::instance()->DB;
 
@@ -10,21 +24,21 @@ function setting($name, $value=null, $overwrite=true) {
 	// We only want the setting
 	if ($value === null)
 	{
-		if ($v = base::instance()->get("SETTINGS.".$name))
+		if ($v = base::instance()->get("SETTINGS.".setting_config::$namespace.$name))
 			return $v;
 
-		return $db->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
+		return $db->exec("SELECT value FROM settings WHERE setting=?", setting_config::$namespace.$name)[0]["value"];
 	}
 	else
 	{
 		if ($overwrite)
-			set_setting($name, $value);
+			set_setting(setting_config::$namespace.$name, $value);
 		else
 		{
 			$result = $db->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
 
 			if (!$result)
-				set_setting($name, $value);
+				set_setting(setting_config::$namespace.$name, $value);
 		}
 	}
 }

@@ -54,19 +54,19 @@
 					<form action="{{@BASE}}/admin/contact/settings" method="post">
 						<div class="form-group">
 							<label>Email</label>
-							<input name="email" type="text" class="form-control" value="{{@contact_email}}">
+							<input name="email" type="text" class="form-control" value="{{@contact.email}}">
 							<span class="help-block">What address do we send too? (eg: business owner's email)</span>  
 						</div>
 
 						<div class="form-group">
 							<label>Name</label>
-							<input name="name" type="text" class="form-control" value="{{@contact_name}}">
+							<input name="name" type="text" class="form-control" value="{{@contact.name}}">
 							<span class="help-block">Who should the email address? (eg: business owner's name)</span> 
 						</div>
 
 						<div class="form-group">
 							<label>Subject Line</label>
-							<input name="subject" type="text" class="form-control" value="{{@contact_subject}}">
+							<input name="subject" type="text" class="form-control" value="{{@contact.subject}}">
 							<span class="help-block">eg: &lt;business name&gt; website enquiry</span>
 						</div>
 
@@ -82,7 +82,7 @@
 					<h2>Test center</h2>
 
 					<form class="form-horizontal" action="{{@BASE}}/contact" method="post">
-						<repeat group="{{@contact_fields}}" value="{{@field}}">
+						<repeat group="{{@contact.fields}}" value="{{@field}}">
 							<switch expr="{{@field.type}}">
 								<case value="name">
 									<set value="John Smith">
@@ -123,7 +123,7 @@
 						<div class="form-group">
 							<label for="sendto" class="col-sm-3 control-label">Send test to:</label>
 							<div class="col-sm-9">
-								<input name="sendto" value="{{@contact_email}}" type="email" class="form-control" placeholder="">
+								<input name="sendto" value="{{@contact.email}}" type="email" class="form-control" placeholder="">
 							</div>
 						</div>
 
@@ -152,7 +152,7 @@
 							<th></th>
 						</thead>
 
-						<repeat group="{{@contact_fields}}" value="{{@field}}">
+						<repeat group="{{@contact.fields}}" value="{{@field}}">
 							<form action="{{@BASE}}/admin/contact/update_field/{{@field.id}}" method="post">
 							<tr>
 								<td>

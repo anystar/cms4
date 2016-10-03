@@ -200,24 +200,21 @@ class banners extends prefab {
 	function upload() {
 		$f3 = base::instance();
 
+		// Temp image path
+		$temp_image = $f3->FILES["file"]["tmp_name"];
+
 		// Create a safer file name
 		$new_name = str_replace(' ', '_', $f3->FILES["file"]["name"]);
 		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
 		$new_name = preg_replace('/\.[^.]+$/','',$new_name);
 		$new_name .= ".".$this->file_type;
 
-		// 
-		$tmpImage = $this->file_path."/".$new_name;
+		// Where to save
+		$save_to = getcwd()."/".$this->file_path."/".$new_name;
 
 		// Ensure directory exsists and make it if it doesn't
 		if (!is_dir($this->file_path))
 			mkdir($this->file_path, 0755, true);
-
-		// Something happened and couldn't move image file..
-		if (!move_uploaded_file($f3->FILES["file"]["tmp_name"], $tmpImage))
-		{
-			exit("couldn't move uploaded file?");
-		}
 
 		// Get width and height settings
 		$width = setting($this->namespace."_width");
@@ -227,7 +224,7 @@ class banners extends prefab {
 		if (($width*$height) > 0)
 		{
 			// Pull image off the disk into memory
-			$temp_image = new Image($new_name, false, $this->file_path . "/"); // Image(filename, filehistory, path)
+			$temp_image = new Image($temp_image, false, "/"); // Image(filename, filehistory, path)
 
 			// Resize image using F3's image plugin
 			$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
@@ -235,14 +232,15 @@ class banners extends prefab {
 			// Save image depending on user selected file type
 			switch ($this->file_type)
 			{	
+				case "jpg":
 				case "jpeg":
-					imagejpeg($temp_image->data($this->file_type, 100), $this->file_path."/".$new_name);
+					imagejpeg($temp_image->data($this->file_type, 100), $save_to);
 				break;
 				case "png":
-					imagepng($temp_image->data($this->file_type, 100), $this->file_path."/".$new_name);
+					imagepng($temp_image->data($this->file_type, 100), $save_to);
 				break;
 				case "gif":
-					imagegif($temp_image->data($this->file_type, 100), $this->file_path."/".$new_name);
+					imagegif($temp_image->data($this->file_type, 100), $save_to);
 				break;
 			}
 		}

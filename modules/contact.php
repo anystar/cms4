@@ -2,12 +2,16 @@
 
 class contact extends prefab
 {
+	private $namespace;
+
 	static $moduleName = "Contact Form";
 	static $email_template = "generic_email_template.html";
 	static $port = 25;
 	static $systemID = null;
 
-	function __construct ($systemID=null) {
+	function __construct ($namespace) {
+		$this->namespace = $namespace;
+
 		$f3 = base::instance();
 
 		// Sets the page for which this module loads on
@@ -18,24 +22,19 @@ class contact extends prefab
 		if ($f3->exists("SETTINGS[contact.email_template]")) contact::$email_template = $f3->get("SETTINGS[contact.email_template]");
 		if ($f3->exists("SETTINGS[contact.port]")) contact::$port = $f3->get("SETTINGS[contact.port]");
 
+		$this->routes($f3);
 
-		// Ensure contact module is initlized
-		if (contact::hasInit())
-		{
-			$this->routes($f3);
+		$pageToLoadOn = $f3->get("SETTINGS[contact.page]");
 
-			$pageToLoadOn = $f3->get("SETTINGS[contact.page]");
+		if ($f3->POST["return"] == null) {
+			$f3->set("contact_return_page", $f3->PATH);
+		} else {
+			$f3->set("contact_return_page", $f3->POST["return"]);
+		}
 
-			if ($f3->POST["return"] == null) {
-				$f3->set("contact_return_page", $f3->PATH);
-			} else {
-				$f3->set("contact_return_page", $f3->POST["return"]);
-			}
-
-			// Load contact form on this page.
-			if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all") {			
-				$this->load();
-			}
+		// Load contact form on this page.
+		if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all") {			
+			$this->load();
 		}
 
 		if (admin::$signed)
@@ -45,7 +44,7 @@ class contact extends prefab
 	function routes($f3) {
 
 		$f3->route("GET /captcha", function ($f3) {
-			contact::captcha($f3);
+			$this->captcha($f3);
 		});
 
 		$f3->route("POST /contact", function ($f3, $params) {
@@ -83,78 +82,88 @@ class contact extends prefab
 
 	}
 
-	static function captcha($f3) {
+	function admin_routes ($f3)
+	{
+		$f3->route("GET /admin/{$this->namespace}", function ($f3) {
+			$this->retreive_content();
+
+			// Get settings
+			setting_use_namespace($this->namespace);
+			$f3->set("contact.email", setting("email"));
+			$f3->set("contact.name", setting("name"));
+			$f3->set("contact.subject", setting("subject"));
+			setting_clear_namespace();
+
+			$f3->contact["fields"] = base::instance()->DB->exec("SELECT * FROM {$this->namespace} ORDER BY `order`");
+
+			echo Template::instance()->render("/contact/contact.html");
+		});
+
+		$f3->route("GET /admin/{$this->namespace}/install", function () {
+			$this->install();
+		});
+
+		$f3->route("GET /admin/{$this->namespace}/email_template", function () {
+			$this->retreive_content();
+
+			echo Template::instance()->render("/contact/email_template/generic_email_template.html");
+		});
+
+		$f3->route("GET /admin/{$this->namespace}/documentation", function ($f3) {
+			echo Template::instance()->render("/contact/documentation.html");
+		});
+
+		$f3->route("POST /admin/{$this->namespace}/settings", function ($f3) {
+			$db = $f3->DB;
+
+			setting_use_namespace($this->namespace);
+
+			setting("email", $f3->POST["email"]);
+			setting("name", $f3->POST["name"]);
+			setting("subject", $f3->POST["subject"]);
+
+			setting_clear_namespace();
+
+			$f3->reroute("/admin/".$this->namespace);
+		});		
+		$f3->route("POST /admin/{$this->namespace}/update_field/@field", "contact::update_field");
+		$f3->route("POST /admin/{$this->namespace}/add_field", "contact::add_field");
+		$f3->route("GET /admin/{$this->namespace}/delete_field/@field", "contact::delete_field");
+	}
+
+
+	function captcha($f3) {
 
 		$img = new Image();
 
-		$img->captcha('/contact/Abel-Regular.ttf', 16, 5,'SESSION.captcha_code');
+		$img->captcha("/contact/Abel-Regular.ttf", 16, 5,"SESSION.captcha_code");
 
 		$img->render();
 	}
 
-	function admin_routes ($f3)
-	{
-		$f3->route("GET /captcha_code", function ($f3) {
-			d($f3->SESSION);
-		});
-
-		$f3->route('GET /admin/contact', "contact::admin");
-
-		$f3->route('POST /admin/contact/generate', "contact::generate");
-		$f3->route('GET /admin/contact/email_template', function ($f3) {
-			contact::load($f3);
-			echo Template::instance()->render("/contact/email_template/generic_email_template.html");
-		});
-
-		$f3->route('GET /admin/contact/documentation', function ($f3) {
-			echo Template::instance()->render("/contact/documentation.html");
-		});
-
-		$f3->route('POST /admin/contact/settings', "contact::update_settings");		
-		$f3->route('POST /admin/contact/update_field/@field', "contact::update_field");
-		$f3->route('POST /admin/contact/add_field', "contact::add_field");
-		$f3->route('GET /admin/contact/delete_field/@field', "contact::delete_field");
-	}
-
-	static public function contact ($f3) {
-		if (contact::exists())
-			echo Template::instance()->render("/contactForm/contact.html");
-		else
-			echo Template::instance()->render("/contactForm/nocontact.html");
-	}
-
-	static function load()
+	function retreive_content()
 	{	
-		$f3 = f3::instance();
+		$f3 = base::instance();
 		$db = $f3->get("DB");
 
-		// Do not pass go
-		if ($f3->get("contact.html")) return;
-
-		if (!$f3->exists("contact.form"))
+		if (!$f3->exists("{$this->namespace}.form"))
 		{
 			$result = $db->exec("SELECT * FROM contact_form ORDER BY `order`");
 
 			foreach ($result as $r) 
 				$formcompiled[$r["id"]] = $r;
 
-			$f3->set("contact.form", $formcompiled);
+			$f3->set("{$this->namespace}.form", $formcompiled);
 		}
 
-		$result = $db->exec("SELECT value FROM settings WHERE setting=?", "contact-custom_html")[0]["value"];
+		$snippet = \Template::instance()->render("/contact/contact_form.html");
 
-		// Use template snippet
-		if ($result == 0) {
-
-			$snippet = \Template::instance()->render("/contact/contact_form.html");
-
-			$f3->set("contact.html", $snippet);
-		}
+		$f3->set("{$this->namespace}.html", $snippet);
 	}
 
-	static function validate ()
+	function validate ()
 	{
-		contact::load();
+		$this->retreive_content();
 
 		$f3 = f3::instance();
 		$post = $f3->get("POST");
@@ -163,13 +172,13 @@ class contact extends prefab
 
 		if ($post["captcha"] != $f3->SESSION["captcha_code"]) {
 			$sendemail = false;
-			$f3->set("contact.captcha_error", true);
+			$f3->set("{$this->namespace}.captcha_error", true);
 		}
 
 		foreach ($post as $key => $value)
 		{
 			$matches = array();
-			preg_match('#(\d+)$#', $key, $matches);
+			preg_match("#(\d+)$#", $key, $matches);
 			$id = $matches[0];
 
 			if ($id == null) break;
@@ -216,32 +225,34 @@ class contact extends prefab
 
 		if ($sendemail)
 		{
-			contact::submit();
+			$this->send_email();
 			return true;
 		}
 		else
 			return false;
 	}
 
-	static function submit()
+	function send_email ()
 	{
 		$f3 = f3::instance();
 		$db = $f3->get("DB");
+
+		setting_use_namespace($this->namespace);
 			
 		if ($f3->POST["sendto"])
 			$toAddress = $f3->POST["sendto"];
 		else
-			$toAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-email'")[0]["value"];
+			setting("email");
 
-		$toName = $db->exec("SELECT `value` FROM settings WHERE setting='contact-name'")[0]["value"];
-		$subject = $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"];
+		$toName = setting("name");
+		$subject = setting("value");
 
  		$fromName = $f3->get("fromName");
 
  		if ($f3->exists("fromAddress"))
 			$fromAddress = $f3->get("fromAddress");
 		else
-			$fromAddress = $db->exec("SELECT `value` FROM settings WHERE setting='contact-from_address'")[0]["value"];
+			$fromAddress = setting("from_address");
 
 		// Worst case just set it to admin@webworksau.com...
 		$fromAddress = "admin@webworksau.com";
@@ -253,13 +264,14 @@ class contact extends prefab
 		$smtp->set('Subject', $subject);
 		$smtp->set('Content-Type', 'text/html');
 
-		$f3->set("contact_subject", $db->exec("SELECT `value` FROM settings WHERE setting='contact-subject'")[0]["value"]);
+		$f3->set("contact.subject", $subject);
 
 		if (file_exists(contact::$email_template))
 			$body = Template::instance()->render(contact::$email_template);
 		else
 			error::log("No email template found!");
 
+		setting_clear_namespace();
 
 		$smtp->send($body);
 
@@ -285,102 +297,35 @@ class contact extends prefab
 		if ($f3->POST["order"])
 			$db->exec("UPDATE contact_form SET `order`=? WHERE id=?", [$f3->POST["order"], $field]);
 
-		$f3->reroute("/admin/contact");
+		$f3->reroute("/admin/{$this->namespace}");
 	}
 
-	static function hasInit()
-	{	
-		$db = f3::instance()->get("DB");
-		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contact_form'");
-		
-		if (empty($result))
-			return false;
-
-		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
-		if (empty($result)) 
-			return false;
-
-
-		base::instance()->contact["init"] = true;
-		return true;
-	}
-
-	static function generate()
+	function install()
 	{
 		$db = f3::instance()->get("DB");
 
-		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='contact_form'");
+		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}'");
 		
 		if (empty($result))
 		{
 			$db->begin();
-			$db->exec("CREATE TABLE `contact_form` ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'label' TEXT, 'type' INTEGER, 'order' INTEGER, 'error_message' TEXT, 'placeholder' TEXT);");
-			$db->exec("INSERT INTO `contact_form` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('1','Name','name','1','Please add your name.',NULL);");
-			$db->exec("INSERT INTO `contact_form` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('2','Phone','number','2','Please add your phone number.','Landline or Mobile');");
-			$db->exec("INSERT INTO `contact_form` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('3','Email Address','email','3','Please add a valid email address.',NULL);");
-			$db->exec("INSERT INTO `contact_form` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('4','Message','textarea','4','Please add a message.',NULL);");
+			$db->exec("CREATE TABLE `{$this->namespace}` ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'label' TEXT, 'type' INTEGER, 'order' INTEGER, 'error_message' TEXT, 'placeholder' TEXT);");
+			$db->exec("INSERT INTO `{$this->namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('1','Name','name','1','Please add your name.',NULL);");
+			$db->exec("INSERT INTO `{$this->namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('2','Phone','number','2','Please add your phone number.','Landline or Mobile');");
+			$db->exec("INSERT INTO `{$this->namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('3','Email Address','email','3','Please add a valid email address.',NULL);");
+			$db->exec("INSERT INTO `{$this->namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('4','Message','textarea','4','Please add a message.',NULL);");
 			$db->commit();
 		}
 
-		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
+		setting_use_namespace($this->namespace);
+		setting("email", "joe@example.com", false);
+		setting("name", "Joe", false);
+		setting("subject", "Example subject line", false);
+		setting_clear_namespace();
 
-		if (empty($result))
-		{
-			$db->begin();
-			$db->exec("CREATE TABLE 'settings' ('setting' TEXT, 'value' TEXT);");
-			$db->exec("INSERT INTO settings VALUES ('contact-email', 'joe@example.com');");
-			$db->exec("INSERT INTO settings VALUES ('contact-name', 'Joe');");
-			$db->exec("INSERT INTO settings VALUES ('contact-subject', 'Email subject line');");
-			$db->commit();
-		}
-		else 
-		{
-			$result = $db->exec("SELECT setting FROM settings WHERE setting='contact-email'");
-			if (empty($result))
-				$db->exec("INSERT INTO settings VALUES ('contact-email', 'joe@example.com')");
-
-			$result = $db->exec("SELECT setting FROM settings WHERE setting='contact-name'");
-			if (empty($result))
-				$db->exec("INSERT INTO settings VALUES ('contact-name', 'Joe')");
-
-			$result = $db->exec("SELECT setting FROM settings WHERE setting='contact-subject'");
-			if (empty($result))
-				$db->exec("INSERT INTO settings VALUES ('contact-subject', 'Email subject line')");
-		}
-
-		base::instance()->reroute('/admin/contact');
+		base::instance()->reroute("/admin/".$this->namespace);
 	}
 
-	static public function admin ($f3) {
-		if (contact::hasInit())
-		{
-			contact::load();
-
-			// Get settings
-			$f3->set("contact_email", setting("contact-email"));
-			$f3->set("contact_name", setting("contact-name"));
-			$f3->set("contact_subject", setting("contact-subject"));
-
-			$f3->contact_fields = base::instance()->DB->exec("SELECT * FROM contact_form ORDER BY `order`");
-
-			echo Template::instance()->render("/contact/contact.html");
-		}
-		else
-			echo Template::instance()->render("/contact/nocontact.html");
-	}
-
-	static public function update_settings($f3) {
-		$db = base::instance()->DB;
-
-		if ($f3->POST["email"])
-			$db->exec("UPDATE settings SET value=? WHERE setting='contact-email'", $f3->POST["email"]);
-		if ($f3->POST["name"])
-			$db->exec("UPDATE settings SET value=? WHERE setting='contact-name'", $f3->POST["name"]);
-		if ($f3->POST["subject"])
-			$db->exec("UPDATE settings SET value=? WHERE setting='contact-subject'", $f3->POST["subject"]);
-
-		$f3->reroute("/admin/contact");
-	}
 
 	static public function add_field($f3) {
 
@@ -389,12 +334,12 @@ class contact extends prefab
 
 		$db->exec("INSERT INTO contact_form (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
 
-		$f3->reroute("/admin/contact");
+		$f3->reroute("/admin/{$this->namespace}");
 	}
 
 	static public function delete_field ($f3, $params) {
 		base::instance()->DB->exec("DELETE FROM contact_form WHERE id=?", $params["field"]);
-		$f3->reroute("/admin/contact");
+		$f3->reroute("/admin/{$this->namespace}");
 	}
 
 }

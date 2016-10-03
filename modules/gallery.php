@@ -135,10 +135,6 @@ class gallery extends prefab {
 
 	function upload($f3) {
 
-		///
-		// Determine the file paths
-		///
-
 		// Temp image path
 		$temp_image = $f3->FILES["file"]["tmp_name"];
 
