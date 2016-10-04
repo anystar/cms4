@@ -46,14 +46,6 @@ class banners extends prefab {
 
 			$f3->set("max_upload_size", file_upload_max_size());
 
-			if (admin::$signed) {
-				if (file_exists($this->file_path."/slider.css"))
-					$f3->banners["css"] = Template::instance()->render("uploads/".$this->namespace."/slider.css");
-
-				if (file_exists($this->file_path."/slider.js"))
-					$f3->banners["js"] = Template::instance()->render("uploads/".$this->namespace."/slider.js");
-			}
-
 			// Overwrite banners template var incase it is used by another module
 			// This is only for admin section.
 			$f3->banners = $f3->get($this->namespace);
@@ -106,7 +98,7 @@ class banners extends prefab {
 		if (!is_dir($this->file_path))
 			return;
 
-		// Get images URLs
+		// Get images from folder
 		$dir = array_diff(scandir($this->file_path), array('..', '.', "slider.html", "slider.css", "slider.js"));
 
 		$order = json_decode(setting($this->namespace."_order"), true);

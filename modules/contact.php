@@ -301,8 +301,6 @@ class contact extends prefab
 			return false;
 
 
-		contact::patch_columns_add_system();
-
 		base::instance()->contact["init"] = true;
 		return true;
 	}
@@ -397,20 +395,6 @@ class contact extends prefab
 	static public function delete_field ($f3, $params) {
 		base::instance()->DB->exec("DELETE FROM contact_form WHERE id=?", $params["field"]);
 		$f3->reroute("/admin/contact");
-	}
-
-	static function patch_columns_add_system ()
-	{
-		$result = base::instance()->DB->exec("PRAGMA table_info(contact_form)");
-		
-		//Patch to ensure type column is added.
-		foreach ($result as $r) {
-			if ($r["name"] == "system") {
-				return;
-			}
-		}
-
-		base::instance()->DB->exec("ALTER TABLE contact_form ADD COLUMN system int");
 	}
 
 }

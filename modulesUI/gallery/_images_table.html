@@ -10,18 +10,18 @@
 					<repeat group="{{@gallery.images}}" value="{{@image}}">
 					<tr>
 							<td>
-								<img data-lity data-lity-target="{{@BASE}}/{{@gallery.upload_path}}/{{@image.filename}}" width="250" src="{{@BASE}}/{{@gallery.thumb_path}}/{{@image.thumb}}" />
+								<img data-lity data-lity-target="{{@image.url}}" width="250" src="{{@image.thumb}}" />
 							</td>
 							<td class="filename">{{@image.filename}}</td>
 							<td>{{@image.caption}}</td>
 							<td>
-								<a class="delete_image" href="{{@BASE}}/admin/gallery/delete/{{@image.id}}"><button>Delete</button></a>
+								<a class="delete_image" href="{{@BASE}}/admin/{{@namespace}}/delete/{{@image.id}}"><button>Delete</button></a>
 							</td>
 					</tr>
 					</repeat>
 				</table>
 
-        <form method="post" action="{{@BASE}}/admin/gallery/dropzone" class="dropzone" id="gallerydropzone">
+        <form method="post" action="{{@BASE}}/admin/{{@namespace}}/dropzone" class="dropzone" id="gallerydropzone">
           <div class="dz-message">
 
                 <div>Drop more photos here.</div>
