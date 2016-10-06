@@ -39,7 +39,7 @@ if (!extension_loaded("gd")) {
 }
 
 // Require random compat for random_byte not available in php <7
-if (!checkfile($settings["paths"]["random_compat"]."/lib/random.php")) {
+if (!file_exists($settings["paths"]["random_compat"]."/lib/random.php")) {
 	echo "Random compatability library not found. Please download it from https://github.com/paragonie/random_compat";
 	exit;
 }
