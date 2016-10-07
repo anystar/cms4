@@ -4,9 +4,6 @@ class ckeditor extends prefab {
 
 	function __construct() {
 
-		if (!$this->installed())
-			return;
-
 		$this->routes(base::instance());
 		$this->assets(base::instance());
 
@@ -144,6 +141,16 @@ class ckeditor extends prefab {
 
 			$f3->reroute("/admin/ckeditor/");
 		});
+
+		$f3->route("GET /admin/ckeditor/documentation", function ($f3) {
+			echo Template::instance()->render("/ckeditor/documentation.html");
+		});
+
+		$f3->route("GET /admin/ckeditor/install", function ($f3) {
+
+			$f3->reroute("/admin/ckeditor");
+
+		});
 	}
 
 	function assets($f3) {
@@ -158,22 +165,5 @@ class ckeditor extends prefab {
 		$f3->route('GET /admin/ckeditor/skins/moono-dark.png', function () { echo View::instance()->render("/ckeditor/skins/moono-dark.png", "image/png"); });
 		$f3->route('GET /admin/ckeditor/skins/office2013.png', function () { echo View::instance()->render("/ckeditor/skins/office2013.png", "image/png"); });
 
-	}
-
-	function installed () {
-		if (!setting("ckeditor_installed")) {
-				base::instance()->route("GET /admin/ckeditor/install", function () {
-					$this->install();
-				});
-				return false;
-		}
-
-		base::instance()->set("ckeditor.installed", true);
-
-		return true;
-	}
-
-	function install () {
-		base::instance()->reroute("/admin/ckeditor");
 	}
 }
