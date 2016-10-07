@@ -210,7 +210,7 @@ class banners extends prefab {
 		$new_name .= ".".$this->file_type;
 
 		// Where to save
-		$save_to = getcwd()."/".$this->file_path."/".$new_name;
+		$save_to = $this->file_path."/".$new_name;
 
 		// Ensure directory exsists and make it if it doesn't
 		if (!is_dir($this->file_path))

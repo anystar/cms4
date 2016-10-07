@@ -211,7 +211,7 @@
 			});
 
 
-			$(".up,.down").click(function(){
+			$(".up,.down").click(function() {
 				var row = $(this).parents("tr:first");
 
 				if ($(this).is(".up")) {
@@ -219,7 +219,6 @@
 				} else {
 					row.insertAfter(row.next());
 				}
-
 
 				var order = [];
 				$(".bannerimage").each(function () {
@@ -243,7 +242,7 @@
 	  Dropzone.options.dropzone = {
 			init: function() {
 				this.on("queuecomplete", function(file) { 
-					location.reload();  
+					// location.reload();  
 				});
 			}
 	  };

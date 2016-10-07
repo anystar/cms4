@@ -69,6 +69,15 @@ function set_setting($name, $value) {
 }
 
 function d ($x=null) {
+ 		if (class_exists("f3"))
+ 		{
+ 			if (f3::instance()->AJAX)
+			{
+				echo $x;
+				exit;
+			}
+ 		}
+
 
         echo "<pre>";
  		if (class_exists("f3"))
