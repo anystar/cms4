@@ -1,9 +1,6 @@
 @font-face {
   font-family: "Oswald";
   src: url("{{@BASE}}/admin/fonts/Oswald-Regular.ttf"); }
-@font-face {
-  font-family: "Jaldi";
-  src: url("{{@BASE}}/admin/fonts/Jaldi-Regular.ttf"); }
 body {
   background: #00356B;
   padding-top: 20px; }
@@ -83,8 +80,8 @@ body > .container > .row > .box {
   background-color: #fff; }
 
 .box h2 {
-  font-family: 'jaldi', Helvetica, Arial, sans-serif;
-  font-size: 22.4px;
+  font-family: Arial, sans-serif;
+  font-size: 18.5px;
   background-color: #444444;
   padding: 5px 0 2px 10px;
   margin: -10px;
