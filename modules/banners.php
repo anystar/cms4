@@ -58,6 +58,10 @@ class banners extends prefab {
 			$this->install();
 		});
 
+		$f3->route('GET /admin/'.$this->namespace.'/setup', function ($f3) {
+			echo Template::instance()->render("/banners/setup.html");
+		});
+
 		$f3->route('GET /admin/'.$this->namespace.'/documentation', function ($f3) {
 			echo Template::instance()->render("/banners/documentation.html");
 		});

@@ -48,6 +48,13 @@ class contact extends prefab
 		// Only load if on particular route
 		if (isroute($this->route) || isroute("/admin/{$namespace}"))
 		{
+			// Ensure smtp server is available to send mail to
+			if (!$this->check_smtp_server())
+			{
+				$f3->set($this->namespace.".html", "Form temporarily unavailable");
+				return;
+			}
+
 			// Retreive contents of form
 			$this->retreive_content();
 
@@ -151,8 +158,13 @@ class contact extends prefab
 
 		foreach ($result as $r) 
 		{
-			$r["id"] = substr(sha1($r["id"].$r["label"]), 0, 8);
+			$r["id"] = substr(sha1($this->namespace.$r["id"].$r["label"]), 0, 12);
 			$formcompiled[$r["id"]] = $r;
+
+			if ($value = $f3->POST[$r["id"]])
+			{
+				$formcompiled[$r["id"]]["value"] = $value;
+			}
 		}
 
 		$f3->set("{$this->namespace}.form", $formcompiled);
@@ -196,7 +208,7 @@ class contact extends prefab
 
 		foreach ($form as $key=>$field) 
 		{
-			$value = $post[$field["id"]];
+			$value = $field["value"];
 
 			switch ($field["type"])
 			{
@@ -255,7 +267,7 @@ class contact extends prefab
 			setting("email");
 
 		$toName = setting("name");
-		$subject = setting("value");
+		$subject = setting("subject");
 
  		$fromName = $f3->get("fromName");
 
@@ -264,10 +276,12 @@ class contact extends prefab
 		else
 			$fromAddress = setting("from_address");
 
+		setting_clear_namespace();
+
 		// Worst case just set it to admin@webworksau.com...
 		$fromAddress = "admin@webworksau.com";
 
-		$smtp = new SMTP("127.0.0.1", contact::$port, "", "", "");
+		$smtp = new SMTP($this->smtp_server, $this->port, "", "", "");
 
 		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
 		$smtp->set('From', '"'.$fromName.'" <'.$fromAddress.'>');
@@ -276,12 +290,20 @@ class contact extends prefab
 
 		$f3->set("contact.subject", $subject);
 
-		if (file_exists(contact::$email_template))
-			$body = Template::instance()->render(contact::$email_template);
-		else
-			error::log("No email template found!");
+		if (file_exists(getcwd().$this->email_template))
 
-		setting_clear_namespace();
+			// Use custom email template from client directory
+			$body = Template::instance()->render($this->email_template);
+		else
+		{
+			// Temp hive to generate a html snippet
+			$temphive = [
+				"contact" => $f3->get($this->namespace),
+			];
+
+			// Use our generic email template
+			$body = Template::instance()->render("/contact/email_template/generic_email_template.html", null, $temphive);
+		}
 
 		$smtp->send($body);
 
@@ -311,6 +333,42 @@ class contact extends prefab
 		$f3->reroute("/admin/{$this->namespace}");
 	}
 
+	function add_field($f3) {
+
+		$db = base::instance()->DB;
+		$p = $f3->POST;
+
+		$db->exec("INSERT INTO {$this->namespace} (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
+
+		$f3->reroute("/admin/{$this->namespace}");
+	}
+
+	function delete_field ($f3, $params) {
+		base::instance()->DB->exec("DELETE FROM {$this->namespace} WHERE id=?", $params["field"]);
+		$f3->reroute("/admin/{$this->namespace}");
+	}
+
+	function check_smtp_server () {
+
+		// Use cached result
+		if (base::instance()->get("smtp_server_check"))
+			return true;
+
+		$f = fsockopen($this->smtp_server, $this->port);
+		
+		if ($f !== false) 
+		{
+		    $res = fread($f, 1024);
+		    if (strlen($res) > 0 && strpos($res, '220') === 0)
+		    {
+		    	base::instance()->set("smtp_server_check", true, 1800); // Cache for 30 minutes
+				return true;
+		    }
+		}
+		
+		fclose($f);
+	}
+
 	function install()
 	{
 		$db = f3::instance()->get("DB");
@@ -337,21 +395,4 @@ class contact extends prefab
 
 		base::instance()->reroute("/admin/".$this->namespace);
 	}
-
-
-	public function add_field($f3) {
-
-		$db = base::instance()->DB;
-		$p = $f3->POST;
-
-		$db->exec("INSERT INTO {$this->namespace} (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
-
-		$f3->reroute("/admin/{$this->namespace}");
-	}
-
-	public function delete_field ($f3, $params) {
-		base::instance()->DB->exec("DELETE FROM {$this->namespace} WHERE id=?", $params["field"]);
-		$f3->reroute("/admin/{$this->namespace}");
-	}
-
 }

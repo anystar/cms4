@@ -40,7 +40,8 @@
 
 				<div class="col-xs-4" style="text-align:right;">
 					<a href="{{@BASE}}/admin/store/uninstall/{{@namespace}}"><button>Uninstall</button></a>
-					<a href="{{@BASE}}/admin/contact/documentation"><button>Documentation</button></a>
+					<a href="{{@BASE}}/admin/{{@namespace}}/setup"><button>Setup</button></a>						
+					<a href="{{@BASE}}/admin/{{@namespace}}/documentation"><button>Documentation</button></a>
 				</div>
 			</div>
 		</check>
@@ -114,7 +115,7 @@
 						</repeat>
 						
 						<div class="input-group pull-right" style="margin-bottom:15px;width:85%">
-							<div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
+							<div class="input-group-addon"><img src="{{@BASE}}/contact/captcha" alt="captcha" /></div>
 							<input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
 						</div>
 						<div class="clearfix"></div>
