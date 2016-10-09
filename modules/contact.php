@@ -3,83 +3,77 @@
 class contact extends prefab
 {
 	private $namespace;
+	private $route 			= "/contact;/about";
+	private $email_template = "generic_email_template.html";
+	private $return_on_error_to = "/contact";
+	private $contact_success = "/contact_success";
+	private $submit_route	 = "/contact";
 
-	static $moduleName = "Contact Form";
-	static $email_template = "generic_email_template.html";
-	static $port = 25;
-	static $systemID = null;
+	private $smtp_server	= "127.0.0.1";
+	private $port 			= 25;
 
 	function __construct ($namespace) {
 		$this->namespace = $namespace;
 
 		$f3 = base::instance();
 
-		// Sets the page for which this module loads on
-		$default = $f3->exists("SETTINGS[contact.page]") ? $f3->get("SETTINGS[contact.page]") : "/contact";
-		$f3->set("SETTINGS[contact.page]", $default);
+		setting_use_namespace($namespace);
 
-		// Sets the default email template
-		if ($f3->exists("SETTINGS[contact.email_template]")) contact::$email_template = $f3->get("SETTINGS[contact.email_template]");
-		if ($f3->exists("SETTINGS[contact.port]")) contact::$port = $f3->get("SETTINGS[contact.port]");
+		// load routes from settings
+		if ($value = setting("routes"))
+			$this->routes = $value;
 
+		// email template location
+		if ($value = setting("email_template"))
+			$this->email_template = $value;
+
+		// What smtp server?
+		if ($value = setting("smtp_server"))
+			$this->smtp_server = $value;
+
+		// What port for smtp server?
+		if ($value = setting("port"))
+			$this->port = $value;
+
+
+		setting_clear_namespace();
+
+		// Set up routes
 		$this->routes($f3);
 
-		$pageToLoadOn = $f3->get("SETTINGS[contact.page]");
-
-		if ($f3->POST["return"] == null) {
-			$f3->set("contact_return_page", $f3->PATH);
-		} else {
-			$f3->set("contact_return_page", $f3->POST["return"]);
-		}
-
-		// Load contact form on this page.
-		if ($pageToLoadOn == $f3->PATH || $pageToLoadOn == "all") {			
-			$this->load();
-		}
-
+		// Set up admin routes
 		if (admin::$signed)
 			$this->admin_routes($f3);
+
+		// Only load if on particular route
+		if (isroute($this->route) || isroute("/admin/{$namespace}"))
+		{
+			// Retreive contents of form
+			$this->retreive_content();
+
+			if ($f3->POST["actionid"] == "{$namespace}_submitted")
+			{
+				// Validate the form and submit email
+				if ($error = $this->validate())
+					$this->send_email();
+				
+				// Change HTTP verb so the route doesn't look like a POST route
+				$f3->VERB = "GET";
+
+				$this->set_html_snippet();
+				return;
+			}
+			
+			$this->set_html_snippet();
+		}
 	}
 
 	function routes($f3) {
+		$namespace = $this->namespace;
 
-		$f3->route("GET /captcha", function ($f3) {
+		$f3->route("GET /{$namespace}/captcha", function ($f3) {
 			$this->captcha($f3);
 		});
-
-		$f3->route("POST /contact", function ($f3, $params) {
-
-			if ($f3->get("SETTINGS[contact.page]") == "all") {
-				if ($f3->POST["return"])
-					$mock = $f3->get("POST.return");
-				else
-					$mock = "/contact";
-			}
-			else
-				$mock = $f3->get("SETTINGS[contact.page]");
-
-			$result = contact::validate();
-
-			if ($result)
-			{
-				if (file_exists("contact_success.html")) {
-					$f3->reroute("/contact_success");
-				}
-				else
-					echo Template::instance()->render("/contact/contact_success.html");
-			}
-			else
-			{
-				$snippet = \Template::instance()->render("/contact/contact_form.html");
-
-				$f3->set("contact_form", $snippet);
-				$f3->set("contact.html", $snippet);
-
-				$f3->mock("GET ". $mock);
-				die;
-			}
-		});
-
 	}
 
 	function admin_routes ($f3)
@@ -126,9 +120,16 @@ class contact extends prefab
 
 			$f3->reroute("/admin/".$this->namespace);
 		});		
-		$f3->route("POST /admin/{$this->namespace}/update_field/@field", "contact::update_field");
-		$f3->route("POST /admin/{$this->namespace}/add_field", "contact::add_field");
-		$f3->route("GET /admin/{$this->namespace}/delete_field/@field", "contact::delete_field");
+		
+		$f3->route("POST /admin/{$this->namespace}/update_field/@field", 
+			function ($f3, $params) { $this->update_field($f3, $params); });
+		
+		$f3->route("POST /admin/{$this->namespace}/add_field", 			 
+			function ($f3, $params) { $this->add_field($f3); });
+		
+		$f3->route("GET /admin/{$this->namespace}/delete_field/@field",  
+			function ($f3, $params) { $this->delete_field($f3, $params); });
+
 	}
 
 
@@ -146,88 +147,97 @@ class contact extends prefab
 		$f3 = base::instance();
 		$db = $f3->get("DB");
 
-		if (!$f3->exists("{$this->namespace}.form"))
+		$result = $db->exec("SELECT * FROM {$this->namespace} ORDER BY `order`");
+
+		foreach ($result as $r) 
 		{
-			$result = $db->exec("SELECT * FROM contact_form ORDER BY `order`");
-
-			foreach ($result as $r) 
-				$formcompiled[$r["id"]] = $r;
-
-			$f3->set("{$this->namespace}.form", $formcompiled);
+			$r["id"] = substr(sha1($r["id"].$r["label"]), 0, 8);
+			$formcompiled[$r["id"]] = $r;
 		}
 
-		$snippet = \Template::instance()->render("/contact/contact_form.html");
+		$f3->set("{$this->namespace}.form", $formcompiled);
+	}
 
+	function set_html_snippet() {
+		$f3 = base::instance();
+
+		$contact = $f3->get("{$this->namespace}");
+
+		$contact["action"] = $f3->BASE.$f3->PATH;
+		$contact["actionid"] = $this->namespace."_submitted";
+
+		// Temp hive to generate a html snippet
+		$temphive = [
+			"BASE" => $f3->BASE,
+			"contact" => $contact, 
+			"namespace" => $this->namespace
+		];
+
+		$snippet = \Template::instance()->render("/contact/contact_form.html", null, $temphive);
 		$f3->set("{$this->namespace}.html", $snippet);
 	}
 
 	function validate ()
 	{
-		$this->retreive_content();
-
 		$f3 = f3::instance();
 		$post = $f3->get("POST");
+		$namespace = $this->namespace;
 
+		// Temp variable that we'll falisify if we cannot send mail
 		$sendemail = true;
 
+		// Check to see if captcha is valid
 		if ($post["captcha"] != $f3->SESSION["captcha_code"]) {
 			$sendemail = false;
 			$f3->set("{$this->namespace}.captcha_error", true);
 		}
 
-		foreach ($post as $key => $value)
+		$form = $f3->get("{$namespace}.form");
+
+		foreach ($form as $key=>$field) 
 		{
-			$matches = array();
-			preg_match("#(\d+)$#", $key, $matches);
-			$id = $matches[0];
-
-			if ($id == null) break;
-
-			$field = &$f3->ref("form.".$id);
-
-			$field["value"] = $value;
+			$value = $post[$field["id"]];
 
 			switch ($field["type"])
 			{
 				case "name":
 					if (strlen($value) == 0)
-						$field["has_error"] = "true";
+						$form[$key]["has_error"] = true;
 
 					$f3->set("fromName", $value);
 				break;
 
 				case "text":
 					if (strlen($value) == 0)
-						$field["has_error"] = "true";
+						$form[$key]["has_error"] = true;
 				break;
 
 				case "textarea":
 					if (strlen($value) < 5)
-						$field["has_error"] = "true";
+						$form[$key]["has_error"] = true;
 				break;
 
 				case "number":
 					if (strlen($value) < 5)
-						$field["has_error"] = "true";
+						$form[$key]["has_error"] = true;
 				break;
 
 				case "email":
 					if (!filter_var($value, FILTER_VALIDATE_EMAIL))
-						$field["error"] = true;
+						$form[$key]["has_error"] = true;
 
 					$f3->set("fromAddress", $value);
 				break;
 			}
 
-			if ($field["error"] == true)
+			if ($form[$key]["has_error"] == true)
 				$sendemail = false;
 		}
 
+		$f3->set("{$namespace}.form", $form);
+
 		if ($sendemail)
-		{
-			$this->send_email();
 			return true;
-		}
 		else
 			return false;
 	}
@@ -278,24 +288,25 @@ class contact extends prefab
 		return true;
 	}
 
-	static function update_field ($f3, $params) {
+	function update_field ($f3, $params) {
 		$db = Base::instance()->DB;
+		$namespace = $this->namespace;
 		$field = $params["field"];
 
 		if ($f3->POST["label"])
-			$db->exec("UPDATE contact_form SET label=? WHERE id=?", [$f3->POST["label"], $field]);
+			$db->exec("UPDATE {$namespace} SET label=? WHERE id=?", [$f3->POST["label"], $field]);
 
 		if ($f3->POST["type"])
-			$db->exec("UPDATE contact_form SET type=? WHERE id=?", [$f3->POST["type"], $field]);
+			$db->exec("UPDATE {$namespace} SET type=? WHERE id=?", [$f3->POST["type"], $field]);
 
 		if ($f3->POST["error_message"])
-			$db->exec("UPDATE contact_form SET error_message=? WHERE id=?", [$f3->POST["error_message"], $field]);
+			$db->exec("UPDATE {$namespace} SET error_message=? WHERE id=?", [$f3->POST["error_message"], $field]);
 
 		if ($f3->POST["placeholder"])
-			$db->exec("UPDATE contact_form SET placeholder=? WHERE id=?", [$f3->POST["placeholder"], $field]);
+			$db->exec("UPDATE {$namespace} SET placeholder=? WHERE id=?", [$f3->POST["placeholder"], $field]);
 
 		if ($f3->POST["order"])
-			$db->exec("UPDATE contact_form SET `order`=? WHERE id=?", [$f3->POST["order"], $field]);
+			$db->exec("UPDATE {$namespace} SET `order`=? WHERE id=?", [$f3->POST["order"], $field]);
 
 		$f3->reroute("/admin/{$this->namespace}");
 	}
@@ -303,6 +314,7 @@ class contact extends prefab
 	function install()
 	{
 		$db = f3::instance()->get("DB");
+		$namespace = $this->namespace;
 
 		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}'");
 		
@@ -310,10 +322,10 @@ class contact extends prefab
 		{
 			$db->begin();
 			$db->exec("CREATE TABLE `{$this->namespace}` ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'label' TEXT, 'type' INTEGER, 'order' INTEGER, 'error_message' TEXT, 'placeholder' TEXT);");
-			$db->exec("INSERT INTO `{$this->namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('1','Name','name','1','Please add your name.',NULL);");
-			$db->exec("INSERT INTO `{$this->namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('2','Phone','number','2','Please add your phone number.','Landline or Mobile');");
-			$db->exec("INSERT INTO `{$this->namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('3','Email Address','email','3','Please add a valid email address.',NULL);");
-			$db->exec("INSERT INTO `{$this->namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('4','Message','textarea','4','Please add a message.',NULL);");
+			$db->exec("INSERT INTO `{$namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('1','Name','name','1','Please add your name.',NULL);");
+			$db->exec("INSERT INTO `{$namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('2','Phone','number','2','Please add your phone number.','Landline or Mobile');");
+			$db->exec("INSERT INTO `{$namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('3','Email Address','email','3','Please add a valid email address.',NULL);");
+			$db->exec("INSERT INTO `{$namespace}` (`id`,`label`,`type`,`order`,`error_message`,`placeholder`) VALUES ('4','Message','textarea','4','Please add a message.',NULL);");
 			$db->commit();
 		}
 
@@ -327,18 +339,18 @@ class contact extends prefab
 	}
 
 
-	static public function add_field($f3) {
+	public function add_field($f3) {
 
 		$db = base::instance()->DB;
 		$p = $f3->POST;
 
-		$db->exec("INSERT INTO contact_form (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
+		$db->exec("INSERT INTO {$this->namespace} (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
 
 		$f3->reroute("/admin/{$this->namespace}");
 	}
 
-	static public function delete_field ($f3, $params) {
-		base::instance()->DB->exec("DELETE FROM contact_form WHERE id=?", $params["field"]);
+	public function delete_field ($f3, $params) {
+		base::instance()->DB->exec("DELETE FROM {$this->namespace} WHERE id=?", $params["field"]);
 		$f3->reroute("/admin/{$this->namespace}");
 	}
 

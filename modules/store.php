@@ -58,7 +58,6 @@ class store extends prefab {
 					}
 				}
 
-
 				$f3->POST["module_name"] = $module["name"];
 				$f3->POST["namespace"] = $module["module"];
 
@@ -99,6 +98,24 @@ class store extends prefab {
 				else
 					echo Template::instance()->render("/store/purchase.html");
 
+			});
+
+			$f3->route("GET /admin/store/uninstall/@module", function ($f3, $params) {
+
+				$f3->module = $f3->DB->exec("SELECT * FROM licenses WHERE namespace=?", $params["module"])[0];
+
+				echo Template::instance()->render("/store/uninstall_confirm.html");
+			});
+
+			$f3->route("POST /admin/store/uninstall/@module", function ($f3, $params) {
+
+				if ($f3->POST["confirm"])
+				{
+					$f3->DB->exec("DELETE FROM licenses WHERE namespace=?", $params["module"]);
+					$f3->reroute("/admin/store");
+				}
+				else
+					$f3->reroute("/admin/@module");
 			});
 
 		}

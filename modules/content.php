@@ -15,7 +15,7 @@ class content extends prefab {
 
 		$this->installed();
 
-		// Sets static variables Path and File
+		// Determines wether a file matches the route
 		$this->determine_path();
 
 		// Lets get the special "all" content for all paths and then override

@@ -13,9 +13,7 @@ class banners extends prefab {
 		
 		$this->file_path = getcwd()."/uploads/".$namespace."/";
 
-		$this->file_type = setting($namespace."_file_type");
-		if (!$this->file_type)
-			$this->file_type = "jpeg";
+		$this->load_settings();
 
 		$this->retreive_content($f3);
 
@@ -48,8 +46,8 @@ class banners extends prefab {
 
 			// Overwrite banners template var incase it is used by another module
 			// This is only for admin section.
-			$f3->banners = $f3->get($this->namespace);
-			
+			$f3->banner = $f3->get($this->namespace);
+
 			$f3->namespace = $this->namespace;
 
 			echo Template::instance()->render("/banners/banners.html");
@@ -90,6 +88,31 @@ class banners extends prefab {
 			$this->delete_banner($f3, $params);
 			exit;
 		});
+	}
+
+	function load_settings()
+	{
+		$f3 = base::instance();
+
+		setting_use_namespace($this->namespace);
+
+		if (!$this->file_type = setting("file_type")) 
+			$this->file_type = "jpeg";
+
+		$js = setting("javascript_url");
+		$css = setting("stylesheet_url");
+		$jsinit = setting("javascript_init");
+		$template = setting("template_code");
+
+		if (!$js || !$css || !$jsinit || !$template)
+			$f3->set("{$namespace}.error", true);
+
+		$f3->set("{$this->namespace}.javascript_url", $js);
+		$f3->set("{$this->namespace}.stylesheet_url", $css);
+		$f3->set("{$this->namespace}.javascript_init", $jsinit);
+		$f3->set("{$this->namespace}.template_code", $template);
+
+		setting_clear_namespace();
 	}
 
 	function retreive_content($f3) {
@@ -168,6 +191,23 @@ class banners extends prefab {
 
 	function update_settings($f3) {
 
+		setting_use_namespace($this->namespace);
+
+		// Slider settings
+		if (isset($f3->POST["javascript_url"]))
+			setting("javascript_url", $f3->POST["javascript_url"]);
+
+		if (isset($f3->POST["stylesheet_url"]))
+			setting("stylesheet_url", $f3->POST["stylesheet_url"]);
+
+		if (isset($f3->POST["javascript_init"]))
+			setting("javascript_init", $f3->POST["javascript_init"]);
+
+		if (isset($f3->POST["template_code"]))
+			setting("template_code", $f3->POST["template_code"]);
+
+
+		// Upload settings
 		if (isset($f3->POST["html"]))
 			file_put_contents($this->file_path."/slider.html", $f3->POST["html"]);
 
@@ -178,13 +218,15 @@ class banners extends prefab {
 			file_put_contents($this->file_path."/slider.js", $f3->POST["js"]);
 
 		if (isset($f3->POST["width"]))
-			setting($this->namespace."_width", $f3->POST["width"]);
+			setting("width", $f3->POST["width"]);
 
 		if (isset($f3->POST["height"]))
-			setting($this->namespace."_height", $f3->POST["height"]);
+			setting("height", $f3->POST["height"]);
 
 		if (isset($f3->POST["banners_order"]))
-			setting($this->namespace."_order", $f3->POST["banners_order"]);
+			setting("order", $f3->POST["banners_order"]);
+
+		setting_clear_namespace();
 	}
 
 

@@ -257,3 +257,29 @@ function parse_file_size($size) {
     return round($size);
   }
 }
+
+function isroute($route, $verb=null)
+{
+
+	$f3 = base::instance();
+
+	if ($verb!=null)
+		if (!strtolower($f3->VERB) == strtolower($verb))
+			return false;
+
+	if (is_array($route))
+		foreach ($route as $item)
+			return isroute($item);
+
+	$route = $f3->split($route);
+
+	foreach ($route as $item)
+	{
+		$item = rtrim($item, "/");
+
+		if (fnmatch($item, base::instance()->PATH))
+			return true;
+	}
+
+	return false;
+}

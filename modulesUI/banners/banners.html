@@ -99,7 +99,7 @@
 					</div>
 
 					<div class="col-xs-4" style="text-align:right;">
-						<button>Uninstall</button>
+						<a href="{{@BASE}}/admin/store/uninstall/{{@namespace}}"><button>Uninstall</button></a>
 						<a href="{{@BASE}}/admin/{{@namespace}}/documentation"><button>Documentation</button></a>
 					</div>
 				</div>
@@ -109,7 +109,7 @@
 				<h2>Banner example</h2> 
 			
 				<div class="admin_banner_display">
-					{{@banners.html}}
+					{{@banner.html}}
 				</div>
 			</div>
 		
@@ -132,7 +132,7 @@
 							</thead>
 							
 							<tbody>					
-								<repeat group="{{@banners.images}}" value="{{@image}}">
+								<repeat group="{{@banner.images}}" value="{{@image}}">
 								<tr class="banner_images">
 									<td class="orderbuttons">
 										<button class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
@@ -158,7 +158,44 @@
 				</div>
 				<check if="{{@webmaster}}">
 				<div class="col-md-4">
-				
+					<div class="box">
+						<h2>Slider Settings</h2>
+
+							<div class="form-group">
+								<label>Autoload slider</label>
+								<select class="form-control">
+									<option class="form-control">Select slider to autoload</option>
+									<option class="form-control">Flexslider</option>
+									<option class="form-control">SlidesJS</option>
+								</select>
+							</div>
+
+							<form method="post" action="{{@BASE}}/admin/{{@namespace}}/update_settings">
+
+								<div class="form-group">
+									<label>Javascript</label>
+									<input value="{{@banner.javascript_url}}" name="javascript_url" type="text" class="form-control" placeholder="url to javascript assets">
+								</div>
+
+								<div class="form-group">
+									<label>Stylesheet</label>
+									<input value="{{@banner.stylesheet_url}}" name="stylesheet_url" type="text" class="form-control" placeholder="url to stylesheet assets">
+								</div>
+
+								<div class="form-group">
+									<label>Javascript Initialization</label>
+									<textarea name="javascript_init" class="form-control" rows="3">{{@banner.javascript_init}}</textarea>
+								</div>
+
+								<div class="form-group">
+									<label>Template Code</label>
+									<textarea name="template_code" class="form-control" rows="3">{{@banner.template_code}}</textarea>
+								</div>
+
+								<button class="button-fullwidth" type="submit">Apply Settings</button>
+							</form>
+					</div>
+
 					<div class="box">
 						<h2>Upload settings</h2>
 						<div class="container image_upload_settings">

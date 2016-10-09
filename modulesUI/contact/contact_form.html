@@ -1,4 +1,4 @@
-<form class="contact" action="{{@BASE}}/contact" method="post">
+<form class="contact" action="{{@contact.action}}" method="post">
     
     <repeat group="{{ @contact.form }}" value="{{ @field }}">
 
@@ -7,8 +7,8 @@
           <check if="{{@field.has_error}}">
               <true>
               <div class="form-group has-error has-feedback">
-                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
-                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <label for="{{@field.id}}">{{@field.label}}</label>
+                  <input name="{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
                   <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                   <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
               </div>
@@ -16,8 +16,8 @@
 
               <false>
               <div class="form-group">
-                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}          {{@field.has_error}}</label>
-                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <label for="{{@field.id}}">{{@field.label}}</label>
+                  <input name="{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
               </div>
               </false>
           </check>
@@ -27,8 +27,8 @@
           <check if="{{@field.has_error}}">
               <true>
               <div class="form-group has-error has-feedback">
-                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
-                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <label for="{{@field.id}}">{{@field.label}}</label>
+                  <input name="{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
                   <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                   <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
               </div>
@@ -36,8 +36,8 @@
 
               <false>
               <div class="form-group">
-                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
-                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <label for="{{@field.id}}">{{@field.label}}</label>
+                  <input name="{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
               </div>
               </false>
           </check>
@@ -47,8 +47,8 @@
           <check if="{{@field.has_error}}">
               <true>
               <div class="form-group has-error has-feedback">
-                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
-                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <label for="{{@field.id}}">{{@field.label}}</label>
+                  <input name="{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
                   <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                   <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
               </div>
@@ -56,8 +56,8 @@
 
               <false>
               <div class="form-group">
-                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
-                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <label for="{{@field.id}}">{{@field.label}}</label>
+                  <input name="{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
               </div>
               </false>
           </check>
@@ -67,8 +67,8 @@
             <check if="{{@field.has_error}}">
               <true>
               <div class="form-group has-error has-feedback">
-                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
-                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <label for="{{@field.id}}">{{@field.label}}</label>
+                  <input name="{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
                   <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                   <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
               </div>
@@ -76,8 +76,8 @@
 
               <false>
               <div class="form-group">
-                  <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
-                  <input name="{{@field.label}}{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
+                  <label for="{{@field.id}}">{{@field.label}}</label>
+                  <input name="{{@field.id}}" type="text" class="form-control" placeholder="{{@field.placeholder}}" value="{{@field.value}}">
               </div>
               </false>
             </check>
@@ -87,8 +87,8 @@
           <check if="{{@field.has_error}}">
             <true>
             <div class="form-group has-error has-feedback">
-                <label for="{{@field.label}}{{@field.id}}">{{@field.label}}</label>
-                <textarea name="{{@field.label}}{{@field.id}}" class="form-control" rows="5">{{@field.value}}</textarea>
+                <label for="{{@field.id}}">{{@field.label}}</label>
+                <textarea name="{{@field.id}}" class="form-control" rows="5">{{@field.value}}</textarea>
                 <span class="glyphicon glyphicon-remove form-control-feedback"></span>
                 <span id="helpBlock" class="help-block">{{@field.error_message}}</span>
             </div>
@@ -97,7 +97,7 @@
             <false>              
             <div class="form-group">
                 <label for="Comment">{{@field.label}}</label>
-                <textarea name="{{@field.label}}{{@field.id}}" class="form-control" rows="5">{{@field.value}}</textarea>
+                <textarea name="{{@field.id}}" class="form-control" rows="5">{{@field.value}}</textarea>
             </div>
             </false>
           </check>
@@ -109,7 +109,7 @@
     <check if="{{@contact.captcha_error==1}}">
       <true>
       <div class="input-group has-error" style="margin-bottom:15px;">
-        <div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
+        <div class="input-group-addon"><img src="{{@BASE}}/{{@namespace}}/captcha" alt="captcha" /></div>
         <input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
         <span class="glyphicon glyphicon-remove form-control-feedback"></span>
       </div>
@@ -118,15 +118,13 @@
 
       <false>
       <div class="input-group" style="margin-bottom:15px;">
-        <div class="input-group-addon"><img src="{{@BASE}}/captcha" alt="captcha" /></div>
+        <div class="input-group-addon"><img src="{{@BASE}}/{{@namespace}}/captcha" alt="captcha" /></div>
         <input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
       </div>
       </false>
     </check>
     
-    <check if="{{@SETTINGS[contact.page] == 'all'}}">
-      <input type="hidden" name="return" value="{{@PATH}}">
-    </check>
-    
+    <input type="hidden" name="actionid" value="{{@contact.actionid}}">
+
     <button type="submit" class="btn btn-default">Submit</button>
 </form>
