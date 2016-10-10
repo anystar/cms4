@@ -275,7 +275,8 @@ function isroute($route, $verb=null)
 
 	foreach ($route as $item)
 	{
-		$item = rtrim($item, "/");
+		if ($item != "/")
+			$item = rtrim($item, "/");
 
 		if (fnmatch($item, base::instance()->PATH))
 			return true;

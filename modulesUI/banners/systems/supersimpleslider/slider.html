@@ -1,5 +1,9 @@
-<div class="slider">
-		<repeat group="{{@banners.images}}" value="{{@image}}">
-			<img src="{{@BASE}}/{{@image.url}}" />
-		</repeat>
+<div class="flexslider">
+  <ul class="slides">
+    <repeat group="{{@banners.images}}" value="{{@image}}">
+    <li>
+      <img src="{{@BASE}}/{{@image.url}}" />
+    </li>
+    </repeat>
+  </ul>
 </div>

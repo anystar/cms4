@@ -29,10 +29,10 @@
 				<div class="box">
 					<h2>Setup {{@namespace}}</h2>
 
-					<form>
+					<form method="POST" action="{{@BASE}}/admin/banners/update_settings">
 						<div class="form-group">
 							<label>URL routes to load on</label>
-							<input type="email" class="form-control" placeholder="eg: /example">
+							<input name="routes" value="{{@banner.routes}}" type="text" class="form-control" placeholder="eg: /example">
 							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
 						</div>
 
@@ -43,6 +43,11 @@
 								<option class="form-control">Flexslider</option>
 								<option class="form-control">SlidesJS</option>
 							</select>
+						</div>
+
+						<div class="form-group">
+							<label>Javascript Framework</label>
+							<input value="{{@banner.javascript_framework_url}}" name="javascript_framework_url" type="text" class="form-control" placeholder="eg: url to jquery">
 						</div>
 
 						<div class="form-group">
@@ -57,12 +62,14 @@
 
 						<div class="form-group">
 							<label>Javascript Initialization</label>
-							<textarea name="javascript_init" class="form-control" rows="3">{{@banner.javascript_init}}</textarea>
+							<div id="editor"></div>
+							<textarea style="display:none;" name="javascript_init" class="form-control" rows="3">{{@banner.javascript_init}}</textarea>
 						</div>
 
 						<div class="form-group">
 							<label>Template Code</label>
-							<textarea name="template_code" class="form-control" rows="3">{{@banner.template_code}}</textarea>
+							<div id="editor2"></div>
+							<textarea style="display:none;" name="template_code" class="form-control" rows="3">{{@banner.template_code}}</textarea>
 						</div>
 
 						<button class="button-fullwidth" type="submit">Save setup</button>
@@ -73,6 +80,51 @@
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			var editor = ace.edit("editor");
+			var textarea = $('textarea[name="javascript_init"]');
+			editor.setValue(textarea.val(), -1);
+
+			editor.getSession().on("change", function () {
+			    textarea.val(editor.getSession().getValue());
+			});
+
+			editor.getSession().setMode("ace/mode/javascript");
+			editor.setTheme("ace/theme/chrome");
+			editor.setOptions({
+			    showGutter: true,
+			    vScrollBarAlwaysVisible: false,
+			    printMargin: false,
+			    fontSize: 14,
+			    minLines: 12,
+			    maxLines: 1000
+			});
+			editor.container.style.lineHeight = 1.4;
+			editor.renderer.updateFontSize()
+
+			var editor2 = ace.edit("editor2");
+			var textarea2 = $('textarea[name="template_code"]');
+			editor2.setValue(textarea2.val(), -1);
+			editor2.getSession().on("change", function () {
+			    textarea2.val(editor2.getSession().getValue());
+			});
+
+			editor2.getSession().setMode("ace/mode/html");
+			editor2.setTheme("ace/theme/chrome");
+			editor2.setOptions({
+			    showGutter: true,
+			    vScrollBarAlwaysVisible: false,
+			    printMargin: false,
+			    fontSize: 14,
+			    minLines: 12,
+			    maxLines: 1000
+			});
+
+			editor2.container.style.lineHeight = 1.4;
+			editor2.renderer.updateFontSize()
+		</script>
+
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="{{@BASE}}/admin/bootstrap.min.js"></script>
 	</body>

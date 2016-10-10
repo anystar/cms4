@@ -2,20 +2,23 @@
 
 class banners extends prefab {
 	private $namespace;
-	private $route;
+	private $routes;
 
 	private $file_path, $upload_path, $file_type;
 
 	function __construct($namespace) {
-		$this->namespace = $namespace;
-
 		$f3 = base::instance();
+		$this->namespace = $namespace;
 		
-		$this->file_path = getcwd()."/uploads/".$namespace."/";
+		$this->routes = setting($namespace."_routes");
 
-		$this->load_settings();
-
-		$this->retreive_content($f3);
+		// Load banner for this route
+		if (isroute($this->routes) || isroute("/admin/banners"))
+		{
+			$this->file_path = getcwd()."/uploads/".$namespace."/";
+			$this->load_settings();
+			$this->retreive_content($f3);
+		}
 
 		$this->routes($f3);
 
@@ -59,6 +62,8 @@ class banners extends prefab {
 		});
 
 		$f3->route('GET /admin/'.$this->namespace.'/setup', function ($f3) {
+			$this->load_settings();
+			$f3->banner = $f3->get($this->namespace);
 			echo Template::instance()->render("/banners/setup.html");
 		});
 
@@ -74,7 +79,7 @@ class banners extends prefab {
 		// Update system config of banner system
 		$f3->route('POST /admin/'.$this->namespace.'/update_settings', function ($f3) {
 			$this->update_settings($f3);
-			$f3->reroute('/admin/'.$this->namespace);
+			$f3->reroute('/admin/'.$this->namespace."/setup");
 		});
 
 		// Update system config of banner system
@@ -103,6 +108,8 @@ class banners extends prefab {
 		if (!$this->file_type = setting("file_type")) 
 			$this->file_type = "jpeg";
 
+		$routes = setting("routes");
+		$fw = setting("javascript_framework_url");
 		$js = setting("javascript_url");
 		$css = setting("stylesheet_url");
 		$jsinit = setting("javascript_init");
@@ -111,6 +118,9 @@ class banners extends prefab {
 		if (!$js || !$css || !$jsinit || !$template)
 			$f3->set("{$namespace}.error", true);
 
+		$f3->set("{$this->namespace}.routes", $routes);
+
+		$f3->set("{$this->namespace}.javascript_framework_url", $fw);
 		$f3->set("{$this->namespace}.javascript_url", $js);
 		$f3->set("{$this->namespace}.stylesheet_url", $css);
 		$f3->set("{$this->namespace}.javascript_init", $jsinit);
@@ -179,15 +189,22 @@ class banners extends prefab {
 			}
 		}
 
-		if (file_exists($this->file_path."/slider.html"))
-		{
-			$temp_hive["banner"] = $f3->get($this->namespace);
-			$temp_hive["BASE"] = $f3->BASE;
+		$html = setting($this->namespace."_template_code");
 
 
-			$html = Template::instance()->render("uploads/".$this->namespace."/slider.html", "text/html", $temp_hive);
-			$f3->set($this->namespace.".html", $html);
-		}
+		d($html);
+
+		// if (file_exists($this->file_path."/slider.html"))
+		// {
+		// 	$temp_hive["banner"] = $f3->get($this->namespace);
+		// 	$temp_hive["BASE"] = $f3->BASE;
+
+
+		// 	$html = Template::instance()->render("uploads/".$this->namespace."/slider.html", "text/html", $temp_hive);
+		// 	$f3->set($this->namespace.".html", $html);
+		// }
+
+		$f3->set();
 
 		if ($update_order)
 			setting($this->namespace."_order", json_encode($order));
@@ -197,7 +214,13 @@ class banners extends prefab {
 
 		setting_use_namespace($this->namespace);
 
+		if (isset($f3->POST["routes"]))
+			setting("routes", $f3->POST["routes"]);
+
 		// Slider settings
+		if (isset($f3->POST["javascript_framework_url"]))
+			setting("javascript_framework_url", $f3->POST["javascript_framework_url"]);
+
 		if (isset($f3->POST["javascript_url"]))
 			setting("javascript_url", $f3->POST["javascript_url"]);
 
