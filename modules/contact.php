@@ -186,6 +186,8 @@ class contact extends prefab
 		}
 
 		$f3->set("{$this->namespace}.form", $formcompiled);
+		$f3->set("{$this->namespace}.ation", $f3->BASE.$f3->PATH);
+		$f3->set("{$this->namespace}.ationid", $this->namespace."_submitted";
 	}
 
 	function set_html_snippet() {
