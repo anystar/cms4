@@ -10,7 +10,7 @@ class debug extends prefab {
 			$f3->set("debug.json_hive", json_encode($f3->hive()));
 
 			$inlinecode = Template::instance()->render("/debug/debug.html");
-			$f3->concat("admin", $inlinecode);
+			$f3->concat("debug", $inlinecode);
 		}
 	}
 }
