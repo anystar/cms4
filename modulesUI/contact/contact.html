@@ -81,9 +81,13 @@
 			<div class="col-xs-12 col-md-7">
 				<div class="box">
 					<h2>Test center</h2>
+					
+					<check if="{{@contact.form_successfully_submitted}}">
+						EMAIL SUCESSFULLY SUBMITTED
+					</check>
 
-					<form class="form-horizontal" action="{{@BASE}}/contact" method="post">
-						<repeat group="{{@contact.fields}}" value="{{@field}}">
+					<form class="form-horizontal" action="{{@contact.action}}" method="post">
+						<repeat group="{{@contact.form}}" value="{{@field}}">
 							<switch expr="{{@field.type}}">
 								<case value="name">
 									<set value="John Smith">
@@ -108,16 +112,29 @@
 							<div class="form-group">
 								<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
 								<div class="col-sm-9">
-									<input name="{{@field.label}}{{@field.id}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+									<input name="{{@field.id}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
 								</div>
 							</div>
 
 						</repeat>
 						
-						<div class="input-group pull-right" style="margin-bottom:15px;width:85%">
-							<div class="input-group-addon"><img src="{{@BASE}}/contact/captcha" alt="captcha" /></div>
-							<input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
-						</div>
+					    <check if="{{@contact.captcha_error==1}}">
+					      <true>
+					      <div class="input-group pull-right has-error" style="margin-bottom:15px;width:85%">
+					        <div class="input-group-addon"><img src="{{@BASE}}/contact/captcha" alt="captcha" /></div>
+					        <input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
+					        <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+					      </div>
+					      </true>
+
+					      <false>
+					      <div class="input-group pull-right" style="margin-bottom:15px;width:85%">
+					        <div class="input-group-addon"><img src="{{@BASE}}/contact/captcha" alt="captcha" /></div>
+					        <input name="captcha" style="height: 50px" type="text" class="form-control" id="exampleInputAmount" placeholder="Are you human?">
+					      </div>
+					      </false>
+					    </check>
+
 						<div class="clearfix"></div>
 						
 						<hr>
@@ -133,6 +150,8 @@
 						<div style="text-align:right">
 							<button type="submit">Submit Test Email</button>
 						</div>
+
+						<input type="hidden" name="actionid" value="{{@contact.actionid}}">
 					</form>
 				</div>
 			</div>

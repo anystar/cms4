@@ -47,7 +47,7 @@ class contact extends prefab
 			$this->admin_routes($f3);
 
 		// Only load if on particular route
-		if (isroute($this->routes))
+		if (isroute($this->routes) || isroute("/admin/".$namespace))
 		{
 			// Ensure smtp server is available to send mail to
 			if (!$this->check_smtp_server())
@@ -63,7 +63,13 @@ class contact extends prefab
 			{
 				// Validate the form and submit email
 				if ($error = $this->validate())
+				{
 					$this->send_email();
+
+					// Should we reroute to a success page?
+					if ($value = setting("{$namespace}_success"))
+						$f3->reroute($value);
+				}
 				
 				// Change HTTP verb so the route doesn't look like a POST route
 				$f3->VERB = "GET";
@@ -94,14 +100,14 @@ class contact extends prefab
 
 			$this->retreive_content();
 
+			$f3->set("contact", $f3->get($this->namespace));
+
 			// Get settings
 			setting_use_namespace($this->namespace);
 			$f3->set("contact.email", setting("email"));
 			$f3->set("contact.name", setting("name"));
 			$f3->set("contact.subject", setting("subject"));
 			setting_clear_namespace();
-
-			$f3->contact["fields"] = base::instance()->DB->exec("SELECT * FROM {$this->namespace} ORDER BY `order`");
 
 			echo Template::instance()->render("/contact/contact.html");
 		});
@@ -113,6 +119,7 @@ class contact extends prefab
 			$f3->set("contact.routes", $this->routes);
 			$f3->set("contact.smtp_server", setting("smtp_server"));
 			$f3->set("contact.port", setting("port"));
+			$f3->set("contact.success", setting("success"));
 			setting_clear_namespace();
 
 			echo Template::instance()->render("/contact/setup.html");
@@ -398,6 +405,7 @@ class contact extends prefab
 		setting("routes", $f3->POST["routes"]);
 		setting("smtp_server", $f3->POST["smtp_server"]);
 		setting("port", $f3->POST["port"]);
+		setting("success", $f3->POST["contact_success"]);
 
 		setting_clear_namespace();
 	}

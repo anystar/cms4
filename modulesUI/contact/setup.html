@@ -46,6 +46,12 @@
 							<input value="{{@contact.port}}" name="port" type="text" class="form-control" placeholder="eg: 25">
 						</div>
 
+						<div class="form-group">
+							<label>Redirect to success page</label>
+							<input value="{{@contact.success}}" name="contact_success" type="text" class="form-control" placeholder="eg: /contact_success">
+							<p class="help-block">Leave blank to return back to same page.</p>
+						</div>
+
 						<button class="button-fullwidth" type="submit">Save setup</button>
 					</form>
 				</div>
