@@ -3,7 +3,7 @@
 class contact extends prefab
 {
 	private $namespace;
-	private $route 			= "/contact;/about";
+	private $routes 			= "/contact";
 	private $email_template = "generic_email_template.html";
 	private $return_on_error_to = "/contact";
 	private $contact_success = "/contact_success";
@@ -14,6 +14,7 @@ class contact extends prefab
 
 	function __construct ($namespace) {
 		$this->namespace = $namespace;
+		$this->routes = setting($namespace."_routes");
 
 		$f3 = base::instance();
 
@@ -46,7 +47,7 @@ class contact extends prefab
 			$this->admin_routes($f3);
 
 		// Only load if on particular route
-		if (isroute($this->route) || isroute("/admin/{$namespace}"))
+		if (isroute($this->routes))
 		{
 			// Ensure smtp server is available to send mail to
 			if (!$this->check_smtp_server())
@@ -86,6 +87,11 @@ class contact extends prefab
 	function admin_routes ($f3)
 	{
 		$f3->route("GET /admin/{$this->namespace}", function ($f3) {
+			$f3->namespace = $this->namespace;
+
+			if (!$this->check_install())
+				$f3->reroute("/admin/".$this->namespace."/setup");
+
 			$this->retreive_content();
 
 			// Get settings
@@ -100,8 +106,34 @@ class contact extends prefab
 			echo Template::instance()->render("/contact/contact.html");
 		});
 
-		$f3->route("GET /admin/{$this->namespace}/install", function () {
+		$f3->route("GET /admin/{$this->namespace}/setup", function ($f3) {
+			$f3->namespace = $this->namespace;	
+
+			setting_use_namespace($this->namespace);
+			$f3->set("contact.routes", $this->routes);
+			$f3->set("contact.smtp_server", setting("smtp_server"));
+			$f3->set("contact.port", setting("port"));
+			setting_clear_namespace();
+
+			echo Template::instance()->render("/contact/setup.html");
+		});
+
+		$f3->route("POST /admin/{$this->namespace}/setup", function ($f3) {
+			$this->update_settings();
 			$this->install();
+
+			echo Template::instance()->render("/contact/setup.html");
+		});
+
+		$f3->route("POST /admin/{$this->namespace}/settings", function ($f3) {
+
+			setting_use_namespace($this->namespace);
+			setting("email", $f3->POST["email"]);
+			setting("name", $f3->POST["name"]);
+			setting("subject", $f3->POST["subject"]);
+			setting_clear_namespace();
+
+			$f3->reroute("/admin/{$this->namespace}/");
 		});
 
 		$f3->route("GET /admin/{$this->namespace}/email_template", function () {
@@ -113,20 +145,6 @@ class contact extends prefab
 		$f3->route("GET /admin/{$this->namespace}/documentation", function ($f3) {
 			echo Template::instance()->render("/contact/documentation.html");
 		});
-
-		$f3->route("POST /admin/{$this->namespace}/settings", function ($f3) {
-			$db = $f3->DB;
-
-			setting_use_namespace($this->namespace);
-
-			setting("email", $f3->POST["email"]);
-			setting("name", $f3->POST["name"]);
-			setting("subject", $f3->POST["subject"]);
-
-			setting_clear_namespace();
-
-			$f3->reroute("/admin/".$this->namespace);
-		});		
 		
 		$f3->route("POST /admin/{$this->namespace}/update_field/@field", 
 			function ($f3, $params) { $this->update_field($f3, $params); });
@@ -369,6 +387,19 @@ class contact extends prefab
 		fclose($f);
 	}
 
+	function update_settings()
+	{
+		$f3 = base::instance();
+
+		setting_use_namespace($this->namespace);
+
+		setting("routes", $f3->POST["routes"]);
+		setting("smtp_server", $f3->POST["smtp_server"]);
+		setting("port", $f3->POST["port"]);
+
+		setting_clear_namespace();
+	}
+
 	function install()
 	{
 		$db = f3::instance()->get("DB");
@@ -394,5 +425,20 @@ class contact extends prefab
 		setting_clear_namespace();
 
 		base::instance()->reroute("/admin/".$this->namespace);
+	}
+
+	function check_install() {
+		$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}'");
+
+		if (empty($result))
+			return false;
+
+		if (!setting("{$this->namespace}_smtp_server"))
+			return false;
+
+		if (!setting("{$this->namespace}_port"))
+			return false;
+
+		return true;
 	}
 }

@@ -73,7 +73,9 @@ class ckeditor extends prefab {
 	function admin_routes($f3) {
 
 		$f3->route("GET /admin/ckeditor", function ($f3) {
-			$f3->ckeditor["skins"] = parse_ini_file($GLOBALS["settings"]["paths"]["cms"]."/modulesUI/ckeditor/settings.ini", true)["skins"];
+
+			$skins = parse_ini_file($f3->SETTINGS["paths"]["cms"]."/modulesUI/ckeditor/settings.ini", true)["skins"];
+			$f3->set("ckeditor.skins", $skins);
 
 			echo Template::instance()->render("/ckeditor/ckeditor.html");
 		});
@@ -146,7 +148,7 @@ class ckeditor extends prefab {
 			echo Template::instance()->render("/ckeditor/documentation.html");
 		});
 
-		$f3->route("GET /admin/ckeditor/install", function ($f3) {
+		$f3->route("GET /admin/ckeditor/setup", function ($f3) {
 
 			$f3->reroute("/admin/ckeditor");
 
