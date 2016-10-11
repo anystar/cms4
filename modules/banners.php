@@ -9,13 +9,13 @@ class banners extends prefab {
 	function __construct($namespace) {
 		$f3 = base::instance();
 		$this->namespace = $namespace;
-		
+
 		$this->routes = setting($namespace."_routes");
+		$this->file_path = getcwd() . "/" . setting($namespace."_directory");
 
 		// Load banner for this route
-		if (isroute($this->routes) || isroute("/admin/banners"))
+		if (isroute($this->routes))
 		{
-			$this->file_path = getcwd()."/uploads/".$namespace."/";
 			$this->load_settings();
 			$this->retreive_content($f3);
 		}
@@ -45,6 +45,12 @@ class banners extends prefab {
 		// Render admin panel
 		$f3->route('GET /admin/'.$this->namespace, function ($f3) {
 
+			if (!$this->routes || !$this->file_path)
+				$f3->reroute("/admin/".$this->namespace."/setup");
+
+			$this->load_settings();
+			$this->retreive_content($f3);
+
 			$f3->set("max_upload_size", file_upload_max_size());
 
 			// Overwrite banners template var incase it is used by another module
@@ -56,14 +62,12 @@ class banners extends prefab {
 			echo Template::instance()->render("/banners/banners.html");
 		});
 
-		// Render install page
-		$f3->route('GET /admin/'.$this->namespace.'/install', function ($f3) {
-			$this->install();
-		});
-
 		$f3->route('GET /admin/'.$this->namespace.'/setup', function ($f3) {
+			
 			$this->load_settings();
 			$f3->banner = $f3->get($this->namespace);
+			$f3->namespace = $this->namespace;
+
 			echo Template::instance()->render("/banners/setup.html");
 		});
 
@@ -192,8 +196,6 @@ class banners extends prefab {
 		$html = setting($this->namespace."_template_code");
 
 
-		d($html);
-
 		// if (file_exists($this->file_path."/slider.html"))
 		// {
 		// 	$temp_hive["banner"] = $f3->get($this->namespace);
@@ -217,6 +219,9 @@ class banners extends prefab {
 		if (isset($f3->POST["routes"]))
 			setting("routes", $f3->POST["routes"]);
 
+		if (isset($f3->POST["directory"]))
+			setting("directory", $f3->POST["directory"]);
+
 		// Slider settings
 		if (isset($f3->POST["javascript_framework_url"]))
 			setting("javascript_framework_url", $f3->POST["javascript_framework_url"]);
@@ -233,6 +238,8 @@ class banners extends prefab {
 		if (isset($f3->POST["template_code"]))
 			setting("template_code", $f3->POST["template_code"]);
 
+		if (isset($f3->POST["directory"]))
+			setting("directory", $f3->POST["directory"]);
 
 		// Upload settings
 		if (isset($f3->POST["html"]))
@@ -318,34 +325,11 @@ class banners extends prefab {
 	function install () {
 		$f3 = base::instance();
 
-		// Default slider
-		$system = "wowslider";
-		$width = "1500";
-		$height = "300";
-
-		// Check to see if directory exists for javascript system
-		$cms = $f3->SETTINGS["paths"]["cms"];
-		$systemPath = $cms."/modulesUI/banners/systems/".$system;
-
-		if (!is_dir($systemPath)) {
-			error::log("A banner system was created where none exists at $systemPath");
-			$f3->rereoute("/admin/banners");
-			return;
-		}
-
 		// Ensure directory exsists and make it if it doesn't
+		d($this->file_path);
+
 		if (!is_dir($this->file_path))
 			mkdir($this->file_path, 0755, true);
-
-		// Copy banner system to client folder
-		if (file_exists($systemPath."/slider.html"))
-			copy($systemPath."/slider.html", $this->file_path."/slider.html");
-
-		if (file_exists($systemPath."/slider.js"))
-			copy($systemPath."/slider.js", $this->file_path."/slider.js");
-	
-		if (file_exists($systemPath."/slider.css"))
-			copy($systemPath."/slider.css", $this->file_path."/slider.css");
 
 		setting($this->namespace."_width", $width, false);
 		setting($this->namespace."_height", $height, false);

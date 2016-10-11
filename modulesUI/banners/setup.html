@@ -29,11 +29,21 @@
 				<div class="box">
 					<h2>Setup {{@namespace}}</h2>
 
-					<form method="POST" action="{{@BASE}}/admin/banners/update_settings">
+					<form method="POST" action="{{@BASE}}/admin/{{@namespace}}/update_settings">
 						<div class="form-group">
 							<label>URL routes to load on</label>
 							<input name="routes" value="{{@banner.routes}}" type="text" class="form-control" placeholder="eg: /example">
 							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
+						</div>
+
+						<div class="form-group">
+							<label>Image directory</label>
+							
+							<check if="{{@banner.directory}}">
+								<true><input name="directory" value="{{@banner.directory}}" type="text" class="form-control" placeholder="relative path"></true>
+								<false><input name="directory" value="assets/{{@namespace}}/" type="text" class="form-control" placeholder="relative path"></false>
+							</check>
+							<p class="help-block">Location of the images in the website directory</p>
 						</div>
 
 						<div class="form-group">
@@ -46,28 +56,28 @@
 						</div>
 
 						<div class="form-group">
-							<label>Javascript Framework</label>
+							<label>Javascript framework</label>
 							<input value="{{@banner.javascript_framework_url}}" name="javascript_framework_url" type="text" class="form-control" placeholder="eg: url to jquery">
 						</div>
 
 						<div class="form-group">
-							<label>Javascript</label>
+							<label>Javascript asset</label>
 							<input value="{{@banner.javascript_url}}" name="javascript_url" type="text" class="form-control" placeholder="url to javascript assets">
 						</div>
 
 						<div class="form-group">
-							<label>Stylesheet</label>
+							<label>Stylesheet asset</label>
 							<input value="{{@banner.stylesheet_url}}" name="stylesheet_url" type="text" class="form-control" placeholder="url to stylesheet assets">
 						</div>
 
 						<div class="form-group">
-							<label>Javascript Initialization</label>
+							<label>Javascript initialization</label>
 							<div id="editor"></div>
 							<textarea style="display:none;" name="javascript_init" class="form-control" rows="3">{{@banner.javascript_init}}</textarea>
 						</div>
 
 						<div class="form-group">
-							<label>Template Code</label>
+							<label>Template code</label>
 							<div id="editor2"></div>
 							<textarea style="display:none;" name="template_code" class="form-control" rows="3">{{@banner.template_code}}</textarea>
 						</div>

@@ -167,7 +167,7 @@ class store extends prefab {
 		$f3->DB->exec("INSERT INTO licenses (module, name, namespace, key) VALUES (?, ?, ?, ?)", [$module, $module_name, $namespace, $key]);
 
 		// Redirect to modules' install screen
-		$f3->reroute("/admin/".$namespace."/install");
+		$f3->reroute("/admin/".$namespace."/setup");
 	}
 
 	function uninstall ($module, $module_name, $namespace) {
