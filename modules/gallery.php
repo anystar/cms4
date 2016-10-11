@@ -1,6 +1,5 @@
 <?php
 
-
 class gallery extends prefab {
 
 	private $namespace;
@@ -18,23 +17,23 @@ class gallery extends prefab {
 		$this->asset_routes($f3);
 
 		// Set an upload path from settings or leave as default
-		if ($value = setting($namespace."_upload_path"))
+		if ($value = setting($namespace."_directory"))
 			$this->upload_path = $value;
 		else
-			$this->upload_path = "uploads/{$namespace}";
+			$this->upload_path = "assets/{$namespace}";
 
 		// Set a thumb path from settings or leave as default
-		if ($value = setting($namespace."_thumb_path"))
+		if ($value = setting($namespace."_directory_thumb"))
 			$this->thumb_path = $value;
 		else
-			$this->thumb_path = "uploads/{$namespace}/thumbs/";
+			$this->thumb_path = "assets/{$namespace}/thumbs/";
 
 		// Which route to load on
 		if ($value = setting($namespace."_route"))
 			$this->route = $value;
 
 		// Retreive contents based on route
-		if ($this->route == $f3->PATH || $this->route == "all")
+		if (isroute($this->route) || isroute("/admin/").$this->namespace)
 			$this->retreiveContent();
 
 		// Load admin routes if signed in
@@ -45,6 +44,9 @@ class gallery extends prefab {
 	function admin_routes($f3) {
 
 		$f3->route("GET /admin/{$this->namespace}", function ($f3) {
+
+			if (!$this->check_install())
+				$f3->reroute("/admin/".$this->namespace."/setup");
 
 			$this->retreiveContent();
 			$this->retreiveSettings();
@@ -63,10 +65,17 @@ class gallery extends prefab {
 			exit;
 		});
 
-		$f3->route("GET /admin/{$this->namespace}/install", function ($f3) {
-			$this->install();
+		$f3->route("GET /admin/{$this->namespace}/setup", function ($f3) {
+			$f3->namespace = $this->namespace;
 
-			$f3->reroute("/admin/{$this->namespace}");
+			echo Template::instance()->render("/gallery/setup.html");
+		});
+
+		$f3->route("POST /admin/{$this->namespace}/setup", function ($f3) {
+			
+			d($f3->POST);
+
+			echo Template::instance()->render("/gallery/setup.html");
 		});
 
 		$f3->route("GET /admin/{$this->namespace}/delete/@id [ajax]", function ($f3, $params) {
@@ -208,6 +217,9 @@ class gallery extends prefab {
 		$f3 = base::instance();
 		$db = $f3->DB;
 
+		if (!$this->check_install())
+			return;
+
 		$result = $db->exec("SELECT * FROM {$this->namespace}");
 
 		foreach ($result as $key=>$image)
@@ -291,5 +303,17 @@ class gallery extends prefab {
 
 		setting($this->namespace."_default_image_size", "1000x1000", false);
 		setting($this->namespace."_default_thumb_size", "500x500", false);
+	}
+
+	function check_install() {
+		$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}'");
+
+		if (empty($result))
+			return false;
+
+		if (!setting("{$this->namespace}_directory"))
+			return false;
+
+		return true;
 	}
 }

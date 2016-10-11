@@ -448,7 +448,7 @@ class contact extends prefab
 
 		if (!setting("{$this->namespace}_port"))
 			return false;
-
+			
 		return true;
 	}
 }
