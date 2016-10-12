@@ -10,6 +10,12 @@ class banners extends prefab {
 		$f3 = base::instance();
 		$this->namespace = $namespace;
 
+		if (admin::$signed)
+			$this->admin_routes($f3);
+
+		if (!$this->isntall_check)
+			return;
+
 		$this->routes = setting($namespace."_routes");
 		$this->file_path = getcwd() . "/" . setting($namespace."_directory");
 
@@ -21,20 +27,6 @@ class banners extends prefab {
 		}
 
 		$this->routes($f3);
-
-		if (admin::$signed)
-			$this->admin_routes($f3);
-	}
-
-	function routes($f3) {
-
-		$f3->route("GET /".$this->namespace."/slider.css", function ($f3) {
-			echo Template::instance()->render("uploads/".$this->namespace."/slider.css", "text/css");
-		});
-
-		$f3->route("GET /".$this->namespace."/slider.js", function ($f3) {
-			echo Template::instance()->render("uploads/".$this->namespace."/slider.js", "application/javascript");
-		});
 	}
 
 	function admin_routes($f3) {
@@ -45,7 +37,7 @@ class banners extends prefab {
 		// Render admin panel
 		$f3->route('GET /admin/'.$this->namespace, function ($f3) {
 
-			if (!$this->routes || !$this->file_path)
+			if (!$this->install_check())
 				$f3->reroute("/admin/".$this->namespace."/setup");
 
 			$this->load_settings();
@@ -62,15 +54,6 @@ class banners extends prefab {
 			echo Template::instance()->render("/banners/banners.html");
 		});
 
-		$f3->route('GET /admin/'.$this->namespace.'/setup', function ($f3) {
-			
-			$this->load_settings();
-			$f3->banner = $f3->get($this->namespace);
-			$f3->namespace = $this->namespace;
-
-			echo Template::instance()->render("/banners/setup.html");
-		});
-
 		$f3->route('GET /admin/'.$this->namespace.'/documentation', function ($f3) {
 			echo Template::instance()->render("/banners/documentation.html");
 		});
@@ -79,17 +62,23 @@ class banners extends prefab {
 		#######################################################
 		########### Delete, Upload, Update Settings ###########
 		#######################################################
+
+		$f3->route('GET /admin/'.$this->namespace.'/setup', function ($f3) {
+			
+			$this->load_settings();
+			$f3->banner = $f3->get($this->namespace);
+			$f3->namespace = $this->namespace;
+
+			echo Template::instance()->render("/banners/setup.html");
+		});
 		
 		// Update system config of banner system
-		$f3->route('POST /admin/'.$this->namespace.'/update_settings', function ($f3) {
+		$f3->route('POST /admin/'.$this->namespace.'/setup', function ($f3) {
+			
 			$this->update_settings($f3);
-			$f3->reroute('/admin/'.$this->namespace."/setup");
-		});
+			$this->install();
 
-		// Update system config of banner system
-		$f3->route('POST /admin/.'.$this->namespace.'./update_settings [ajax]', function ($f3) {
-			$this->update_settings($f3);
-			exit();
+			$f3->reroute('/admin/'.$this->namespace."/setup");
 		});
 
 		// Upload via drop zone
@@ -100,6 +89,10 @@ class banners extends prefab {
 
 			$this->delete_banner($f3, $params);
 			exit;
+		});
+
+		$f3->route('POST /admin/'.$this->namespace.'/update_order', function ($f3, $params) {
+			setting($this->namespace."_order", $f3->POST["banners_order"]);
 		});
 	}
 
@@ -113,6 +106,8 @@ class banners extends prefab {
 			$this->file_type = "jpeg";
 
 		$routes = setting("routes");
+		$dir = setting("directory");
+		$dims = setting("dimensions");
 		$fw = setting("javascript_framework_url");
 		$js = setting("javascript_url");
 		$css = setting("stylesheet_url");
@@ -124,6 +119,8 @@ class banners extends prefab {
 
 		$f3->set("{$this->namespace}.routes", $routes);
 
+		$f3->set("{$this->namespace}.directory", $dir);
+		$f3->set("{$this->namespace}.dimensions", $dims);
 		$f3->set("{$this->namespace}.javascript_framework_url", $fw);
 		$f3->set("{$this->namespace}.javascript_url", $js);
 		$f3->set("{$this->namespace}.stylesheet_url", $css);
@@ -135,12 +132,14 @@ class banners extends prefab {
 
 	function retreive_content($f3) {
 
+		$file_path = setting($this->namespace."_directory");
+
 		// If there is no folder, don't continue.
-		if (!is_dir($this->file_path))
+		if (!is_dir(getcwd()."/".$file_path))
 			return;
 
 		// Get images from folder
-		$dir = array_diff(scandir($this->file_path), array('..', '.', "slider.html", "slider.css", "slider.js"));
+		$dir = array_diff(scandir(getcwd()."/".$file_path), array('..', '.'));
 
 		$order = json_decode(setting($this->namespace."_order"), true);
 
@@ -187,26 +186,13 @@ class banners extends prefab {
 		{
 			foreach ($order as $x) {
 				$f3->push($this->namespace.".images", [
-					"url"=>"uploads/".$this->namespace."/".$x,
+					"url"=>$file_path."/".$x,
 					"filename"=>$x
 				]);
 			}
 		}
 
 		$html = setting($this->namespace."_template_code");
-
-
-		// if (file_exists($this->file_path."/slider.html"))
-		// {
-		// 	$temp_hive["banner"] = $f3->get($this->namespace);
-		// 	$temp_hive["BASE"] = $f3->BASE;
-
-
-		// 	$html = Template::instance()->render("uploads/".$this->namespace."/slider.html", "text/html", $temp_hive);
-		// 	$f3->set($this->namespace.".html", $html);
-		// }
-
-		$f3->set();
 
 		if ($update_order)
 			setting($this->namespace."_order", json_encode($order));
@@ -241,24 +227,8 @@ class banners extends prefab {
 		if (isset($f3->POST["directory"]))
 			setting("directory", $f3->POST["directory"]);
 
-		// Upload settings
-		if (isset($f3->POST["html"]))
-			file_put_contents($this->file_path."/slider.html", $f3->POST["html"]);
-
-		if (isset($f3->POST["css"]))
-			file_put_contents($this->file_path."/slider.css", $f3->POST["css"]);
-
-		if (isset($f3->POST["js"]))
-			file_put_contents($this->file_path."/slider.js", $f3->POST["js"]);
-
-		if (isset($f3->POST["width"]))
-			setting("width", $f3->POST["width"]);
-
-		if (isset($f3->POST["height"]))
-			setting("height", $f3->POST["height"]);
-
-		if (isset($f3->POST["banners_order"]))
-			setting("order", $f3->POST["banners_order"]);
+		if (isset($f3->POST["dimensions"]))
+			setting("dimensions", $f3->POST["dimensions"]);
 
 		setting_clear_namespace();
 	}
@@ -276,6 +246,8 @@ class banners extends prefab {
 	function upload() {
 		$f3 = base::instance();
 
+		$file_path = setting($this->namespace."_directory");
+
 		// Temp image path
 		$temp_image = $f3->FILES["file"]["tmp_name"];
 
@@ -283,18 +255,20 @@ class banners extends prefab {
 		$new_name = str_replace(' ', '_', $f3->FILES["file"]["name"]);
 		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
 		$new_name = preg_replace('/\.[^.]+$/','',$new_name);
-		$new_name .= ".".$this->file_type;
+		$new_name .= ".".$file_type;
 
 		// Where to save
-		$save_to = $this->file_path."/".$new_name;
+		$save_to = $file_path."/".$new_name;
 
 		// Ensure directory exsists and make it if it doesn't
-		if (!is_dir($this->file_path))
-			mkdir($this->file_path, 0755, true);
+		if (!is_dir($file_path))
+			mkdir($file_path, 0755, true);
 
-		// Get width and height settings
-		$width = setting($this->namespace."_width");
-		$height = setting($this->namespace."_height");
+		// Get settings for image size
+		$image_size = setting($this->namespace."_dimensions");
+		$image_size = explode("x", $image_size);
+		$width = $image_size[0];
+		$height = $image_size[1];
 
 		// Make sure that width and height are set before resizing image
 		if (($width*$height) > 0)
@@ -325,28 +299,46 @@ class banners extends prefab {
 	function install () {
 		$f3 = base::instance();
 
+		$file_path = getcwd()."/".setting($this->namespace."_directory");
+
 		// Ensure directory exsists and make it if it doesn't
-		d($this->file_path);
-
-		if (!is_dir($this->file_path))
-			mkdir($this->file_path, 0755, true);
-
-		setting($this->namespace."_width", $width, false);
-		setting($this->namespace."_height", $height, false);
-
-		// Load default images
-		if (is_dir($systemPath."/default_images"))
-		{	
-			$p = $systemPath."/default_images";
-			$dir = array_diff(scandir($p), array('..', '.'));
-
-			foreach ($dir as $img) 
-			{
-				if (!file_exists($this->file_path."/".$img))
-					copy($p."/".$img, $this->file_path."/".$img);
-			}
+		if (!is_dir($file_path))
+		{
+			$copy_defaults = true;
+			mkdir($file_path, 0755, true);
 		}
 
-		$f3->reroute('/admin/'.$this->namespace);
+		// Load default images
+		if ($copy_defaults)
+		{	
+			$default_images = $f3->SETTINGS["paths"]["cms"]."/modulesUI/banners/default_images/";
+
+			if (is_dir($default_images))
+			{	
+				$dir = array_diff(scandir($default_images), array('..', '.'));
+
+				foreach ($dir as $img) 
+				{
+					if (!file_exists($file_path."/".$img))
+						copy($default_images."/".$img, $file_path."/".$img);
+				}
+			}
+		}
+	}
+
+	function install_check() {
+
+		if (!extension_loaded("gd")) return false;
+
+		if (!setting("{$this->namespace}_routes"))
+			return false;
+
+		if (!setting("{$this->namespace}_directory"))
+			return false;
+
+		if (!setting("{$this->namespace}_dimensions"))
+			return false;
+
+		return true;
 	}
 }

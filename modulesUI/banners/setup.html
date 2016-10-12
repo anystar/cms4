@@ -29,21 +29,28 @@
 				<div class="box">
 					<h2>Setup {{@namespace}}</h2>
 
-					<form method="POST" action="{{@BASE}}/admin/{{@namespace}}/update_settings">
-						<div class="form-group">
+					<form method="POST" action="{{@BASE}}/admin/{{@namespace}}/setup">
+						<div class="form-group <check if='{{!@banner.routes}}'>has-error</check>">
 							<label>URL routes to load on</label>
 							<input name="routes" value="{{@banner.routes}}" type="text" class="form-control" placeholder="eg: /example">
 							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group <check if='{{!@banner.directory}}'>has-error</check>">
 							<label>Image directory</label>
 							
 							<check if="{{@banner.directory}}">
 								<true><input name="directory" value="{{@banner.directory}}" type="text" class="form-control" placeholder="relative path"></true>
-								<false><input name="directory" value="assets/{{@namespace}}/" type="text" class="form-control" placeholder="relative path"></false>
+								<false><input name="directory" type="text" class="form-control" placeholder="assets/{{@namespace}}/"></false>
 							</check>
 							<p class="help-block">Location of the images in the website directory</p>
+						</div>
+
+						<div class="form-group <check if='{{!@banner.dimensions}}'>has-error</check>">
+							<label>Banner dimensions (for upload resizing)</label>
+							
+							<input value="{{@banner.dimensions}}" name="dimensions" type="text" class="form-control" placeholder="1000x400">
+							<p class="help-block">ignores aspect ratio. (shrinks and then crops from center)</p>
 						</div>
 
 						<div class="form-group">

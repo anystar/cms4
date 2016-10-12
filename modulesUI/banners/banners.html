@@ -117,7 +117,7 @@
 
 			<div class="row">
 				<check if="{{@webmaster}}">
-					<true><set colwidth="col-xs-12 col-md-8"></true>
+					<true><set colwidth="col-xs-12 col-md-12"></true>
 					<false><set colwidth="col-md-12"></false>
 				</check>
 
@@ -157,35 +157,6 @@
 
 					</div>
 				</div>
-				<check if="{{@webmaster}}">
-				<div class="col-md-4">
-
-
-					<div class="box">
-						<h2>Upload settings</h2>
-						<div class="container image_upload_settings">
-						
-							<form  action="{{@BASE}}/admin/{{@namespace}}/update_settings" method="POST" class="form-inline">
-								<div class="form-group">
-								  <label for="b">Image size: </label>
-								  <input name="width" value="{{@SETTINGS.banners_width}}" type="text" class="form-control" id="b" placeholder="Width"> <span class="glyphicon glyphicon-remove"></span> <input name="height" value="{{@SETTINGS.banners_height}}" type="text" class="form-control" id="exampleInputName2" placeholder="Height">
-								</div>
-								<button type="submit">Apply settings to take effect</button>
-
-								<p>These settings will</p>
-								<ul>
-									<li>resize images when uploaded</li>
-									<li>ignores aspect ratio. <br>(shrinks and then crops from center)</li>
-									<li>images will enlarge.</li>
-								</ul>
-								<ul>
-									<li>Leave blank to not resize.</li>
-								</ul>
-							</form>
-						</div>
-					</div>
-				</div>
-				</check>
 			</div>
 		</div>
 		
@@ -234,7 +205,7 @@
 
 				$.ajax({
 					method: "POST",
-					url: "{{@BASE}}/admin/{{@namespace}}/update_settings",
+					url: "{{@BASE}}/admin/{{@namespace}}/update_order",
 					data: { "banners_order": JSON.stringify(order) }
 				});
 			});
