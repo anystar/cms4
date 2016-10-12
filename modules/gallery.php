@@ -3,7 +3,7 @@
 class gallery extends prefab {
 
 	private $namespace;
-	private $route = "/gallery";
+	private $routes;
 
 	private $upload_path;
 	private $thumb_path;
@@ -11,7 +11,16 @@ class gallery extends prefab {
 
 	function __construct($namespace) {
 		$this->namespace = $namespace;
+		$this->routes = setting($namespace."_routes");
+
 		$f3 = base::instance();
+
+		// Load admin routes if signed in
+		if (admin::$signed)
+			$this->admin_routes($f3);
+
+		if (!$this->install_check())
+			return;
 
 		// Load asset routes
 		$this->asset_routes($f3);
@@ -19,38 +28,31 @@ class gallery extends prefab {
 		// Set an upload path from settings or leave as default
 		if ($value = setting($namespace."_directory"))
 			$this->upload_path = $value;
-		else
-			$this->upload_path = "assets/{$namespace}";
 
 		// Set a thumb path from settings or leave as default
 		if ($value = setting($namespace."_directory_thumb"))
 			$this->thumb_path = $value;
-		else
-			$this->thumb_path = "assets/{$namespace}/thumbs/";
 
 		// Which route to load on
 		if ($value = setting($namespace."_route"))
 			$this->route = $value;
 
 		// Retreive contents based on route
-		if (isroute($this->route) || isroute("/admin/").$this->namespace)
+		if (isroute($this->routes))
 			$this->retreiveContent();
-
-		// Load admin routes if signed in
-		if (admin::$signed)
-			$this->admin_routes($f3);
 	}
 
 	function admin_routes($f3) {
 
 		$f3->route("GET /admin/{$this->namespace}", function ($f3) {
 
-			if (!$this->check_install())
+			if (!$this->install_check())
 				$f3->reroute("/admin/".$this->namespace."/setup");
 
 			$this->retreiveContent();
-			$this->retreiveSettings();
 
+			$f3->set("max_upload_size", file_upload_max_size());
+			
 			$f3->namespace = $this->namespace;
 			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
@@ -68,14 +70,32 @@ class gallery extends prefab {
 		$f3->route("GET /admin/{$this->namespace}/setup", function ($f3) {
 			$f3->namespace = $this->namespace;
 
+			// Get settings
+			setting_use_namespace($this->namespace);
+			$f3->gallery["routes"] = setting("routes");
+			$f3->gallery["image_directory"] = setting("image_directory");
+			$f3->gallery["thumb_directory"] = setting("thumb_directory");
+			$f3->gallery["image_size"] = setting("image_size");
+			$f3->gallery["thumb_size"] = setting("thumb_size");
+			setting_clear_namespace();
+
 			echo Template::instance()->render("/gallery/setup.html");
 		});
 
 		$f3->route("POST /admin/{$this->namespace}/setup", function ($f3) {
 			
-			d($f3->POST);
+			// Set settings
+			setting_use_namespace($this->namespace);
+			setting("routes", $f3->POST["routes"]);
+			setting("image_directory", $f3->POST["image_directory"]);
+			setting("thumb_directory", $f3->POST["thumb_directory"]);
+			setting("image_size", $f3->POST["image_size"]);
+			setting("thumb_size", $f3->POST["thumb_size"]);
+			setting_clear_namespace();
 
-			echo Template::instance()->render("/gallery/setup.html");
+			$this->install();
+
+			$f3->reroute("/admin/{$this->namespace}/setup");
 		});
 
 		$f3->route("GET /admin/{$this->namespace}/delete/@id [ajax]", function ($f3, $params) {
@@ -144,6 +164,9 @@ class gallery extends prefab {
 
 	function upload($f3) {
 
+		$upload_path = setting($this->namespace."_image_directory");
+		$thumb_path = setting($this->namespace."_thumb_directory");
+
 		// Temp image path
 		$temp_image = $f3->FILES["file"]["tmp_name"];
 
@@ -152,14 +175,14 @@ class gallery extends prefab {
 		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
 
 		// Where to save the full image too
-		$save_to_full = getcwd()."/".$this->upload_path."/".$new_name;
+		$save_to_full = getcwd()."/".$upload_path."/".$new_name;
 
 		// Where to save the thumb too
-		$save_to_thumb = getcwd()."/".$this->thumb_path."/".$this->thumb_prefix.$new_name;
+		$save_to_thumb = getcwd()."/".$thumb_path."/".$this->thumb_prefix.$new_name;
 
 		// Get settings for image size
-		$image_size = setting($this->namespace."_default_image_size");
-		$thumb_size = setting($this->namespace."_default_thumb_size");
+		$image_size = setting($this->namespace."_image_size");
+		$thumb_size = setting($this->namespace."_thumb_size");
 
 		$image_size = explode("x", $image_size);
 		$thumb_size = explode("x", $thumb_size);
@@ -186,6 +209,7 @@ class gallery extends prefab {
 		// Record into database
 		$f3->DB->exec("INSERT INTO {$this->namespace} (filename, `order`, caption) 
 					   VALUES (?, ?, ?)", [$new_name, 0, '']);
+
 	}
 
 	function resize_image ($image, $x, $y, $save_as) {
@@ -200,118 +224,73 @@ class gallery extends prefab {
 		imagejpeg($temp_image->data(), $save_as);
 	}
 
-	function update_settings($data) {
-
-		$db = base::instance()->DB;
-
-		$setTo = $data["thumb_size_x"] . "x" . $data["thumb_size_y"];
-		setting($this->namespace."_default_thumb_size", $setTo);
-
-		$setTo = $data["image_size_x"] . "x" . $data["image_size_y"];
-		setting($this->namespace."_default_image_size", $setTo);
-
-		base::instance()->reroute("/admin/".$this->namespace);
-	}
-
 	function retreiveContent() {
 		$f3 = base::instance();
 		$db = $f3->DB;
 
-		if (!$this->check_install())
+		if (!$this->install_check())
 			return;
+
+		$upload_path = setting($this->namespace."_image_directory");
+		$thumb_path = setting($this->namespace."_thumb_directory");
 
 		$result = $db->exec("SELECT * FROM {$this->namespace}");
 
 		foreach ($result as $key=>$image)
 		{
-			$result[$key]["url"] = $f3->BASE ."/". rtrim($this->upload_path, "/") . "/" . $image["filename"];
-			$result[$key]["thumb"] = $f3->BASE. "/" . rtrim($this->thumb_path, "/") . "/". $this->thumb_prefix.$image["filename"];
+			$result[$key]["url"] = $f3->BASE . rtrim($upload_path, "/") . "/" . $image["filename"];
+			$result[$key]["thumb"] = $f3->BASE . rtrim($thumb_path, "/") . "/". $this->thumb_prefix.$image["filename"];
 
 			// If the file does not exist lets remove it from the DB
-			if (!file_exists($this->upload_path."/".$image["filename"]))
+			if (!file_exists(getcwd()."/".$upload_path."/".$image["filename"]))
 			{
 				$db->exec("DELETE FROM {$this->namespace} WHERE id=?", $image["id"]);
 				unset($result[$key]);
 			}
 		}
 
-		base::instance()->set("{$this->namespace}.images", $result);
-	}
+		$f3->set("{$this->namespace}.images", $result);
 
+		// Load html snippet
+		if (isroute($this->routes)) {
+			$temp_hive["gallery"] = $f3->get($this->namespace);
+			$temp_hive["BASE"] = $f3->get("BASE");
 
-	function retreiveSettings () {
-		$f3 = base::instance();
-		$db = base::instance()->get("DB");
-
-		$result = setting($this->namespace."_default_thumb_size");
-		$result = explode("x", $result);
-
-		$f3->set($this->namespace.".settings.thumb_size_x", $result[0]);
-		$f3->set($this->namespace.".settings.thumb_size_y", $result[1]);
-
-		$result = setting($this->namespace."_default_image_size");
-		$result = explode("x", $result);
-
-		$f3->set($this->namespace.".settings.image_size_x", $result[0]);
-		$f3->set($this->namespace.".settings.image_size_y", $result[1]);
-
-		$f3->set("max_upload_size", file_upload_max_size());
-	}
-
-	function installCheck()
-	{	
-
-		if (!extension_loaded("gd")) return false;
-
-		$db = base::instance()->get("DB");
-		$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name=?", $this->namespace);
-
-		if (empty($result)) 
-			return false;
-
-		// Create gallery folder
-		if (!is_dir(getcwd()."/".$this->upload_path))
-			return false;
-
-		// Create gallery folder
-		if (!is_dir(getcwd()."/".$this->thumb_path))
-			return false;
-
-		return true;
+			$snippet = Template::instance()->render("/gallery/gallery_snippet.html", "text/html", $temp_hive);
+			$f3->set("{$this->namespace}.html", $snippet);
+		}
 	}
 
 	function install() {
-
-		if ($this->installCheck())
-			return;
 
 		$db = base::instance()->DB;
 
 		$db->exec("CREATE TABLE IF NOT EXISTS '{$this->namespace}' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'filename' TEXT, 'order' INTEGER, 'caption' TEXT)");
 
-		// Make sure uploads folder exists
-		if (!is_dir(getcwd()."/uploads"))
-			mkdir(getcwd()."/uploads");
+		$upload_path = setting($this->namespace."_image_directory");
+		$thumb_path = setting($this->namespace."_thumb_directory");
 
 		// Create gallery folder
-		if (!is_dir(getcwd()."/".$this->upload_path))
-			mkdir(getcwd()."/".$this->upload_path);
+		if ($this->upload_path)
+			if (!is_dir(getcwd()."/".$upload_path))
+				mkdir(getcwd()."/".$upload_path, 0755, true);
 
 		// Create gallery folder
-		if (!is_dir(getcwd()."/".$this->thumb_path))
-			mkdir(getcwd()."/".$this->thumb_path);
-
-		setting($this->namespace."_default_image_size", "1000x1000", false);
-		setting($this->namespace."_default_thumb_size", "500x500", false);
+		if ($thumb_path)
+			if (!is_dir(getcwd()."/".$thumb_path))
+				mkdir(getcwd()."/".$thumb_path, 0755, true);
 	}
 
-	function check_install() {
+	function install_check() {
+		
+		if (!extension_loaded("gd")) return false;
+
 		$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}'");
 
 		if (empty($result))
 			return false;
 
-		if (!setting("{$this->namespace}_directory"))
+		if (!setting("{$this->namespace}_image_directory"))
 			return false;
 
 		return true;

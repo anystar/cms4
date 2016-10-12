@@ -260,7 +260,6 @@ function parse_file_size($size) {
 
 function isroute($route, $verb=null)
 {
-
 	$f3 = base::instance();
 
 	if ($verb!=null)

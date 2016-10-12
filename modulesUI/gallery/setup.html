@@ -30,22 +30,28 @@
 					<h2>Setup {{@namespace}}</h2>
 
 					<form method="POST" action="{{@BASE}}/admin/{{@namespace}}/setup">
-						<div class="form-group">
+						<div class="form-group <check if='{{!@gallery.routes}}'>has-error</check>">
 							<label>URL routes to load on</label>
 							<input name="routes" value="{{@gallery.routes}}" type="text" class="form-control" placeholder="eg: /example">
 							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group <check if='{{!@gallery.image_directory}}'>has-error</check>">
 							<label>Image directory</label>
 							<input name="image_directory" value="{{@gallery.image_directory}}" type="text" class="form-control" placeholder="eg: /assets/{{@namespace}}/">
 						</div>
 
-						<div class="form-group">
+						<div class="form-group <check if='{{!@gallery.thumb_directory}}'>has-error</check>">
 							<label>Thumb directory</label>
 							<input name="thumb_directory" value="{{@gallery.thumb_directory}}" type="text" class="form-control" placeholder="eg: /assets/{{@namespace}}/thumbs">
 						</div>
-
+					
+						<h3>Upload settings</h3>
+						<ul>
+							<li>resize images when uploaded</li>
+							<li>respect aspect ratio. <br>(fit image with its longest side into the resize dimensions)</li>
+							<li>leave blank to not resize.</li>
+						</ul>
 						<div class="form-group">
 							<label>Image size</label>
 							<input name="image_size" value="{{@gallery.image_size}}" type="text" class="form-control" placeholder="500x500">
