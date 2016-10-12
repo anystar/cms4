@@ -349,7 +349,7 @@ class banners extends prefab {
 			return false;
 
 		$type = strtolower(setting("{$this->namespace}_filetype"));
-		if (!($type == "jpg" || $type == "png" || $type == "gif"))
+		if (!($type == "jpg" || $type == "png" || $type == "gif" || $type!=""))
 			return false;
 
 		return true;
