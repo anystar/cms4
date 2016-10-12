@@ -4,8 +4,6 @@ class banners extends prefab {
 	private $namespace;
 	private $routes;
 
-	private $file_path, $upload_path, $file_type;
-
 	function __construct($namespace) {
 		$f3 = base::instance();
 		$this->namespace = $namespace;
@@ -16,8 +14,6 @@ class banners extends prefab {
 
 		if (!$this->install_check())
 			return;
-
-		$this->file_path = getcwd() . "/" . setting($namespace."_directory");
 
 		// Load banner for this route
 		if (isroute($this->routes))
@@ -53,6 +49,7 @@ class banners extends prefab {
 		});
 
 		$f3->route('GET /admin/'.$this->namespace.'/documentation', function ($f3) {
+			$f3->namespace = $this->namespace;
 			echo Template::instance()->render("/banners/documentation.html");
 		});
 
@@ -100,9 +97,6 @@ class banners extends prefab {
 
 		setting_use_namespace($this->namespace);
 
-		if (!$this->file_type = setting("file_type")) 
-			$this->file_type = "jpeg";
-
 		$routes = setting("routes");
 		$dir = setting("directory");
 		$dims = setting("dimensions");
@@ -111,6 +105,7 @@ class banners extends prefab {
 		$css = setting("stylesheet_url");
 		$jsinit = setting("javascript_init");
 		$template = setting("template_code");
+		$filetype = setting("filetype");
 
 		if (!$js || !$css || !$jsinit || !$template)
 			$f3->set("{$namespace}.error", true);
@@ -124,6 +119,7 @@ class banners extends prefab {
 		$f3->set("{$this->namespace}.stylesheet_url", $css);
 		$f3->set("{$this->namespace}.javascript_init", $jsinit);
 		$f3->set("{$this->namespace}.template_code", $template);
+		$f3->set("{$this->namespace}.filetype", $filetype);
 
 		setting_clear_namespace();
 	}
@@ -180,6 +176,9 @@ class banners extends prefab {
 			$order = $keep;
 		}
 
+		// Lets trim any slashes so we don't double up
+		$file_path = rtrim(ltrim($file_path, "/"), "/");
+
 		if ($order)
 		{
 			foreach ($order as $x) {
@@ -228,13 +227,21 @@ class banners extends prefab {
 		if (isset($f3->POST["dimensions"]))
 			setting("dimensions", $f3->POST["dimensions"]);
 
+		$f = strtolower($f3->POST["filetype"]);
+		if (isset($f))
+		{
+			// Only allow valid file types
+			if ($f=="jpg" || $f=="png" || $f=="gif")
+				setting("filetype", $f3->POST["filetype"]);
+		}
+
 		setting_clear_namespace();
 	}
 
 
 	function delete_banner($f3, $params) {
 
-		$path = $this->file_path."/".$params['image'];
+		$path = getcwd()."/".setting($this->namespace."_directory")."/".$params['image'];
 
 		if (file_exists($path))
 			unlink($path);
@@ -244,7 +251,8 @@ class banners extends prefab {
 	function upload() {
 		$f3 = base::instance();
 
-		$file_path = setting($this->namespace."_directory");
+		// Get file type to use
+		$file_type = setting($this->namespace."_filetype");
 
 		// Temp image path
 		$temp_image = $f3->FILES["file"]["tmp_name"];
@@ -256,6 +264,7 @@ class banners extends prefab {
 		$new_name .= ".".$file_type;
 
 		// Where to save
+		$file_path = getcwd()."/".setting($this->namespace."_directory");
 		$save_to = $file_path."/".$new_name;
 
 		// Ensure directory exsists and make it if it doesn't
@@ -268,29 +277,34 @@ class banners extends prefab {
 		$width = $image_size[0];
 		$height = $image_size[1];
 
+		$this->resize($temp_image, $save_to, $width, $height, $file_type);
+	}
+
+	function resize ($image, $save_to, $width, $height, $file_type) {
+
+		// Pull image off the disk into memory
+		$temp_image = new Image($image, false, "/"); // Image(filename, filehistory, path)
+
 		// Make sure that width and height are set before resizing image
 		if (($width*$height) > 0)
 		{
-			// Pull image off the disk into memory
-			$temp_image = new Image($temp_image, false, "/"); // Image(filename, filehistory, path)
-
 			// Resize image using F3's image plugin
 			$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
+		}
 
-			// Save image depending on user selected file type
-			switch ($this->file_type)
-			{	
-				case "jpg":
-				case "jpeg":
-					imagejpeg($temp_image->data($this->file_type, 100), $save_to);
-				break;
-				case "png":
-					imagepng($temp_image->data($this->file_type, 100), $save_to);
-				break;
-				case "gif":
-					imagegif($temp_image->data($this->file_type, 100), $save_to);
-				break;
-			}
+		// Save image depending on user selected file type
+		switch ($file_type)
+		{	
+			case "jpg":
+			case "jpeg":
+				imagejpeg($temp_image->data($file_type, 100), $save_to);
+			break;
+			case "png":
+				imagepng($temp_image->data($file_type, 100), $save_to);
+			break;
+			case "gif":
+				imagegif($temp_image->data($file_type, 100), $save_to);
+			break;
 		}
 	}
 
@@ -332,6 +346,10 @@ class banners extends prefab {
 			return false;
 
 		if (!setting("{$this->namespace}_directory"))
+			return false;
+
+		$type = strtolower(setting("{$this->namespace}_filetype"));
+		if (!($type == "jpg" || $type == "png" || $type == "gif"))
 			return false;
 
 		return true;

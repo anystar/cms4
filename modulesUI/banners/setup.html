@@ -43,7 +43,18 @@
 								<true><input name="directory" value="{{@banner.directory}}" type="text" class="form-control" placeholder="relative path"></true>
 								<false><input name="directory" type="text" class="form-control" placeholder="assets/{{@namespace}}/"></false>
 							</check>
-							<p class="help-block">Location of the images in the website directory</p>
+							<p class="help-block">Location where to save uploaded images</p>
+						</div>
+
+						<div class="form-group <check if="{{!@banner.filetype}}">has-error</check>">
+							<label>File type</label>
+							<select name="filetype" class="form-control">
+								<option>Choose a file type</option>
+								<option value="jpg" <check if="{{@banner.filetype=='jpg'}}">selected</check>>jpg</option>
+								<option value="png" <check if="{{@banner.filetype=='png'}}">selected</check>>png</option>
+								<option value="gif" <check if="{{@banner.filetype=='gif'}}">selected</check>>gif</option>
+							</select>
+							<p class="help-block">File type of saved images.</p>
 						</div>
 
 						<div class="form-group">
