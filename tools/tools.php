@@ -276,8 +276,8 @@ function isroute($route, $verb=null)
 	{
 		if ($item != "/")
 			$item = rtrim($item, "/");
-
-		if (fnmatch($item, base::instance()->PATH))
+		
+		if (fnmatch($item, "/".content::$path))
 			return true;
 	}
 

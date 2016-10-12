@@ -78,6 +78,19 @@ class content extends prefab {
 				content::$file = $path.".html";
 				content::$path = $path;
 			}
+		} 
+		else 
+		{	
+			$ext = $ext[0];
+
+			if ($ext == ".html" || $ext == ".htm")
+				$path = basename($path, $ext);
+
+				if (is_file($cwd."/".$path.$ext))
+				{
+					content::$file = $path.$ext;
+					content::$path = $path;
+				}
 		}
 
 		if (is_file($path))
