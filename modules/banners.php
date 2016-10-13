@@ -334,9 +334,6 @@ class banners extends prefab {
 		if (!setting("{$this->namespace}_directory"))
 			return false;
 
-		if (!setting("{$this->namespace}_dimensions"))
-			return false;
-
 		return true;
 	}
 }
