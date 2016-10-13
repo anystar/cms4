@@ -276,7 +276,9 @@ function isroute($route, $verb=null)
 	{
 		if ($item != "/")
 			$item = rtrim($item, "/");
-		
+		else
+			$item = "/index";
+
 		if (fnmatch($item, "/".content::$path))
 			return true;
 	}

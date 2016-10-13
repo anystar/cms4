@@ -9,14 +9,14 @@ class banners extends prefab {
 	function __construct($namespace) {
 		$f3 = base::instance();
 		$this->namespace = $namespace;
+		$this->routes = setting($namespace."_routes");
 
 		if (admin::$signed)
 			$this->admin_routes($f3);
 
-		if (!$this->isntall_check)
+		if (!$this->install_check())
 			return;
 
-		$this->routes = setting($namespace."_routes");
 		$this->file_path = getcwd() . "/" . setting($namespace."_directory");
 
 		// Load banner for this route
@@ -25,8 +25,6 @@ class banners extends prefab {
 			$this->load_settings();
 			$this->retreive_content($f3);
 		}
-
-		$this->routes($f3);
 	}
 
 	function admin_routes($f3) {
