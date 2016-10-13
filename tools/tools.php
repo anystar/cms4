@@ -279,9 +279,60 @@ function isroute($route, $verb=null)
 		else
 			$item = "/index";
 
-		if (fnmatch($item, "/".content::$path))
+		if (fnmatch($item, $f3->PATH))
 			return true;
 	}
 
 	return false;
+}
+
+function determine_path ($f3) {
+
+	$path = ltrim($f3->PATH, "/");
+	$cwd = getcwd();
+
+	if ($path == "") {
+		if (is_file(getcwd()."/index.html"))
+		{
+			$f3->PATH = "/index";
+			$f3->FILE = "index.html";
+		}
+		else if (is_file($cwd."/index.htm"))
+		{
+			$f3->PATH = "/index";
+			$f3->FILE = "index.htm";
+		}
+	}
+
+	// No extension detected
+	if (!preg_match("/\.[^\.]+$/i", $path, $ext))
+	{
+		if (is_file($cwd."/".$path.".html"))
+		{
+			$f3->FILE = $path.".html";
+			$f3->PATH = "/".$path;
+		}
+
+		else if (is_file($cwd."/".$path.".htm"))
+		{
+			$f3->FILE = $path.".html";
+			$f3->PATH = "/".$path;
+		}
+	} 
+	else 
+	{	
+		$ext = $ext[0];
+
+		if ($ext == ".html" || $ext == ".htm")
+			$path = basename($path, $ext);
+
+			if (is_file($cwd."/".$path.$ext))
+			{
+				$f3->FILE = $path.$ext;
+				$f3->PATH = "/".$path;
+			}
+	}
+
+	if (is_file($path))
+		$f3->FILE = $f3->PATH = "/".$path;
 }

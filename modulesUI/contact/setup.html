@@ -30,18 +30,19 @@
 					<h2>Setup {{@namespace}}</h2>
 
 					<form method="POST" action="{{@BASE}}/admin/{{@namespace}}/setup">
-						<div class="form-group">
+						<div class="form-group <check if="{{!@contact.routes}}">has-error</check>">
 							<label>URL routes to load on</label>
 							<input name="routes" value="{{@contact.routes}}" type="text" class="form-control" placeholder="eg: /example">
 							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
 						</div>
+					
 
-						<div class="form-group">
+						<div class="form-group <check if="{{!@contact.smtp_server}}">has-error</check>">
 							<label>SMTP Server</label>
 							<input value="{{@contact.smtp_server}}" name="smtp_server" type="text" class="form-control" placeholder="eg: 127.0.0.1">
 						</div>
 
-						<div class="form-group">
+						<div class="form-group <check if="{{!@contact.port}}">has-error</check>">
 							<label>SMTP Port</label>
 							<input value="{{@contact.port}}" name="port" type="text" class="form-control" placeholder="eg: 25">
 						</div>

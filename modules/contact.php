@@ -86,7 +86,10 @@ class contact extends prefab
 		$namespace = $this->namespace;
 
 		$f3->route("GET /{$namespace}/captcha", function ($f3) {
-			$this->captcha($f3);
+			$namespace = $this->namespace;
+			$img = new Image();
+			$img->captcha("/contact/Abel-Regular.ttf", 16, 5,"SESSION.{$namespace}_captcha_code");
+			$img->render();
 		});
 	}
 
@@ -164,16 +167,6 @@ class contact extends prefab
 
 	}
 
-
-	function captcha($f3) {
-
-		$img = new Image();
-
-		$img->captcha("/contact/Abel-Regular.ttf", 16, 5,"SESSION.captcha_code");
-
-		$img->render();
-	}
-
 	function retreive_content()
 	{	
 		$f3 = base::instance();
@@ -183,12 +176,12 @@ class contact extends prefab
 
 		foreach ($result as $r) 
 		{
-			$r["id"] = substr(sha1($this->namespace.$r["id"].$r["label"]), 0, 12);
-			$formcompiled[$r["id"]] = $r;
+			$r["name"] = substr(sha1($this->namespace.$r["id"].$r["label"]), 0, 12);
+			$formcompiled[$r["name"]] = $r;
 
-			if ($value = $f3->POST[$r["id"]])
+			if ($value = $f3->POST[$r["name"]])
 			{
-				$formcompiled[$r["id"]]["value"] = $value;
+				$formcompiled[$r["name"]]["value"] = $value;
 			}
 		}
 
@@ -226,7 +219,7 @@ class contact extends prefab
 		$sendemail = true;
 
 		// Check to see if captcha is valid
-		if ($post["captcha"] != $f3->SESSION["captcha_code"]) {
+		if ($post["captcha"] != $f3->SESSION["{$namespace}_captcha_code"]) {
 			$sendemail = false;
 			$f3->set("{$this->namespace}.captcha_error", true);
 		}

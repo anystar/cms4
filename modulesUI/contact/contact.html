@@ -112,7 +112,7 @@
 							<div class="form-group">
 								<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
 								<div class="col-sm-9">
-									<input name="{{@field.id}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+									<input name="{{@field.name}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
 								</div>
 							</div>
 
@@ -172,7 +172,7 @@
 							<th></th>
 						</thead>
 
-						<repeat group="{{@contact.fields}}" value="{{@field}}">
+						<repeat group="{{@contact.form}}" value="{{@field}}">
 							<form action="{{@BASE}}/admin/contact/update_field/{{@field.id}}" method="post">
 							<tr>
 								<td>
@@ -182,12 +182,13 @@
 								</td>
 								<td>
 								   <div class="input-group">
-									  <select name="type" class="">
-										<option value="name">Name</option>
-										<option value="text">Text</option>
-										<option value="textarea">Textarea</option>
-										<option value="number">Number</option>
-										<option value="email">Email</option>
+
+									  <select name="type">
+										<option <check if="{{@field.type=='name'}}">selected</check> value="name">Name</option>
+										<option <check if="{{@field.type=='text'}}">selected</check> value="text">Text</option>
+										<option <check if="{{@field.type=='textarea'}}">selected</check> value="textarea">Textarea</option>
+										<option <check if="{{@field.type=='number'}}">selected</check> value="number">Number</option>
+										<option <check if="{{@field.type=='email'}}">selected</check> value="email">Email</option>
 									  </select>
 								   </div>
 								</td>
@@ -222,7 +223,7 @@
 							</td>
 							<td>
 							   <div class="input-group">
-								  <select name="type">
+								  <select name="type" class="">
 									<option value="name">Name</option>
 									<option value="text">Text</option>
 									<option value="textarea">Textarea</option>
