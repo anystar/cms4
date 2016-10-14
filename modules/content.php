@@ -120,7 +120,11 @@ class content extends prefab {
 				// Render as a template file
 				echo Template::instance()->render(content::$file, $mime_type);
 			else
-				echo View::instance()->render(content::$file, $mime_type);
+			{
+				// Render as raw data
+				header('Content-Type: '.$mime_type.';');
+				echo readfile(content::$file);
+			}
 		});
 
 		$f3->route("GET /admin/content", function ($f3) {
