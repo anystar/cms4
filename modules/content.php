@@ -101,6 +101,7 @@ class content extends prefab {
 
 		$f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 
+			// Accepted mimetypes to render as a template file
 			$accepted_mimetypes = [
 				"text/html",
 				"text/css",
@@ -119,7 +120,7 @@ class content extends prefab {
 				// Render as a template file
 				echo Template::instance()->render(content::$file, $mime_type);
 			else
-				echo View::instance()->render(content::$file, "image/png");
+				echo View::instance()->render(content::$file, $mime_type);
 		});
 
 		$f3->route("GET /admin/content", function ($f3) {

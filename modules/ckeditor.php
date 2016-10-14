@@ -124,12 +124,7 @@ class ckeditor extends prefab {
 
 				file_put_contents(getcwd()."/".$filename, $file);
 			}
-
-			// echo "Sent: " .$sentHash. "\n";
-			// echo "Check: ".$checkHash . "\n";
-			// echo "New Hash: ".sha1($content) . "\n";
-			// echo "Contents: " .$contents;
-
+			
 			echo sha1($contents);
 
 			return;
