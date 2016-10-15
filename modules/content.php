@@ -25,7 +25,7 @@ class content extends prefab {
 			$f3->set($content["name"], $content["content"]);
 
 		// Get content for this current path
-		$result = $f3->DB->exec("SELECT * FROM contents WHERE path=?", content::$path);
+		$result = $f3->DB->exec("SELECT * FROM contents WHERE path=?", $f3->PATH);
 		foreach ($result as $content)
 			$f3->set($content["name"], $content["content"]);
 

@@ -3,7 +3,7 @@ CKEDITOR.plugins.add( 'cmssave',
 	init: function( editor )
 	{
 		editor.cms = {
-			file : editor.element.getAttribute("file"),
+			path : editor.element.getAttribute("path"),
 			id : editor.element.getAttribute("id"),
 			hash : editor.element.getAttribute("hash")
 		};
@@ -22,7 +22,7 @@ CKEDITOR.plugins.add( 'cmssave',
 
 					postData.contents = editor.getData();
 					postData.id = editor.container.getId();
-					postData.file = editor.element.getAttribute("file");
+					postData.path = editor.element.getAttribute("path");
 					postData.hash = editor.element.getAttribute("hash");
 
 					// Convert postData object to multi-part form data query string for post like jQuery does by default.

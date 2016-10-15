@@ -15,7 +15,7 @@ class ckeditor extends prefab {
 			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
 
 			$out .= '<?php if (admin::$signed) {?>';
-			$out .= "<div file='$file' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
+			$out .= "<div path='$file' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
 			$out .= "<?php } ?>";
 			$out .= $args[0];
 			$out .= '<?php if (admin::$signed) {?>';
@@ -25,14 +25,13 @@ class ckeditor extends prefab {
 			return  $out;
 		});
 
-		base::instance()->set("index.content", "Some test content");
-
 		Template::instance()->filter("ckeditor", function ($content, $contentID, $type="full") {
+
 
 			if ($content == "") $content = "Dummy text";
 
 			if (admin::$signed) 
-				$out .= "<div file='database' type='".$type."' id='".$contentID."' class='ckeditor' contenteditable='true'>";
+				$out .= "<div file='database' type='".$type."' id='".$contentID."' path='".base::instance()->PATH."' class='ckeditor' contenteditable='true'>";
 			
 			$out .= $content;
 			
@@ -41,6 +40,8 @@ class ckeditor extends prefab {
 
 			return $out;
 		});
+
+		Template::instance()->filter("urlencode", function ($encode) { return urlencode($encode); });
 
 		if (admin::$signed)
 		{
@@ -80,9 +81,29 @@ class ckeditor extends prefab {
 			echo Template::instance()->render("/ckeditor/ckeditor.html");
 		});
 
+		$f3->route("GET /admin/ckeditor/setup", function ($f3) {
+
+			$f3->set("ckeditor.image_upload_path", setting("ckeditor_image_upload_path"));
+			$f3->set("ckeditor.folder_structure", setting("ckeditor_folder_structure"));
+
+			echo Template::instance()->render("/ckeditor/setup.html");
+		});
+
+		$f3->route("POST /admin/ckeditor/setup", function ($f3) {
+			$post = $f3->POST;
+
+			if ($post["upload_path"])
+				setting("ckeditor_image_upload_path", $post["upload_path"]);
+
+			if ($post["folderstructure"])
+				setting("ckeditor_folder_structure", $post["folderstructure"]);
+
+			$f3->reroute("/admin/ckeditor/setup");
+		});
+
 		$f3->route("POST /admin/ckeditor/save", function ($f3) {
 
-			$filename = $f3->POST["file"];
+			$filename = $f3->POST["path"];
 			$id = $f3->POST["id"];
 			$sentHash = $f3->POST["hash"];
 			$contents = $f3->POST["contents"];
@@ -91,13 +112,7 @@ class ckeditor extends prefab {
 			// Hand this role over to content as its his data.
 			if ($filename == 'database' || $filename == 'null' || !is_file(getcwd()."/".$filename))
 			{
-				$tmp = explode("-", $id);
-				$name = end($tmp);	
-				array_pop($tmp);
-				$path = implode("/", $tmp);
-
-				content::set($name, $path, $contents);
-
+				content::set($id, $filename, $contents);
 				return;
 			}
 
@@ -143,10 +158,31 @@ class ckeditor extends prefab {
 			echo Template::instance()->render("/ckeditor/documentation.html");
 		});
 
-		$f3->route("GET /admin/ckeditor/setup", function ($f3) {
+		$f3->route("POST /admin/ckeditor/upload_image", function ($f3) {
 
-			$f3->reroute("/admin/ckeditor");
+			$upload_directory = trim(setting("ckeditor_image_upload_path"), "/");
+			$folder_structure = setting("ckeditor_folder_structure");
 
+			if ($folder_structure == "grouped")
+			{
+				$path = trim(urldecode($f3->GET["upload_path"]), "/");
+				$upload_directory .= "/" . $path;
+			}
+
+			if (!is_dir($upload_directory))
+				mkdir($upload_directory, 755, true);
+
+			$new_name = str_replace(' ', '_', $f3->FILES["upload"]["name"]);
+			$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
+
+			$save_to = getcwd()."/".$upload_directory."/".$new_name;
+
+			move_uploaded_file($f3->FILES["upload"]["tmp_name"], $save_to);
+			
+			$path = $upload_directory . "/" . $new_name;
+			$ck_func_number = $f3->GET["CKEditorFuncNum"];
+			echo "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('$ck_func_number', '$path', 'File uploaded successfully');</script>";
+			exit;
 		});
 	}
 

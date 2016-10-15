@@ -29,33 +29,30 @@
 				<div class="box">
 					<h2>Setup {{@namespace}}</h2>
 
-					<form method="POST" action="{{@BASE}}/admin/{{@namespace}}/setup">
-						<div class="form-group <check if="{{!@contact.routes}}">has-error</check>">
-							<label>URL routes to load on</label>
-							<input name="routes" value="{{@contact.routes}}" type="text" class="form-control" placeholder="eg: /example">
-							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
-						</div>
-					
-
-						<div class="form-group <check if="{{!@contact.smtp_server || !@contact.smtp_server_check}}">has-error</check>">
-							<label>Outgoing mail Server (smtp)</label>
-							<input value="{{@contact.smtp_server}}" name="smtp_server" type="text" class="form-control" placeholder="eg: 127.0.0.1">
-							<check if="{{!@@contact.smtp_server_check}}">
-								<p class="help-block">Failed to connect to outgoing smtp server</p>
-							</check>
+					<form method="POST" action="{{@BASE}}/admin/ckeditor/setup">
+						<div class="form-group <check if="{{!@ckeditor.image_upload_path}}">has-error</check>">
+							<label>Image upload path</label>
+							<input name="upload_path" value="{{@ckeditor.image_upload_path}}" type="text" class="form-control" placeholder="eg: /assets/imageuploads/">
+							<p class="help-block">Folder to store uploaded images to via CKEditors image upload feature</p>
 						</div>
 
-						<div class="form-group <check if="{{!@contact.port || !@contact.smtp_server_check}}">has-error</check>">
-							<label>SMTP Port</label>
-							<input value="{{@contact.port}}" name="port" type="text" class="form-control" placeholder="eg: 25">
+						<div class="form-group <check if="{{!@ckeditor.folder_structure}}">has-error</check>">
+							<label>Folder upload structure</label>
+							<div class="radio">
+								<label for="radios-1">
+									<input name="folderstructure" id="radios-1" value="grouped" <check if="{{@ckeditor.folder_structure=='grouped'}}">checked="checked"</check> type="radio">
+									Images grouped into folders by the page they are uploaded from.
+								</label>
+							</div>
+							<div class="radio">
+								<label for="radios-0">
+									<input name="folderstructure" id="radios-0" value="single" <check if="{{@ckeditor.folder_structure=='single'}}">checked="checked"</check> type="radio">
+									All images in single directory.
+								</label>
+							</div>
+							<p class="help-block">If you switch folder structures half way through, the orginal structure will be kept intact.</p>
 						</div>
-
-						<div class="form-group">
-							<label>Redirect to success page</label>
-							<input value="{{@contact.success}}" name="contact_success" type="text" class="form-control" placeholder="eg: /contact_success">
-							<p class="help-block">Leave blank to return back to same page.</p>
-						</div>
-
+						
 						<button class="button-fullwidth" type="submit">Save setup</button>
 					</form>
 				</div>

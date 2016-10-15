@@ -39,26 +39,20 @@
 		</div>
 
 		<div class="container">
-			<check if="{{@webmaster}}">
-				<div class="row box module-bar">
-					<div class="col-xs-8">
-						<header>CKEditor</header>
-					</div>
-
-					<div class="col-xs-4" style="text-align:right;">
-						<a href="{{@BASE}}/admin/store/uninstall/{{@namespace}}"><button>Uninstall</button></a>
-						<a href="{{@BASE}}/admin/ckeditor/documentation"><button>Documentation</button></a>
-					</div>
+			<div class="row box module-bar">
+				<div class="col-xs-8">
+					<header>CKEditor</header>
 				</div>
-			</check>
+
+				<div class="col-xs-4" style="text-align:right;">
+					<a href="{{@BASE}}/admin/store/uninstall/ckeditor"><button>Uninstall</button></a>
+					<a href="{{@BASE}}/admin/ckeditor/setup/"><button>Setup</button></a>
+					<a href="{{@BASE}}/admin/ckeditor/documentation"><button>Documentation</button></a>
+				</div>
+			</div>
 			
 			<div class="row">
-				<div class="col-md-8">
-					<div class="box">
-						<h2>Test</h2>
-					</div>
-				</div>
-				<div class="col-md-4">
+				<div class="col-md-4 col-md-offset-4">
 				<div class="box themes">
 					<h2>Themes</h2>
 					<div class="row">

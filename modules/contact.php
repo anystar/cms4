@@ -118,7 +118,10 @@ class contact extends prefab
 		$f3->route("GET /admin/{$this->namespace}/setup", function ($f3) {
 			$f3->namespace = $this->namespace;	
 
+			$this->check_smtp_server();
+
 			setting_use_namespace($this->namespace);
+			$f3->set("contact.smtp_server_check", $f3->get($this->namespace.".smtp_server_check"));
 			$f3->set("contact.routes", $this->routes);
 			$f3->set("contact.smtp_server", setting("smtp_server"));
 			$f3->set("contact.port", setting("port"));
@@ -129,22 +132,20 @@ class contact extends prefab
 		});
 
 		$f3->route("POST /admin/{$this->namespace}/setup", function ($f3) {
-			$this->update_settings();
-			$this->install();
-
-			echo Template::instance()->render("/contact/setup.html");
-		});
-
-		$f3->route("POST /admin/{$this->namespace}/settings", function ($f3) {
+			$f3->clear($this->namespace.".smtp_server_check");
 
 			setting_use_namespace($this->namespace);
-			setting("email", $f3->POST["email"]);
-			setting("name", $f3->POST["name"]);
-			setting("subject", $f3->POST["subject"]);
+			setting("routes", $f3->POST["routes"]);
+			setting("smtp_server", $f3->POST["smtp_server"]);
+			setting("port", $f3->POST["port"]);
+			setting("success", $f3->POST["contact_success"]);
 			setting_clear_namespace();
 
-			$f3->reroute("/admin/{$this->namespace}/");
+			$this->install();
+
+			$f3->reroute("/admin/{$this->namespace}/setup");
 		});
+
 
 		$f3->route("GET /admin/{$this->namespace}/email_template", function () {
 			$this->retreive_content();
@@ -371,36 +372,24 @@ class contact extends prefab
 	function check_smtp_server () {
 
 		// Use cached result
-		if (base::instance()->get("smtp_server_check"))
+		if (base::instance()->get($this->namespace.".smtp_server_check"))
 			return true;
 
-		$f = fsockopen($this->smtp_server, $this->port);
+		$f = @fsockopen($this->smtp_server, $this->port);
 		
 		if ($f !== false) 
 		{
 		    $res = fread($f, 1024);
 		    if (strlen($res) > 0 && strpos($res, '220') === 0)
 		    {
-		    	base::instance()->set("smtp_server_check", true, 1800); // Cache for 30 minutes
+		    	base::instance()->set($this->namespace.".smtp_server_check", true, 1800); // Cache for 30 minutes
 				return true;
 		    }
+	
+			fclose($f);
 		}
-		
-		fclose($f);
-	}
 
-	function update_settings()
-	{
-		$f3 = base::instance();
-
-		setting_use_namespace($this->namespace);
-
-		setting("routes", $f3->POST["routes"]);
-		setting("smtp_server", $f3->POST["smtp_server"]);
-		setting("port", $f3->POST["port"]);
-		setting("success", $f3->POST["contact_success"]);
-
-		setting_clear_namespace();
+		return false;
 	}
 
 	function install()
@@ -426,14 +415,15 @@ class contact extends prefab
 		setting("name", "Joe", false);
 		setting("subject", "Example subject line", false);
 		setting_clear_namespace();
-
-		base::instance()->reroute("/admin/".$this->namespace);
 	}
 
 	function check_install() {
 		$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}'");
 
 		if (empty($result))
+			return false;
+
+		if (!$this->check_smtp_server())
 			return false;
 
 		if (!setting("{$this->namespace}_smtp_server"))
