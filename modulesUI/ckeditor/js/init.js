@@ -4,13 +4,14 @@ function getConfig (type) {
 	var config = {
 		filebrowserUploadUrl : '{{@BASE}}/admin/ckeditor/upload_image?upload_path='+upload_path,
 		fontSize_sizes : '8/8px;10/10px;12/12px;14/14px;16/16px;18/18px;20/20px;22/22px;24/24px;26/26px;28/28px;30/30px;32/32px;34/34px;36/36px;38/38px;40/40px;42/42px;44/44px;46/46px;48/48px;50/50px;52/52px;54/54px;56/56px;58/58px;60/60px;62/62px;64/64px;68/68px;70/70px;',
-		extraPlugins : "cmssave",
+		extraPlugins : "imagebrowser,cmssave",
 		removeButtons : 'Inlinesave,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About',
-		removePlugins : 'imagebrowser,ckeditor-gwf-plugin,inlinesave',
+		removePlugins : 'ckeditor-gwf-plugin,inlinesave',
 		skin : ckeditor_skin,
 		title : '',
 		enterMode : CKEDITOR.ENTER_BR,
 		allowedContent : true,
+		imageBrowser_listUrl : '{{@BASE}}/admin/ckeditor/imagebrowser?path='+upload_path,
 		toolbarGroups : 
 		[
 			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },

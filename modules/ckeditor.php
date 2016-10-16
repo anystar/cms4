@@ -179,10 +179,46 @@ class ckeditor extends prefab {
 
 			move_uploaded_file($f3->FILES["upload"]["tmp_name"], $save_to);
 			
-			$path = $upload_directory . "/" . $new_name;
+			$path = "/" . $upload_directory . "/" . $new_name;
 			$ck_func_number = $f3->GET["CKEditorFuncNum"];
 			echo "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('$ck_func_number', '$path', 'File uploaded successfully');</script>";
 			exit;
+		});
+
+		$f3->route("GET /admin/ckeditor/imagebrowser", function ($f3) {
+			$upload_directory = trim(setting("ckeditor_image_upload_path"), "/");
+
+			$path = trim(urldecode($f3->GET["path"]), "/");
+
+			$urlpath = $upload_directory."/".$path;
+			$dirpath = getcwd()."/".$upload_directory."/".$path;
+
+			$dir = scandir($dirpath);
+			$dir = array_diff($dir, array('..', '.'));
+			
+			$accepted_mimes = [
+				'image/gif',
+				'image/jpeg',
+				'image/png',
+				'image/tiff'
+			];
+
+			foreach ($dir as $file)
+			{
+				if (!is_file($dirpath."/".$file))
+					continue;
+
+				$mime_type = mime_content_type2($dirpath."/".$file);
+
+				if (in_array($mime_type, $accepted_mimes))
+				{
+					$compiled[] = [
+						"image" => $f3->BASE."/".$urlpath."/".$file
+					];
+				}
+			}
+
+			echo json_encode($compiled);
 		});
 	}
 
