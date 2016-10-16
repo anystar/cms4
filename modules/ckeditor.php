@@ -193,6 +193,13 @@ class ckeditor extends prefab {
 			$urlpath = $upload_directory."/".$path;
 			$dirpath = getcwd()."/".$upload_directory."/".$path;
 
+			if (!is_dir($dirpath))
+			{
+				echo json_encode(array());
+
+				return;
+			}
+
 			$dir = scandir($dirpath);
 			$dir = array_diff($dir, array('..', '.'));
 			
