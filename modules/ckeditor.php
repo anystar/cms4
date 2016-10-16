@@ -195,7 +195,7 @@ class ckeditor extends prefab {
 
 			if (!is_dir($dirpath))
 			{
-				echo json_encode(array());
+				echo '[]';
 
 				return;
 			}
