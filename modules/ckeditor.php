@@ -12,7 +12,7 @@ class ckeditor extends prefab {
 			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
 
 			$out .= '<?php if (admin::$signed) {?>';
-			$out .= "<div path='$file' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
+			$out .= "<div file='".urlencode($file)."' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
 			$out .= "<?php } ?>";
 			$out .= $args[0];
 			$out .= '<?php if (admin::$signed) {?>';
@@ -28,7 +28,7 @@ class ckeditor extends prefab {
 			if ($content == "") $content = "Dummy text";
 
 			if (admin::$signed) 
-				$out .= "<div file='database' type='".$type."' id='".$contentID."' path='".base::instance()->PATH."' class='ckeditor' contenteditable='true'>";
+				$out .= "<div type='".$type."' id='".$contentID."' path='".urlencode(base::instance()->PATH)."' class='ckeditor' contenteditable='true'>";
 			
 			$out .= $content;
 			
@@ -47,8 +47,6 @@ class ckeditor extends prefab {
 			if (!base::instance()->SETTINGS["ckeditor_skin"])
 				base::instance()->SETTINGS["ckeditor_skin"] = "minimalist";
 
-			base::instance()->set("CORS.headers", "access-control-allow-origin");
-			base::instance()->set("CORS.origin", "*");
 
 			$this->admin_routes(base::instance());
 
@@ -89,19 +87,18 @@ class ckeditor extends prefab {
 
 		$f3->route("POST /admin/ckeditor/save", function ($f3) {
 
-			$filename = $f3->POST["path"];
-			$id = $f3->POST["id"];
+			$filename = urldecode($f3->POST["file"]);
+			$path 	  = urldecode($f3->POST["path"]);
+			$id 	  = $f3->POST["id"];
 			$sentHash = $f3->POST["hash"];
 			$contents = $f3->POST["contents"];
 
-			// No filename supplied, update the database instead.
-			// Hand this role over to content as its his data.
-			if ($filename == 'database' || $filename == 'null' || !is_file(getcwd()."/".$filename))
+			if ($path != "null" && $filename == "null")
 			{
-				content::set($id, $filename, $contents);
+				content::set($id, $path, $contents);
+				echo "saved";
 				return;
 			}
-
 			// Load in to replace contents with
 			$file = file_get_contents(getcwd()."/".$filename);
 
@@ -126,7 +123,7 @@ class ckeditor extends prefab {
 				file_put_contents(getcwd()."/".$filename, $file);
 			}
 			
-			echo sha1($contents);
+			echo "saved";
 
 			return;
 		});
