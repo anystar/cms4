@@ -115,10 +115,18 @@ class content extends prefab {
 	
 			$mime_type = mime_content_type2(getcwd()."/".content::$file);
 
+			if ($mime_type == "text/html")
+			{
+				$f3->expire(0);
+			} else {
+				$f3->expire(60*30);
+			}
+
 			if (in_array($mime_type, $accepted_mimetypes))
-				
+			{
 				// Render as a template file
 				echo Template::instance()->render(content::$file, $mime_type);
+			}
 			else
 			{
 				// Render as raw data
