@@ -156,7 +156,7 @@ class ckeditor extends prefab {
 			}
 
 			if (!is_dir($upload_directory))
-				mkdir($upload_directory, 755, true);
+				mkdir($upload_directory, 0755, true);
 
 			$new_name = str_replace(' ', '_', $f3->FILES["upload"]["name"]);
 			$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
