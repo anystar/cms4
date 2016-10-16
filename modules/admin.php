@@ -257,17 +257,5 @@ class admin extends prefab {
 			$img = new Image('/admin/imgs/login_bg.png');
 			$img->render();
 		}, 604800);
-
-		if (admin::$signed) {
-
-			$f3->route('GET /admin/css/admin_toolbar.css', function () {
-				echo Template::instance()->render("/admin/css/admin_toolbar.css", "text/css");
-			});
-
-			$f3->route('GET /admin/js/admin_toolbar.js', function () {
-				echo Template::instance()->render("/admin/js/admin_toolbar.js", "text/javascript");
-			});
-		}
-
 	}
 }

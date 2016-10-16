@@ -1,6 +1,9 @@
-<link rel="stylesheet" type="text/css" href="{{@BASE}}/admin/css/admin_toolbar.css">
+<link rel="stylesheet" type="text/css" href="{{@BASE}}/admin/ckeditor/css/toolbar.css">
+<script src="https://code.jquery.com/jquery-1.9.1.min.js" integrity="sha256-wS9gmOZBqsqWxgIVgA8Y9WcQOa7PgSIX+rPA0VL2rbQ=" crossorigin="anonymous"></script>
+<script src="{{@BASE}}/admin/ckeditor/js/toolbar.js"></script>
+
 <script src="{{@SETTINGS.cdn.ckeditor}}"></script>
-<style>div[contenteditable]:hover { outline: 1px dashed #777; }</style>
+<style>div[contenteditable='true']:hover { outline: 1px dashed #777; }</style>
 <script>
 	ckeditor_skin = "{{@SETTINGS.ckeditor_skin}}";
 	upload_path = "{{@PATH | urlencode}}";

@@ -234,5 +234,8 @@ class ckeditor extends prefab {
 		$f3->route('GET /admin/ckeditor/browser/browser.css', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.css", "text/css"); });
 		$f3->route('GET /admin/ckeditor/browser/browser.js', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.js", "application/javascript"); });
 
+		$f3->route('GET /admin/ckeditor/css/toolbar.css', function () { echo Template::instance()->render("/ckeditor/css/toolbar.css", "text/css"); });
+		$f3->route('GET /admin/ckeditor/js/toolbar.js', function () { echo Template::instance()->render("/ckeditor/js/toolbar.js", "text/javascript"); });
+
 	}
 }

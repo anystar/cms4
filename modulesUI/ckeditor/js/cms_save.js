@@ -37,7 +37,7 @@ CKEDITOR.plugins.add( 'cmssave',
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function () {
 						if (this.readyState == 4 && this.status == 200) {
-							console.log(this.responseText);
+							console.log(this.responseText);							
 							editor.element.setAttribute("hash", this.responseText);
 						}
 					};

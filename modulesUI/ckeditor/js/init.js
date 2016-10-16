@@ -62,6 +62,12 @@ function init_inline_ckeditors() {
 		var editorID = editors[i].getAttribute("id");
 		var type = editors[i].getAttribute("type");
 		var editor = CKEDITOR.inline(editorID, getConfig(type));
+		
+		editor.on( 'blur', function( e ) {
+			if (e.editor.checkDirty()) {
+				$("#savebutton").css("background-color", "red");
+			}
+		} );
 	}
 }
 
