@@ -11,7 +11,7 @@ function getConfig (type) {
 		title : '',
 		enterMode : CKEDITOR.ENTER_BR,
 		allowedContent : true,
-		imageBrowser_listUrl : '{{@BASE}}/admin/ckeditor/imagebrowser?path='+upload_path,
+		imageBrowser_listUrl : '{{@SCHEME.'://'.@HOST.@BASE}}/admin/ckeditor/imagebrowser?path='+upload_path,
 		toolbarGroups : 
 		[
 			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
