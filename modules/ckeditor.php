@@ -195,6 +195,7 @@ class ckeditor extends prefab {
 
 			if (!is_dir($dirpath))
 			{
+				header('Access-Control-Allow-Origin: *');
 				echo '[]';
 
 				return;
