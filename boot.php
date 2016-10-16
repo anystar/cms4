@@ -180,6 +180,9 @@ $f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses");
 ############ Load modules ##############
 ########################################
 
+base::instance()->set("CORS.headers", "Access-Control-Allow-Origin");
+base::instance()->set("CORS.origin", "*");
+
 new admin();
 new content();
 

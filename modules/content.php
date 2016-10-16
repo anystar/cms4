@@ -123,6 +123,7 @@ class content extends prefab {
 			{
 				// Render as raw data
 				header('Content-Type: '.$mime_type.';');
+				header('Content-Length: ' . filesize(content::$file));
 				echo readfile(content::$file);
 			}
 		});

@@ -4,9 +4,6 @@ class ckeditor extends prefab {
 
 	function __construct() {
 
-		$this->routes(base::instance());
-		$this->assets(base::instance());
-
 		Template::instance()->extend("ckeditor", function ($args) {
 
 			$hash = sha1($args[0]);
@@ -45,30 +42,19 @@ class ckeditor extends prefab {
 
 		if (admin::$signed)
 		{
+			$this->assets(base::instance());
+
 			if (!base::instance()->SETTINGS["ckeditor_skin"])
 				base::instance()->SETTINGS["ckeditor_skin"] = "minimalist";
+
+			base::instance()->set("CORS.headers", "access-control-allow-origin");
+			base::instance()->set("CORS.origin", "*");
 
 			$this->admin_routes(base::instance());
 
 			$inlinecode = Template::instance()->render("/ckeditor/inline_init.html");
 			base::instance()->set("ckeditor", $inlinecode);
 		}
-	}
-
-	function routes($f3) {
-
-		$f3->route('GET /ckeditor/images/inlinesave-color.svg', function () {
-			echo View::instance()->render("/ckeditor/images/save-color.png", "image/png");
-		});
-
-		$f3->route('GET /ckeditor/images/inlinesave-label.svg', function () {
-			echo View::instance()->render("/ckeditor/images/save-label.png", "image/png");
-		});
-
-		$f3->route('GET /ckeditor/cms_save.js', function () {
-			echo Template::instance()->render("/ckeditor/js/cms_save.js", "application/javascript");
-		});
-
 	}
 
 	function admin_routes($f3) {
@@ -186,7 +172,6 @@ class ckeditor extends prefab {
 		});
 
 		$f3->route("GET /admin/ckeditor/imagebrowser", function ($f3) {
-			header('Access-Control-Allow-Origin: *');
 
 			$upload_directory = trim(setting("ckeditor_image_upload_path"), "/");
 
@@ -197,7 +182,7 @@ class ckeditor extends prefab {
 
 			if (!is_dir($dirpath))
 			{
-				echo '[]';
+				echo json_encode(array());
 
 				return;
 			}
@@ -221,6 +206,7 @@ class ckeditor extends prefab {
 
 				if (in_array($mime_type, $accepted_mimes))
 				{
+
 					$compiled[] = [
 						"image" => $f3->BASE."/".$urlpath."/".$file
 					];
@@ -242,6 +228,14 @@ class ckeditor extends prefab {
 		$f3->route('GET /admin/ckeditor/skins/moonocolor.png', function () { echo View::instance()->render("/ckeditor/skins/moonocolor.png", "image/png"); });
 		$f3->route('GET /admin/ckeditor/skins/moono-dark.png', function () { echo View::instance()->render("/ckeditor/skins/moono-dark.png", "image/png"); });
 		$f3->route('GET /admin/ckeditor/skins/office2013.png', function () { echo View::instance()->render("/ckeditor/skins/office2013.png", "image/png"); });
+
+		$f3->route('GET /ckeditor/images/inlinesave-color.svg', function () { echo View::instance()->render("/ckeditor/images/save-color.png", "image/png"); });
+		$f3->route('GET /ckeditor/images/inlinesave-label.svg', function () { echo View::instance()->render("/ckeditor/images/save-label.png", "image/png"); });
+		$f3->route('GET /ckeditor/cms_save.js', function () { echo Template::instance()->render("/ckeditor/js/cms_save.js", "application/javascript"); });
+		$f3->route('GET /ckeditor/imagebrowser.js', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/plugin.js", "application/javascript"); });
+		$f3->route('GET /ckeditor/browser/browser.html', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.html", "text/html"); });
+		$f3->route('GET /ckeditor/browser/browser.css', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.css", "text/css"); });
+		$f3->route('GET /ckeditor/browser/browser.js', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.js", "application/javascript"); });
 
 	}
 }

@@ -1,4 +1,5 @@
 CKEDITOR.plugins.addExternal("cmssave", "{{@BASE}}/ckeditor/cms_save.js");
+CKEDITOR.plugins.addExternal("imagebrowser", "{{@BASE}}/ckeditor/imagebrowser.js");
 
 function getConfig (type) {
 	var config = {
