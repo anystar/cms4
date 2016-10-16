@@ -186,6 +186,8 @@ class ckeditor extends prefab {
 		});
 
 		$f3->route("GET /admin/ckeditor/imagebrowser", function ($f3) {
+			header('Access-Control-Allow-Origin: *');
+
 			$upload_directory = trim(setting("ckeditor_image_upload_path"), "/");
 
 			$path = trim(urldecode($f3->GET["path"]), "/");
@@ -195,7 +197,6 @@ class ckeditor extends prefab {
 
 			if (!is_dir($dirpath))
 			{
-				header('Access-Control-Allow-Origin: *');
 				echo '[]';
 
 				return;
