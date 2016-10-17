@@ -119,7 +119,7 @@ class content extends prefab {
 			{
 				$f3->expire(0);
 			} else {
-				$f3->expire(60*30);
+				$f3->expire(172800);
 			}
 
 			if (in_array($mime_type, $accepted_mimetypes))
