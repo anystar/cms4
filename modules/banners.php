@@ -189,10 +189,17 @@ class banners extends prefab {
 			}
 		}
 
-		$html = setting($this->namespace."_template_code");
-
 		if ($update_order)
 			setting($this->namespace."_order", json_encode($order));
+
+		$html = setting($this->namespace."_template_code");
+
+		$html = preg_replace('/\h*<\?(?!xml)(?:php|\s*=)?.+?\?>\h*|\{\*.+?\*\}/is', '', $html);
+		$html = Template::instance()->parse($html);
+		$html = Template::instance()->resolve($html);
+		$html = Template::instance()->build($html);
+
+		$f3->set($this->namespace.".html", $html);
 	}
 
 	function update_settings($f3) {
