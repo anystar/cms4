@@ -4,6 +4,11 @@ class ckeditor extends prefab {
 
 	function __construct() {
 
+		$f3 = base::instance();
+
+		if (setting("ckeditor_folder_structure") && setting("ckeditor_image_upload_path"))
+			$f3->set("ckeditor.enable_image_uploading", true);
+
 		Template::instance()->extend("ckeditor", function ($args) {
 
 			$hash = sha1($args[0]);
@@ -28,7 +33,7 @@ class ckeditor extends prefab {
 			if ($content == "") $content = "Dummy text";
 
 			if (admin::$signed) 
-				$out .= "<div type='".$type."' id='".$contentID."' path='".urlencode(base::instance()->PATH)."' class='ckeditor' contenteditable='true'>";
+				$out .= "<div type='".$type."' id='".$contentID."' path='".urlencode($f3->PATH)."' class='ckeditor' contenteditable='true'>";
 			
 			$out .= $content;
 			
@@ -42,16 +47,16 @@ class ckeditor extends prefab {
 
 		if (admin::$signed)
 		{
-			$this->assets(base::instance());
+			$this->assets($f3);
 
-			if (!base::instance()->SETTINGS["ckeditor_skin"])
-				base::instance()->SETTINGS["ckeditor_skin"] = "minimalist";
+			if (!$f3->SETTINGS["ckeditor_skin"])
+				$f3->SETTINGS["ckeditor_skin"] = "minimalist";
 
 
-			$this->admin_routes(base::instance());
+			$this->admin_routes($f3);
 
 			$inlinecode = Template::instance()->render("/ckeditor/inline_init.html");
-			base::instance()->set("ckeditor", $inlinecode);
+			$f3->set("ckeditor", $inlinecode);
 		}
 	}
 
