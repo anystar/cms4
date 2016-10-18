@@ -166,6 +166,24 @@ class contact extends prefab
 		$f3->route("GET /admin/{$this->namespace}/delete_field/@field",  
 			function ($f3, $params) { $this->delete_field($f3, $params); });
 
+		$f3->route("POST /admin/{$this->namespace}/settings", function ($f3) {
+			$post = $f3->POST;
+
+			setting_use_namespace($this->namespace);
+			if (filter_var($post["email"], FILTER_VALIDATE_EMAIL))
+				setting("email", $f3->POST["email"]);
+
+			if (strlen($post["name"]) > 3)
+				setting("name", $f3->POST["name"]);
+
+			if (strlen($post["subject"]) > 3)
+				setting("subject", $f3->POST["subject"]);
+
+			setting_clear_namespace();
+
+			$f3->reroute("/admin/{$this->namespace}");
+		});
+
 	}
 
 	function retreive_content()
@@ -178,6 +196,8 @@ class contact extends prefab
 		foreach ($result as $r) 
 		{
 			$r["name"] = substr(sha1($this->namespace.$r["id"].$r["label"]), 0, 12);
+			$r["name"] = strtolower(str_replace(" ", "_", $r["label"]));
+
 			$formcompiled[$r["name"]] = $r;
 
 			if ($value = $f3->POST[$r["name"]])

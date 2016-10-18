@@ -167,7 +167,7 @@ class ckeditor extends prefab {
 
 			move_uploaded_file($f3->FILES["upload"]["tmp_name"], $save_to);
 			
-			$path = "/" . $upload_directory . "/" . $new_name;
+			$path = $f3->BASE . "/" . $upload_directory . "/" . $new_name;
 			$ck_func_number = $f3->GET["CKEditorFuncNum"];
 			echo "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('$ck_func_number', '$path', 'File uploaded successfully');</script>";
 			exit;
