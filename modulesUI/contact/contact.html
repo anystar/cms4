@@ -35,7 +35,7 @@
 		<check if="{{@webmaster}}">
 			<div class="row box module-bar">
 				<div class="col-xs-8">
-					<header>Contact Form</header>
+					<header>{{@module_name}}</header>
 				</div>
 
 				<div class="col-xs-4" style="text-align:right;">
@@ -52,7 +52,7 @@
 				<div class="box">
 					<h2>Settings</h2>
 
-					<form action="{{@BASE}}/admin/contact/settings" method="post">
+					<form action="{{@BASE}}/admin/{{@namespace}}/settings" method="post">
 						<div class="form-group">
 							<label>Email</label>
 							<input name="email" type="text" class="form-control" value="{{@contact.email}}">
@@ -173,7 +173,7 @@
 						</thead>
 
 						<repeat group="{{@contact.form}}" value="{{@field}}">
-							<form action="{{@BASE}}/admin/contact/update_field/{{@field.id}}" method="post">
+							<form action="{{@BASE}}/admin/{{@namespace}}/update_field/{{@field.id}}" method="post">
 							<tr>
 								<td>
 									<div class="input-group">
@@ -207,14 +207,14 @@
 									  <input name="order" type="text" class="form-control" value="{{@field.order}}">
 									</div>
 								</td>
-								<td><a href="{{@BASE}}/admin/contact/delete_field/{{@field.id}}"><button type="button">Delete</button></a></td>
+								<td><a href="{{@BASE}}/admin/{{@namespace}}/delete_field/{{@field.id}}"><button type="button">Delete</button></a></td>
 								<td><button type="submit">Update</button></td>
 							</tr>
 							</form>
 						</repeat>
 						
 						<check if="{{@webmaster}}">
-						<form action="{{@BASE}}/admin/contact/add_field" method="post">
+						<form action="{{@BASE}}/admin/{{@namespace}}/add_field" method="post">
 						<tr>
 							<td>
 								<div class="input-group">
@@ -263,7 +263,7 @@
 					<h2>Email Template</h2>
 					
 
-						<iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/admin/contact/email_template"></iframe>
+						<iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/admin/{{@namespace}}/email_template"></iframe>
 
 				</div>
 			</div>
@@ -278,5 +278,7 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{@BASE}}/admin/bootstrap.min.js"></script>
+
+	{{@debug}}
   </body>
 </html>

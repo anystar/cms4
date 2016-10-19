@@ -104,6 +104,7 @@ class contact extends prefab
 			$this->retreive_content();
 
 			$f3->set("contact", $f3->get($this->namespace));
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			// Get settings
 			setting_use_namespace($this->namespace);
@@ -147,8 +148,10 @@ class contact extends prefab
 		});
 
 
-		$f3->route("GET /admin/{$this->namespace}/email_template", function () {
+		$f3->route("GET /admin/{$this->namespace}/email_template", function ($f3) {
 			$this->retreive_content();
+
+			$f3->set("contact", $f3->get("{$this->namespace}"));
 
 			echo Template::instance()->render("/contact/email_template/generic_email_template.html");
 		});
