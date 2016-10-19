@@ -15,9 +15,6 @@ class content extends prefab {
 
 		$this->installed();
 
-		// Determines wether a file matches the route
-		$this->determine_path();
-
 		// Lets get the special "all" content for all paths and then override
 		// if there are unique entries for current path
 		$result = $f3->DB->exec("SELECT * FROM contents WHERE path='all'");
@@ -110,10 +107,10 @@ class content extends prefab {
 				"application/x-javascript",
 			];
 
-			if (!content::$file)
+			if (!$f3->FILE)
 				$f3->error("404");
 	
-			$mime_type = mime_content_type2(getcwd()."/".content::$file);
+			$mime_type = mime_content_type2(getcwd()."/".$f3->FILE);
 
 			if ($mime_type == "text/html")
 			{
@@ -125,14 +122,14 @@ class content extends prefab {
 			if (in_array($mime_type, $accepted_mimetypes))
 			{
 				// Render as a template file
-				echo Template::instance()->render(content::$file, $mime_type);
+				echo Template::instance()->render($f3->FILE, $mime_type);
 			}
 			else
 			{
 				// Render as raw data
 				header('Content-Type: '.$mime_type.';');
-				header('Content-Length: ' . filesize(content::$file));
-				echo readfile(content::$file);
+				header('Content-Length: ' . filesize(getcwd()."/".$f3->FILE));
+				echo readfile(getcwd()."/".$f3->FILE);
 			}
 		});
 

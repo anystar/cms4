@@ -288,7 +288,7 @@ function isroute($route, $verb=null)
 
 function determine_path ($f3) {
 
-	$path = ltrim($f3->PATH, "/");
+	$path = urldecode(ltrim($f3->PATH, "/"));
 	$cwd = getcwd();
 
 	if ($path == "") {

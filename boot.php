@@ -1,4 +1,5 @@
 <?php
+
 ########################################
 ######## Default configuration #########
 ########################################
@@ -20,7 +21,6 @@ $f3->set('DEBUG', $settings["debug"]);
 
 if($Did_F3_Load) 
 	d("Fat free framework not found at ".$settings["paths"]["f3"].". Please download from http://fatfreeframework.com/");
-
 
 ########################################
 ## Check folder and file permissions  ##
