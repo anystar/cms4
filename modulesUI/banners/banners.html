@@ -10,9 +10,9 @@
 		<!-- Bootstrap -->
 		<link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
 		<link href="{{ @BASE }}/admin/theme" rel="stylesheet">
+		<link href="{{@banner.stylesheet}}" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/min/dropzone.min.css" rel="stylesheet">
 		<link href="{{ @BASE }}/{{@namespace}}/slider.css" rel="stylesheet">
-
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>
@@ -164,9 +164,9 @@
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="{{ @BASE }}/admin/bootstrap.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/min/dropzone.min.js"></script>
-		<script src="{{ @BASE }}/{{@namespace}}/slider.js"></script>
+		<script src="{{ @BASE }}/admin/bootstrap.min.js"></script>
+		<script src="{{@banner.javascript}}"></script>
 
 	<script>
 		$(function() {
@@ -182,7 +182,6 @@
 
 				return false;
 			});
-
 
 			$(".up,.down").click(function() {
 				var row = $(this).parents("tr:first");
@@ -221,7 +220,9 @@
 	  };
 
 	  new Dropzone("#dropzone");
-	</script>
 
+		{{@banner.init}}
+	</script>
+	{{@debug}}
 	</body>
 </html>

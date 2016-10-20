@@ -73,12 +73,13 @@ function d ($x=null) {
  		{
  			if (f3::instance()->AJAX)
 			{
-				echo $x;
+                echo "<pre>";
+                print_r($x);
+                echo "</pre>";
 				exit;
 			}
  		}
-
-
+ 		
         echo "<pre>";
  		if (class_exists("f3"))
  		{

@@ -3,7 +3,7 @@
 // https://github.com/kreative/F3-PYPL
 
 
-class paypal_gateway extends prefab {
+class paypal_express extends prefab {
 
 	private $routes;
 	private $namespace;
@@ -18,8 +18,8 @@ class paypal_gateway extends prefab {
 
 		if (!$this->install_check())
 		{
-			if (!$f3->mask("/admin/paypal_gateway/setup"))
-				if ($f3->mask("/admin/paypal_gateway") || $f3->mask("/admin/paypal_gateway/*")) { $f3->reroute("/admin/paypal_gateway/setup"); }
+			if (!$f3->mask("/admin/paypal_express/setup"))
+				if ($f3->mask("/admin/paypal_express") || $f3->mask("/admin/paypal_express/*")) { $f3->reroute("/admin/paypal_express/setup"); }
 		}
 
 
@@ -66,45 +66,45 @@ class paypal_gateway extends prefab {
 	function admin_routes($f3) {
 		
 		// Render admin panel
-		$f3->route('GET /admin/paypal_gateway', function ($f3) {
-			echo Template::instance()->render("/paypal_gateway/paypal_gateway.html");
+		$f3->route('GET /admin/paypal_express', function ($f3) {
+			echo Template::instance()->render("/paypal_express/paypal_express.html");
 		});
 
-		// $f3->route("GET /admin/paypal_gateway/documentation", function ($f3) {
-		// 	echo Template::instance()->render("/paypal_gateway/documentation.html");
+		// $f3->route("GET /admin/paypal_express/documentation", function ($f3) {
+		// 	echo Template::instance()->render("/paypal_express/documentation.html");
 		// });
 	}
 
 	function setup_routes ($f3) {
 
-		$f3->route('GET /admin/paypal_gateway/setup', function ($f3) {
+		$f3->route('GET /admin/paypal_express/setup', function ($f3) {
 			
-			echo Template::instance()->render("/paypal_gateway/setup.html");
+			echo Template::instance()->render("/paypal_express/setup.html");
 		});
 
-		$f3->route('POST /admin/paypal_gateway/setup', function ($f3) {
+		$f3->route('POST /admin/paypal_express/setup', function ($f3) {
 
 			$this->install();
 
-			$f3->reroute('/admin/paypal_gateway/setup');
+			$f3->reroute('/admin/paypal_express/setup');
 		});
 	}
 
 	function asset_routes ($f3) {
 		// Insert any assets in here
 
-		// EG: $f3->route('GET /test/path', function () { echo Template::instance()->render("/paypal_gateway/test_file.html", "text/html"); });
+		// EG: $f3->route('GET /test/path', function () { echo Template::instance()->render("/paypal_express/test_file.html", "text/html"); });
 	}
 
 	function install () {
 
-		setting("paypal_gateway_setup", true);
+		setting("paypal_express_setup", true);
 
 	}
 
 	function install_check () {
 
-		if (!setting("paypal_gateway_setup"))
+		if (!setting("paypal_express_setup"))
 		{
 			return false;
 		}

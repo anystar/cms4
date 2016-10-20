@@ -173,8 +173,12 @@
 						</thead>
 
 						<repeat group="{{@contact.form}}" value="{{@field}}">
-							<form action="{{@BASE}}/admin/{{@namespace}}/update_field/{{@field.id}}" method="post">
-							<tr>
+							<tr class="field" title="{{@field.id}}">
+								<form title="{{@field.id}}" class="update_field" action="{{@BASE}}/admin/{{@namespace}}/update_field" method="post">
+								<td width="130" class="orderbuttons">
+									<button type="button" class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
+									<button type="button" class="down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+								</td>
 								<td>
 									<div class="input-group">
 									  <input name="label" type="text" class="form-control" placeholder="input label" value="{{@field.label}}">
@@ -202,20 +206,16 @@
 									  <input name="error_message" type="text" class="form-control" value="{{@field.error_message}}">
 									</div>
 								</td>
-								<td>
-									<div class="input-group">
-									  <input name="order" type="text" class="form-control" value="{{@field.order}}">
-									</div>
-								</td>
 								<td><a href="{{@BASE}}/admin/{{@namespace}}/delete_field/{{@field.id}}"><button type="button">Delete</button></a></td>
-								<td><button type="submit">Update</button></td>
+								<td><button class="update_field" type="submit">Update</button></td>
+								</form>
 							</tr>
-							</form>
 						</repeat>
 						
 						<check if="{{@webmaster}}">
-						<form action="{{@BASE}}/admin/{{@namespace}}/add_field" method="post">
 						<tr>
+							<form action="{{@BASE}}/admin/{{@namespace}}/add_field" method="post">
+							<td width="130"></td>
 							<td>
 								<div class="input-group">
 								  <input name="label" type="text" class="form-control" placeholder="input label">
@@ -242,14 +242,9 @@
 								  <input name="error_message" type="text" class="form-control">
 								</div>
 							</td>
-							<td>
-								<div class="input-group">
-								  <input name="order" type="text" class="form-control" value="{{@field.order+1}}">
-								</div>
-							</td>
 							<td><a href="{{@BASE}}/"><button type="submit">Add</button></a></td>
-						</tr>
 						</form>
+						</tr>
 						</check>
 					</table>
 				</div>
@@ -262,7 +257,11 @@
 				<div class="box">
 					<h2>Email Template</h2>
 					
-
+						<script>
+							function resizeIframe(obj) {
+								obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+							}
+						</script>
 						<iframe frameborder="0" scrolling="no" width="100%" onload="resizeIframe(this)" src="{{@BASE}}/admin/{{@namespace}}/email_template"></iframe>
 
 				</div>
@@ -270,14 +269,42 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
-	  function resizeIframe(obj) {
-		obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
-	  }
-	</script>
-
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="{{@BASE}}/admin/bootstrap.min.js"></script>
+
+	<script>
+
+		$(".update_field").submit(function () {
+
+			$.post("{{@BASE}}/admin/{{@namespace}}/update_field/"+$(this).attr("title"), {
+				data: $(this).serialize()
+			});
+
+			return false;
+
+		});
+
+		$(".up,.down").click(function() {
+			var row = $(this).parents("tr:first");
+
+			if ($(this).is(".up")) {
+				row.insertBefore(row.prev());
+			} else {
+				row.insertAfter(row.next());
+			}
+
+			var order = [];
+			$(".field").each(function () {
+				order.push($(this).attr("title"));
+			});
+
+			$.ajax({
+				method: "POST",
+				url: "{{@BASE}}/admin/{{@namespace}}/update_order",
+				data: { "fields_order": JSON.stringify(order) }
+			});
+		});
+	</script>
 
 	{{@debug}}
   </body>

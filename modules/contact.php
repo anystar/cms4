@@ -160,8 +160,18 @@ class contact extends prefab
 			echo Template::instance()->render("/contact/documentation.html");
 		});
 		
-		$f3->route("POST /admin/{$this->namespace}/update_field/@field", 
-			function ($f3, $params) { $this->update_field($f3, $params); });
+		$f3->route("POST /admin/{$this->namespace}/update_field/@field", function ($f3, $params) { 
+			$this->update_field($f3, $params);
+			$f3->reroute("/admin/{$this->namespace}");
+		});
+
+		$f3->route("POST /admin/{$this->namespace}/update_field/@field [ajax]", function ($f3, $params) {
+
+			parse_str($_POST["data"], $_POST);
+
+			$this->update_field($f3, $params);
+			echo "success";
+		});
 		
 		$f3->route("POST /admin/{$this->namespace}/add_field", 			 
 			function ($f3, $params) { $this->add_field($f3); });
@@ -187,6 +197,18 @@ class contact extends prefab
 			$f3->reroute("/admin/{$this->namespace}");
 		});
 
+		$f3->route("POST /admin/{$this->namespace}/update_order [ajax]", function ($f3) {
+			$orders = json_decode($f3->POST["fields_order"]);
+
+			$db = $f3->DB;
+
+			$db->begin();
+			foreach ($orders as $order=>$id) {
+				$db->exec("UPDATE {$this->namespace} SET `order`=? WHERE id=?", [$order, $id]);
+			}
+			$db->commit();
+		});
+
 	}
 
 	function retreive_content()
@@ -194,7 +216,7 @@ class contact extends prefab
 		$f3 = base::instance();
 		$db = $f3->get("DB");
 
-		$result = $db->exec("SELECT * FROM {$this->namespace} ORDER BY `order`");
+		$result = $db->exec("SELECT * FROM {$this->namespace} ORDER BY `order` ASC");
 
 		foreach ($result as $r) 
 		{
@@ -355,6 +377,7 @@ class contact extends prefab
 	}
 
 	function update_field ($f3, $params) {
+
 		$db = Base::instance()->DB;
 		$namespace = $this->namespace;
 		$field = $params["field"];
@@ -373,8 +396,6 @@ class contact extends prefab
 
 		if ($f3->POST["order"])
 			$db->exec("UPDATE {$namespace} SET `order`=? WHERE id=?", [$f3->POST["order"], $field]);
-
-		$f3->reroute("/admin/{$this->namespace}");
 	}
 
 	function add_field($f3) {

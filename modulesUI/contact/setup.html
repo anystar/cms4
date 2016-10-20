@@ -56,6 +56,12 @@
 							<p class="help-block">Leave blank to return back to same page.</p>
 						</div>
 
+						<div class="form-group">
+							<label>Template code</label>
+							<div id="editor"></div>
+							<textarea style="display:none;" name="template_code" class="form-control" rows="3">{{@contact.template_code}}</textarea>
+						</div>
+
 						<button class="button-fullwidth" type="submit">Save setup</button>
 					</form>
 				</div>
@@ -64,8 +70,30 @@
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script>
+			var editor = ace.edit("editor");
+			var textarea = $('textarea[name="template_code"]');
+			editor.setValue(textarea.val(), -1);
 
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="{{@BASE}}/admin/bootstrap.min.js"></script>
+			editor.getSession().on("change", function () {
+			    textarea.val(editor.getSession().getValue());
+			});
+
+			editor.getSession().setMode("ace/mode/html");
+			editor.setTheme("ace/theme/chrome");
+			editor.setOptions({
+			    showGutter: true,
+			    vScrollBarAlwaysVisible: false,
+			    printMargin: false,
+			    fontSize: 14,
+			    minLines: 12,
+			    maxLines: 1000
+			});
+			editor.container.style.lineHeight = 1.4;
+			editor.renderer.updateFontSize()
+		</script>
+
 	</body>
 </html>

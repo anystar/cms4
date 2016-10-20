@@ -100,10 +100,10 @@ class banners extends prefab {
 		$routes = setting("routes");
 		$dir = setting("directory");
 		$dims = setting("dimensions");
-		$fw = setting("javascript_framework_url");
-		$js = setting("javascript_url");
-		$css = setting("stylesheet_url");
-		$jsinit = setting("javascript_init");
+		$fw = setting("javascript_framework");
+		$js = setting("javascript");
+		$css = setting("stylesheet");
+		$jsinit = setting("init");
 		$template = setting("template_code");
 		$filetype = setting("filetype");
 
@@ -114,10 +114,10 @@ class banners extends prefab {
 
 		$f3->set("{$this->namespace}.directory", $dir);
 		$f3->set("{$this->namespace}.dimensions", $dims);
-		$f3->set("{$this->namespace}.javascript_framework_url", $fw);
-		$f3->set("{$this->namespace}.javascript_url", $js);
-		$f3->set("{$this->namespace}.stylesheet_url", $css);
-		$f3->set("{$this->namespace}.javascript_init", $jsinit);
+		$f3->set("{$this->namespace}.javascript_framework", $fw);
+		$f3->set("{$this->namespace}.javascript", $js);
+		$f3->set("{$this->namespace}.stylesheet", $css);
+		$f3->set("{$this->namespace}.init", $jsinit);
 		$f3->set("{$this->namespace}.template_code", $template);
 		$f3->set("{$this->namespace}.filetype", $filetype);
 
@@ -214,16 +214,16 @@ class banners extends prefab {
 
 		// Slider settings
 		if (isset($f3->POST["javascript_framework_url"]))
-			setting("javascript_framework_url", $f3->POST["javascript_framework_url"]);
+			setting("javascript_framework", $f3->POST["javascript_framework_url"]);
 
 		if (isset($f3->POST["javascript_url"]))
-			setting("javascript_url", $f3->POST["javascript_url"]);
+			setting("javascript", $f3->POST["javascript_url"]);
 
 		if (isset($f3->POST["stylesheet_url"]))
-			setting("stylesheet_url", $f3->POST["stylesheet_url"]);
+			setting("stylesheet", $f3->POST["stylesheet_url"]);
 
 		if (isset($f3->POST["javascript_init"]))
-			setting("javascript_init", $f3->POST["javascript_init"]);
+			setting("init", $f3->POST["javascript_init"]);
 
 		if (isset($f3->POST["template_code"]))
 			setting("template_code", $f3->POST["template_code"]);

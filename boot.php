@@ -191,8 +191,8 @@ new content();
 
 if (admin::$signed) {
 	new store();
-	new debug();
-}
 
+}
+	new debug();
 $f3->run();
 
