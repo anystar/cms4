@@ -31,33 +31,46 @@
 				</div>
 
 				<div class="col-xs-4" style="text-align:right;">
-					<a href="{{@BASE}}/admin/store/uninstall/paypal_gateway"><button>Uninstall</button></a>
-					<a href="{{@BASE}}/admin/paypal_gateway/setup"><button>Setup</button></a>						
-					<a href="{{@BASE}}/admin/paypal_gateway/documentation"><button>Documentation</button></a>
+					<a href="{{@BASE}}/admin/store/uninstall/paypal_express"><button>Uninstall</button></a>
+					<a href="{{@BASE}}/admin/paypal_express/setup"><button>Setup</button></a>						
+					<a href="{{@BASE}}/admin/paypal_express/documentation"><button>Documentation</button></a>
 				</div>
 			</div>
-
-
 
 			<div class="row">
 				<div class="col-xs-12 col-md-6 col-md-offset-3">
 					<div class="box">
-						<h2>Setup</h2>
+						<h2>Setup Paypal Express</h2>
 
-						<form action="{{@BASE}}/admin/paypal_gateway/setup" method="post">
-							<div class="form-group">
+						<form action="{{@BASE}}/admin/paypal_express/setup" method="post">
+							<div class="form-group <check if='{{!@paypal_express.routes}}'>has-error</check>">
+								<label>URL routes to load on</label>
+								<input required type="text" name="routes" class="form-control" placeholder="eg: /products/*" value="{{@paypal_express.routes}}">
+							</div>
+
+							<div class="form-group <check if='{{!@paypal_express.username}}'>has-error</check>">
 								<label>API Username</label>
-								<input required type="api_username" class="form-control" placeholder="">
+								<input required type="text" name="api_username" class="form-control" placeholder="Paypal Express API username" value="{{@paypal_express.username}}">
 							</div>
 
-							<div class="form-group">
+							<div class="form-group <check if='{{!@paypal_express.password}}'>has-error</check>">
 								<label>API Password</label>
-								<input required type="api_password" class="form-control" placeholder="">
+								<input required type="text" name="api_password" class="form-control" placeholder="Paypal Express API password" value="{{@paypal_express.password}}">
 							</div>
 
-							<div class="form-group">
-								<label>Signiture</label>
-								<input required type="api_signiture" class="form-control" placeholder="">
+							<div class="form-group <check if='{{!@paypal_express.signature}}'>has-error</check>">
+								<label>Signature</label>
+								<input required type="text" name="api_signature" class="form-control" placeholder="Paypal Express API signature" value="{{@paypal_express.signature}}">
+							</div>
+
+							<div class="form-group <check if='{{!@paypal_express.return}}'>has-error</check>">
+								<label>Return route</label>
+								<input required type="text" name="return_route" class="form-control" placeholder="eg: /payment_success" value="{{@paypal_express.return}}">
+							</div>
+
+							<div class="form-group <check if='{{!@paypal_express.cancel}}'>has-error</check>">
+								<label>Cancel route</label>
+								<input required type="text" name="cancel_route" class="form-control" placeholder="eg: /cancel_payment" value="{{@paypal_express.cancel}}">
 							</div>
 
 							<button class="button-fullwidth" type="submit">Save setup</button>

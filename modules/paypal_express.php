@@ -8,13 +8,16 @@ class paypal_express extends prefab {
 	private $routes;
 	private $namespace;
 
+	private $settings;
+
 	function __construct($namespace) {
 		$this->namespace = $namespace;
 		$this->routes = setting($namespace."_routes");
 
 		$f3 = base::instance();
 
-		$this->setup_routes(base::instance());
+		if (admin::$signed)
+			$this->setup_routes(base::instance());
 
 		if (!$this->install_check())
 		{
@@ -22,6 +25,9 @@ class paypal_express extends prefab {
 				if ($f3->mask("/admin/paypal_express") || $f3->mask("/admin/paypal_express/*")) { $f3->reroute("/admin/paypal_express/setup"); }
 		}
 
+		setting_use_namespace("paypal_express");
+		$this->settings = setting("*");
+		setting_clear_namespace();
 
 
 
@@ -46,11 +52,6 @@ class paypal_express extends prefab {
 		// log=0
 
 
-
-
-
-
-
 		if (admin::$signed)
 			$this->admin_routes(base::instance());
 
@@ -60,6 +61,16 @@ class paypal_express extends prefab {
 
 	function routes($f3) {
 		// Insert routes for this module
+		$f3->route('GET /payment_success', function ($f3) {
+
+			d($f3->GET);
+
+		});
+
+		$f3->route('GET /cancel_payment', function ($f3) {
+
+			
+		});
 
 	}
 
@@ -70,6 +81,29 @@ class paypal_express extends prefab {
 			echo Template::instance()->render("/paypal_express/paypal_express.html");
 		});
 
+		$f3->route("GET /admin/paypal_express/test", function ($f3) {
+
+			$paypal = new PayPal([
+				"user" => $this->settings["username"],
+				"pass" => $this->settings["password"],
+				"signature" => $this->settings["signature"],
+				"endpoint" => "sandbox",
+				"apiver" => "124.0",
+				"return" => $f3->SCHEME ."://".$f3->HOST.$f3->BASE."/".trim($this->settings["return"], "/"),
+				"cancel" => $f3->SCHEME ."://".$f3->HOST.$f3->BASE."/".trim($this->settings["cancel"], "/"),
+				"log"=>0
+			]);
+
+			$paypal = new PayPal;
+
+			$f3->clear("paypal");
+
+
+			$result = $paypal->create("Sale","AUD","10.00");
+
+			$f3->reroute($result['redirect']);
+		});
+
 		// $f3->route("GET /admin/paypal_express/documentation", function ($f3) {
 		// 	echo Template::instance()->render("/paypal_express/documentation.html");
 		// });
@@ -78,13 +112,28 @@ class paypal_express extends prefab {
 	function setup_routes ($f3) {
 
 		$f3->route('GET /admin/paypal_express/setup', function ($f3) {
-			
+				
+			setting_use_namespace("paypal_express");
+			$f3->paypal_express = $this->settings;
+			setting_clear_namespace();
+
 			echo Template::instance()->render("/paypal_express/setup.html");
 		});
 
 		$f3->route('POST /admin/paypal_express/setup', function ($f3) {
 
+			$p = $f3->POST;
+
 			$this->install();
+
+			setting_use_namespace("paypal_express");
+			setting("routes", $p["routes"]);
+			setting("username", $p["api_username"]);
+			setting("password", $p["api_password"]);
+			setting("signature", $p["api_signature"]);
+			setting("return", $p["return_route"]);
+			setting("cancel", $p["cancel_route"]);
+			setting_clear_namespace();
 
 			$f3->reroute('/admin/paypal_express/setup');
 		});

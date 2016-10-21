@@ -27,7 +27,15 @@ function setting($name, $value=null, $overwrite=true) {
 		if ($v = base::instance()->get("SETTINGS.".setting_config::$namespace.$name))
 			return $v;
 
-		return $db->exec("SELECT value FROM settings WHERE setting=?", setting_config::$namespace.$name)[0]["value"];
+		if ($name=="*" && setting_config::$namespace)
+		{	
+			$result = $db->exec("SELECT setting, value FROM settings WHERE setting LIKE ?", [setting_config::$namespace."%"]);
+			foreach ($result as $x)
+				$compiled[ str_replace(setting_config::$namespace, "", $x["setting"]) ] = $x["value"];
+			return $compiled;
+		}
+		else
+			return $db->exec("SELECT value FROM settings WHERE setting=?", setting_config::$namespace.$name)[0]["value"];
 	}
 	else
 	{
