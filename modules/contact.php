@@ -330,7 +330,7 @@ class contact extends prefab
 		if ($f3->POST["sendto"])
 			$toAddress = $f3->POST["sendto"];
 		else
-			setting("email");
+			$toAddress = setting("email");
 
 		$toName = setting("name");
 		$subject = setting("subject");
@@ -356,7 +356,7 @@ class contact extends prefab
 
 		$f3->set("contact.subject", $subject);
 
-		if (file_exists(getcwd().$this->email_template))
+		if (file_exists(getcwd()."/".$this->email_template))
 
 			// Use custom email template from client directory
 			$body = Template::instance()->render($this->email_template);
@@ -370,7 +370,7 @@ class contact extends prefab
 			// Use our generic email template
 			$body = Template::instance()->render("/contact/email_template/generic_email_template.html", null, $temphive);
 		}
-
+		
 		$smtp->send($body);
 
 		return true;
