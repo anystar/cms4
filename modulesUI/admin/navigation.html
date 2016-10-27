@@ -4,11 +4,10 @@
 		<li class="{{@nav_active_dashboard}}"><a href="{{ @BASE }}/admin/">Dashboard</a></li>
 		<li class="{{@nav_active_content}}"><a href="{{ @BASE }}/admin/content">Content</a></li>
 		<li class="{{@nav_active_store}}"><a href="{{ @BASE }}/admin/store">Store</a></li>
-		<li class="{{@nav_active_help}}"><a href="{{ @BASE }}/admin/help">Help</a></li>
-		<check if="{{@webmaster}}"><li class="{{@nav_active_webmaster}}"><a href="{{ @BASE }}/admin/webmaster">Webmaster</a></li></check>
+		<li class="{{@nav_active_settings}}"><a href="{{ @BASE }}/admin/settings">Settings</a></li>
+		<check if="{{@developer}}"><li class="{{@nav_active_webmaster}}"><a href="{{ @BASE }}/admin/webmaster">Webmaster</a></li></check>
 		<li class="pull-right"><a href="{{ @BASE }}/admin/logout">Logout</a></li>
-		<li class="pull-right"><a href="{{@SCHEME.'://'.@HOST.@BASE.'/'}}">Live Edit</a></li>
-		<li class="pull-right {{@nav_active_settings}}"><a href="{{ @BASE }}/admin/settings">Settings</a></li>
+		<li class="pull-right"><a href="{{@SCHEME.'://'.@HOST.@BASE.'/'}}">Preview Website</a></li>
 	</ul>
 
 

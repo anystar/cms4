@@ -13,7 +13,23 @@
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script sNotification Bar
+
+Module to manage a notification bar that appears at the top of the website. Ability to highly customize the design and layout.
+	in developement 	
+Blog / News
+
+Module that managers artical style content. Use it to create a blog or news stream.
+	in developement 	
+Contact Form
+
+Add a contact form to a website. Add and delete fields to build it into whatever you like. It can also be used as a number of other things, for example a booking form, registration form, expression of interest, etc..
+	
+Paypal Express
+
+Implements the Paypal Express API allowing you to price items on your website and receive payments from your users. Also implements a shopping cart so users can add multiply items before checking out.
+	
+rc="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
 	</head>
@@ -50,9 +66,16 @@
 									
 									<check if="{{@module.dev_status != 1}}">
 									<true>
-										<check if="{{@module.price > 0}}">
-											<true><td width="13%"><a href="{{@BASE}}/admin/store/{{@module.name}}"><button>${{@module.price}} Install</button></a></td></true>
-											<false><td width="13%"><a href="{{@BASE}}/admin/store/{{@module.module}}"><button>Free Install</button></a></td></false>
+										<check if="{{@developer}}">
+											<true>
+												<check if="{{@module.price > 0}}">
+													<true><td width="13%"><a href="{{@BASE}}/admin/store/{{@module.name}}"><button>${{@module.price}} Install</button></a></td></true>
+													<false><td width="13%"><a href="{{@BASE}}/admin/store/{{@module.module}}"><button>Free Install</button></a></td></false>
+												</check>
+											</true>
+											<false>
+												<td width="13%"><a href="{{@BASE}}/admin/store/{{@module.module}}"><button>Request install</button></a></td>
+											</false>
 										</check>
 									</true>
 									<false>

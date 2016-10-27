@@ -41,7 +41,7 @@
 				<div class="form-group">
 					<label class="control-label">CMS Login password</label>
 					<div class="input-group">
-						<input type="password" class="form-control password" name="admin_pass" placeholder="">
+						<input type="password" class="form-control password" name="admin_pass" placeholder="" value="{{@password}}">
 						<span class="input-group-btn">
 						<button class="btn generaterandom" type="button">Generate Random</button>
 						</span>
@@ -58,7 +58,6 @@
 
 		<exclude>
 		<form class="form-horizontal" method="post" action="{{@BASE}}/admin/settings/update">
-		  
 
 		  <repeat group="{{@SETTINGS}}" key="{{@setting}}" value="{{@value}}">
 		  <div class="form-group">
@@ -74,6 +73,17 @@
 
 		</form>
 		</exclude>
+
+		<div class="box">
+			<h2>Website mode</h2>
+			
+			<form method="POST" action="">
+				
+
+		
+			</form>
+
+		</div>
 
 	  </div>
 	  <div class="col-xs-12 col-md-6">
@@ -134,5 +144,8 @@
 			})
 		});
 	</script>
+
+	{{@debug}}
   </body>
+	}
 </html>

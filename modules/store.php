@@ -61,7 +61,10 @@ class store extends prefab {
 				$f3->POST["module_name"] = $module["name"];
 				$f3->POST["namespace"] = $module["module"];
 
-				echo Template::instance()->render("/store/purchase.html");
+				if ($f3->develoepr)
+					echo Template::instance()->render("/store/developer_install.html");
+				else
+					echo Template::instance()->render("/store/client_install.html");
 
 			});
 
