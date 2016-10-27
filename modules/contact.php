@@ -95,6 +95,9 @@ class contact extends prefab
 
 	function admin_routes ($f3)
 	{
+		$f3->set("contact", $f3->get($this->namespace));
+		$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
+
 		$f3->route("GET /admin/{$this->namespace}", function ($f3) {
 			$f3->namespace = $this->namespace;
 
@@ -102,9 +105,6 @@ class contact extends prefab
 				$f3->reroute("/admin/".$this->namespace."/setup");
 
 			$this->retreive_content();
-
-			$f3->set("contact", $f3->get($this->namespace));
-			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			// Get settings
 			setting_use_namespace($this->namespace);

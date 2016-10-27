@@ -168,7 +168,7 @@ if ($check)
 $f3->SETTINGS = $GLOBALS["settings"];
 
 $f3->developer = setting("developer_mode");
-$f3->developer = false;
+$f3->developer = true;
 
 determine_path($f3);
 
@@ -197,5 +197,5 @@ if (admin::$signed) {
 
 }
 	new debug();
-$f3->run();
 
+$f3->run();

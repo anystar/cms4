@@ -25,18 +25,7 @@
 		</div>
 	
 		<div class="container">
-			<check if="{{@webmaster}}">
-				<div class="row box module-bar">
-					<div class="col-xs-8">
-						<header>Gallery Documentation</header>
-					</div>
-
-					<div class="col-xs-4" style="text-align:right;">
-						<a href="{{@BASE}}/admin/store/uninstall/{{@namespace}}"><button>Uninstall</button></a>
-						<a href="{{@BASE}}/admin/{{@namespace}}/setup"><button>Setup</button></a>						
-						<a href="{{@BASE}}/admin/{{@namespace}}/documentation"><button>Documentation</button></a>
-					</div>
-				</div>
+			<include href="admin/toolbar.html">
 
 				<div class="row">
 					<div class="col-md-6">
@@ -140,7 +129,6 @@
 						</div>
 					</div>
 				</div>
-			</check>
 		</div>
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
