@@ -95,9 +95,6 @@ class contact extends prefab
 
 	function admin_routes ($f3)
 	{
-		$f3->set("contact", $f3->get($this->namespace));
-		$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
-
 		$f3->route("GET /admin/{$this->namespace}", function ($f3) {
 			$f3->namespace = $this->namespace;
 
@@ -106,12 +103,16 @@ class contact extends prefab
 
 			$this->retreive_content();
 
+			$f3->set("contact", $f3->get($this->namespace));
+
 			// Get settings
 			setting_use_namespace($this->namespace);
 			$f3->set("contact.email", setting("email"));
 			$f3->set("contact.name", setting("name"));
 			$f3->set("contact.subject", setting("subject"));
 			setting_clear_namespace();
+
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			echo Template::instance()->render("/contact/contact.html");
 		});
@@ -128,6 +129,8 @@ class contact extends prefab
 			$f3->set("contact.port", setting("port"));
 			$f3->set("contact.success", setting("success"));
 			setting_clear_namespace();
+
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			echo Template::instance()->render("/contact/setup.html");
 		});
@@ -157,6 +160,9 @@ class contact extends prefab
 		});
 
 		$f3->route("GET /admin/{$this->namespace}/documentation", function ($f3) {
+			$f3->set("contact", $f3->get($this->namespace));
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
+			
 			echo Template::instance()->render("/contact/documentation.html");
 		});
 		
