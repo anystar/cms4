@@ -82,7 +82,7 @@ class paypal_express extends prefab {
 		});
 
 		$f3->route("GET /admin/paypal_express/test", function ($f3) {
-
+			
 			$paypal = new PayPal([
 				"user" => $this->settings["username"],
 				"pass" => $this->settings["password"],
@@ -93,11 +93,6 @@ class paypal_express extends prefab {
 				"cancel" => $f3->SCHEME ."://".$f3->HOST.$f3->BASE."/".trim($this->settings["cancel"], "/"),
 				"log"=>0
 			]);
-
-			$paypal = new PayPal;
-
-			$f3->clear("paypal");
-
 
 			$result = $paypal->create("Sale","AUD","10.00");
 

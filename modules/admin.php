@@ -191,6 +191,12 @@ class admin extends prefab {
 
 	static public function settings($f3) {
 
+
+		$pass = setting("admin_pass");
+		if (strlen($pass) > 0)
+			$pass = str_repeat("*", strlen($pass));
+
+		$f3->set("password", $pass);
 		echo Template::instance()->render("/admin/settings.html");
 	}
 

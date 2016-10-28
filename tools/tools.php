@@ -298,6 +298,10 @@ function isroute($route, $verb=null)
 function determine_path ($f3) {
 
 	$path = urldecode(ltrim($f3->PATH, "/"));
+
+	if ($pos = strpos($path, "@"))
+		$path = substr($path, 0, $pos);
+
 	$cwd = getcwd();
 
 	if ($path == "") {
