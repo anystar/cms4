@@ -34,25 +34,22 @@ $(function() {
 
 
 	r_div.append(save);
-	r_div.append($('<div class="spacer"></div>'));
 
-	r_div.append($('<a href="{{@BASE}}/admin" target="_cmswindow" type="button">CMS Panel</a>'));
+	var toggleBtn = $('<input type="button" value="Editors off"/>');
 
-	var toggleBtn = $('<input type="button" value="~"/>');
 	toggleBtn.click(function () {
-		
-		if (r_div.is(":visible"))
-		{
 
+		// Turn editors off
+		if ($(this).val() == "Editors off")
+		{
 			Object.keys(CKEDITOR.instances).forEach(function(key,index) {
 				var editor = CKEDITOR.instances[key];
 				editor.destroy();
 				$(editor.container.$).attr('contenteditable',"false");
 			});
-
-			r_div.hide();
-		} else
-		{
+			
+			$(this).val("Editors on");
+		} else {
 			init_inline_ckeditors();
 			Object.keys(CKEDITOR.instances).forEach(function(key,index) {
 				var editor = CKEDITOR.instances[key];
@@ -60,9 +57,16 @@ $(function() {
 				$(editor.element.$).attr('contenteditable',"true");
 			});
 
-			r_div.show();
+			$(this).val("Editors off");
 		}
 	});
 
 	top_div.append(toggleBtn);
+
+	r_div.append($('<div class="spacer"></div>'));
+
+	r_div.append($('<a href="{{@BASE}}/admin" target="_cmswindow" type="button">CMS Panel</a>'));
+
+
+
 });
