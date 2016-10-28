@@ -24,9 +24,6 @@ class banners extends prefab {
 	}
 
 	function admin_routes($f3) {
-		$f3->namespace = $this->namespace;
-		$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
-
 
 		#######################################################
 		################# Admin Panel Render ##################
@@ -46,6 +43,9 @@ class banners extends prefab {
 			// This is only for admin section.
 			$f3->banner = $f3->get($this->namespace);
 
+			$f3->namespace = $this->namespace;
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
+
 			echo Template::instance()->render("/banners/banners.html");
 		});
 
@@ -64,6 +64,8 @@ class banners extends prefab {
 			$this->load_settings();
 			$f3->banner = $f3->get($this->namespace);
 			$f3->namespace = $this->namespace;
+
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			echo Template::instance()->render("/banners/setup.html");
 		});
