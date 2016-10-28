@@ -181,6 +181,7 @@
 										<option <check if="{{@field.type=='textarea'}}">selected</check> value="textarea">Textarea</option>
 										<option <check if="{{@field.type=='number'}}">selected</check> value="number">Number</option>
 										<option <check if="{{@field.type=='email'}}">selected</check> value="email">Email</option>
+										<option <check if="{{@field.type=='select'}}">selected</check> value="select">Select Box</option>
 									  </select>
 								   </div>
 								</td>
@@ -217,6 +218,7 @@
 									<option value="textarea">Textarea</option>
 									<option value="number">Number</option>
 									<option value="email">Email</option>
+									<option value="select">Select Box</option>
 								  </select>
 							   </div>
 							</td>
@@ -231,6 +233,7 @@
 								</div>
 							</td>
 							<td><a href="{{@BASE}}/"><button type="submit">Add</button></a></td>
+							<input type="hidden" name="order" value="{{@field.order+1}}">
 						</form>
 						</tr>
 						</check>

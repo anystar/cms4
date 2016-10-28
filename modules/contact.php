@@ -235,6 +235,10 @@ class contact extends prefab
 			{
 				$formcompiled[$r["name"]]["value"] = $value;
 			}
+
+			if ($r["type"]=="select") {
+				$formcompiled[$r["name"]]["options"] = $f3->split($r["placeholder"]);
+			}
 		}
 
 		$f3->set("{$this->namespace}.form", $formcompiled);
