@@ -316,6 +316,10 @@ class contact extends prefab
 
 					$f3->set("fromAddress", $value);
 				break;
+
+				case "select":
+
+				break;
 			}
 
 			if ($form[$key]["has_error"] == true)

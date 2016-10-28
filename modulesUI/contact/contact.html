@@ -92,6 +92,9 @@
 								<case value="text">
 									<set value="Dummy text">
 								</case>
+								<case value="select">
+									<set value="Option A">
+								</case>
 								<default>
 									<set value="">
 								</default>
@@ -152,11 +155,11 @@
 					
 					<table class="table table-condensed table-responsive">
 						<thead>
+							<th>Order</th>
 							<th>Label</th>
 							<th>Type</th>
 							<th>Placeholder</th>
 							<th>Error Message</th>
-							<th>Order</th>
 							<th></th>
 						</thead>
 
@@ -187,7 +190,11 @@
 								</td>
 								<td>
 									<div class="input-group">
-									  <input name="placeholder" type="text" class="form-control" placeholder="text you're reading now" value="{{@field.placeholder}}">
+										<check if="{{@field.type=='select'}}">
+											<true><input name="placeholder" type="text" class="form-control" placeholder="Comma seperated values" value="{{@field.placeholder}}"></true>
+											<false><input name="placeholder" type="text" class="form-control" placeholder="text you're reading now" value="{{@field.placeholder}}"></false>
+										</check>
+
 									</div>
 								</td>
 								<td>
