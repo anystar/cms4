@@ -33,9 +33,6 @@ class module_name extends prefab {
 		//$f3->route('GET /admin/module_name', '');
 
 
-
-
-
 		// $f3->route("GET /admin/module_name/documentation", function ($f3) {
 		// 	echo Template::instance()->render("/module_name/documentation.html");
 		// });
