@@ -104,7 +104,6 @@ class contact extends prefab
 			$this->retreive_content();
 
 			$f3->set("contact", $f3->get($this->namespace));
-			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			// Get settings
 			setting_use_namespace($this->namespace);
@@ -112,6 +111,8 @@ class contact extends prefab
 			$f3->set("contact.name", setting("name"));
 			$f3->set("contact.subject", setting("subject"));
 			setting_clear_namespace();
+
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			echo Template::instance()->render("/contact/contact.html");
 		});
@@ -128,6 +129,8 @@ class contact extends prefab
 			$f3->set("contact.port", setting("port"));
 			$f3->set("contact.success", setting("success"));
 			setting_clear_namespace();
+
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			echo Template::instance()->render("/contact/setup.html");
 		});
@@ -157,6 +160,9 @@ class contact extends prefab
 		});
 
 		$f3->route("GET /admin/{$this->namespace}/documentation", function ($f3) {
+			$f3->set("contact", $f3->get($this->namespace));
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
+			
 			echo Template::instance()->render("/contact/documentation.html");
 		});
 		
@@ -228,6 +234,10 @@ class contact extends prefab
 			if ($value = $f3->POST[$r["name"]])
 			{
 				$formcompiled[$r["name"]]["value"] = $value;
+			}
+
+			if ($r["type"]=="select") {
+				$formcompiled[$r["name"]]["options"] = $f3->split($r["placeholder"]);
 			}
 		}
 
@@ -305,6 +315,10 @@ class contact extends prefab
 						$form[$key]["has_error"] = true;
 
 					$f3->set("fromAddress", $value);
+				break;
+
+				case "select":
+
 				break;
 			}
 

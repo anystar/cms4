@@ -92,6 +92,9 @@
 								<case value="text">
 									<set value="Dummy text">
 								</case>
+								<case value="select">
+									<set value="Option A">
+								</case>
 								<default>
 									<set value="">
 								</default>
@@ -152,11 +155,11 @@
 					
 					<table class="table table-condensed table-responsive">
 						<thead>
+							<th>Order</th>
 							<th>Label</th>
 							<th>Type</th>
 							<th>Placeholder</th>
 							<th>Error Message</th>
-							<th>Order</th>
 							<th></th>
 						</thead>
 
@@ -181,12 +184,17 @@
 										<option <check if="{{@field.type=='textarea'}}">selected</check> value="textarea">Textarea</option>
 										<option <check if="{{@field.type=='number'}}">selected</check> value="number">Number</option>
 										<option <check if="{{@field.type=='email'}}">selected</check> value="email">Email</option>
+										<option <check if="{{@field.type=='select'}}">selected</check> value="select">Select Box</option>
 									  </select>
 								   </div>
 								</td>
 								<td>
 									<div class="input-group">
-									  <input name="placeholder" type="text" class="form-control" placeholder="text you're reading now" value="{{@field.placeholder}}">
+										<check if="{{@field.type=='select'}}">
+											<true><input name="placeholder" type="text" class="form-control" placeholder="Comma seperated values" value="{{@field.placeholder}}"></true>
+											<false><input name="placeholder" type="text" class="form-control" placeholder="text you're reading now" value="{{@field.placeholder}}"></false>
+										</check>
+
 									</div>
 								</td>
 								<td>
@@ -217,6 +225,7 @@
 									<option value="textarea">Textarea</option>
 									<option value="number">Number</option>
 									<option value="email">Email</option>
+									<option value="select">Select Box</option>
 								  </select>
 							   </div>
 							</td>
@@ -231,6 +240,7 @@
 								</div>
 							</td>
 							<td><a href="{{@BASE}}/"><button type="submit">Add</button></a></td>
+							<input type="hidden" name="order" value="{{@field.order+1}}">
 						</form>
 						</tr>
 						</check>

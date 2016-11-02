@@ -44,6 +44,7 @@ class banners extends prefab {
 			$f3->banner = $f3->get($this->namespace);
 
 			$f3->namespace = $this->namespace;
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			echo Template::instance()->render("/banners/banners.html");
 		});
@@ -63,6 +64,8 @@ class banners extends prefab {
 			$this->load_settings();
 			$f3->banner = $f3->get($this->namespace);
 			$f3->namespace = $this->namespace;
+
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
 			echo Template::instance()->render("/banners/setup.html");
 		});

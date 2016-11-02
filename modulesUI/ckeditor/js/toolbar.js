@@ -10,7 +10,7 @@ $(function() {
 	save.click(function () {
 
 		Object.keys(CKEDITOR.instances).forEach(function(key,index) {
-			
+
 			var editor = CKEDITOR.instances[key];
 			if (!editor.checkDirty()) return;
 

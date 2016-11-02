@@ -25,6 +25,8 @@
 		</div>
 	
 		<div class="container">
+			<include href="admin/toolbar.html">
+	
 			<div class="col-md-6 col-md-offset-3 col-xs-12">
 				<div class="box">
 					<h2>Setup {{@namespace}}</h2>
@@ -54,6 +56,19 @@
 							<label>Redirect to success page</label>
 							<input value="{{@contact.success}}" name="contact_success" type="text" class="form-control" placeholder="eg: /contact_success">
 							<p class="help-block">Leave blank to return back to same page.</p>
+						</div>
+
+						<div class="form-group">
+							<label>Form field editting</label>
+							  <div class="checkbox">
+							    <label>
+									<check if="{{@contact.form_field_editting}}">
+							    		<true><input checked type="checkbox"> Turned on</true>
+							    		<false><input type="checkbox"> Turned off</false>
+							    	</check>
+							    </label>
+							  </div>
+							  <p class="help-block">Helpful if you hard code the contact form on the website.</p>
 						</div>
 
 						<div class="form-group">
