@@ -20,6 +20,10 @@ class debug extends prefab {
 			$code .= "</script>";
 			$f3->set("debug", $code);
 		}
+		else
+		{
+			$f3->set("debug", "");	
+		}
 	}
 
 	function array_keys_blacklist( array $array, array $keys ) {
