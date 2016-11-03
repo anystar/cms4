@@ -182,19 +182,23 @@ $f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses");
 ############ Load modules ##############
 ########################################
 
-base::instance()->set("CORS.headers", "Access-Control-Allow-Origin");
-base::instance()->set("CORS.origin", "*");
-
 new admin();
 new content();
 
 	foreach ($f3->installed_modules as $module)
 		new $module["module"]($module["namespace"]);
 
-if (admin::$signed) {
-	new store();
+	if ($extra_modules)
+	{
+		$f3->UI .= ";".getcwd()."/".$extra_modules_ui;
 
-}
+		foreach ($extra_modules as $module)
+			new $module["module"]($module["namespace"]);
+	}
+
+	if (admin::$signed)
+		new store();
+
 	new debug();
 
 $f3->run();

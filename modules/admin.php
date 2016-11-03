@@ -46,17 +46,16 @@ class admin extends prefab {
 		// Expose login screen
 		if (!admin::$signed)
 			$this->login_routes($f3);
-
 	}
 
 
 	function login_routes($f3) {
 
+		$f3->route('GET /admin', "admin::login_render");
+
 		$f3->route('GET /admin/*', function ($f3) {
 			$f3->reroute("/admin");
 		});
-
-		$f3->route('GET /admin', "admin::login_render");
 
 		$f3->route("POST /admin/login", function ($f3) {
 			admin::login($f3);
