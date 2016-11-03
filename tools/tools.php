@@ -110,6 +110,20 @@ function d ($x=null) {
 }
 
 
+function k ($x)
+{
+	if (!isset($GLOBALS["settings"]["paths"]["krumo"]))
+		d($x);
+
+	require_once $GLOBALS["settings"]["paths"]["krumo"];
+
+	krumo($x);
+
+    if (class_exists("f3")) 
+   		f3::instance()->error(0);
+}
+
+
 
 function writable($path) {
 
