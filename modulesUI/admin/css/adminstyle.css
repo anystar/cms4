@@ -147,6 +147,9 @@ button:active {
   box-shadow: none;
   outline: medium none !important; }
 
+.dropdown-toggle {
+  text-shadow: none !important; }
+
 .button-fullwidth {
   width: 100%; }
 

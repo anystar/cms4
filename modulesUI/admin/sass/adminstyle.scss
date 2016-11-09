@@ -201,10 +201,13 @@ button:hover {
 }
 
 button:active {
-
     border: 1px solid #141414 !important;
     box-shadow: none;
     outline: medium none !important;
+}
+
+.dropdown-toggle {
+    text-shadow: none !important; 
 }
 
 .button-fullwidth {
