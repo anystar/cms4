@@ -131,14 +131,10 @@ table .order {
 button {
   background-color: #444444;
   border: 1px solid #141414;
-  border-radius: 3px;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 0 1px rgba(0, 0, 0, 0.7);
   color: #fff;
-  padding: 4px 20px;
-  text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.89); }
+  padding: 4px 20px; }
 
 button:hover {
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 0 1px rgba(0, 0, 0, 0.9);
   border: 1px solid #000;
   color: #fff; }
 

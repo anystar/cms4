@@ -24,6 +24,10 @@ class debug extends prefab {
 				require_once $GLOBALS["settings"]["paths"]["krumo"];
 				return krumo($array);
 			});
+
+			Template::instance()->filter("die", function () {
+				die;
+			});
 		}
 		else
 		{
