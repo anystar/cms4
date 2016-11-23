@@ -50,7 +50,10 @@ class banners extends prefab {
 		});
 
 		$f3->route('GET /admin/'.$this->namespace.'/documentation', function ($f3) {
+
 			$f3->namespace = $this->namespace;
+			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
+			
 			echo Template::instance()->render("/banners/documentation.html");
 		});
 
@@ -129,14 +132,24 @@ class banners extends prefab {
 
 	function retreive_content($f3) {
 
-		$file_path = setting($this->namespace."_directory");
+		$file_path = rtrim(setting($this->namespace."_directory"), "/");
 
 		// If there is no folder, don't continue.
 		if (!is_dir(getcwd()."/".$file_path))
 			return;
 
 		// Get images from folder
-		$dir = array_diff(scandir(getcwd()."/".$file_path), array('..', '.'));
+		$temp = array_diff(scandir(getcwd()."/".$file_path), array('..', '.'));
+
+		$extension = setting($this->namespace."_filetype");
+
+		// Only images with extension
+		$dir = [];
+		foreach ($temp as $file)
+		{
+			if (pathinfo($file)["extension"] == $extension)
+				$dir[] = $file;
+		}
 
 		$order = json_decode(setting($this->namespace."_order"), true);
 
@@ -184,9 +197,12 @@ class banners extends prefab {
 
 		if ($order)
 		{
+			if ($filepath != "")
+				$filepath .= "/";
+
 			foreach ($order as $x) {
 				$f3->push($this->namespace.".images", [
-					"url"=>$file_path."/".$x,
+					"url"=>$file_path.$x,
 					"filename"=>$x
 				]);
 			}
@@ -274,8 +290,10 @@ class banners extends prefab {
 		$new_name .= ".".$file_type;
 
 		// Where to save
-		$file_path = getcwd()."/".setting($this->namespace."_directory");
+		$file_path = getcwd()."/".rtrim(setting($this->namespace."_directory"), "/");
 		$save_to = $file_path."/".$new_name;
+
+		d($save_to);
 
 		// Ensure directory exsists and make it if it doesn't
 		if (!is_dir($file_path))

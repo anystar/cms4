@@ -66,6 +66,9 @@ class ckeditor extends prefab {
 
 		$f3->route("GET /admin/ckeditor", function ($f3) {
 
+			if (!$this->install_check())
+				$f3->reroute("/admin/ckeditor/setup");
+
 			$skins = parse_ini_file($f3->SETTINGS["paths"]["cms"]."/modulesUI/ckeditor/settings.ini", true)["skins"];
 			$f3->set("ckeditor.skins", $skins);
 
@@ -229,6 +232,17 @@ class ckeditor extends prefab {
 
 			echo json_encode($compiled);
 		});
+	}
+
+	function install_check() {
+
+		if (!setting("ckeditor_image_upload_path"))
+			return false;
+
+		if (!setting("ckeditor_folder_structure"))
+			return false;
+
+		return true;
 	}
 
 	function assets($f3) {

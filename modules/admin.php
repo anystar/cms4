@@ -41,8 +41,6 @@ class admin extends prefab {
 			$f3->concat("admin", $inlinecode);
 		}
 
-		admin::file_routes($f3);
-
 		// Expose login screen
 		if (!admin::$signed)
 			$this->login_routes($f3);
@@ -226,58 +224,5 @@ class admin extends prefab {
 		}
 
 		$f3->reroute("/admin/settings");
-	}
-
-
-	static function file_routes($f3) {	
-		$f3->route('GET /admin/theme', function () {
-			echo Template::instance()->render("/admin/css/adminstyle.css", "text/css");
-		}, 604800);
-
-		$f3->route('GET /admin/js/jquery.1.12.4.js', function () {
-			echo Template::instance()->render("/admin/js/jquery.1.12.4.js", "application/javascript");
-		}, 604800);
-
-		$f3->route('GET /admin/bootstrap.min.css', function () {
-			echo Template::instance()->render("/admin/css/bootstrap.min.css", "text/css");
-		}, 604800);
-
-		$f3->route('GET /admin/bootstrap.min.js', function () {
-			echo Template::instance()->render("/admin/js/bootstrap.min.js", "application/javascript");
-		}, 604800);
-
-		$f3->route('GET /admin/imgs/help_pdf_screenshot.png', function () {
-			echo View::instance()->render("/admin/imgs/help_pdf_screenshot.png", "image/png");
-		}, 604800);
-
-		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
-			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.woff2", "application/font-woff2");
-		}, 604800);
-
-		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
-			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.woff", "application/x-font-woff");
-		}, 604800);
-
-		$f3->route('GET /admin/fonts/glyphicons-halflings-regular.woff2', function () {
-			echo View::instance()->render("/admin/fonts/glyphicons-halflings-regular.ttf", "application/x-font-woff");
-		}, 604800);
-
-		$f3->route('GET /admin/fonts/Jaldi-Regular.ttf', function () {
-			echo View::instance()->render("/admin/fonts/Jaldi-Regular.ttf", "application/x-font-woff");
-		}, 604800);
-
-		$f3->route('GET /admin/fonts/Oswald-Regular.ttf', function () {
-			echo View::instance()->render("/admin/fonts/Oswald-Regular.ttf", "application/x-font-woff");
-		}, 604800);
-
-		$f3->route('GET /admin/imgs/logo.png', function ($f3) {
-			$img = new Image('/admin/imgs/logo.png');
-			$img->render();
-		}, 604800);
-
-		$f3->route('GET /admin/imgs/login_bg.png', function ($f3) {
-			$img = new Image('/admin/imgs/login_bg.png');
-			$img->render();
-		}, 604800);
 	}
 }

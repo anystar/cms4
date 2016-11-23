@@ -8,8 +8,8 @@
 		<title>Web Works CMS</title>
 
 		<!-- Bootstrap -->
-		<link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
-		<link href="{{ @BASE }}/admin/theme" rel="stylesheet">
+		<link href="{{ @SETTINGS.cdn.cms }}/admin/css/bootstrap.min.css" rel="stylesheet">
+		<link href="{{ @SETTINGS.cdn.cms }}/admin/css/main.css" rel="stylesheet">
 		<link href="{{@banner.stylesheet}}" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/min/dropzone.min.css" rel="stylesheet">
 		<link href="{{ @BASE }}/{{@namespace}}/slider.css" rel="stylesheet">
@@ -80,17 +80,20 @@
 			  width: 100%;
 			  margin: 20px 0;
 			  font-weight: bold; }
-
+			
+			.orderbuttons .up {
+				margin-bottom:2px;
+			}
 
 		</style>
 	</head>
 	<body>
-		<h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
+		<h1><img src="{{ @SETTINGS.cdn.cms }}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
 
 		<div class="nav top_nav">
 			<include href="/admin/navigation.html" with="{{nav_active_banners=active}}"  />
 		</div>
-		
+			
 		<div class="container">
 			<include href="admin/toolbar.html">
 
@@ -122,12 +125,12 @@
 							<tbody>					
 								<repeat group="{{@banner.images}}" value="{{@image}}">
 								<tr class="banner_images">
-									<td class="orderbuttons">
+									<td align="center" class="orderbuttons">
 										<button class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
 										<button class="down"><span class="glyphicon glyphicon-arrow-down"></span></button>
 									</td>
 									<td width="100%"><a target="_blank" href="{{@BASE}}/{{@image.url}}"><img title="{{@image.filename}}" class="bannerimage" width="100%" src="{{@BASE}}/{{@image.url}}" /></a></td>
-									<td class="tools">
+									<td align="center" class="tools">
 										<a class="delete_image" href="{{@BASE}}/admin/{{@namespace}}/delete/{{@image.filename}}"><button>Delete</button></a>
 									</td>
 								</tr>
@@ -149,10 +152,10 @@
 		
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/jquery.min.js"></script>
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/min/dropzone.min.js"></script>
-		<script src="{{ @BASE }}/admin/bootstrap.min.js"></script>
+		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/bootstrap.min.js"></script>
 		<script src="{{@banner.javascript}}"></script>
 
 	<script>

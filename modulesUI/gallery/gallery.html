@@ -8,8 +8,8 @@
 	<title>Web Works CMS</title>
 
 	<!-- Bootstrap -->
-	<link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
-	<link href="{{ @BASE }}/admin/theme" rel="stylesheet">
+	<link href="{{ @SETTINGS.cdn.cms }}/admin/css/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ @SETTINGS.cdn.cms }}/admin/css/main.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/min/dropzone.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/lity/2.1.1/lity.min.css" rel="stylesheet">
 	<link href="{{ @BASE }}/admin/gallery/css/gallery.css" rel="stylesheet">
@@ -24,7 +24,7 @@
   </head>
   <body>
 	
-	<h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
+	<h1><img src="{{ @SETTINGS.cdn.cms }}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
 
 	<div class="nav top_nav">
 			<include href="/admin/navigation.html" with="{{nav_active_galleries=active}}"  />

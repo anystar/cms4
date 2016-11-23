@@ -7,8 +7,8 @@
 
 		<title>Web Works CMS</title>
 	
-	    <link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
-	    <link href="{{ @BASE }}/admin/theme" rel="stylesheet">
+	    <link href="{{ @SETTINGS.cdn.cms }}/admin/css/bootstrap.min.css" rel="stylesheet">
+	    <link href="{{ @SETTINGS.cdn.cms }}/admin/css/main.css" rel="stylesheet">
 
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -18,14 +18,14 @@
 		<![endif]-->
 	</head>
 	<body>
-		<h1><img src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
+		<h1><img src="{{ @SETTINGS.cdn.cms }}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
 
 		<div class="nav top_nav">
 			<include href="/admin/navigation.html" />
 		</div>
 	
 		<div class="container">
-			<include href="admin/toolbar.html" with="module_name='CKEditor'">
+			<include href="admin/toolbar.html" with="module_name='Gallery'">
 
 			<div class="col-md-6 col-md-offset-3 col-xs-12">
 				<div class="box">
@@ -80,10 +80,10 @@
 		</div>
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/jquery.min.js"></script>
 
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="{{@BASE}}/admin/bootstrap.min.js"></script>
+		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/bootstrap.min.js"></script>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
 		

@@ -10,15 +10,15 @@
     <title>Web Works CMS</title>
 
     <!-- Bootstrap -->
-    <link href="{{ @BASE }}/admin/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ @BASE }}/admin/theme" rel="stylesheet">
+    <link href="{{ @SETTINGS.cdn.cms }}/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ @SETTINGS.cdn.cms }}/admin/css/main.css" rel="stylesheet">
   
     <style>
 
 
       body::after {
         content: "";
-        background: url("{{@BASE}}/admin/imgs/login_bg.png") no-repeat center center fixed; 
+        background: url("{{ @SETTINGS.cdn.cms }}/admin/imgs/login_bg.png") no-repeat center center fixed; 
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
@@ -82,12 +82,12 @@
 
     
     <div class="box" id="login">
-      <img width="100%" src="{{@BASE}}/admin/imgs/logo.png" alt="Web Works CMS Login">
+      <img width="100%" src="{{ @SETTINGS.cdn.cms }}/admin/imgs/logo.png" alt="Web Works CMS Login">
 
       <form autocomplete="off" method="post" action="{{ @BASE }}/admin/login">
         <div class="form-group">
 
-          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@POST.user}}">
+          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@POST.user}}" autofocus>
           <check if="{{@login.email_error}}"><span id="helpBlock" class="help-block">Incorrect email address</span></check>
         </div>
         <div class="form-group">
