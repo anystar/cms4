@@ -67,6 +67,12 @@ class gallery extends prefab {
 			exit;
 		});
 
+		$f3->route("POST /admin/{$this->namespace}/update-caption", function ($f3) {
+
+			$f3->DB->exec("UPDATE {$this->namespace} SET caption=? WHERE id=?", [$f3->POST['caption'], $f3->POST['id']]);
+
+		});
+
 		$f3->route("GET /admin/{$this->namespace}/setup", function ($f3) {
 			$f3->namespace = $this->namespace;
 

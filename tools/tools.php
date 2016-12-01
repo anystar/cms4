@@ -109,6 +109,17 @@ function d ($x=null) {
         exit;
 }
 
+function j ($data) {
+	header('Content-Type: application/json');
+
+	if (is_array($data))
+		echo json_encode($data);
+	else 
+		echo $data;
+	
+	exit;
+}
+
 
 function k ($x)
 {

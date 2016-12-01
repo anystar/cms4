@@ -21,6 +21,12 @@
 	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
 
+	<style>
+		.dropzone {
+			margin: 30px;
+			border: 2px dashed #777;
+		}
+	</style>
   </head>
   <body>
 	
@@ -41,7 +47,36 @@
 
 					<check if="{{@gallery.images}}">
 					  <true>
-						<include href="gallery/_images_table.html">
+							<table class="table table-condensed">
+								<tr>
+									<td>Thumb</td>
+									<td>File name</td>
+									<td>Caption</td>
+									<td>Tools</td>
+								</tr>
+								
+								<repeat group="{{@gallery.images}}" value="{{@image}}">
+								<tr>
+										<td>
+											<img data-lity data-lity-target="{{@image.url}}" width="250" src="{{@image.thumb}}" />
+										</td>
+										<td class="filename">{{@image.filename}}</td>
+										<td><input id="{{@image.id}}" placeholder="Type short caption here" class="form-control caption_save" name="caption" type="text" value="{{@image.caption}}"></td>
+										<td>
+											<a class="delete_image" href="{{@BASE}}/admin/{{@namespace}}/delete/{{@image.id}}"><button>Delete</button></a>
+										</td>
+								</tr>
+								</repeat>
+							</table>
+
+					        <form method="post" action="{{@BASE}}/admin/{{@namespace}}/dropzone" class="dropzone" id="gallerydropzone">
+					          <div class="dz-message">
+
+					                <div>Drop more photos here.</div>
+					                <div>Max file size: {{@max_upload_size}}</div>
+
+					          </div>
+					        </form>
 					  </true>
 					</check>
 
@@ -49,7 +84,7 @@
 					  <false>
 						<form method="post" action="{{@BASE}}/admin/{{@namespace}}/dropzone" class="dropzone" id="gallerydropzone">
 						  <div class="dz-message">
-							<div>Drop some photos (or click) to create first gallery.</div>
+							<div>Drop photos (or click) to create first gallery.</div>
 							<div>Max file size: {{@max_upload_size}}</div>
 						  </div>
 						</form>
@@ -73,13 +108,19 @@
 				
 				return false;
 			});
-		});
 
+			$(".caption_save").on("blur", function (e) {
+		
+				$.post("{{@BASE}}/admin/{{@namespace}}/update-caption", {
+					caption : $(e.currentTarget).val(), id : $(e.currentTarget).attr("id")
+				});
+			});
+		});
 
 	  Dropzone.autoDiscover = false;
 	  Dropzone.options.gallerydropzone = {
 		init: function() {
-		  this.on("queuecomplete", function(file) { location.reload();  });
+		  this.on("queuecomplete", function(file) { /*location.reload();*/  });
 		}
 	  };
 

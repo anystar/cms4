@@ -105,10 +105,8 @@ if (isset($variables))
 
 $f3->set('AUTOLOAD', $settings["paths"]["cms"]."/modules/" . ";" . getcwd()."/modules/");
 
-
 $f3->UI = getcwd()."/;"; 								// Client directory files
-$f3->UI .= $settings["paths"]["cms"] . "/adminUI/;";    // Admin panel UI
-$f3->UI .= $settings["paths"]["cms"] . "/modulesUI/";   // Modules UI
+$f3->UI .= rtrim($settings["paths"]["cms"], "/") . "/modulesUI/";   // Modules UI
 
 if ($settings["cache"])
 	$f3->set('CACHE', getcwd() . "/tmp/");
