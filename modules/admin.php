@@ -168,7 +168,7 @@ class admin extends prefab {
 			if ($post["pass"] != admin::$clientPass && $post["pass"] != admin::$webmasterPass)
 				$f3->set("login.pass_error", true);
 
-			admin::login_render($f3);
+			$f3->mock("GET /admin");
 			return;
 		}
 
