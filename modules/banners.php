@@ -197,8 +197,8 @@ class banners extends prefab {
 
 		if ($order)
 		{
-			if ($filepath != "")
-				$filepath .= "/";
+			if ($file_path != "")
+				$file_path .= "/";
 
 			foreach ($order as $x) {
 				$f3->push($this->namespace.".images", [
@@ -213,10 +213,12 @@ class banners extends prefab {
 
 		$html = setting($this->namespace."_template_code");
 
-		$html = preg_replace('/\h*<\?(?!xml)(?:php|\s*=)?.+?\?>\h*|\{\*.+?\*\}/is', '', $html);
-		$html = Template::instance()->parse($html);
-		$html = Template::instance()->resolve($html);
-		$html = Template::instance()->build($html);
+		if ($html != "") {
+			$html = preg_replace('/\h*<\?(?!xml)(?:php|\s*=)?.+?\?>\h*|\{\*.+?\*\}/is', '', $html);
+			$html = Template::instance()->parse($html);
+			$html = Template::instance()->resolve($html);
+			$html = Template::instance()->build($html);
+		}
 
 		$f3->set($this->namespace.".html", $html);
 	}
