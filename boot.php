@@ -184,7 +184,10 @@ new admin();
 new content();
 
 	foreach ($f3->installed_modules as $module)
-		new $module["module"]($module["namespace"]);
+	{
+		if (class_exists($module["module"]))
+			new $module["module"]($module["namespace"]);
+	}
 
 	if ($extra_modules)
 	{
