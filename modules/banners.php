@@ -295,8 +295,6 @@ class banners extends prefab {
 		$file_path = getcwd()."/".rtrim(setting($this->namespace."_directory"), "/");
 		$save_to = $file_path."/".$new_name;
 
-		d($save_to);
-
 		// Ensure directory exsists and make it if it doesn't
 		if (!is_dir($file_path))
 			mkdir($file_path, 0755, true);
