@@ -28,53 +28,73 @@ class file_manager extends prefab {
 	private $throttle = 1;
 
 	function __construct($namespace) {
+		setting_use_namespace($this->namespace);
+		
+		if (setting("directory") == null)
+			setting("directory", "files");
+
+		$this->directory = setting("directory");
+
+		setting_clear_namespace();
 
 		$this->routes(base::instance());
-
 	}
 
 	function routes($f3) {
 
-		$f3->route("GET /".$this->directory, function ($f3, $params) {
+		// Respond with uploaded files. Implements throttling
+		$f3->route("GET /".$this->directory."/@file", function ($f3, $params) {
 
 			if ($this->throttle == 0)
 				$f3->error(503);
 
-			$file = getcwd()."/". $f3->upload_path.$params["img"];
+			$file = getcwd()."/". $this->directory."/".$params["file"];
 
 			if (!file_exists($file)) {
 				$f3->error(404);
 				exit;
 			}
 
-			$type = image_type_to_mime_type(exif_imagetype($file));
+			$mime_type = mime_content_type2($file);
 
-			header('Content-Type:'.$type);
+			header('Content-Type:'.$mime_type);
 			header('Content-Length: ' . filesize($file));
 			readfile($file);
 
-		}, null, $upload_speed * $throttle);
+		}, null, $this->upload_speed * $this->throttle);
 
 
-		$f3->route("POST /upload", function ($f3) {
-			$file = $f3->FILES["upload"];
-
-			// Is the image in the allowed list?
-			if (!is_allowed_image($f3, $file)) exit;
-
-			// Does file already exist?
-			if (!does_file_exsist($f3, $file)) exit;
-
-			// Store the image!
-			store_image($f3, $file);
-		});
+		if ($f3->admin)
+		{
+			// Receive uploaded files.
+			$f3->route("POST /".$this->directory."/upload", function ($f3) {
+				$this->upload_file($f3);
+			});
+		}
 
 	}
 
-	function is_file_allowed($f3, $file) {
-		$type = image_type_to_mime_type(exif_imagetype($file['tmp_name']));
+	function upload_file ($f3) {
+		$file = $f3->FILES["file"];
 
-		if (!in_array($type, $f3->allowed_types))
+		// File cannot be named upload.
+		if ($file["name"] == "upload") exit;
+
+		// Is the image in the allowed list?
+		//if (!$this->is_file_allowed($f3, $file["tmp_name"])) exit;
+
+		// Does file already exist?
+		//if (!$this->does_file_exist($f3, $file["tmp_name"])) exit;
+		// Note: Need to store sha1 and search DB for quicker results.
+
+		// Store the image!
+		$this->store_file($f3, $file);
+	}
+
+	function is_file_allowed($f3, $file) {
+		$mime_type = mime_content_type2($file);
+
+		if (!in_array($mime_type, $this->allowed_types))
 		{
 			echo "file type not allowed";
 			return false;
@@ -83,7 +103,7 @@ class file_manager extends prefab {
 		return true;
 	}
 
-	function does_file_exsist ($f3, $file) {
+	function does_file_exist ($f3, $file) {
 		
 		$sha1 = sha1_file($file["tmp_name"]);
 		$result = $f3->DB->exec("SELECT filename FROM image_files WHERE sha1=UNHEX(?)", $sha1)[0];
@@ -92,7 +112,7 @@ class file_manager extends prefab {
 			echo json_encode(array(
 				"uploaded"=>1,
 				"filename"=>$result["filename"],
-				"url"=>$f3->address . $result["filename"]
+				"url"=>$f3->SCHEME.'://'.$f3->HOST.$f3->BASE.'/'.$filename
 			));
 
 			return false;
@@ -103,7 +123,7 @@ class file_manager extends prefab {
 		return true;
 	}
 
-	function store_image($f3, $file) {
+	function store_file($f3, $file) {
 		// Make sure filename is not taken..
 		$keep_checking = true;
 		while ($keep_checking) {
@@ -116,12 +136,12 @@ class file_manager extends prefab {
 				$keep_checking = false;
 		}
 
-		move_uploaded_file($file["tmp_name"], $this->directory . "/" . $filename);
+		move_uploaded_file($file["tmp_name"], getcwd() . "/" . $this->directory . "/" . $filename);
 
 		echo json_encode(array(
 			"uploaded"=>1,
 			"filename"=>$filename,
-			"url"=>$f3->address . $filename
+			"url"=>$f3->SCHEME.'://'.$f3->HOST.$f3->BASE.'/'.$this->directory.'/'.$filename
 		));
 	}
 }
