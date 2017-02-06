@@ -358,13 +358,11 @@ class contact extends prefab
 
 		setting_clear_namespace();
 
-		// Worst case just set it to admin@webworksau.com...
-		$fromAddress = "admin@webworksau.com";
-
 		$smtp = new SMTP($this->smtp_server, $this->port, "", "", "");
 
 		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
-		$smtp->set('From', '"'.$fromName.'" <'.$fromAddress.'>');
+		$smtp->set('From', '"admin" <admin@webworksau.com>');
+		$smtp->set('Reply-To', '"'.$fromName.'" <'.$fromAddress.'>');
 		$smtp->set('Subject', $subject);
 		$smtp->set('Content-Type', 'text/html');
 
