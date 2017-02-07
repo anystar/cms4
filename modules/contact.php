@@ -352,22 +352,23 @@ class contact extends prefab
 		$toName = setting("name");
 		$subject = setting("subject");
 
- 		$fromName = $f3->get("fromName");
-
  		if ($f3->exists("fromAddress"))
 			$fromAddress = $f3->get("fromAddress");
 		else
 			$fromAddress = setting("from_address");
 
-		setting_clear_namespace();
+ 		if ($f3->exists("fromAddress"))
+	 		$fromName = $f3->get("fromName");
+	 	else
+	 		$fromName = "Website visitor";
 
-		// Worst case just set it to admin@webworksau.com...
-		$fromAddress = "admin@webworksau.com";
+		setting_clear_namespace();
 
 		$smtp = new SMTP($this->smtp_server, $this->port, "", "", "");
 
 		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
-		$smtp->set('From', '"'.$fromName.'" <'.$fromAddress.'>');
+		$smtp->set('From', '"'.$fromName.'" <admin@webworksau.com>');
+		$smtp->set('Reply-To', '"'.$fromName.'" <'.$fromAddress.'>');
 		$smtp->set('Subject', $subject);
 		$smtp->set('Content-Type', 'text/html');
 

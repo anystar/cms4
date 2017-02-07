@@ -35,6 +35,9 @@ class file_manager extends prefab {
 
 		$this->directory = setting("directory");
 
+		if (!is_dir(getcwd()."/".$this->directory))
+			mkdir(getcwd()."/".$this->directory);
+
 		setting_clear_namespace();
 
 		$this->routes(base::instance());
