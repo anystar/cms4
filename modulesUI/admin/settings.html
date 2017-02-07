@@ -27,33 +27,7 @@
 
 	<div class="container">
 	  <div class="col-xs-12 col-md-6">
-		<div class="box">
 
-			<h2><span title="Content Management System">Login</span> settings</h2>
-			<form class="" method="post" action="{{@BASE}}/admin/update_settings">
-
-				<div class="form-group">
-					<label class="control-label">CMS Login email</label>
-					<input type="email" class="form-control" name="admin_email" value="{{@SETTINGS.admin_email}}">
-					<span id="helpBlock" class="help-block">Must be an email address.</span>
-				</div>
-
-				<div class="form-group">
-					<label class="control-label">CMS Login password</label>
-					<div class="input-group">
-						<input type="password" class="form-control password" name="admin_pass" placeholder="" value="{{@password}}">
-						<span class="input-group-btn">
-						<button class="btn generaterandom" type="button">Generate Random</button>
-						</span>
-					</div>
-					<span id="helpBlock" class="help-block">Make it complicated and write it down.</span>
-				</div>
-			
-				<button type="submit" class="btn btn-primary pull-right">Apply settings</button>
-				<div class="clearfix"></div>
-		  	
-			</form>
-		</div>
 	
 
 		<exclude>
@@ -74,29 +48,7 @@
 		</form>
 		</exclude>
 		
-		<check if="{{@website_mode}}">
-		<div class="box">
-			<h2>Website mode</h2>
-			
-			<form method="POST" action="{{@BASE}}/admin/developer_mode">
-				<p>
-					Developer mode turns off unnessecary features to protect your website
-					against accedently changing settings which might break things. This is
-					helpful if you only need administrative access to update certain parts of
-					the website.
-				</p>
-				<check if="{{@developer}}">
-					<true><button type="submit">Turn off developer mode</button></true>
-					<false><button type="submit">Turn on developer mode</button></false>
-				</check>
 
-				<check if="{{@developer}}">
-					<true><button value="yes" name="permanentlyoff" type="submit">Permanently turn off developer mode</button></true>
-				</check>
-			</form>
-
-		</div>
-	  	</check>
 
 	  </div>
 

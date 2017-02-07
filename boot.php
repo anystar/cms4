@@ -191,7 +191,7 @@ new content();
 
 	if ($extra_modules)
 	{
-		$f3->UI .= ";".getcwd()."/".$extra_modules_ui;
+		$f3->AUTOLOAD .= ";".getcwd()."/".$extra_modules_ui;
 
 		foreach ($extra_modules as $module)
 			new $module["module"]($module["namespace"]);

@@ -26,24 +26,13 @@
 
 		<div class="container">
 			<div class="row">
-				<div class="col-xs-12 col-md-7">
-					<div class="box">
+				<div class="col-xs-12 col-md-6">
 
-						<h2>Welcome to Web Works CMS</h2>
-
-						<p>
-							This is your control panel administration area where you can edit the installed modules and settings of your website. 
-						</p>
-					</div>
-
-				</div>
-
-				<div class="col-xs-12 col-md-5">
 					<div class="box contactus">
 						<h2>Contact us</h2>
 						<p>Feel free to phone us on (03) 5446 3371 for any questions.</p>
 						<p>
-							You can also drop by our office in Eaglehawk, Bendigo or we can come out to your offices. Call-out fee may apply if we come out.
+							You can also drop by our office in Eaglehawk, Bendigo or we can come out to your offices. Call-out fee may apply.
 						</p>
 					</div>
 
@@ -56,6 +45,77 @@
 						</div>
 					</div>
 
+				</div>
+
+				<div class="col-md-6">
+					<div class="box">
+
+						<h2><span title="Content Management System">Login</span> settings</h2>
+						<form class="" method="post" action="{{@BASE}}/admin/update_settings">
+
+							<div class="form-group">
+								<label class="control-label">CMS Login email</label>
+								<input type="email" class="form-control" name="admin_email" value="{{@SETTINGS.admin_email}}">
+								<span id="helpBlock" class="help-block">Must be an email address.</span>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label">CMS Login password</label>
+								<div class="input-group">
+									<input type="password" class="form-control password" name="admin_pass" placeholder="" value="{{@password}}">
+									<span class="input-group-btn">
+									<button class="btn generaterandom" type="button">Generate Random</button>
+									</span>
+								</div>
+								<span id="helpBlock" class="help-block">Make it complicated and write it down.</span>
+							</div>
+						
+							<button type="submit" class="btn btn-primary pull-right">Apply settings</button>
+							<div class="clearfix"></div>
+					  	
+						</form>
+					</div>
+
+				
+					<check if="{{@webmaster}}">
+					<div class="box">
+						<h2>Install additional modules (Webmaster only)</h2>
+						
+						<div class="table-responsive">
+							<table class="table table-striped table-bordered">
+								<repeat group="{{@store.modules}}" value="{{@module}}">
+								<check if="{{@module.dev_status != 1}}">
+								<tr>
+									<td>
+										<h3>{{@module.name}}</h3>
+										<p>{{@module.description}}</p>
+									</td>
+									
+									<check if="{{@module.dev_status != 1}}">
+									<true>
+										<check if="{{@developer}}">
+											<true>
+												<check if="{{@module.price > 0}}">
+													<true><td width="13%"><a href="{{@BASE}}/admin/store/{{@module.name}}"><button>${{@module.price}} Install</button></a></td></true>
+													<false><td width="13%"><a class="btn" href="{{@BASE}}/admin/store/{{@module.module}}"><button>Install</button></a></td></false>
+												</check>
+											</true>
+											<false>
+												<td width="13%"><a href="{{@BASE}}/admin/store/{{@module.module}}"><button>Request install</button></a></td>
+											</false>
+										</check>
+									</true>
+									<false>
+										<td width="13%">in developement</td>
+									</false>
+									</check>
+								</tr>
+								</check>
+								</repeat>
+							</table>
+						</div>
+					</div>
+					</check>
 				</div>
 
 			</div>

@@ -13,10 +13,16 @@ class contact extends prefab
 	private $port 			= 25;
 
 	function __construct ($namespace) {
+		$f3 = base::instance();
+
 		$this->namespace = $namespace;
 		$this->routes = setting($namespace."_routes");
 
-		$f3 = base::instance();
+		if (isroute("/admin/contact")) {
+
+			if (!$this->check_install())
+				$f3->reroute("/admin/".$this->namespace."/setup");
+		}
 
 		setting_use_namespace($namespace);
 
@@ -97,9 +103,6 @@ class contact extends prefab
 	{
 		$f3->route("GET /admin/{$this->namespace}", function ($f3) {
 			$f3->namespace = $this->namespace;
-
-			if (!$this->check_install())
-				$f3->reroute("/admin/".$this->namespace."/setup");
 
 			$this->retreive_content();
 

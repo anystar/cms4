@@ -11,8 +11,8 @@ class store extends prefab {
 		{
 			$this->storeDB = new DB\SQL('sqlite:'.$f3->SETTINGS['paths']["cms"]."/"."store.db");
 
-			$f3->route("GET /admin/store", function ($f3) {
-
+			if (isroute("/admin") || isroute("/admin/store"))
+			{
 				$f3->store['modules'] = $this->storeDB->exec("SELECT * FROM modules");
 
 				// Get modules already installed so we can filter out
@@ -39,6 +39,16 @@ class store extends prefab {
 						}
 					}
 				}
+			}
+
+			$this->routes($f3);
+
+		}
+	}
+
+	function routes ($f3) {
+
+			$f3->route("GET /admin/store", function ($f3) {
 
 				echo Template::instance()->render("/store/store.html");
 			});
@@ -120,8 +130,6 @@ class store extends prefab {
 				else
 					$f3->reroute("/admin/@module");
 			});
-
-		}
 	}
 
 	function install ($module, $module_name, $namespace) {

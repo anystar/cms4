@@ -38,22 +38,18 @@
 							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
 						</div>
 
-						<div class="form-group <check if='{{!@gallery.image_directory}}'>has-error</check>">
-							<label>Image directory</label>
-							<input name="image_directory" value="{{@gallery.image_directory}}" type="text" class="form-control" placeholder="eg: /assets/{{@namespace}}/">
-						</div>
-
-						<div class="form-group <check if='{{!@gallery.thumb_directory}}'>has-error</check>">
-							<label>Thumb directory</label>
-							<input name="thumb_directory" value="{{@gallery.thumb_directory}}" type="text" class="form-control" placeholder="eg: /assets/{{@namespace}}/thumbs">
-						</div>
-					
-						<h3>Upload settings</h3>
+				
+						<h3>Image upload settings</h3>
 						<ul>
 							<li>resize images when uploaded</li>
 							<li>respect aspect ratio. <br>(fit image with its longest side into the resize dimensions)</li>
 							<li>leave blank to not resize.</li>
 						</ul>
+
+						<div class="form-group <check if='{{!@gallery.image_directory}}'>has-error</check>">
+							<label>Image directory</label>
+							<input name="image_directory" value="{{@gallery.image_directory}}" type="text" class="form-control" placeholder="eg: /assets/{{@namespace}}/">
+						</div>
 						
 						<div class="form-group">
 							<label>Thumb size</label>
@@ -79,29 +75,5 @@
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/bootstrap.min.js"></script>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
-		
-		<script>
-			var editor = ace.edit("editor");
-			var textarea = $('textarea[name="template_code"]');
-			editor.setValue(textarea.val(), -1);
-
-			editor.getSession().on("change", function () {
-			    textarea.val(editor.getSession().getValue());
-			});
-
-			editor.getSession().setMode("ace/mode/html");
-			editor.setTheme("ace/theme/chrome");
-			editor.setOptions({
-			    showGutter: true,
-			    vScrollBarAlwaysVisible: false,
-			    printMargin: false,
-			    fontSize: 14,
-			    minLines: 12,
-			    maxLines: 1000
-			});
-			editor.container.style.lineHeight = 1.4;
-			editor.renderer.updateFontSize();
-		</script>
 	</body>
 </html>

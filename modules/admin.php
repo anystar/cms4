@@ -75,7 +75,22 @@ class admin extends prefab {
 		});
 
 		$f3->route('GET /admin/help', "admin::help");
-		$f3->route('GET /admin/settings', "admin::settings");
+
+		if (isroute('/admin/settings') || isroute('/admin'))
+		{
+			//$this->load_settings($f3);
+
+			$pass = setting("admin_pass");
+			if (strlen($pass) > 0)
+				$pass = str_repeat("*", strlen($pass));
+
+			$f3->website_mode = true;
+			if (setting("developer_mode_permanently_off"))
+				$f3->website_mode = false;
+
+			$f3->set("password", $pass);
+		}
+
 		$f3->route('POST /admin/update_settings', "admin::update_settings");
 
 		$f3->route('POST /admin/developer_mode', function ($f3) {
@@ -88,7 +103,7 @@ class admin extends prefab {
 			else
 				setting("developer_mode", !$f3->developer);
 
-			$f3->reroute("/admin/settings");
+			$f3->reroute("/admin/");
 		});
 
 		$f3->route('GET /admin/template', function () {
@@ -201,16 +216,6 @@ class admin extends prefab {
 
 	static public function settings($f3) {
 
-
-		$pass = setting("admin_pass");
-		if (strlen($pass) > 0)
-			$pass = str_repeat("*", strlen($pass));
-
-		$f3->website_mode = true;
-		if (setting("developer_mode_permanently_off"))
-			$f3->website_mode = false;
-
-		$f3->set("password", $pass);
 		echo Template::instance()->render("/admin/settings.html");
 	}
 
@@ -223,6 +228,6 @@ class admin extends prefab {
 			}
 		}
 
-		$f3->reroute("/admin/settings");
+		$f3->reroute("/admin");
 	}
 }

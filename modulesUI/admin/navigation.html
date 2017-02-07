@@ -2,10 +2,8 @@
 
 	<ul class="nav nav-tabs nav-stacked">
 		<li class="{{@nav_active_dashboard}}"><a href="{{ @BASE }}/admin/">Dashboard</a></li>
-		<check if="{{@developer}}"><li class="{{@nav_active_content}}"><a href="{{ @BASE }}/admin/content">Content</a></li></check>
-		<li class="{{@nav_active_store}}"><a href="{{ @BASE }}/admin/store">Store</a></li>
-		<li class="{{@nav_active_settings}}"><a href="{{ @BASE }}/admin/settings">Settings</a></li>
-		<check if="{{@developer}}"><li class="{{@nav_active_webmaster}}"><a href="{{ @BASE }}/admin/webmaster">Webmaster</a></li></check>
+		<exclude><check if="{{@developer}}"><li class="{{@nav_active_content}}"><a href="{{ @BASE }}/admin/content">Content</a></li></check></exclude>
+		<exclude><check if="{{@developer}}"><li class="{{@nav_active_webmaster}}"><a href="{{ @BASE }}/admin/webmaster">Webmaster</a></li></check></exclude>
 		<li class="pull-right"><a href="{{ @BASE }}/admin/logout">Logout</a></li>
 		<li class="pull-right"><a href="{{@SCHEME.'://'.@HOST.@BASE.'/'}}">Preview Website</a></li>
 	</ul>

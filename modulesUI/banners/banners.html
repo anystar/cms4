@@ -97,14 +97,6 @@
 		<div class="container">
 			<include href="admin/toolbar.html">
 
-			<div class="box">
-				<h2>Banner example</h2> 
-			
-				<div class="admin_banner_display">
-					{{@banner.html}}
-				</div>
-			</div>
-
 			<div class="row">
 				<check if="{{@webmaster}}">
 					<true><set colwidth="col-xs-12 col-md-12"></true>
@@ -114,7 +106,8 @@
 				<div class="{{@colwidth}}">	
 					<div class="box">
 						<h2>Banner images</h2>
-
+						
+						<check if="{{@banner.images}}">
 						<table class="images-table table table-bordered">
 							<thead>
 								<th width="10%">Order</th>
@@ -137,6 +130,7 @@
 								</repeat>
 							</tbody>
 						</table>
+						</check>
 
 						<form method="post" action="{{@BASE}}/admin/{{@namespace}}/dropzone" class="dropzone" id="dropzone">
 						  <div class="dz-message">
