@@ -165,7 +165,8 @@ if ($check)
 
 $f3->SETTINGS = $GLOBALS["settings"];
 
-$f3->developer = setting("developer_mode");
+//$f3->developer = setting("developer_mode");
+$f3->developer = 1;
 
 determine_path($f3);
 
