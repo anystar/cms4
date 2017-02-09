@@ -181,7 +181,7 @@ class ckeditor extends prefab {
 		$f3->route("GET /admin/ckeditor/imagebrowser", function ($f3) {
 
 			$upload_directory = trim(setting("ckeditor_image_upload_path"), "/");
-			$upload_structure = setting("ckeditor_upload_structure");
+			$upload_structure = setting("ckeditor_folder_structure");
 
 			switch ($upload_structure)
 			{

@@ -18,7 +18,7 @@ class contact extends prefab
 		$this->namespace = $namespace;
 		$this->routes = setting($namespace."_routes");
 
-		if (isroute("/admin/contact")) {
+		if (isroute("/admin/".$namespace)) {
 
 			if (!$this->check_install())
 				$f3->reroute("/admin/".$this->namespace."/setup");

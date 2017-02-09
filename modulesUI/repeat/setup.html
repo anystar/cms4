@@ -25,20 +25,38 @@
 		</div>
 	
 		<div class="container">
-			<include href="admin/toolbar.html" with="module_name='Gallery'">
+			<include href="admin/toolbar.html">
 
 			<div class="col-md-6 col-md-offset-3 col-xs-12">
 				<div class="box">
 					<h2>Setup {{@namespace}}</h2>
 
 					<form method="POST" action="{{@BASE}}/admin/{{@namespace}}/setup">
-						<div class="form-group <check if='{{!@gallery.routes}}'>has-error</check>">
+						<div class="form-group <check if='{{!@repeat.routes}}'>has-error</check>">
 							<label>URL routes to load on</label>
-							<input name="routes" value="{{@gallery.routes}}" type="text" class="form-control" placeholder="eg: /example">
+							<input name="routes" value="{{@repeat.routes}}" type="text" class="form-control" placeholder="eg: /example">
 							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
 						</div>
+						
+						<div class="form-group <check if="{{!@repeat.snippet}}">has-error</check>">
+							<label>Content style</label>
 
-				
+							<check if="{{!@repeat.lock_snippet}}">
+								<true>
+								<select name="snippet" class="form-control">
+									<repeat group="{{@repeat.snippets}}" value="{{@snippet}}">
+										<option value="{{@snippet.file}}" <check if="{{@repeat.snippet==@snippet.file}}">selected</check>>{{@snippet.name}}</option>
+									</repeat>
+								</select>
+								</true>
+								<false>
+									<p class="help-block">Content exists in table so content style has been locked.</p>
+								</false>
+							</check>
+						</div>
+
+						
+						<exclude>
 						<h3>Image upload settings</h3>
 						<ul>
 							<li>resize images when uploaded</li>
@@ -62,6 +80,7 @@
 							<input name="image_size" value="{{@gallery.image_size}}" type="text" class="form-control" placeholder="2000x2000">
 							<p class="help-block">Leave blank not to resize</p>
 						</div>
+						</exclude>
 
 						<button class="button-fullwidth" type="submit">Save setup</button>
 					</form>
