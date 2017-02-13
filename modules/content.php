@@ -26,6 +26,8 @@ class content extends prefab {
 		foreach ($result as $content)
 			$f3->set($content["name"], $content["content"]);
 
+		$this->extras(base::instance());
+
 		$this->routes(base::instance());
 	}
 
@@ -211,5 +213,51 @@ class content extends prefab {
 
 	function install () {
 		base::instance()->DB->exec("CREATE TABLE 'contents' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' TEXT, 'path' TEXT, 'content' TEXT)");
+	}
+
+	function extras ($f3) {
+
+		Template::instance()->extend("minify", function ($args) {
+
+			$dom = new DomDocument;
+			$dom->loadHTML( $args[0] );
+
+			$elems = $dom->getElementsByTagName('*');
+
+			foreach ( $elems as $elm ) {
+			    if ( $elm->hasAttribute('src') )
+			        $srcs[] = $elm->getAttribute('src');
+			}
+
+			// check if local or web
+			foreach ($srcs as $src) {
+				if(filter_var($src, FILTER_VALIDATE_URL) === FALSE) {
+					
+					$src = ltrim($src,"/");
+					if (checkfile($src)) {
+						
+						// local file
+
+
+					} else {
+
+						// not found
+
+					}
+
+				} else {
+					// web file
+				}
+			}
+
+			k( $srcs );
+
+
+			k($args);
+
+
+			return  $out;
+		});
+
 	}
 }
