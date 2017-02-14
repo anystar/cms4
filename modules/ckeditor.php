@@ -133,7 +133,7 @@ class ckeditor extends prefab {
 				file_put_contents(getcwd()."/".$filename, $file);
 			}
 			
-			echo "saved";
+			echo sha1($contents);
 
 			return;
 		});
