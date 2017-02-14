@@ -219,15 +219,40 @@ class content extends prefab {
 
 		Template::instance()->extend("minify", function ($args) {
 
+			// if (!$args["@attrib"]["if"])
+			// {
+			// 	return $args[0];
+			// }
+
+			if (base::instance()->exists("minifyhash"))
+			{
+				k("we've already hashed");
+			}
+
 			$dom = new DomDocument;
 			$dom->loadHTML( $args[0] );
 
-			$elems = $dom->getElementsByTagName('*');
 
-			foreach ( $elems as $elm ) {
-			    if ( $elm->hasAttribute('src') )
-			        $srcs[] = $elm->getAttribute('src');
+			$ext = pathinfo($args["@attrib"]["src"], PATHINFO_EXTENSION);
+
+			if ($ext == "js")
+			{
+				$elems = $dom->getElementsByTagName('script');
+				foreach ( $elems as $elm ) {
+				    if ( $elm->hasAttribute('src') )
+				        $srcs[] = $elm->getAttribute('src');
+				}
 			}
+			else if ($ext == "css")
+			{
+				$elems = $dom->getElementsByTagName('link');
+
+				foreach ( $elems as $elm ) {
+				    if ( $elm->hasAttribute('href') )
+				        $srcs[] = $elm->getAttribute('href');
+				}
+			}
+
 
 			// check if local or web
 			foreach ($srcs as $src) {
@@ -237,8 +262,10 @@ class content extends prefab {
 					if (checkfile($src)) {
 						
 						// local file
-
-
+						$merged .= "/*! " . $src . "*/";
+						$merged .= "\n";
+						$merged .= file_get_contents($src);
+						$merged .= "\n\n";
 					} else {
 
 						// not found
@@ -247,14 +274,24 @@ class content extends prefab {
 
 				} else {
 					// web file
+					$merged .= "/*! " . $src . "*/";
+					$merged .= "\n";
+					$merged .= file_get_contents($src);
+					$merged .= "\n\n";
 				}
 			}
 
-			k( $srcs );
+			file_put_contents($args["@attrib"]["src"], $merged);
 
 
-			k($args);
-
+			if ($ext=="js")
+			{
+				return '<script src="'.$f3->BASE.$args["@attrib"]["src"].'"></script>';
+			} 
+			else if ($ext=="css")
+			{
+				return '<link rel="stylesheet" href="'.$f3->BASE.$args["@attrib"]["src"].'">';
+			}
 
 			return  $out;
 		});
