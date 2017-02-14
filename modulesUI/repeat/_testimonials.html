@@ -7,17 +7,16 @@
 
 		<table class="table table-striped">
 			<thead>
-				<th>Title</th>
-				<th>Date</th>
-				<th>Short</th>
-				<th>Actions</th>
+				<th>Testimonials</th>
+				<th>Who</th>
+				<th>From</th>
 			</thead>
 			<tbody>
 				<repeat group="{{@data}}" value="{{@row}}">
 				<tr>
-					<td>{{@row.title}}</td>
-					<td>{{@row.date}}</td>
-					<td>{{@row.article}}</td>
+					<td>{{@row.testimonials}}</td>
+					<td>{{@row.who}}</td>
+					<td>{{@row.from}}</td>
 					<td>
 						<a href="{{@BASE}}/admin/{{@namespace}}/update?data_id={{@row.id}}">Update</a> -
 						<a class="delete" href="{{@BASE}}/admin/{{@namespace}}/delete?data_id={{@row.id}}">Delete</a>
@@ -37,27 +36,18 @@
 
 		<form method="post" action="{{@BASE}}/admin/{{@namespace}}/addupdate">
 			<div class="form-group">
-				<label>Title</label>
-				<input required name="title" value="{{@values.title}}" type="text" class="form-control" placeholder="entry title">
+				<label>Testimonials</label>
+				<textarea required name="testimonials" type="text" class="form-control" placeholder="">{{@values.testimonials}}</textarea>
+
 			</div>
 			<div class="form-group">
-				<label>Date</label>
-				<input required name="date" value="{{@values.date}}" type="text" class="form-control" placeholder="date">
+				<label>By who</label>
+				<input name="who" value="{{@values.who}}" type="text" class="form-control" placeholder="who">
 			</div>
 
 			<div class="form-group">
-				<label>Short</label>
-				<textarea required name="short" class="form-control" rows="3" placeholder="a short version of entry">{{@values.short}}</textarea>
-			</div>
-			
-			<div class="form-group">
-				<label>Article</label>
-				<textarea required name="article" class="form-control" rows="3">{{@values.article}}</textarea>
-			</div>
-
-			<div class="form-group">
-				<label>Helo</label>
-				<textarea required name="helo" class="form-control" rows="3">{{@values.helo}}</textarea>
+				<label>By from</label>
+				<input name="from" value="{{@values.from}}" type="text" class="form-control" placeholder="from">
 			</div>
 
 			<div style="text-align:right;">

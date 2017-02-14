@@ -9,7 +9,7 @@ class repeat extends prefab {
 
 		$this->snippets[] = ["file" => "_blog.html", "name" => "Blog"];
 		$this->snippets[] = ["file" => "_menu.html", "name" => "Menu"];
-		$this->snippets[] = ["file" => "_news.html", "name" => "News"];
+		$this->snippets[] = ["file" => "_testimonials.html", "name" => "Testimonials"];
 
 		$this->namespace = $namespace;
 		$this->routes = base::instance()->split(setting($namespace."_routes"));
@@ -124,14 +124,14 @@ class repeat extends prefab {
 				$f3->DB->exec("UPDATE {$this->namespace} SET data=? WHERE id=?", [$json, $id]);
 			}
 
-			$f3->reroute('/admin/'.$this->namespace);
+			$f3->reroute('/admin/'.$this->namespace.'#form');
 		});
 
 		$f3->route('GET /admin/'.$this->namespace.'/delete', function ($f3) {
 
 			$f3->DB->exec("DELETE FROM {$this->namespace} WHERE id=?", $f3->GET["data_id"]);
 
-			$f3->reroute('/admin/'.$this->namespace);
+			$f3->reroute('/admin/'.$this->namespace.'#form');
 		});
 
 		$f3->route('POST /admin/'.$this->namespace.'/reorder [ajax]', function ($f3) {

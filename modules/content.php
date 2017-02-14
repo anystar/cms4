@@ -26,6 +26,8 @@ class content extends prefab {
 		foreach ($result as $content)
 			$f3->set($content["name"], $content["content"]);
 
+		$this->extras(base::instance());
+
 		$this->routes(base::instance());
 	}
 
@@ -211,5 +213,88 @@ class content extends prefab {
 
 	function install () {
 		base::instance()->DB->exec("CREATE TABLE 'contents' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' TEXT, 'path' TEXT, 'content' TEXT)");
+	}
+
+	function extras ($f3) {
+
+		Template::instance()->extend("minify", function ($args) {
+
+			// if (!$args["@attrib"]["if"])
+			// {
+			// 	return $args[0];
+			// }
+
+			if (base::instance()->exists("minifyhash"))
+			{
+				k("we've already hashed");
+			}
+
+			$dom = new DomDocument;
+			$dom->loadHTML( $args[0] );
+
+
+			$ext = pathinfo($args["@attrib"]["src"], PATHINFO_EXTENSION);
+
+			if ($ext == "js")
+			{
+				$elems = $dom->getElementsByTagName('script');
+				foreach ( $elems as $elm ) {
+				    if ( $elm->hasAttribute('src') )
+				        $srcs[] = $elm->getAttribute('src');
+				}
+			}
+			else if ($ext == "css")
+			{
+				$elems = $dom->getElementsByTagName('link');
+
+				foreach ( $elems as $elm ) {
+				    if ( $elm->hasAttribute('href') )
+				        $srcs[] = $elm->getAttribute('href');
+				}
+			}
+
+
+			// check if local or web
+			foreach ($srcs as $src) {
+				if(filter_var($src, FILTER_VALIDATE_URL) === FALSE) {
+					
+					$src = ltrim($src,"/");
+					if (checkfile($src)) {
+						
+						// local file
+						$merged .= "/*! " . $src . "*/";
+						$merged .= "\n";
+						$merged .= file_get_contents($src);
+						$merged .= "\n\n";
+					} else {
+
+						// not found
+
+					}
+
+				} else {
+					// web file
+					$merged .= "/*! " . $src . "*/";
+					$merged .= "\n";
+					$merged .= file_get_contents($src);
+					$merged .= "\n\n";
+				}
+			}
+
+			file_put_contents($args["@attrib"]["src"], $merged);
+
+
+			if ($ext=="js")
+			{
+				return '<script src="'.$f3->BASE.$args["@attrib"]["src"].'"></script>';
+			} 
+			else if ($ext=="css")
+			{
+				return '<link rel="stylesheet" href="'.$f3->BASE.$args["@attrib"]["src"].'">';
+			}
+
+			return  $out;
+		});
+
 	}
 }
