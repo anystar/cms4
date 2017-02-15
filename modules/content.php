@@ -281,6 +281,11 @@ class content extends prefab {
 				}
 			}
 
+			if (!is_file($args["@attrib"]["src"]))
+			{
+				exit("Minify: File does not exist. - ". $args["@attrib"]["src"]);
+			}
+
 			file_put_contents($args["@attrib"]["src"], $merged);
 
 
