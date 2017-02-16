@@ -9,6 +9,7 @@ class repeat extends prefab {
 
 		$this->snippets[] = ["file" => "_blog.html", "name" => "Blog"];
 		$this->snippets[] = ["file" => "_menu.html", "name" => "Menu"];
+		$this->snippets[] = ["file" => "_products.html", "name" => "Products"];
 		$this->snippets[] = ["file" => "_testimonials.html", "name" => "Testimonials"];
 
 		$this->namespace = $namespace;
