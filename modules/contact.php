@@ -247,6 +247,7 @@ class contact extends prefab
 		$f3->set("{$this->namespace}.form", $formcompiled);
 		$f3->set("{$this->namespace}.action", $f3->BASE.$f3->PATH);
 		$f3->set("{$this->namespace}.actionid", $this->namespace."_submitted");
+		$f3->set("{$this->namespace}.captcha", $f3->BASE."/".$this->namespace."/captcha");
 	}
 
 	function set_html_snippet() {

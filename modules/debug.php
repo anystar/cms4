@@ -22,6 +22,7 @@ class debug extends prefab {
 
 			Template::instance()->filter("krumo", function ($array) {
 				require_once $GLOBALS["settings"]["paths"]["krumo"];
+
 				return krumo($array);
 			});
 
