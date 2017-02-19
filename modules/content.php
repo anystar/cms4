@@ -219,10 +219,9 @@ class content extends prefab {
 
 		Template::instance()->extend("minify", function ($args) {
 
-			// if (!$args["@attrib"]["if"])
-			// {
-			// 	return $args[0];
-			// }
+			if ($args["@attrib"]["if"])
+				if (!$args["@attrib"]["if"])
+					return $args[0];
 
 			if (base::instance()->exists("minifyhash"))
 			{
