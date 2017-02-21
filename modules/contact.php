@@ -117,6 +117,8 @@ class contact extends prefab
 
 			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
 
+			$f3->set("contact.enable_editting", setting($this->namespace."_enable_editting"));
+
 			echo Template::instance()->render("/contact/contact.html");
 		});
 
@@ -131,6 +133,7 @@ class contact extends prefab
 			$f3->set("contact.smtp_server", setting("smtp_server"));
 			$f3->set("contact.port", setting("port"));
 			$f3->set("contact.success", setting("success"));
+			$f3->set("contact.enable_editting", setting("enable_editting"));
 			setting_clear_namespace();
 
 			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
@@ -146,6 +149,12 @@ class contact extends prefab
 			setting("smtp_server", $f3->POST["smtp_server"]);
 			setting("port", $f3->POST["port"]);
 			setting("success", $f3->POST["contact_success"]);
+
+			if ($f3->devoid("POST.enable_editting"))
+				setting("enable_editting", "false");
+			else
+				setting("enable_editting", "true");
+	
 			setting_clear_namespace();
 
 			$this->install();
@@ -407,10 +416,7 @@ class contact extends prefab
 		if ($f3->POST["type"])
 			$db->exec("UPDATE {$namespace} SET type=? WHERE id=?", [$f3->POST["type"], $field]);
 
-		if ($f3->POST["error_message"])
 			$db->exec("UPDATE {$namespace} SET error_message=? WHERE id=?", [$f3->POST["error_message"], $field]);
-
-		if ($f3->POST["placeholder"])
 			$db->exec("UPDATE {$namespace} SET placeholder=? WHERE id=?", [$f3->POST["placeholder"], $field]);
 
 		if ($f3->POST["order"])

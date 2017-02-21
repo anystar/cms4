@@ -41,7 +41,10 @@
 
 						<div class="form-group <check if="{{!@contact.smtp_server || !@contact.smtp_server_check}}">has-error</check>">
 							<label>Outgoing mail Server (smtp)</label>
-							<input value="{{@contact.smtp_server}}" name="smtp_server" type="text" class="form-control" placeholder="eg: 127.0.0.1">
+							<check if="{{@contact.smtp_server}}">
+								<true><input value="{{@contact.smtp_server}}" name="smtp_server" type="text" class="form-control" placeholder="eg: 127.0.0.1"></true>
+								<false><input value="127.0.0.1" name="smtp_server" type="text" class="form-control" placeholder="eg: 127.0.0.1"></false>
+							</check>
 							<check if="{{!@@contact.smtp_server_check}}">
 								<p class="help-block">Failed to connect to outgoing smtp server</p>
 							</check>
@@ -49,7 +52,15 @@
 
 						<div class="form-group <check if="{{!@contact.port || !@contact.smtp_server_check}}">has-error</check>">
 							<label>SMTP Port</label>
-							<input value="{{@contact.port}}" name="port" type="text" class="form-control" placeholder="eg: 25">
+							<check if="{{@contact.port}}">
+								<true><input value="{{@contact.port}}" name="port" type="text" class="form-control" placeholder="eg: 25"></true>
+								<false><input value="25" name="port" type="text" class="form-control" placeholder="eg: 25"></false>
+							</check>
+						</div>
+
+						<div class="form-group">
+							<label>Editable: </label> <input style="width: 30px;background-color:#ccc;" type="checkbox" name="enable_editting" <check if="{{@contact.enable_editting=='true'}}">checked</check>>
+							<p class="help-block">Leave blank to return back to same page.</p>
 						</div>
 
 						<div class="form-group">
@@ -57,21 +68,6 @@
 							<input value="{{@contact.success}}" name="contact_success" type="text" class="form-control" placeholder="eg: /contact_success">
 							<p class="help-block">Leave blank to return back to same page.</p>
 						</div>
-						
-						<exclude>
-						<div class="form-group">
-							<label>Form field editting</label>
-							  <div class="checkbox">
-							    <label>
-									<check if="{{@contact.form_field_editting}}">
-							    		<true><input checked type="checkbox"> Turned on</true>
-							    		<false><input type="checkbox"> Turned off</false>
-							    	</check>
-							    </label>
-							  </div>
-							  <p class="help-block">Helpful if you hard code the contact form on the website.</p>
-						</div>
-						</exclude>
 
 						<button class="button-fullwidth" type="submit">Save setup</button>
 					</form>
@@ -81,30 +77,6 @@
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
-		
-		<script>
-			var editor = ace.edit("editor");
-			var textarea = $('textarea[name="template_code"]');
-			editor.setValue(textarea.val(), -1);
-
-			editor.getSession().on("change", function () {
-			    textarea.val(editor.getSession().getValue());
-			});
-
-			editor.getSession().setMode("ace/mode/html");
-			editor.setTheme("ace/theme/chrome");
-			editor.setOptions({
-			    showGutter: true,
-			    vScrollBarAlwaysVisible: false,
-			    printMargin: false,
-			    fontSize: 14,
-			    minLines: 12,
-			    maxLines: 1000
-			});
-			editor.container.style.lineHeight = 1.4;
-			editor.renderer.updateFontSize()
-		</script>
 
 	</body>
 </html>

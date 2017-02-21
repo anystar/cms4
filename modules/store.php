@@ -109,7 +109,7 @@ class store extends prefab {
 				if (count($f3->errors) == 0)
 					$this->install($module, $module_name, $namespace);
 				else
-					echo Template::instance()->render("/store/purchase.html");
+					echo Template::instance()->render("/store/developer_install.html");
 
 			});
 

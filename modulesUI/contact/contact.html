@@ -149,7 +149,7 @@
 		</div>
 	
 
-		<check if="{{@webmaster}}">
+		<check if="{{@contact.enable_editting=='true'}}">
 		<div class="col-md-12">
 			<div class="row">
 				<div class="box">
@@ -252,7 +252,8 @@
 
 		</div>
 		</check>
-
+		
+		<exclude>
 		<div class="row">
 			<div class="col-md-12">
 				<div class="box">
@@ -268,6 +269,7 @@
 				</div>
 			</div>
 		</div>
+		</exclude>
 	</div>
 
 	<script src="{{ @SETTINGS.cdn.cms }}/admin/js/jquery.min.js"></script>
