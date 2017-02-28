@@ -45,57 +45,6 @@ class content extends prefab {
 		return;
 	}
 
-	function determine_path () {
-
-		$path = ltrim(base::instance()->PATH, "/");
-		$cwd = getcwd();
-
-		if ($path == "") {
-			if (is_file(getcwd()."/index.html"))
-			{
-				content::$path = "index";
-				content::$file = "index.html";
-			}
-			else if (is_file($cwd."/index.htm"))
-			{
-				content::$path = "index";
-				content::$file = "index.htm";
-			}
-		}
-
-		// No extension detected
-		if (!preg_match("/\.[^\.]+$/i", $path, $ext))
-		{
-			if (is_file($cwd."/".$path.".html"))
-			{
-				content::$file = $path.".html";
-				content::$path = $path;
-			}
-
-			else if (is_file($cwd."/".$path.".htm"))
-			{
-				content::$file = $path.".html";
-				content::$path = $path;
-			}
-		} 
-		else 
-		{	
-			$ext = $ext[0];
-
-			if ($ext == ".html" || $ext == ".htm")
-				$path = basename($path, $ext);
-
-				if (is_file($cwd."/".$path.$ext))
-				{
-					content::$file = $path.$ext;
-					content::$path = $path;
-				}
-		}
-
-		if (is_file($path))
-			content::$file = content::$path = $path;
-	}
-
 	function routes ($f3) {
 
 		$f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {

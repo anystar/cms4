@@ -144,6 +144,7 @@ $result = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND n
 if (!$result)
 	$f3->DB->exec("CREATE TABLE 'licenses' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'module' TEXT, 'name' TEXT, 'namespace' TEXT, 'key' TEXT)");
 
+
 ######################################################
 ########## Override settings from Database ###########
 ######################################################
@@ -187,7 +188,9 @@ new content();
 	foreach ($f3->installed_modules as $module)
 	{
 		if (class_exists($module["module"]))
-			new $module["module"]($module["namespace"]);
+		{
+			$module["module"]::instance($module["namespace"]);
+		}
 	}
 
 	if ($extra_modules)
@@ -195,7 +198,7 @@ new content();
 		$f3->AUTOLOAD .= ";".getcwd()."/".$extra_modules_ui;
 
 		foreach ($extra_modules as $module)
-			new $module["module"]($module["namespace"]);
+			$module["module"]::instance($module["namespace"]);
 	}
 
 	if (admin::$signed)
