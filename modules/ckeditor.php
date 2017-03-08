@@ -10,6 +10,7 @@ class ckeditor extends prefab {
 		{
 			echo Template::instance()->render("/ckeditor/ckeditor_warning.html");
 			$f3->clear("ckeditor_has_duplicates");
+			$f3->clear("id_duplicate");
 			exit();
 		}
 
@@ -17,6 +18,8 @@ class ckeditor extends prefab {
 
 		if (admin::$signed)
 		{
+
+			$this->checker($f3);
 
 			$f3->set("ckeditor.enable_image_uploading", false);
 
@@ -210,6 +213,10 @@ class ckeditor extends prefab {
 		});
 	}
 
+	function checker ($f3) {
+		
+	}
+
 	function install_check() {
 
 		if (!setting("ckeditor_image_upload_path"))
@@ -261,6 +268,7 @@ class ckeditor extends prefab {
 			{
 				// We have duplicates. I wonder if we can redirect from here?
 				base::instance()->set("ckeditor_has_duplicates", true, 3600);
+				base::instance()->set("id_duplicate", $args["@attrib"]["id"], 3600);
 			
 			    $string = '<script type="text/javascript">';
 			    $string .= 'window.location = "' . $url . '"';

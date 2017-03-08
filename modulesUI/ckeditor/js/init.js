@@ -11,6 +11,7 @@ function getConfig (type) {
 		title : '',
 		enterMode : CKEDITOR.ENTER_BR,
 		allowedContent : true,
+		disableNativeSpellChecker: true,
 		toolbarGroups : 
 		[
 			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
@@ -58,6 +59,22 @@ function getConfig (type) {
 			{ name: 'colors', groups: [ 'colors' ] },
 			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
 		];
+	}
+
+	if (type == "text")
+	{
+		config.toolbarGroups = [
+			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+			{ name: 'paragraph', groups: [ 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+			{ name: 'editing', groups: [ 'find', 'selection', 'editing', 'others', 'tools' ] },
+			'/',
+			{ name: 'styles', groups: [ 'styles' ] },
+			{ name: 'colors', groups: [ 'colors' ] },
+			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+		];
+
+		config.removePlugins += ",liststyle,tabletools,scayt,menubutton,contextmenu";
+		config.disableNativeSpellChecker = false;
 	}
 
 	return config;
