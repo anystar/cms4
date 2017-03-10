@@ -1,6 +1,6 @@
 <?php
 
-class gallery extends prefab {
+class gallery {
 
 	private $namespace;
 	private $routes;

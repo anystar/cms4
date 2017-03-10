@@ -1,6 +1,6 @@
 <?php
 
-class banners extends prefab {
+class banners {
 	private $namespace;
 	private $routes;
 

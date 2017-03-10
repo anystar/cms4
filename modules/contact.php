@@ -1,6 +1,6 @@
 <?php
 
-class contact extends prefab
+class contact
 {
 	private $namespace;
 	private $routes 			= "/contact";
