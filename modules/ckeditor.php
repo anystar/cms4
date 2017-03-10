@@ -6,47 +6,26 @@ class ckeditor extends prefab {
 
 		$f3 = base::instance();
 
-		if (setting("ckeditor_folder_structure") && setting("ckeditor_image_upload_path"))
-			$f3->set("ckeditor.enable_image_uploading", true);
+		if (!$f3->devoid("ckeditor_has_duplicates"))
+		{
+			echo Template::instance()->render("/ckeditor/ckeditor_warning.html");
+			$f3->clear("ckeditor_has_duplicates");
+			$f3->clear("id_duplicate");
+			exit();
+		}
 
-		Template::instance()->extend("ckeditor", function ($args) {
-
-			$hash = sha1($args[0]);
-			$file = Template::instance()->file;
-
-			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
-
-			$out .= '<?php if (admin::$signed) {?>';
-			$out .= "<div file='".urlencode($file)."' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
-			$out .= "<?php } ?>";
-			$out .= $args[0];
-			$out .= '<?php if (admin::$signed) {?>';
-			$out .= "</div>";
-			$out .= "<?php } ?>";
-
-			return  $out;
-		});
-
-		Template::instance()->filter("ckeditor", function ($content, $contentID, $type="full") {
-
-
-			if ($content == "") $content = "Dummy text";
-
-			if (admin::$signed) 
-				$out .= "<div type='".$type."' id='".$contentID."' path='".urlencode($f3->PATH)."' class='ckeditor' contenteditable='true'>";
-			
-			$out .= $content;
-			
-			if (admin::$signed) 
-				$out .= "</div>";
-
-			return $out;
-		});
-
-		Template::instance()->filter("urlencode", function ($encode) { return urlencode($encode); });
+		$this->template_filters($f3);
 
 		if (admin::$signed)
 		{
+
+			$this->checker($f3);
+
+			$f3->set("ckeditor.enable_image_uploading", false);
+
+			if (setting("ckeditor_folder_structure") && setting("ckeditor_image_upload_path"))
+				$f3->set("ckeditor.enable_image_uploading", true);
+
 			$this->assets($f3);
 
 			if (!$f3->SETTINGS["ckeditor_skin"])
@@ -234,6 +213,10 @@ class ckeditor extends prefab {
 		});
 	}
 
+	function checker ($f3) {
+		
+	}
+
 	function install_check() {
 
 		if (!setting("ckeditor_image_upload_path"))
@@ -268,5 +251,66 @@ class ckeditor extends prefab {
 		$f3->route('GET /admin/ckeditor/css/toolbar.css', function () { echo Template::instance()->render("/ckeditor/css/toolbar.css", "text/css"); });
 		$f3->route('GET /admin/ckeditor/js/toolbar.js', function () { echo Template::instance()->render("/ckeditor/js/toolbar.js", "text/javascript"); });
 
+	}
+
+
+	public $id_list = array();
+	function template_filters ($f3) {
+
+		Template::instance()->extend("ckeditor", function ($args) {
+
+
+			if (!array_key_exists($args["@attrib"]["id"], ckeditor::instance()->id_list))
+			{
+				ckeditor::instance()->id_list[$args["@attrib"]["id"]] = true;
+			}
+			else
+			{
+				// We have duplicates. I wonder if we can redirect from here?
+				base::instance()->set("ckeditor_has_duplicates", true, 3600);
+				base::instance()->set("id_duplicate", $args["@attrib"]["id"], 3600);
+			
+			    $string = '<script type="text/javascript">';
+			    $string .= 'window.location = "' . $url . '"';
+			    $string .= '</script>';
+
+			    echo $string;
+				die;
+			}
+
+
+			$hash = sha1($args[0]);
+			$file = Template::instance()->file;
+
+			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
+
+			$out .= '<?php if (admin::$signed) {?>';
+			$out .= "<div file='".urlencode($file)."' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
+			$out .= "<?php } ?>";
+			$out .= $args[0];
+			$out .= '<?php if (admin::$signed) {?>';
+			$out .= "</div>";
+			$out .= "<?php } ?>";
+
+			return  $out;
+		});
+
+		Template::instance()->filter("ckeditor", function ($content, $contentID, $type="full") {
+
+
+			if ($content == "") $content = "Dummy text";
+
+			if (admin::$signed) 
+				$out .= "<div type='".$type."' id='".$contentID."' path='".urlencode($f3->PATH)."' class='ckeditor' contenteditable='true'>";
+			
+			$out .= $content;
+			
+			if (admin::$signed) 
+				$out .= "</div>";
+
+			return $out;
+		});
+
+		Template::instance()->filter("urlencode", function ($encode) { return urlencode($encode); });
 	}
 }

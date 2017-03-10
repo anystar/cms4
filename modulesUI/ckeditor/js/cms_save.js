@@ -49,12 +49,12 @@ CKEDITOR.plugins.add( 'cmssave',
 				}
 		});
 		
-		editor.ui.addButton( 'cmssave',
-		{
-			toolbar: 'document',
-			label: 'Save',
-			command: 'cmssave',
-			icon: this.path + 'images/' + iconName
-		} );
+		// editor.ui.addButton( 'cmssave',
+		// {
+		// 	toolbar: 'document',
+		// 	label: 'Save',
+		// 	command: 'cmssave',
+		// 	icon: this.path + 'images/' + iconName
+		// } );
 	}
 } );
