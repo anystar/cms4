@@ -1,6 +1,6 @@
 <?php
 
-class repeat extends prefab {
+class repeat {
 
 	private $routes;
 	private $namespace;

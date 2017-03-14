@@ -1,6 +1,6 @@
 <?php
 
-class blog extends prefab {
+class blog {
 
 	public $namespace;
 

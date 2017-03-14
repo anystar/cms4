@@ -189,16 +189,17 @@ new content();
 	{
 		if (class_exists($module["module"]))
 		{
-			$module["module"]::instance($module["namespace"]);
+			new $module["module"]($module["namespace"]);
 		}
 	}
+
 
 	if ($extra_modules)
 	{
 		$f3->AUTOLOAD .= ";".getcwd()."/".$extra_modules_ui;
 
 		foreach ($extra_modules as $module)
-			$module["module"]::instance($module["namespace"]);
+			new $module["module"]($module["namespace"]);
 	}
 
 	if (admin::$signed)

@@ -4,7 +4,7 @@
 
 // Sub folders are not supported at the current time.
 
-class content extends prefab {
+class content {
 
 	static $has_routed = false;
 	static $path;
@@ -168,10 +168,9 @@ class content extends prefab {
 
 		Template::instance()->extend("minify", function ($args) {
 
-			// if (!$args["@attrib"]["if"])
-			// {
-			// 	return $args[0];
-			// }
+			if ($args["@attrib"]["if"])
+				if (!$args["@attrib"]["if"])
+					return $args[0];
 
 			if (base::instance()->exists("minifyhash"))
 			{
