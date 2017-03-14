@@ -270,6 +270,61 @@
 			</div>
 		</div>
 		</exclude>
+
+		
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered table-condensed">
+				<thead>
+					<repeat group="{{@archived_labels}}" value="{{@label}}">
+					<th>{{@label}}</th>
+					</repeat>
+					<th style="width: 100px;text-align:center;" class="actions">Actions</th>
+				</thead>
+				<tbody>
+					<repeat group="{{@archived}}" value="{{@item}}">
+					<tr>
+						<repeat group="{{@item}}" value="{{@value}}">
+						<td>{{@value}}</td>
+						</repeat>
+						<td style="width: 100px;text-align:center;" class="actions">
+							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"> View </button>
+
+							<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+							  <div class="modal-dialog" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h4 class="modal-title" id="myModalLabel">Full view</h4>
+							      </div>
+							      <div class="modal-body">
+										
+										<table class="table table-striped table-bordered">
+											<repeat group="{{@item}}" key="{{@label}}" value="{{@value}}">
+											<tr>
+												<td>{{@label}}</td>
+												<td>{{@value}}</td>
+											</tr>
+											</repeat>
+										</table>
+
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+
+
+						</td>
+					</tr>
+					</repeat>
+				</tbody>
+			</table>
+		</div>
+
+
+
 	</div>
 
 	<script src="{{ @SETTINGS.cdn.cms }}/admin/js/jquery.min.js"></script>

@@ -19,7 +19,7 @@ function getConfig (type) {
 			{ name: 'links', groups: [ 'links' ] },
 			{ name: 'insert', groups: [ 'insert' ] },
 			{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-			{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing', 'others', 'tools' ] },
+			{ name: 'editing', groups: [ 'find', 'selection', 'editing', 'others', 'tools' ] },
 			'/',
 			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 			{ name: 'styles', groups: [ 'styles' ] },
@@ -53,7 +53,7 @@ function getConfig (type) {
 		config.toolbarGroups = [
 			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 			{ name: 'paragraph', groups: [ 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-			{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing', 'others', 'tools' ] },
+			{ name: 'editing', groups: [ 'find', 'selection', 'editing', 'others', 'tools' ] },
 			'/',
 			{ name: 'styles', groups: [ 'styles' ] },
 			{ name: 'colors', groups: [ 'colors' ] },

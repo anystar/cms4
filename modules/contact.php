@@ -119,6 +119,19 @@ class contact extends prefab
 
 			$f3->set("contact.enable_editting", setting($this->namespace."_enable_editting"));
 
+			// Get archived messages
+			$result = $f3->DB->exec("SELECT contents FROM {$this->namespace}_archived ORDER BY `date` DESC");
+			if ($result)
+				foreach ($result as $r)
+					$archived[] = json_decode($r["contents"]);
+
+			if ($archived)
+				foreach ($archived[0] as $key=>$x)
+					$archived_labels[] = $key;
+
+			$f3->set("archived_labels", $archived_labels);
+			$f3->set("archived", $archived);
+
 			echo Template::instance()->render("/contact/contact.html");
 		});
 
@@ -398,6 +411,13 @@ class contact extends prefab
 			// Use our generic email template
 			$body = Template::instance()->render("/contact/email_template/generic_email_template.html", null, $temphive);
 		}
+	
+		$contents = $f3->POST;
+		unset($contents["actionid"]);
+		unset($contents["sendto"]);
+		unset($contents["captcha"]);
+
+		$f3->DB->exec("INSERT INTO {$this->namespace}_archived (contents, `date`) VALUES (?, ?)", [json_encode($contents), time()]);
 		
 		$smtp->send($body);
 
@@ -491,6 +511,11 @@ class contact extends prefab
 
 		if (empty($result))
 			return false;
+
+		$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}_archived'");
+
+		if (empty($result))
+			base::instance()->DB->exec("CREATE TABLE 'contact_archived' ('id' INTEGER PRIMARY KEY NOT NULL, 'contents' TEXT, 'date' DATETIME);");
 
 		if (!$this->check_smtp_server())
 			return false;
