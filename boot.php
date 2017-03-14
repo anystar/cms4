@@ -182,14 +182,18 @@ $f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses");
 ############ Load modules ##############
 ########################################
 
-new admin();
-new content();
+admin::instance();
+content::instance();
+
 
 	foreach ($f3->installed_modules as $module)
 	{
 		if (class_exists($module["module"]))
 		{
-			new $module["module"]($module["namespace"]);
+			if (is_subclass_of($module["module"], "prefab"))
+				$module["module"]::instance();
+			else
+				new $module["module"]($module["namespace"]);
 		}
 	}
 

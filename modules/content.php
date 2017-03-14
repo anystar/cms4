@@ -4,7 +4,7 @@
 
 // Sub folders are not supported at the current time.
 
-class content {
+class content extends prefab {
 
 	static $has_routed = false;
 	static $path;
