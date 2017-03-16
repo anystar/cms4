@@ -43,19 +43,21 @@
 			
 			<div class="row">
 				<div class="col-md-4 col-md-offset-4">
-				<div class="box themes">
-					<h2>Themes</h2>
-					<div class="row">
-						<repeat group="{{@ckeditor.skins}}" value="{{@skin}}">
-							<set selected="">
-							<check if="{{@skin == @SETTINGS.ckeditor_skin}}"><set selected="selected"></check>
-							
-								<a title="{{@skin}}" href="{{@BASE}}/admin/ckeditor/select-skin/{{@skin}}"><img class="{{@selected}}" src="{{@BASE}}/admin/ckeditor/skins/{{@skin}}.png"></a>
-						</repeat>
+					<div class="box themes">
+						<h2>Themes</h2>
+						<div class="row">
+							<repeat group="{{@ckeditor.skins}}" value="{{@skin}}">
+								<set selected="">
+								<check if="{{@skin == @SETTINGS.ckeditor_skin}}"><set selected="selected"></check>
+								
+									<a title="{{@skin}}" href="{{@BASE}}/admin/ckeditor/select-skin/{{@skin}}"><img class="{{@selected}}" src="{{@BASE}}/admin/ckeditor/skins/{{@skin}}.png"></a>
+							</repeat>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<include href="admin/_needhelp.html">
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/jquery.min.js"></script>
