@@ -47,6 +47,14 @@
 							<label>Thumb directory</label>
 							<input name="thumb_directory" value="{{@gallery.thumb_directory}}" type="text" class="form-control" placeholder="eg: /assets/{{@namespace}}/thumbs">
 						</div>
+
+						<div class="form-group">
+							<label>Captions Enabled: </label> <input style="width: 30px;background-color:#ccc;" type="checkbox" name="captions_enabled" <check if="{{@gallery.captions_enabled=='true'}}">checked</check>>
+						</div>
+
+						<div class="form-group">
+							<label>Tags Enabled: </label> <input style="width: 30px;background-color:#ccc;" type="checkbox" name="tags_enabled" <check if="{{@gallery.tags_enabled=='true'}}">checked</check>>
+						</div>
 					
 						<h3>Upload settings</h3>
 						<ul>

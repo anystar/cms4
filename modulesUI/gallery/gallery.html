@@ -26,6 +26,14 @@
 			margin: 30px;
 			border: 2px dashed #777;
 		}
+
+		.orderbuttons {
+			width: 10%;
+		}
+
+		.orderbuttons .up {
+			margin-bottom:2px;
+		}
 	</style>
   </head>
   <body>
@@ -49,22 +57,29 @@
 					  <true>
 							<table class="table table-condensed">
 								<tr>
-									<td>Thumb</td>
+									<td width="10%">Order</td>
+									<td style="width:260px;">Thumb</td>
 									<td>File name</td>
 									<td>Caption</td>
-									<td>Tools</td>
+									<td>Tag</td>
+									<td style="text-align:center;width:150px;">Tools</td>
 								</tr>
 								
 								<repeat group="{{@gallery.images}}" value="{{@image}}">
-								<tr>
-										<td>
-											<img data-lity data-lity-target="{{@image.url}}" width="250" src="{{@image.thumb}}" />
-										</td>
-										<td class="filename">{{@image.filename}}</td>
-										<td><input id="{{@image.id}}" placeholder="Type short caption here" class="form-control caption_save" name="caption" type="text" value="{{@image.caption}}"></td>
-										<td>
-											<a class="delete_image" href="{{@BASE}}/admin/{{@namespace}}/delete/{{@image.id}}"><button>Delete</button></a>
-										</td>
+								<tr class="galleryimage" data-image-id="{{@image.id}}">
+									<td align="center" class="orderbuttons">
+										<button class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
+										<button class="down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+									</td>
+									<td style="width:260px;">
+										<img data-lity data-lity-target="{{@image.url}}" width="250" src="{{@image.thumb}}" />
+									</td>
+									<td class="filename">{{@image.filename}}</td>
+									<td><input id="{{@image.id}}" placeholder="Type short caption here" class="form-control caption_save" name="caption" type="text" value="{{@image.caption}}"></td>
+									<td><input id="{{@image.id}}" placeholder="Tag" class="form-control tags_save" name="tag" type="text" value="{{@image.tags}}"></td>
+									<td align="center">
+										<a class="delete_image" href="{{@BASE}}/admin/{{@namespace}}/delete/{{@image.id}}"><button>Delete</button></a>
+									</td>
 								</tr>
 								</repeat>
 							</table>
@@ -113,6 +128,34 @@
 		
 				$.post("{{@BASE}}/admin/{{@namespace}}/update-caption", {
 					caption : $(e.currentTarget).val(), id : $(e.currentTarget).attr("id")
+				});
+			});
+
+			$(".tags_save").on("blur", function (e) {
+		
+				$.post("{{@BASE}}/admin/{{@namespace}}/update-tags", {
+					tags : $(e.currentTarget).val(), id : $(e.currentTarget).attr("id")
+				});
+			});
+
+			$(".up,.down").click(function() {
+				var row = $(this).parents("tr:first");
+
+				if ($(this).is(".up")) {
+					row.insertBefore(row.prev());
+				} else {
+					row.insertAfter(row.next());
+				}
+
+				var order = [];
+				$(".galleryimage").each(function () {
+					order.push($(this).attr("data-image-id"));
+				});
+		
+				$.ajax({
+					method: "POST",
+					url: "{{@BASE}}/admin/{{@namespace}}/update_order",
+					data: { "gallery_order": JSON.stringify(order) }
 				});
 			});
 		});

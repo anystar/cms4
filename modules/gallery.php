@@ -68,9 +68,11 @@ class gallery {
 		});
 
 		$f3->route("POST /admin/{$this->namespace}/update-caption", function ($f3) {
-
 			$f3->DB->exec("UPDATE {$this->namespace} SET caption=? WHERE id=?", [$f3->POST['caption'], $f3->POST['id']]);
+		});
 
+		$f3->route("POST /admin/{$this->namespace}/update-tags", function ($f3) {
+			$f3->DB->exec("UPDATE {$this->namespace} SET tags=? WHERE id=?", [$f3->POST['tags'], $f3->POST['id']]);
 		});
 
 		$f3->route("GET /admin/{$this->namespace}/setup", function ($f3) {
@@ -108,6 +110,10 @@ class gallery {
 			$this->ajaxDelete($f3, $params["id"]);			
 		});
 
+		$f3->route("POST /admin/{$this->namespace}/update_order", function ($f3) {
+			$this->ajaxUpdateOrder($f3);
+		});
+
 		$f3->route("GET /admin/{$this->namespace}/delete/@id", function ($f3, $params) {
 			$this->delete($f3, $params["id"]);
 		});
@@ -141,6 +147,16 @@ class gallery {
 
 		echo true;
 		exit;
+	}
+
+	function ajaxUpdateOrder ($f3) {
+
+		$order = json_decode($f3->POST["gallery_order"], true);
+
+		foreach ($order as $key=>$id) {
+			$f3->DB->exec("UPDATE {$this->namespace} SET `order`=? WHERE id=?", [$key, $id]);
+		}
+
 	}
 
 	function delete($f3, $id, $ajax=false) {
@@ -240,7 +256,7 @@ class gallery {
 		$upload_path = setting($this->namespace."_image_directory");
 		$thumb_path = setting($this->namespace."_thumb_directory");
 
-		$result = $db->exec("SELECT * FROM {$this->namespace}");
+		$result = $db->exec("SELECT * FROM {$this->namespace} ORDER BY `order`");
 
 		foreach ($result as $key=>$image)
 		{
@@ -292,12 +308,22 @@ class gallery {
 		if (!extension_loaded("gd")) return false;
 
 		$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}'");
-
+		
 		if (empty($result))
 			return false;
 
 		if (!setting("{$this->namespace}_image_directory"))
 			return false;
+
+		$result =  base::instance()->DB->exec("PRAGMA table_info({$this->namespace})");
+
+		$found = false;
+		foreach ($result as $column)
+			if ($column["name"] == "tags")
+				$found = true;
+
+		if (!$found)
+			base::instance()->DB->exec("ALTER TABLE {$this->namespace} ADD COLUMN tags TEXT");
 
 		return true;
 	}

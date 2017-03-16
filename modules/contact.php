@@ -515,7 +515,7 @@ class contact
 		$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}_archived'");
 
 		if (empty($result))
-			base::instance()->DB->exec("CREATE TABLE 'contact_archived' ('id' INTEGER PRIMARY KEY NOT NULL, 'contents' TEXT, 'date' DATETIME);");
+			base::instance()->DB->exec("CREATE TABLE '{$this->namespace}_archived' ('id' INTEGER PRIMARY KEY NOT NULL, 'contents' TEXT, 'date' DATETIME);");
 
 		if (!$this->check_smtp_server())
 			return false;
