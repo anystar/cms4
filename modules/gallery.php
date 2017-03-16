@@ -99,6 +99,17 @@ class gallery {
 			setting("thumb_directory", $f3->POST["thumb_directory"]);
 			setting("image_size", $f3->POST["image_size"]);
 			setting("thumb_size", $f3->POST["thumb_size"]);
+
+			if ($f3->devoid("POST.captions_enabled"))
+				setting("captions_enabled", false);
+			else
+				setting("captions_enabled", true);
+
+			if ($f3->devoid("POST.tags_enabled"))
+				setting("tags_enabled", false);
+			else
+				setting("tags_enabled", true);
+
 			setting_clear_namespace();
 
 			$this->install();
@@ -272,6 +283,8 @@ class gallery {
 		}
 
 		$f3->set("{$this->namespace}.images", $result);
+		$f3->set("{$this->namespace}.captions_enabled", setting($this->namespace."_captions_enabled"));
+		$f3->set("{$this->namespace}.tags_enabled", setting($this->namespace."_tags_enabled"));
 
 		// Load html snippet
 		if (isroute($this->routes)) {
@@ -281,6 +294,7 @@ class gallery {
 			$snippet = Template::instance()->render("/gallery/gallery_snippet.html", "text/html", $temp_hive);
 			$f3->set("{$this->namespace}.html", $snippet);
 		}
+
 	}
 
 	function install() {
