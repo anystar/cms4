@@ -142,8 +142,15 @@ if (!$result)
 // Ensure license table exists
 $result = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='licenses'");
 if (!$result)
-	$f3->DB->exec("CREATE TABLE 'licenses' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'module' TEXT, 'name' TEXT, 'namespace' TEXT, 'key' TEXT)");
-
+	$f3->DB->exec("CREATE TABLE 'licenses' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'module' TEXT, 'name' TEXT, 'namespace' TEXT, 'key' TEXT, 'order' INT)");
+else
+{
+	// Patch with order column
+	$checklicensetable =  base::instance()->DB->exec("PRAGMA table_info(licenses)");
+	$found = false;	
+	foreach ($checklicensetable as $column) if ($column["name"] == "order") $found = true;
+	if (!$found) $f3->DB->exec("ALTER TABLE 'licenses' ADD COLUMN 'order' INT");
+}
 
 ######################################################
 ########## Override settings from Database ###########

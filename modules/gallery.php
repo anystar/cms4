@@ -301,7 +301,7 @@ class gallery {
 
 		$db = base::instance()->DB;
 
-		$db->exec("CREATE TABLE IF NOT EXISTS '{$this->namespace}' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'filename' TEXT, 'order' INTEGER, 'caption' TEXT)");
+		$db->exec("CREATE TABLE IF NOT EXISTS '{$this->namespace}' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'filename' TEXT, 'order' INTEGER, 'caption' TEXT, 'tags' TEXT)");
 
 		$upload_path = setting($this->namespace."_image_directory");
 		$thumb_path = setting($this->namespace."_thumb_directory");
