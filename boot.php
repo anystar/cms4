@@ -198,7 +198,7 @@ content::instance();
 		if (class_exists($module["module"]))
 		{
 			if (is_subclass_of($module["module"], "prefab"))
-				$module["module"]::instance();
+				$module["module"]::instance($module["namespace"]);
 			else
 				new $module["module"]($module["namespace"]);
 		}

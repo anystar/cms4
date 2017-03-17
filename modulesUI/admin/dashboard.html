@@ -128,5 +128,21 @@
 		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/jquery.min.js"></script>
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="{{ @SETTINGS.cdn.cms }}/admin/js/bootstrap.min.js"></script>
+	
+		<script>
+			$( document ).ready(function() {
+				$(".generaterandom").click(function () {
+					var length = 8,
+						charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+						retVal = "";
+					for (var i = 0, n = charset.length; i < length; ++i) {
+						retVal += charset.charAt(Math.floor(Math.random() * n));
+					}
+
+					$(".password").val(retVal);
+					$(".password").attr("type", "text");
+				})
+			});
+		</script>
 	</body>
 </html>
