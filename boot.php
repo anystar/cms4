@@ -183,7 +183,7 @@ determine_path($f3);
 ###############################################
 
 // Get modules from licensing table
-$f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses");
+$f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses ORDER BY 'order'");
 
 ########################################
 ############ Load modules ##############
