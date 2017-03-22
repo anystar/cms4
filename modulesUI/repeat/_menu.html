@@ -12,7 +12,7 @@
 			</thead>
 			<tbody class="sortable">
 				<repeat group="{{@data}}" value="{{@row}}">
-				<tr valign="middle" data-id="{{@row.id}}">
+				<tr valign="middle" data-id="{{@row.id}}" style="<check if="{{@row.hidden}}">opacity:0.5;</check>">
 					<td class="handle">
 						<span class="ui-sortable-handle">
 							<i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i>
@@ -33,8 +33,12 @@
 						</check>
 					</td>
 					<td style="width:200px;text-align:right;"><check if="{{!@row.isTitle}}">{{@row.price}}</check></td>
-					<td style="text-align: center;" width="150">
+					<td style="text-align: center;" width="200">
 						<a href="{{@BASE}}/admin/{{@namespace}}/update?data_id={{@row.id}}#updateform">Update</a> -
+						<check if="{{@row.hidden}}">
+							<true><a href="{{@BASE}}/admin/{{@namespace}}/toggle?data_id={{@row.id}}">Show</a> -</true>
+							<false><a href="{{@BASE}}/admin/{{@namespace}}/toggle?data_id={{@row.id}}">Hide</a> -</false>
+						</check>
 						<a onclick="return confirm('Delete: Are you sure?');" class="delete" href="{{@BASE}}/admin/{{@namespace}}/delete?data_id={{@row.id}}">Delete</a>
 					</td>
 				</tr>

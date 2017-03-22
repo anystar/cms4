@@ -135,6 +135,23 @@ class repeat {
 			$f3->reroute('/admin/'.$this->namespace.'#form');
 		});
 
+		$f3->route('GET /admin/'.$this->namespace.'/toggle', function ($f3) {
+
+			$data = $f3->DB->exec("SELECT data FROM {$this->namespace} WHERE id=?", [$f3->GET["data_id"]]);
+			$data = json_decode($data[0]["data"], true);
+
+			if (!array_key_exists("hidden", $data))
+				$data["hidden"] = true;
+
+			$data["hidden"] = !$data["hidden"];
+
+			$data = json_encode($data);
+
+			$f3->DB->exec("UPDATE {$this->namespace} SET data=? WHERE id=?", [$data, $f3->GET["data_id"]]);
+
+			$f3->reroute('/admin/'.$this->namespace);
+		});
+
 		$f3->route('POST /admin/'.$this->namespace.'/reorder [ajax]', function ($f3) {
 
 			$order = json_decode($f3->POST["order"], 1);
