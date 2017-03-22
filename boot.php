@@ -191,6 +191,7 @@ $f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses ORDER BY `order` 
 
 admin::instance();
 content::instance();
+backup::instance();
 
 
 	foreach ($f3->installed_modules as $module)
