@@ -141,7 +141,7 @@ class repeat {
 			$data = json_decode($data[0]["data"], true);
 
 			if (!array_key_exists("hidden", $data))
-				$data["hidden"] = true;
+				$data["hidden"] = false;
 
 			$data["hidden"] = !$data["hidden"];
 
