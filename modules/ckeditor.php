@@ -19,7 +19,7 @@ class ckeditor extends prefab {
 		if (admin::$signed)
 		{
 
-			$this->checker($f3);
+			$this->patch_table();
 
 			$f3->set("ckeditor.enable_image_uploading", false);
 
@@ -100,11 +100,14 @@ class ckeditor extends prefab {
 			// the right content.
 			if ($sentHash == $checkHash) {
 
-				$file = preg_replace_callback("#(<ckeditor id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents) {
+				$file = preg_replace_callback("#(<ckeditor id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents, $filename, $id) {
 
 					$return .= $matches[1];
 					$return .= $contents;
 					$return .= $matches[3];
+
+					// Store for revision control
+					$this->addRevision($id, $filename, $matches[2]);
 
 					return $return;
 				}, $file);
@@ -202,7 +205,6 @@ class ckeditor extends prefab {
 
 				if (in_array($mime_type, $accepted_mimes))
 				{
-
 					$compiled[] = [
 						"image" => $f3->BASE."/".$urlpath."/".$file
 					];
@@ -211,10 +213,36 @@ class ckeditor extends prefab {
 
 			echo json_encode($compiled);
 		});
+
+		$f3->route("POST /admin/ckeditor/getRevision", function ($f3) {
+
+			$result = $f3->DB->exec("SELECT content FROM ckeditor_revisions WHERE id=?", $f3->POST["id"]);
+
+			echo $result[0]["content"];
+		});
+
+		$f3->route("GET /admin/ckeditor/getRevisions/@ckeditor", function ($f3, $params) {
+
+			$result = $f3->DB->exec("SELECT id, `date` FROM ckeditor_revisions WHERE ckeditor=? ORDER BY `date` DESC", $params["ckeditor"]);
+
+			if (!$result) return null;
+
+			foreach ($result as $key=>$value) {
+				$result[$key]["date"] = time_elapsed_string($value["date"]);
+			}
+
+			j($result);
+
+		});
 	}
 
-	function checker ($f3) {
-		
+
+	function addRevision ($id, $file, $contents) {
+		$db = base::instance()->DB;
+
+		$db->exec("INSERT INTO ckeditor_revisions (`file`, `content`, `date`, `ckeditor`) VALUES (?, ?, ?, ?)", [$file, $contents, time(), $id]);
+
+		return $version;
 	}
 
 	function install_check() {
@@ -226,6 +254,14 @@ class ckeditor extends prefab {
 			return false;
 
 		return true;
+	}
+
+	function patch_table () {
+
+		$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='ckeditor_revisions'");
+
+		if (empty($result))
+			base::instance()->DB->exec("CREATE TABLE 'ckeditor_revisions' ('id' INTEGER PRIMARY KEY NOT NULL, 'file' TEXT, 'content' TEXT, 'date' DATETIME, 'ckeditor' TEXT);");
 	}
 
 	function assets($f3) {
@@ -243,6 +279,7 @@ class ckeditor extends prefab {
 		$f3->route('GET /admin/ckeditor/images/inlinesave-color.svg', function () { echo View::instance()->render("/ckeditor/images/save-color.png", "image/png"); });
 		$f3->route('GET /admin/ckeditor/images/inlinesave-label.svg', function () { echo View::instance()->render("/ckeditor/images/save-label.png", "image/png"); });
 		$f3->route('GET /admin/ckeditor/cms_save.js', function () { echo Template::instance()->render("/ckeditor/js/cms_save.js", "application/javascript"); });
+		$f3->route('GET /admin/ckeditor/restore.js', function () { echo Template::instance()->render("/ckeditor/js/restore.js", "application/javascript"); });
 		$f3->route('GET /admin/ckeditor/imagebrowser.js', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/plugin.js", "application/javascript"); });
 		$f3->route('GET /admin/ckeditor/browser/browser.html', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.html", "text/html"); });
 		$f3->route('GET /admin/ckeditor/browser/browser.css', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.css", "text/css"); });

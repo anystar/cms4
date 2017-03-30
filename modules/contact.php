@@ -120,7 +120,7 @@ class contact
 			$f3->set("contact.enable_editting", setting($this->namespace."_enable_editting"));
 
 			// Get archived messages
-			$result = $f3->DB->exec("SELECT contents FROM {$this->namespace}_archived ORDER BY `date` DESC");
+			$result = $f3->DB->exec("SELECT contents FROM `{$this->namespace}_archived` ORDER BY `date` DESC");
 			if ($result)
 				foreach ($result as $r)
 					$archived[] = json_decode($r["contents"]);
@@ -235,7 +235,7 @@ class contact
 
 			$db->begin();
 			foreach ($orders as $order=>$id) {
-				$db->exec("UPDATE {$this->namespace} SET `order`=? WHERE id=?", [$order, $id]);
+				$db->exec("UPDATE `{$this->namespace}` SET `order`=? WHERE id=?", [$order, $id]);
 			}
 			$db->commit();
 		});
@@ -247,7 +247,7 @@ class contact
 		$f3 = base::instance();
 		$db = $f3->get("DB");
 
-		$result = $db->exec("SELECT * FROM {$this->namespace} ORDER BY `order` ASC");
+		$result = $db->exec("SELECT * FROM `{$this->namespace}` ORDER BY `order` ASC");
 
 		foreach ($result as $r) 
 		{
@@ -417,7 +417,7 @@ class contact
 		unset($contents["sendto"]);
 		unset($contents["captcha"]);
 
-		$f3->DB->exec("INSERT INTO {$this->namespace}_archived (contents, `date`) VALUES (?, ?)", [json_encode($contents), time()]);
+		$f3->DB->exec("INSERT INTO `{$this->namespace}_archived` (contents, `date`) VALUES (?, ?)", [json_encode($contents), time()]);
 		
 		$smtp->send($body);
 
@@ -431,16 +431,16 @@ class contact
 		$field = $params["field"];
 
 		if ($f3->POST["label"])
-			$db->exec("UPDATE {$namespace} SET label=? WHERE id=?", [$f3->POST["label"], $field]);
+			$db->exec("UPDATE `{$namespace}` SET label=? WHERE id=?", [$f3->POST["label"], $field]);
 
 		if ($f3->POST["type"])
-			$db->exec("UPDATE {$namespace} SET type=? WHERE id=?", [$f3->POST["type"], $field]);
+			$db->exec("UPDATE `{$namespace}` SET type=? WHERE id=?", [$f3->POST["type"], $field]);
 
-			$db->exec("UPDATE {$namespace} SET error_message=? WHERE id=?", [$f3->POST["error_message"], $field]);
-			$db->exec("UPDATE {$namespace} SET placeholder=? WHERE id=?", [$f3->POST["placeholder"], $field]);
+			$db->exec("UPDATE `{$namespace}` SET error_message=? WHERE id=?", [$f3->POST["error_message"], $field]);
+			$db->exec("UPDATE `{$namespace}` SET placeholder=? WHERE id=?", [$f3->POST["placeholder"], $field]);
 
 		if ($f3->POST["order"])
-			$db->exec("UPDATE {$namespace} SET `order`=? WHERE id=?", [$f3->POST["order"], $field]);
+			$db->exec("UPDATE `{$namespace}` SET `order`=? WHERE id=?", [$f3->POST["order"], $field]);
 	}
 
 	function add_field($f3) {
@@ -448,13 +448,13 @@ class contact
 		$db = base::instance()->DB;
 		$p = $f3->POST;
 
-		$db->exec("INSERT INTO {$this->namespace} (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
+		$db->exec("INSERT INTO `{$this->namespace}` (label, type, `order`, error_message, placeholder) VALUES (?, ?, ?, ?, ?)",[$p["label"], $p["type"], $p["order"], $p["error_message"], $p["placeholder"]]);
 
 		$f3->reroute("/admin/{$this->namespace}");
 	}
 
 	function delete_field ($f3, $params) {
-		base::instance()->DB->exec("DELETE FROM {$this->namespace} WHERE id=?", $params["field"]);
+		base::instance()->DB->exec("DELETE FROM `{$this->namespace}` WHERE id=?", $params["field"]);
 		$f3->reroute("/admin/{$this->namespace}");
 	}
 

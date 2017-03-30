@@ -193,7 +193,6 @@ admin::instance();
 content::instance();
 backup::instance();
 
-
 	foreach ($f3->installed_modules as $module)
 	{
 		if (class_exists($module["module"]))
