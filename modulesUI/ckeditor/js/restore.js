@@ -89,7 +89,7 @@ CKEDITOR.plugins.add( 'restore',
 							 		}
 							 	}
 						 	]
-						},
+						}
 					);
 			}
 
