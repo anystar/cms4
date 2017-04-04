@@ -66,8 +66,9 @@ function getConfig (type) {
 	{
 		config.toolbarGroups = [
 			{ name: 'basicstyles', groups: [ 'undo', 'basicstyles', 'cleanup' ] },
-			{ name: 'paragraph', groups: [ 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
 			{ name: 'links', groups: [ 'links' ] },
+			{ name: 'insert', groups: [ 'insert' ] },
+			{ name: 'paragraph', groups: [ 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
 			{ name: 'editing', groups: [ 'find', 'selection', 'editing', 'others', 'tools' ] },
 			'/',
 			{ name: 'styles', groups: [ 'styles' ] },
