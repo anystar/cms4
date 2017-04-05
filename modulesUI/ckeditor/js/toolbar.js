@@ -1,12 +1,31 @@
 $(function() {
 
-	var top_div = $('<div>').attr('id', 'webworkscms_admintoolbar');
-	$('body').append(top_div);
+	var main_div = $('<div>').attr('id', 'webworkscms_admintoolbar');
+	$('body').append(main_div);
 
-	var r_div = $('<span>').attr('id', 'right_div');
-	top_div.append(r_div);
 
-	var save = $('<input id="savebutton" type="button" value="Save"/>');
+	var configmenu = $('<ul>').attr('id', 'webworkscms_configmenu');
+
+	var menuitem = $('<li><a target="_blank" href="{{ @BASE }}/admin/">Dashboard</a></li>');
+	configmenu.append(menuitem);
+
+	/*<repeat group="{{@installed_modules}}" value="{{@module}}">*/
+		var menuitem = $('<li><a target="_blank" href="{{ @BASE }}/admin/{{@module.namespace}}">{{@module.name}}</a></li>');
+		configmenu.append(menuitem);
+	/*</repeat>*/
+	
+	$('body').append(configmenu);
+
+	var left_div = $('<div>').attr('id', 'left_div');
+	main_div.append(left_div);
+
+	var center_div = $('<div>').attr('id', 'center_div');
+	main_div.append(center_div);
+
+	var right_div = $('<div>').attr('id', 'right_div');
+	main_div.append(right_div);
+
+	var save = $('<input id="savebutton" type="button" value="Save Content"/>');
 	save.click(function () {
 
 		Object.keys(CKEDITOR.instances).forEach(function(key,index) {
@@ -21,10 +40,10 @@ $(function() {
             setTimeout(
               function()
               {
-                $("#savebutton").val("Saved!").css("background", "#3cab4e");
+                $("#savebutton").val("Saved!").css("background", "#F4F4F4");
 
                     setTimeout(
-                      function() { $("#savebutton").val("Save"); }, 1500);
+                      function() { $("#savebutton").val("Save Content"); }, 1500);
                     }, 2000);
 
 		});
@@ -33,40 +52,47 @@ $(function() {
 	});
 
 
-	r_div.append(save);
+	center_div.append(save);
 
-	var toggleBtn = $('<input type="button" value="Editors off"/>');
+	var help_div = $('<div>').attr('id', 'help_div');
+	help_div.append("If you have any trouble do not hesitate to call us on 5446 3371");
 
-	toggleBtn.click(function () {
+	// var toggleBtn = $('<input type="button" value="Editors off"/>');
 
-		// Turn editors off
-		if ($(this).val() == "Editors off")
-		{
-			Object.keys(CKEDITOR.instances).forEach(function(key,index) {
-				var editor = CKEDITOR.instances[key];
-				editor.destroy();
-				$(editor.container.$).attr('contenteditable',"false");
-			});
+	// toggleBtn.click(function () {
+
+	// 	// Turn editors off
+	// 	if ($(this).val() == "Editors off")
+	// 	{
+	// 		Object.keys(CKEDITOR.instances).forEach(function(key,index) {
+	// 			var editor = CKEDITOR.instances[key];
+	// 			editor.destroy();
+	// 			$(editor.container.$).attr('contenteditable',"false");
+	// 		});
 			
-			$(this).val("Editors on");
-		} else {
-			init_inline_ckeditors();
-			Object.keys(CKEDITOR.instances).forEach(function(key,index) {
-				var editor = CKEDITOR.instances[key];
-				editor.readOnly = false;
-				$(editor.element.$).attr('contenteditable',"true");
-			});
+	// 		$(this).val("Editors on");
+	// 	} else {
+	// 		init_inline_ckeditors();
+	// 		Object.keys(CKEDITOR.instances).forEach(function(key,index) {
+	// 			var editor = CKEDITOR.instances[key];
+	// 			editor.readOnly = false;
+	// 			$(editor.element.$).attr('contenteditable',"true");
+	// 		});
 
-			$(this).val("Editors off");
-		}
+	// 		$(this).val("Editors off");
+	// 	}
+	// });
+
+	// main_div.append(toggleBtn);
+
+	left_div.append($('<img src="{{ @SETTINGS.cdn.cms }}/admin/imgs/logo_toolbar.png" height="100%">'));
+
+	var configbutton = $('<button>Admin Menu</button>');
+	configbutton.click(function () {
+		$('#webworkscms_configmenu').toggle();
 	});
 
-	top_div.append(toggleBtn);
-
-	r_div.append($('<div class="spacer"></div>'));
-
-	r_div.append($('<a href="{{@BASE}}/admin" target="_cmswindow" type="button">CMS Panel</a>'));
-
+	right_div.append(configbutton);
 
 
 });

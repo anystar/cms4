@@ -94,7 +94,7 @@ function init_inline_ckeditors() {
 		
 		editor.on( 'blur', function( e ) {
 			if (e.editor.checkDirty()) {
-				$("#savebutton").css("background-color", "red");
+				$("#savebutton").css("background-color", "#B80000");
 			}
 		} );
 	}

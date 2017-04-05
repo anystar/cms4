@@ -92,7 +92,7 @@ class ckeditor extends prefab {
 			$file = file_get_contents(getcwd()."/".$filename);
 
 			// Determine hash
-			preg_match_all("#(<ckeditor id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
+			preg_match_all("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
 			$checkHash = sha1($output_array[2][0]);
 
 			// If sent hash and check hash are the same,
@@ -100,7 +100,7 @@ class ckeditor extends prefab {
 			// the right content.
 			if ($sentHash == $checkHash) {
 
-				$file = preg_replace_callback("#(<ckeditor id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents, $filename, $id) {
+				$file = preg_replace_callback("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents, $filename, $id) {
 
 					$return .= $matches[1];
 					$return .= $contents;
@@ -113,6 +113,9 @@ class ckeditor extends prefab {
 				}, $file);
 
 				file_put_contents(getcwd()."/".$filename, $file);
+			} else {
+
+				echo "wrong hash!";
 			}
 			
 			echo sha1($contents);
