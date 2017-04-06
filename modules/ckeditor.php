@@ -35,6 +35,7 @@ class ckeditor extends prefab {
 			$this->admin_routes($f3);
 
 			$inlinecode = Template::instance()->render("/ckeditor/inline_init.html");
+
 			$f3->set("ckeditor", $inlinecode);
 		}
 		else
@@ -333,22 +334,6 @@ class ckeditor extends prefab {
 			$out .= "<?php } ?>";
 
 			return  $out;
-		});
-
-		Template::instance()->filter("ckeditor", function ($content, $contentID, $type="full") {
-
-
-			if ($content == "") $content = "Dummy text";
-
-			if (admin::$signed) 
-				$out .= "<div type='".$type."' id='".$contentID."' path='".urlencode($f3->PATH)."' class='ckeditor' contenteditable='true'>";
-			
-			$out .= $content;
-			
-			if (admin::$signed) 
-				$out .= "</div>";
-
-			return $out;
 		});
 
 		Template::instance()->filter("urlencode", function ($encode) { return urlencode($encode); });

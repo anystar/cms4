@@ -1,9 +1,10 @@
 <?php
+// Very handy global functions
+require_once("tools/tools.php");
 
 ########################################
 ######## Default configuration #########
 ########################################
-require_once("tools/tools.php");
 
 // Merge config that may be coming from clients folder
 if (isset($settings))
@@ -26,19 +27,19 @@ if($Did_F3_Load)
 ## Check folder and file permissions  ##
 ########################################
 
-// Require php extentions for operation
+// Required php extentions for operation
 if (!extension_loaded("SQLite3")) {
 	echo "SQLite3 php extention not loaded!";
 	die;
 }
 
-// Require php extension gd for image operations
+// Required php extension gd for image operations
 if (!extension_loaded("gd")) {
 	echo "GD extention not loaded!";
 	die;
 }
 
-// Require random compat for random_byte not available in php <7
+// Required random compat for random_byte not available in php <7
 if (!file_exists($settings["paths"]["random_compat"]."/lib/random.php")) {
 	echo "Random compatability library not found. Please download it from https://github.com/paragonie/random_compat";
 	exit;
@@ -58,14 +59,6 @@ checkdeny($settings["database"]);
 
 // If we are calling cms.php..
 if ($f3->PATH == "/cms.php") $f3->reroute("/admin");
-
-##########################################
-############ Error handling ##############
-##########################################
-// $error_log = $settings["paths"]["cms"]."/error.log";
-// writable($error_log);
-require_once("tools/error_handler.php");
-error::construct(new DB\SQL('sqlite:'.$error_log), $f3->HOST.$f3->PATH);
 
 
 ########################################
@@ -173,9 +166,6 @@ if ($check)
 
 $f3->SETTINGS = $GLOBALS["settings"];
 
-//$f3->developer = setting("developer_mode");
-$f3->developer = 1;
-
 determine_path($f3);
 
 ###############################################
@@ -190,7 +180,6 @@ $f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses ORDER BY `order` 
 ########################################
 
 admin::instance();
-content::instance();
 backup::instance();
 
 	foreach ($f3->installed_modules as $module)
@@ -213,9 +202,80 @@ backup::instance();
 			new $module["module"]($module["namespace"]);
 	}
 
-	if (admin::$signed)
-		new store();
+if (admin::$signed)
+	new store();
 
-	new debug();
+
+############################################################
+############ Populate debug template variable ##############
+############################################################
+if (admin::$signed) {
+	$hive = $f3->hive();	
+
+	$keys = ['HEADERS', 'GET', 'POST', 'COOKIE', 'REQUEST', 'SESSION', 'FILES', 'SERVER', 'ENV', 'CMS', 'ACE', 'DB', 'SETTINGS', 'AJAX','AGENT','ALIAS','ALIASES','AUTOLOAD','BASE','BITMASK','BODY','CACHE','CASELESS','CONFIG','CORS','DEBUG','DIACRITICS','DNSBL','EMOJI','ENCODING','ERROR','ESCAPE','EXCEPTION','EXEMPT','FALLBACK','FRAGMENT','HALT','HIGHLIGHT','HOST','IP','JAR','LANGUAGE','LOCALES','LOGS','ONERROR','ONREROUTE','PACKAGE','PARAMS','PATH','PATTERN','PLUGINS','PORT','PREFIX','PREMAP','QUERY','QUIET','RAW','REALM','RESPONSE','ROOT','ROUTES','SCHEME','SERIALIZER','TEMP','TIME','TZ','UI','UNLOAD','UPLOADS','URI','VERB','VERSION','XFRAME'];
+	foreach ( $hive as $key => $value ) {
+		if ( in_array( $key, $keys ) ) {
+			unset( $hive[ $key ] );
+		}
+	}
+
+	$hive = json_encode($hive);
+
+	$code .= "<script>";
+	$code .= "var obj = ".$hive.";";
+	$code .= "console.log({'Template Variables' : obj});";
+	$code .= "</script>";
+
+	$f3->set("debug", $code);
+
+	Template::instance()->filter("krumo", function ($array) {
+		require_once $GLOBALS["settings"]["paths"]["krumo"];
+
+		return krumo($array);
+	});
+
+	Template::instance()->filter("die", function () { die; });
+}
+
+############################################
+############ Set global route ##############
+############################################
+
+$f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
+
+	// Accepted mimetypes to render as a template file
+	$accepted_mimetypes = [
+		"text/html",
+		"text/css",
+		"text/plain",
+		"application/javascript",
+		"application/x-javascript",
+	];
+
+	if (!$f3->FILE)
+		$f3->error("404");
+
+	$mime_type = mime_content_type2(getcwd()."/".$f3->FILE);
+
+	if ($mime_type == "text/html")
+	{
+		$f3->expire(0);
+	} else {
+		$f3->expire(172800);
+	}
+
+	if (in_array($mime_type, $accepted_mimetypes))
+	{
+		// Render as a template file
+		echo Template::instance()->render($f3->FILE, $mime_type);
+	}
+	else
+	{
+		// Render as raw data
+		header('Content-Type: '.$mime_type.';');
+		header('Content-Length: ' . filesize(getcwd()."/".$f3->FILE));
+		echo readfile(getcwd()."/".$f3->FILE);
+	}
+});
 
 $f3->run();

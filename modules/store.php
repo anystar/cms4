@@ -48,11 +48,6 @@ class store extends prefab {
 
 	function routes ($f3) {
 
-			$f3->route("GET /admin/store", function ($f3) {
-
-				echo Template::instance()->render("/store/store.html");
-			});
-
 
 			$f3->route("GET /admin/store/@module", function ($f3, $params) {
 
@@ -71,7 +66,7 @@ class store extends prefab {
 				$f3->POST["module_name"] = $module["name"];
 				$f3->POST["namespace"] = $module["module"];
 
-				if ($f3->developer)
+				if ($f3->webmaster)
 					echo Template::instance()->render("/store/developer_install.html");
 				else
 					echo Template::instance()->render("/store/client_install.html");
@@ -79,6 +74,7 @@ class store extends prefab {
 			});
 
 			$f3->route("POST /admin/store/@module/install", function ($f3, $params) {
+
 				$module = $params["module"];
 				$module_name = $f3->POST["module_name"];
 				$namespace = $f3->POST["namespace"];
