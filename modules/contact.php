@@ -148,6 +148,7 @@ class contact
 			$f3->set("contact.port", setting("port"));
 			$f3->set("contact.success", setting("success"));
 			$f3->set("contact.enable_editting", setting("enable_editting"));
+			$f3->set("contact.file_upload_folder", setting("file_upload_folder"));
 			setting_clear_namespace();
 
 			$f3->module_name = base::instance()->DB->exec("SELECT name FROM licenses WHERE namespace=?", [$this->namespace])[0]["name"];
@@ -169,6 +170,9 @@ class contact
 			else
 				setting("enable_editting", "true");
 	
+			if (checkdir($f3->POST["file_upload_folder"])) 
+				setting("file_upload_folder", $f3->POST["file_upload_folder"]);
+
 			setting_clear_namespace();
 
 			$this->install();
@@ -265,6 +269,11 @@ class contact
 			if ($r["type"]=="select") {
 				$formcompiled[$r["name"]]["options"] = $f3->split($r["placeholder"]);
 			}
+
+			if ($r["type"]=="file") {
+				if ($value = $f3->FILES[$r["name"]])
+					$formcompiled[$r["name"]]["value"] = $value;
+			}
 		}
 
 		$f3->set("{$this->namespace}.form", $formcompiled);
@@ -347,6 +356,26 @@ class contact
 				case "select":
 
 				break;
+
+				case "file":
+					// Upload method from
+					// https://fatfreeframework.com/3.6/web#receive
+
+					$folder = setting($this->namespace."_file_upload_folder");
+					
+					checkdir($folder);
+
+					$name = $field["value"]["name"];
+
+					while (file_exists($folder."/".$name))
+						$name = uniqid()."_".$name;
+
+					move_uploaded_file($field["value"]["tmp_name"], getcwd()."/".$folder."/".$name);
+
+					$form[$key]["value"]["url"] = $f3->SCHEME . "://" . $f3->HOST . $f3->BASE . "/" . rtrim(ltrim($folder, "/"), "/")."/".$name;
+					$form[$key]["value"]["name"] = $name;
+
+				break;
 			}
 
 			if ($form[$key]["has_error"] == true)
@@ -363,7 +392,7 @@ class contact
 
 	function send_email ()
 	{
-		$f3 = f3::instance();
+		$f3 = base::instance();
 		$db = $f3->get("DB");
 
 		setting_use_namespace($this->namespace);
@@ -396,7 +425,7 @@ class contact
 		$smtp->set('Subject', $subject);
 		$smtp->set('Content-Type', 'text/html');
 
-		$f3->set("contact.subject", $subject);
+		$f3->set($this->namespace.".subject", $subject);
 
 		if (file_exists(getcwd()."/".$this->email_template))
 

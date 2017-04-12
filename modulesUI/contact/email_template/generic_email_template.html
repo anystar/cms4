@@ -5,7 +5,7 @@
 <title>{{@contact.subject}}</title>
 </head>
 <body style="background-color: #fff;">
-  <div id="background" style="font-family: 'Times New Roman', Times, serif; background-color: #eee; padding: 20px; text-align: center; color: #fff; font-size: 16px; width:97%">
+  <div id="background" style="font-family: 'times roman', Times, serif; background-color: #eee; padding: 20px; text-align: center; color: #fff; font-size: 16px; width:97%">
 	<div id="page" style="padding: 10px; width: 600px; margin: 0 auto; text-align: left; background-color: #fff; border: 1px solid #C0C0C0;">
 		<div id="header" style="padding: 0px 0px 10px 0px;">
         	<h1 style="padding: 0px; margin: 0px 0px 2px 0px; font-size: 16px; text-decoration: none; font-weight: bold; color: #666;">{{@contact.subject}}</h1>
@@ -15,16 +15,16 @@
         	<div id="contentHeader" style="border: 1px solid #DDD; border-right-width: 0px; border-left-width: 0px;">
             	<table cellpadding="0" cellspacing="0" border="0">
 					<tr valign="top">
-                    	<th style="font-family: 'Times New Roman', Times, serif; font-size: 16px; width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">Form Submitted</th>
-						<td style="font-family: 'Times New Roman', Times, serif; font-size: 16px; padding: 3px; border-left: 1px solid #DDD; color: #B6B6B6;">{{'{0,date} - {0,time}',time() | format}}</td>
+                    	<th style="font-family: 'times roman', Times, serif; font-size: 16px; width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">Form Submitted</th>
+						<td style="font-family: 'times roman', Times, serif; font-size: 16px; padding: 3px; border-left: 1px solid #DDD; color: #000; padding-left:15px">{{'{0,date} - {0,time}',time() | format}}</td>
 					</tr>
 				</table>
             </div>
             <div id="content" style="padding: 0px 10px 10px 0px;">
             	<table cellpadding="0" cellspacing="0" border="0">
 					<tr valign="top">
-                    	<th style="font-family: 'Times New Roman', Times, serif; font-size: 10px;width: 134px; height:1px; font-size: 1px; line-height: 1px;">&nbsp;</th>
-						<td style="font-family: 'Times New Roman', Times, serif; font-size: 10px;height:1px; font-size: 1px; line-height: 1px; border-left: 1px solid #DDD;">&nbsp;</td>
+                    	<th style="font-family: 'times roman', Times, serif; font-size: 10px;width: 134px; height:1px; font-size: 1px; line-height: 1px;">&nbsp;</th>
+						<td style="font-family: 'times roman', Times, serif; font-size: 10px;height:1px; font-size: 1px; line-height: 1px; border-left: 1px solid #DDD;">&nbsp;</td>
 					</tr>
 					
 					<repeat group="{{@contact.form}}" value="{{@field}}">
@@ -32,43 +32,49 @@
 						<switch expr="{{@field.type}}">
 							<case value="name">
 							<tr valign="top">
-		                    	<th style="font-family: 'Times New Roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
-								<td style="font-family: 'Times New Roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #B6B6B6;">{{@field.value}}</td>
+		                    	<th style="font-family: 'times roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
+								<td style="font-family: 'times roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #000; padding-left:15px">{{@field.value}}</td>
 							</tr>
 							</case>
 
 							<case value="text">
 							<tr valign="top">
-		                    	<th style="font-family: 'Times New Roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
-								<td style="font-family: 'Times New Roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #B6B6B6;">{{@field.value}}</td>
+		                    	<th style="font-family: 'times roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
+								<td style="font-family: 'times roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #000; padding-left:15px">{{@field.value}}</td>
 							</tr>
 							</case>
 							
 							<case value="number">
 							<tr valign="top">
-		                    	<th style="font-family: 'Times New Roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
-								<td style="font-family: 'Times New Roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #B6B6B6;">{{@field.value}}</td>
+		                    	<th style="font-family: 'times roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
+								<td style="font-family: 'times roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #000; padding-left:15px">{{@field.value}}</td>
 							</tr>
 							</case>
 
 							<case value="email">
 							<tr valign="top">
-		                    	<th style="font-family: 'Times New Roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
-								<td style="font-family: 'Times New Roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #B6B6B6;">{{@field.value}}</td>
+		                    	<th style="font-family: 'times roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
+								<td style="font-family: 'times roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #000; padding-left:15px">{{@field.value}}</td>
 							</tr>
 							</case>
 
 							<case value="textarea">
 							<tr valign="top">
-		                    	<th style="font-family: 'Times New Roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
-								<td style="font-family: 'Times New Roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #B6B6B6;">{{@field.value}}</td>
+		                    	<th style="font-family: 'times roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
+								<td style="font-family: 'times roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #000; padding-left:15px">{{@field.value}}</td>
 							</tr>
 							</case>
 
 							<case value="select">
 							<tr valign="top">
-		                    	<th style="font-family: 'Times New Roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
-								<td style="font-family: 'Times New Roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #B6B6B6;">{{@field.value}}</td>
+		                    	<th style="font-family: 'times roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
+								<td style="font-family: 'times roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #000; padding-left:15px">{{@field.value}}</td>
+							</tr>
+							</case>
+							<case value="file">
+							<tr valign="top">
+		                    	<th style="font-family: 'times roman', Times, serif; font-size: 16px;width: 134px; text-align: right; padding: 3px 10px 3px 3px; color: #666; font-weight: bold;">{{@field.label}}:</th>
+								<td style="font-family: 'times roman', Times, serif; font-size: 16px;padding: 3px; border-left: 1px solid #DDD; color: #000; padding-left:15px"><a href="{{@field.value.url}}">{{@field.value.name}}</a></td>
 							</tr>
 							</case>
 

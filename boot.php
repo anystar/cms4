@@ -18,7 +18,8 @@ $settings = &$GLOBALS["settings"];
 ######## Load Fat Free Framework #########
 ##########################################
 $Did_F3_Load = (($f3 = include $settings["paths"]["f3"]) === false);
-$f3->set('DEBUG', $settings["debug"]);
+
+$f3->set("DEBUG", $settings["debug"]);
 
 if($Did_F3_Load) 
 	d("Fat free framework not found at ".$settings["paths"]["f3"].". Please download from http://fatfreeframework.com/");

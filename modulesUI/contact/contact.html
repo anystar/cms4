@@ -73,8 +73,8 @@
 					<check if="{{@contact.form_successfully_submitted}}">
 						EMAIL SUCESSFULLY SUBMITTED
 					</check>
-
-					<form class="form-horizontal" action="{{@contact.action}}" method="post">
+					
+					<form class="form-horizontal" action="{{@contact.action}}" method="post" enctype="multipart/form-data">
 						<repeat group="{{@contact.form}}" value="{{@field}}">
 							<switch expr="{{@field.type}}">
 								<case value="name">
@@ -100,12 +100,24 @@
 								</default>
 							</switch>
 							
-							<div class="form-group">
-								<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
-								<div class="col-sm-9">
-									<input name="{{@field.name}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
-								</div>
-							</div>
+							<switch expr="{{@field.type}}">
+								<case value="file">
+									<div class="form-group">
+										<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
+										<div class="col-sm-9">
+											<input name="{{@field.name}}" type="file" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+										</div>
+									</div>
+								</case>
+								<default>
+									<div class="form-group">
+										<label for="{{@field.label}}" class="col-sm-3 control-label">{{@field.label}}</label>
+										<div class="col-sm-9">
+											<input name="{{@field.name}}" value="{{@value}}" type="input" class="form-control" id="{{@field.label}}" placeholder="{{@field.placeholder}}">
+										</div>
+									</div>
+								</default>
+							</switch>
 
 						</repeat>
 						
@@ -187,6 +199,7 @@
 										<option <check if="{{@field.type=='number'}}">selected</check> value="number">Number</option>
 										<option <check if="{{@field.type=='email'}}">selected</check> value="email">Email</option>
 										<option <check if="{{@field.type=='select'}}">selected</check> value="select">Select Box</option>
+										<option <check if="{{@field.type=='file'}}">selected</check> value="file">File</option>
 									  </select>
 								   </div>
 								</td>
@@ -228,6 +241,7 @@
 									<option value="number">Number</option>
 									<option value="email">Email</option>
 									<option value="select">Select Box</option>
+									<option value="file">File</option>
 								  </select>
 							   </div>
 							</td>

@@ -59,8 +59,14 @@
 						</div>
 
 						<div class="form-group">
-							<label>Editable: </label> <input style="width: 30px;background-color:#ccc;" type="checkbox" name="enable_editting" <check if="{{@contact.enable_editting=='true'}}">checked</check>>
+							<label>Forms Fields Editable: </label> <input style="width: 30px;background-color:#ccc;" type="checkbox" name="enable_editting" <check if="{{@contact.enable_editting=='true'}}">checked</check>>
 							<p class="help-block">Hides form field editting.</p>
+						</div>
+
+						<div class="form-group">
+							<label>File upload folder</label>
+							<input value="{{@contact.file_upload_folder}}" name="file_upload_folder" type="text" class="form-control" placeholder="eg: {{@namespace}}_files/">
+							<p class="help-block">If a file field is set, this is where files are uploaded too.</p>
 						</div>
 
 						<div class="form-group">
