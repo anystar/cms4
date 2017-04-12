@@ -52,6 +52,7 @@ class contact
 		if (admin::$signed)
 			$this->admin_routes($f3);
 
+
 		// Only load if on particular route
 		if (isroute($this->routes) || isroute("/admin/".$namespace))
 		{

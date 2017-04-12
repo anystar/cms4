@@ -294,6 +294,7 @@ function parse_file_size($size) {
 
 function isroute($route, $verb=null)
 {
+
 	if ($route == null)
 		return;
 
@@ -348,7 +349,7 @@ function determine_path ($f3) {
 		}
 	}
 
-	// If there are no extensions
+	// No extension detected
 	if (!preg_match("/\.[^\.]+$/i", $path, $ext))
 	{
 		if (is_file($cwd."/".$path.".html"))
@@ -363,6 +364,19 @@ function determine_path ($f3) {
 			$f3->PATH = "/".$path;
 		}
 	} 
+	else 
+	{	
+		$ext = $ext[0];
+
+		if ($ext == ".html" || $ext == ".htm")
+			$path = basename($path, $ext);
+
+			if (is_file($cwd."/".$path.$ext))
+			{
+				$f3->FILE = $path.$ext;
+				$f3->PATH = "/".$path;
+			}
+	}
 
 	if (is_file($path))
 		$f3->FILE = $f3->PATH = "/".$path;
