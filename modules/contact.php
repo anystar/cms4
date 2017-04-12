@@ -170,8 +170,11 @@ class contact
 			else
 				setting("enable_editting", "true");
 	
-			if (checkdir($f3->POST["file_upload_folder"])) 
-				setting("file_upload_folder", $f3->POST["file_upload_folder"]);
+			if ($f3->POST["file_upload_folder"])
+			{
+				if (checkdir($f3->POST["file_upload_folder"]))
+					setting("file_upload_folder", $f3->POST["file_upload_folder"]);
+			}
 
 			setting_clear_namespace();
 
