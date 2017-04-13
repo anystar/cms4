@@ -111,10 +111,7 @@
 								<i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i>
 							</span>
 						</td>
-						<td style="font-size:28px;font-weight:bold;">{{@row.title}}</td>
-						<td></td>
-						<td></td>
-						<td></td>
+						<td colspan="4" style="font-size:28px;font-weight:bold;">{{@row.title}}</td>
 						<td style="text-align:right;">
 							<a class="btn btn-primary" data-toggle="modal" data-target="#product_{{@row.id}}" href="#">Update</a> -
 							<a class="btn btn-primary" onclick="return confirm('Delete product?')" class="delete" href="{{@BASE}}/admin/{{@namespace}}/delete?data_id={{@row.id}}">Delete</a>
