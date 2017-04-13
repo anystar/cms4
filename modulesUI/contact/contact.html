@@ -321,7 +321,12 @@
 											<repeat group="{{@item}}" key="{{@label}}" value="{{@value}}">
 											<tr>
 												<td>{{@label}}</td>
-												<td>{{@value}}</td>
+												<td>
+												<check if="{{!is_string(@value)}}">
+													<true><a href="{{@value.url}}" target="_blank">{{@value.name}}</a></true>
+													<false>{{@value}}</false>
+												</check>
+												</td>
 											</tr>
 											</repeat>
 										</table>

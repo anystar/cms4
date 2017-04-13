@@ -105,6 +105,36 @@ class repeat {
 
 		$f3->route('POST /admin/'.$this->namespace.'/addupdate', function ($f3) {
 
+
+			// Upload any files
+			if ($image_directory = setting($this->namespace . "_image_directory")) {
+
+				checkdir(getcwd()."/".$image_directory);
+
+				$imagesize = [0,0];
+				$imagesize = setting($this->namespace . "_image_size");
+
+				if (strlen($imagesize) > 0)
+					$imagesize = explode("x", $imagesize);
+
+				foreach ($f3->FILES as $key => $file)
+				{
+					if (!$file["tmp_name"])
+						continue;
+
+					if ($imagesize[0] > 0 && $imagesize[1] > 0)
+					{
+						$this->resize_image ($file["tmp_name"], $imagesize[0], $imagesize[1], getcwd()."/".$image_directory."/".$file["name"]);
+					}
+					else
+						move_uploaded_file($file["tmp_name"], getcwd()."/".$image_directory."/".$file["name"]);
+
+					if (checkfile(getcwd()."/".$image_directory."/".$file["name"]))
+						$f3->POST[$key] = ltrim(rtrim($image_directory, "/"), "/") . "/" . $file["name"];
+
+				}
+			}
+
 			// Create
 			if ($f3->POST["data_id"] == null) {
 
@@ -120,7 +150,12 @@ class repeat {
 			if ($f3->POST["data_id"] != null) {
 				$id = $f3->POST["data_id"];
 				unset($f3->POST["data_id"]);
-				$json = json_encode($f3->POST);
+			
+				$data = json_decode($f3->DB->exec("SELECT data FROM {$this->namespace} WHERE id=?", [$id])[0]["data"], true);
+				
+				$data = arrmerge($data, $f3->POST);
+
+				$json = json_encode($data);
 
 				$f3->DB->exec("UPDATE {$this->namespace} SET data=? WHERE id=?", [$json, $id]);
 			}
@@ -163,9 +198,6 @@ class repeat {
 			}
 
 		});
-
-
-
 	}
 
 	function setup_routes ($f3) {
@@ -178,6 +210,9 @@ class repeat {
 			$f3->repeat["snippets"] = $this->snippets;
 
 			$f3->repeat["snippet"] = setting($this->namespace."_snippet");
+
+			$f3->repeat["image_directory"] = setting($this->namespace."_image_directory");
+			$f3->repeat["image_size"] = setting($this->namespace."_image_size");
 
 			$result = base::instance()->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='{$this->namespace}'");
 
@@ -209,10 +244,18 @@ class repeat {
 	}
 
 	function install () {
+		$f3 = base::instance();
 
 		setting_use_namespace($this->namespace);
-		setting("routes", base::instance()->POST["routes"]);
-		setting("snippet", base::instance()->POST["snippet"]);
+		setting("routes", $f3->POST["routes"]);
+		setting("snippet", $f3->POST["snippet"]);
+		
+		if (isset($f3->POST["image_directory"]))
+			setting("image_directory", $f3->POST["image_directory"]);
+
+		if (isset($f3->POST["image_size"]))
+			setting("image_size", $f3->POST["image_size"]);
+
 		setting_clear_namespace();
 	}
 
@@ -228,6 +271,18 @@ class repeat {
 		setting_clear_namespace();
 
 		return true;
+	}
+
+	function resize_image ($image, $x, $y, $save_as) {
+
+		// Pull image off the disk into memory
+		$temp_image = new Image($image, false, "/");
+
+		// Resize image using F3's image plugin
+		$temp_image->resize($x, $y, false, true);
+		
+		// Save image	
+		imagejpeg($temp_image->data(), $save_as);
 	}
 
 }

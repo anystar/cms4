@@ -54,33 +54,22 @@
 								</false>
 							</check>
 						</div>
-
 						
-						<exclude>
-						<h3>Image upload settings</h3>
-						<ul>
-							<li>resize images when uploaded</li>
-							<li>respect aspect ratio. <br>(fit image with its longest side into the resize dimensions)</li>
-							<li>leave blank to not resize.</li>
-						</ul>
+						<set imageuploading="{{ array('_products.html') }}">
 
-						<div class="form-group <check if='{{!@gallery.image_directory}}'>has-error</check>">
+						<check if="{{in_array(@repeat.snippet, @imageuploading)}}">
+
+						<div class="form-group <check if='{{!@repeat.image_directory}}'>has-error</check>">
 							<label>Image directory</label>
-							<input name="image_directory" value="{{@gallery.image_directory}}" type="text" class="form-control" placeholder="eg: /assets/{{@namespace}}/">
-						</div>
-						
-						<div class="form-group">
-							<label>Thumb size</label>
-							<input name="thumb_size" value="{{@gallery.thumb_size}}" type="text" class="form-control" placeholder="500x500">
-							<p class="help-block">Leave blank not to resize</p>
+							<input name="image_directory" value="{{@repeat.image_directory}}" type="text" class="form-control" placeholder="eg: /assets/{{@namespace}}/">
 						</div>
 
 						<div class="form-group">
 							<label>Image size</label>
-							<input name="image_size" value="{{@gallery.image_size}}" type="text" class="form-control" placeholder="2000x2000">
-							<p class="help-block">Leave blank not to resize</p>
+							<input name="image_size" value="{{@repeat.image_size}}" type="text" class="form-control" placeholder="500x560">
+							<p class="help-block">Leave blank not to resize. Distorts to fit aspect ratio.</p>
 						</div>
-						</exclude>
+						</check>
 
 						<button class="button-fullwidth" type="submit">Save setup</button>
 					</form>
