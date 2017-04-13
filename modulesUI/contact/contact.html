@@ -298,7 +298,12 @@
 					<repeat group="{{@archived}}" value="{{@item}}">
 					<tr>
 						<repeat group="{{@item}}" value="{{@value}}">
-						<td>{{@value}}</td>
+						<td>
+							<check if="{{!is_string(@value)}}">
+								<true><a href="{{@value.url}}" target="_blank">{{@value.name}}</a></true>
+								<false>{{@value}}</false>
+							</check>
+						</td>
 						</repeat>
 						<td style="width: 100px;text-align:center;" class="actions">
 							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"> View </button>

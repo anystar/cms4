@@ -124,7 +124,7 @@ class contact
 			$result = $f3->DB->exec("SELECT contents FROM `{$this->namespace}_archived` ORDER BY `date` DESC");
 			if ($result)
 				foreach ($result as $r)
-					$archived[] = json_decode($r["contents"]);
+					$archived[] = json_decode($r["contents"], true);
 
 			if ($archived)
 				foreach ($archived[0] as $key=>$x)
@@ -363,7 +363,8 @@ class contact
 				case "file":
 					// Upload method from
 					// https://fatfreeframework.com/3.6/web#receive
-
+					if (!$field["value"]) break;
+		
 					$folder = setting($this->namespace."_file_upload_folder");
 					
 					checkdir($folder);
@@ -375,6 +376,7 @@ class contact
 
 					move_uploaded_file($field["value"]["tmp_name"], getcwd()."/".$folder."/".$name);
 
+					$form[$key]["value"] = array();
 					$form[$key]["value"]["url"] = $f3->SCHEME . "://" . $f3->HOST . $f3->BASE . "/" . rtrim(ltrim($folder, "/"), "/")."/".$name;
 					$form[$key]["value"]["name"] = $name;
 
@@ -444,14 +446,12 @@ class contact
 			// Use our generic email template
 			$body = Template::instance()->render("/contact/email_template/generic_email_template.html", null, $temphive);
 		}
-	
-		$contents = $f3->POST;
-		unset($contents["actionid"]);
-		unset($contents["sendto"]);
-		unset($contents["captcha"]);
+
+		foreach ($f3->get($this->namespace)["form"] as $key=>$field)
+			$contents[$key] = $field["value"];
 
 		$f3->DB->exec("INSERT INTO `{$this->namespace}_archived` (contents, `date`) VALUES (?, ?)", [json_encode($contents), time()]);
-		
+
 		$smtp->send($body);
 
 		return true;
