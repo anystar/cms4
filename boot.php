@@ -40,12 +40,6 @@ if (!extension_loaded("gd")) {
 	die;
 }
 
-// Required random compat for random_byte not available in php <7
-if (!file_exists($settings["paths"]["random_compat"]."/lib/random.php")) {
-	echo "Random compatability library not found. Please download it from https://github.com/paragonie/random_compat";
-	exit;
-}
-
 // Ensure we can write to client folder
 writable(getcwd());
 
@@ -265,18 +259,15 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		$f3->expire(172800);
 	}
 
+	header('Content-Type: '.$mime_type.';');
+	header('Content-Length: ' . filesize(getcwd()."/".$f3->FILE));
+
 	if (in_array($mime_type, $accepted_mimetypes))
-	{
 		// Render as a template file
 		echo Template::instance()->render($f3->FILE, $mime_type);
-	}
 	else
-	{
 		// Render as raw data
-		header('Content-Type: '.$mime_type.';');
-		header('Content-Length: ' . filesize(getcwd()."/".$f3->FILE));
 		echo readfile(getcwd()."/".$f3->FILE);
-	}
 });
 
 $f3->run();
