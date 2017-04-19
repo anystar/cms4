@@ -259,15 +259,17 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		$f3->expire(172800);
 	}
 
-	header('Content-Type: '.$mime_type.';');
-	header('Content-Length: ' . filesize(getcwd()."/".$f3->FILE));
-
 	if (in_array($mime_type, $accepted_mimetypes))
 		// Render as a template file
 		echo Template::instance()->render($f3->FILE, $mime_type);
 	else
+	{
+		header('Content-Type: '.$mime_type.';');
+		header('Content-Length: ' . filesize(getcwd()."/".$f3->FILE));
+
 		// Render as raw data
 		echo readfile(getcwd()."/".$f3->FILE);
+	}
 });
 
 $f3->run();
