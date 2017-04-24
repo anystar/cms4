@@ -34,7 +34,7 @@ class ckeditor extends prefab {
 
 			$this->admin_routes($f3);
 
-			$inlinecode = Template::instance()->render("/ckeditor/inline_init.html");
+			$inlinecode = Template::instance()->render("/ckeditor/inline_init.html", null);
 
 			$f3->set("ckeditor", $inlinecode);
 		}

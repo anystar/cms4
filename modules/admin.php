@@ -33,16 +33,12 @@ class admin extends prefab {
 				$f3->set("webmaster", true);
 
 			// Load admin scripts
-			$inlinecode = Template::instance()->render("/admin/toolbar.html", "text/plain");
-		
-			if (headers_sent()) {
-				k("hit");
-			}
+
+			$inlinecode = Template::instance()->render("/admin/toolbar.html", null);
 
 			$f3->concat("admin", $inlinecode);
 
 			echo Template::instance()->render("/ckeditor/css/toolbar.css", "text/css"); 
-die;
 		}
 
 		// Expose login screen

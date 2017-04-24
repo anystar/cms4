@@ -424,3 +424,14 @@ function time_elapsed_string($datetime, $full = false) {
     if (!$full) $string = array_slice($string, 0, 1);
     return $string ? implode(', ', $string) . ' ago' : 'just now';
 }
+
+function dt () {
+
+    $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
+
+    $dt = base::instance()->get("dtlog");
+    $dt[] = "Process Time: {$time}";
+    base::instance()->set("dtlog", $dt, 60*5);
+    k($dt);
+    die;
+}
