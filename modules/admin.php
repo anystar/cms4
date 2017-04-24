@@ -37,7 +37,7 @@ class admin extends prefab {
 				$f3->set("webmaster", true);
 
 			// Load admin scripts
-			$inlinecode = Template::instance()->render("/admin/toolbar.html");
+			$inlinecode = Template::instance()->render("/admin/toolbar.html", NULL);
 			$f3->concat("admin", $inlinecode);
 		}
 
