@@ -323,7 +323,7 @@ class ckeditor extends prefab {
 
 
 			$hash = sha1($args[0]);
-			$file = Template::instance()->file;
+			$file = Template::instance()->actualfile;
 
 			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
 
