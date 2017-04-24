@@ -24,6 +24,14 @@ $f3->set("DEBUG", $settings["debug"]);
 if($Did_F3_Load) 
 	d("Fat free framework not found at ".$settings["paths"]["f3"].". Please download from http://fatfreeframework.com/");
 
+determine_path($f3);
+
+// Redirect cms to admin
+if (isroute("/cms")) {
+	$f3->reroute("/admin", true);
+	exit;
+}
+
 ########################################
 ## Check folder and file permissions  ##
 ########################################
@@ -160,8 +168,6 @@ if ($check)
 }
 
 $f3->SETTINGS = $GLOBALS["settings"];
-
-determine_path($f3);
 
 ###############################################
 ############ Get brought modules ##############

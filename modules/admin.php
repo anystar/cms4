@@ -13,16 +13,12 @@ class admin extends prefab {
 	function __construct() {
 		$f3 = base::instance();
 
-		// Redirect cms to admin
-		$f3->route("GET /cms", function ($f3) {
-			$f3->reroute("/admin", true);
-		});
-
 		$this->load_settings($f3);
 		
 		// Are we logged in?
 		if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
 		{
+
 			admin::$signed = true;
 
 			// Load dashboard routes
@@ -37,8 +33,16 @@ class admin extends prefab {
 				$f3->set("webmaster", true);
 
 			// Load admin scripts
-			$inlinecode = Template::instance()->render("/admin/toolbar.html");
+			$inlinecode = Template::instance()->render("/admin/toolbar.html", "text/plain");
+		
+			if (headers_sent()) {
+				k("hit");
+			}
+
 			$f3->concat("admin", $inlinecode);
+
+			echo Template::instance()->render("/ckeditor/css/toolbar.css", "text/css"); 
+die;
 		}
 
 		// Expose login screen

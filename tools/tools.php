@@ -306,7 +306,6 @@ function parse_file_size($size) {
 
 function isroute($route, $verb=null)
 {
-
 	if ($route == null)
 		return;
 
@@ -331,6 +330,10 @@ function isroute($route, $verb=null)
 
 		if (fnmatch($item, $f3->PATH))
 			return true;
+		else if (fnmatch($item.".html", $f3->PATH))
+			return true;
+		else if (fnmatch($item.".htm", $f3->PATH))
+			return true;
 	}
 
 	return false;
@@ -341,7 +344,6 @@ function determine_path ($f3) {
 	// Get Path and make it relative to working directory
 	$path = urldecode(ltrim($f3->PATH, "/"));
 
-	// ...
 	if ($pos = strpos($path, "@"))
 		$path = substr($path, 0, $pos);
 
@@ -349,7 +351,7 @@ function determine_path ($f3) {
 
 	// If no path, find index file.
 	if ($path == "") {
-		if (is_file(getcwd()."/index.html"))
+		if (is_file($cwd."/index.html"))
 		{
 			$f3->PATH = "/index";
 			$f3->FILE = "index.html";
@@ -359,39 +361,24 @@ function determine_path ($f3) {
 			$f3->PATH = "/index";
 			$f3->FILE = "index.htm";
 		}
+
+		return;
 	}
 
-	// No extension detected
-	if (!preg_match("/\.[^\.]+$/i", $path, $ext))
+	// Check if there is an extension
+	if (!preg_match("/\.[^\.]+$/i", $path, $ext)) // no file extension
 	{
-		if (is_file($cwd."/".$path.".html"))
-		{
-			$f3->FILE = $path.".html";
-			$f3->PATH = "/".$path;
-		}
+		// do for .html 
+		if (is_file($cwd."/".$path.".html")) { $f3->FILE = $path.".html"; $f3->PATH = "/".$path; }
 
-		else if (is_file($cwd."/".$path.".htm"))
-		{
-			$f3->FILE = $path.".html";
-			$f3->PATH = "/".$path;
-		}
+		// do for .htm
+		else if (is_file($cwd."/".$path.".htm")) { $f3->FILE = $path.".html"; $f3->PATH = "/".$path; }
 	} 
-	else 
+	else // file extension found
 	{	
-		$ext = $ext[0];
-
-		if ($ext == ".html" || $ext == ".htm")
-			$path = basename($path, $ext);
-
-			if (is_file($cwd."/".$path.$ext))
-			{
-				$f3->FILE = $path.$ext;
-				$f3->PATH = "/".$path;
-			}
+		if (is_file($cwd."/".$path)) { $f3->FILE = $path; $f3->PATH = "/".$path; }
 	}
 
-	if (is_file($path))
-		$f3->FILE = $f3->PATH = "/".$path;
 }
 
 function camelCase($str, array $noStrip = [])
