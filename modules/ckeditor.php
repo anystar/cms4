@@ -292,7 +292,9 @@ class ckeditor extends prefab {
 		$f3->route('GET /admin/ckeditor/css/toolbar.css', function () { 
 			echo Template::instance()->render("/ckeditor/css/toolbar.css", "text/css"); 
 		});
-		$f3->route('GET /admin/ckeditor/js/toolbar.js', function () { echo Template::instance()->render("/ckeditor/js/toolbar.js", "text/javascript"); });
+		$f3->route('GET /admin/ckeditor/js/toolbar.js', function () { 
+			echo Template::instance()->render("/ckeditor/js/toolbar.js", "text/javascript"); 
+		});
 
 	}
 

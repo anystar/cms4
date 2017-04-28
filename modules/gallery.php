@@ -291,7 +291,7 @@ class gallery {
 			$temp_hive["gallery"] = $f3->get($this->namespace);
 			$temp_hive["BASE"] = $f3->get("BASE");
 
-			$snippet = Template::instance()->render("/gallery/gallery_snippet.html", "text/html", $temp_hive);
+			$snippet = Template::instance()->render("/gallery/gallery_snippet.html", null, $temp_hive);
 			$f3->set("{$this->namespace}.html", $snippet);
 		}
 
