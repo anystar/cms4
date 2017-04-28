@@ -9,14 +9,18 @@ class putimg extends prefab {
 		$f3->route("POST /admin/putimg/upload", function ($f3) {
 
 			// Check if current image exists
-			if (file_exists(getcwd()."/".$f3->POST["file"]))
+			if (!file_exists(getcwd()."/".$f3->POST["filename"]))
 			{
-				j("file exists");
+				echo "HUH, file does not exist??";
+				die;
 			}
 
-			// Resize and overwrite 
-			j($f3->FILES);
+			$file = $f3->POST["filename"];
+			$ext = pathinfo(getcwd()."/".$file)["extension"];
+			$size = explode("x", $f3->POST["size"]);
 
+			// Resize and overwrite 
+			$this->resize($f3->FILES["file"]["tmp_name"], $file, $size[0], $size[1], $ext);
 		});
 
 	}
