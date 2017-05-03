@@ -62,7 +62,7 @@ function getConfig (type) {
 		];
 	}
 
-	if (type == "text")
+	if (type == "text" || type == "full")
 	{
 		config.toolbarGroups = [
 			{ name: 'basicstyles', groups: [ 'undo', 'basicstyles', 'cleanup' ] },

@@ -5,7 +5,6 @@ require_once("tools/tools.php");
 ########################################
 ######## Default configuration #########
 ########################################
-
 // Merge config that may be coming from clients folder
 if (isset($settings))
 	$GLOBALS["settings"] = arrmerge(parse_ini_file("config.ini", true), $settings);
@@ -36,33 +35,37 @@ if (isroute("/cms")) {
 ## Check folder and file permissions  ##
 ########################################
 
-// Required php extentions for operation
-if (!extension_loaded("SQLite3")) {
-	echo "SQLite3 php extention not loaded!";
-	die;
+if (!cache::instance()->exists("cms_check_requirements")) {
+
+	// Required php extentions for operation
+	if (!extension_loaded("SQLite3")) {
+		echo "SQLite3 php extention not loaded!";
+		die;
+	}
+
+	// Required php extension gd for image operations
+	if (!extension_loaded("gd")) {
+		echo "GD extention not loaded!";
+		die;
+	}
+
+	// Ensure we can write to client folder
+	writable(getcwd());
+
+	// Require folders for operation
+	if (!checkdir("tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder.";exit; }
+	if (!checkdir("db/")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder.";exit; }
+
+	// Require files for operations
+	checkhtaccess(".htaccess");
+	checkfile($settings["database"]);
+	checkdeny($settings["database"]);
+
+	// If we are calling cms.php..
+	if ($f3->PATH == "/cms.php") $f3->reroute("/admin");
+
+	cache::instance()->set("cms_check_requirements", true, 5);
 }
-
-// Required php extension gd for image operations
-if (!extension_loaded("gd")) {
-	echo "GD extention not loaded!";
-	die;
-}
-
-// Ensure we can write to client folder
-writable(getcwd());
-
-// Require folders for operation
-if (!checkdir("tmp/")) { echo "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder.";exit; }
-if (!checkdir("db/")) { echo "<strong>db</strong> folder does not exist. Please create db folder in client folder.";exit; }
-
-// Require files for operations
-checkhtaccess(".htaccess");
-checkfile($settings["database"]);
-checkdeny($settings["database"]);
-
-// If we are calling cms.php..
-if ($f3->PATH == "/cms.php") $f3->reroute("/admin");
-
 
 ########################################
 ####### phpLiteAdmin redirecting #######
@@ -179,6 +182,8 @@ $f3->installed_modules = $f3->DB->exec("SELECT * FROM licenses ORDER BY `order` 
 ########################################
 ############ Load modules ##############
 ########################################
+
+$extra_modules[] = [ "namespace"=>"dropimg", "module"=>"dropimg" ];
 
 admin::instance();
 backup::instance();

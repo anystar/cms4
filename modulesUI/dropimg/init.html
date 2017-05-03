@@ -1,0 +1,32 @@
+<style>
+    .imgdropzone:hover { outline: 1px dashed #777; }
+</style>
+
+<script src="{{@SETTINGS.cdn.dropzone}}"></script>
+<script>
+    $(function() {
+
+        var imgs_for_dropzone = document.getElementsByClassName("imgdropzone");
+
+        for (var i = imgs_for_dropzone.length - 1; i >= 0; i--)
+        {
+            var id = imgs_for_dropzone[i].getAttribute("id");
+            var size = imgs_for_dropzone[i].getAttribute("data-size");
+            var filename = imgs_for_dropzone[i].getAttribute("src");
+
+            var dz = new Dropzone("#"+id, { 
+                url: "{{@BASE}}/admin/dropimg/upload",
+                params: {
+                    size: size,
+                    filename: filename
+                },
+                init: function () {
+                    this.on("complete", function (file) {
+                        this.element.src = this.element.src+"?"+new Date().getTime();
+                        
+                    });
+                }
+            });
+        }
+    });
+</script>

@@ -425,7 +425,10 @@ function time_elapsed_string($datetime, $full = false) {
     return $string ? implode(', ', $string) . ' ago' : 'just now';
 }
 
-function dt () {
+function dt ($clear = false) {
+
+	if ($clear)
+		base::instance()->clear("dtlog");
 
     $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
 
