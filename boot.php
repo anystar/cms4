@@ -20,6 +20,10 @@ $Did_F3_Load = (($f3 = include $settings["paths"]["f3"]) === false);
 
 $f3->set("DEBUG", $settings["debug"]);
 
+$f3->set("ONERROR", function ($f3) {
+	echo Template::instance()->render("admin/error.html");
+});
+
 if($Did_F3_Load) 
 	d("Fat free framework not found at ".$settings["paths"]["f3"].". Please download from http://fatfreeframework.com/");
 
@@ -113,9 +117,7 @@ else
 	$f3->set('CACHE', false);
 
 $f3->set('ESCAPE',FALSE);
-
 $f3->set("CMS", $settings["paths"]["cms"]);
-$f3->set("ACE", $settings["cdn"]["ace_editor"]);
 
 // Make database if it doesn't exist
 if (!file_exists(getcwd()."/".$settings['database'])) {
@@ -138,18 +140,6 @@ $result = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND n
 if (!$result)
 	$f3->DB->exec("CREATE TABLE 'settings' ('setting' TEXT, 'value' TEXT);");
 
-// Ensure license table exists
-$result = $f3->DB->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='licenses'");
-if (!$result)
-	$f3->DB->exec("CREATE TABLE 'licenses' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'module' TEXT, 'name' TEXT, 'namespace' TEXT, 'key' TEXT, 'order' INT)");
-else
-{
-	// Patch with order column
-	$checklicensetable =  base::instance()->DB->exec("PRAGMA table_info(licenses)");
-	$found = false;	
-	foreach ($checklicensetable as $column) if ($column["name"] == "order") $found = true;
-	if (!$found) $f3->DB->exec("ALTER TABLE 'licenses' ADD COLUMN 'order' INT");
-}
 
 ######################################################
 ########## Override settings from Database ###########

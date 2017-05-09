@@ -13,11 +13,11 @@ class dropimg extends prefab {
 			$f3->route("POST /admin/dropimg/upload", function ($f3) {
 
 				// Check if current image exists
-				if (!file_exists(getcwd()."/".$f3->POST["filename"]))
-				{
-					echo "HUH, file does not exist??";
-					die;
-				}
+				// if (!file_exists(getcwd()."/".$f3->POST["filename"]))
+				// {
+				// 	echo "HUH, file does not exist??";
+				// 	die;
+				// }
 
 				$file = $f3->POST["filename"];
 				$ext = pathinfo(getcwd()."/".$file)["extension"];

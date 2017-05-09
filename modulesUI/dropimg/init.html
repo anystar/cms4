@@ -1,5 +1,12 @@
 <style>
-    .imgdropzone:hover { outline: 1px dashed #777; }
+    .imgdropzone {
+        transition: opacity 0.1s ease-in-out 0s !important;
+    }
+
+    .imgdropzone:hover { 
+        outline: 1px dashed #777;
+        opacity: 0.3 !important;
+    }
 </style>
 
 <script src="{{@SETTINGS.cdn.dropzone}}"></script>

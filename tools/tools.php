@@ -248,6 +248,9 @@ return "Deny from all";
 
 function mime_content_type2($filename) {
 
+	if ($filename == null)
+		return;
+
 	require("mime_types.php");
 		
 	$tmp = explode('.',$filename);
