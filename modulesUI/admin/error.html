@@ -44,6 +44,8 @@
         color: #FF9550;
         font-size: 8vw;
       }
+
+      code{word-wrap:break-word;color:black}.comment,.doc_comment,.ml_comment{color:dimgray;font-style:italic}.variable{color:blueviolet}.const,.constant_encapsed_string,.class_c,.dir,.file,.func_c,.halt_compiler,.line,.method_c,.lnumber,.dnumber{color:crimson}.string,.and_equal,.boolean_and,.boolean_or,.concat_equal,.dec,.div_equal,.inc,.is_equal,.is_greater_or_equal,.is_identical,.is_not_equal,.is_not_identical,.is_smaller_or_equal,.logical_and,.logical_or,.logical_xor,.minus_equal,.mod_equal,.mul_equal,.ns_c,.ns_separator,.or_equal,.plus_equal,.sl,.sl_equal,.sr,.sr_equal,.xor_equal,.start_heredoc,.end_heredoc,.object_operator,.paamayim_nekudotayim{color:black}.abstract,.array,.array_cast,.as,.break,.case,.catch,.class,.clone,.continue,.declare,.default,.do,.echo,.else,.elseif,.empty.enddeclare,.endfor,.endforach,.endif,.endswitch,.endwhile,.eval,.exit,.extends,.final,.for,.foreach,.function,.global,.goto,.if,.implements,.include,.include_once,.instanceof,.interface,.isset,.list,.namespace,.new,.print,.private,.public,.protected,.require,.require_once,.return,.static,.switch,.throw,.try,.unset,.use,.var,.while{color:royalblue}.open_tag,.open_tag_with_echo,.close_tag{color:orange}.ini_section{color:black}.ini_key{color:royalblue}.ini_value{color:crimson}.xml_tag{color:dodgerblue}.xml_attr{color:blueviolet}.xml_data{color:red}.section{color:black}.directive{color:blue}.data{color:dimgray}
     </style>
   </head>
   <body>
@@ -53,14 +55,15 @@
           <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
         </div>
         <div class="col-9">
-          <h1>An error has occured ({{@ERROR.status}} {{@ERROR.code}} )</h1>
           
           <check if="{{@ERROR.code == 404}}">
+           <h1>{{@ERROR.status}} (404)</h1>
+
             <p>The server could not find the page {{@SCHEME.'://'.@HOST.@BASE.@PATH}}</p>
 
             <ul>
               <li>Have you typed the address correctly?</li>
-              <li>Might the page not exist anymore?</li>
+              <li>Maybe the page does not exist anymore?</li>
               <li>Contact <a href="http://webworksau.com/">Web Works</a> if you believe this page should be here.</li>  
             </ul>
             
@@ -70,7 +73,26 @@
           </check>
 
           <check if="{{@ERROR.code == 500}}">
+            <h1>Internal server error (500)</h1>
+
             <p>Please contact Web Works on 5446 3371 or email alan@webworksau.com</p>
+
+            <p style="padding-top:40px">
+              {{@ERROR.text}}
+              <br>
+              <code><pre>{{@ERROR.trace}}</pre></code>
+            </p>
+          </check>
+
+          <check if="{{@ERROR.code == 1}}">
+            <h1>Template error</h1>
+            <p>{{@ERROR.text}}</p>
+          </check>
+
+          <check if="{{@ERROR.code==0}}">
+              {{@ERROR.text}}
+              <br>
+              <code><pre>{{@ERROR.trace}}</pre></code>
           </check>
 
         </div>

@@ -44,26 +44,34 @@ class fooforms extends Prefab {
 					// We've used it, lets unset it.
 					unset($f3->POST["contactform_submit"]);
 
-					// email to send to, data, template
-					$this->send_email($settings["sendto"], $f3->POST, $settings["template"]);
+					if (isset($f3->POST["name"]))
+						$fromName = $f3->POST["name"];
+
+					if (isset($f3->POST["email"]))
+						$fromAddress = $f3->POST["email"];
+
+					// email to send to, data, template, options
+					$this->send_email($settings["sendto"], $f3->POST, $settings["template"], [
+						"fromName" => $fromName,
+						"fromAddress" => $fromAddress,
+						"sendName"=>isset($settings["sendname"]) ? $settings["sendname"] : "Business owner",
+						"subject" => isset($settings["subject"]) ? $settings["subject"] : "Website Enquiry"
+					]);
 				}
 			}
 		}
 	}
 
 
-	function send_email ($sendto, $form, $template)
+	function send_email ($sendto, $form, $template, $options)
 	{
+
+		base::instance()->error(0, "Form not ready to be submitted");
+		die;
 		$f3 = base::instance();
 		$db = $f3->get("DB");
 
-		k($template);
-
-		//$toName = setting("name");
-		//$subject = setting("subject");
-
 		//$fromAddress = $f3->get("fromAddress");
-
 
  		// if ($f3->exists("fromAddress"))
 	 	// 	$fromName = $f3->get("fromName");
@@ -72,17 +80,17 @@ class fooforms extends Prefab {
 
 		$smtp = new SMTP($this->smtp_server, $this->port, "", "", "");
 
-		$smtp->set('To', '"'.$toName.'" <'.$toAddress.'>');
-		$smtp->set('From', '"'.$fromName.'" <admin@webworksau.com>');
-		$smtp->set('Reply-To', '"'.$fromName.'" <'.$fromAddress.'>');
-		$smtp->set('Subject', $subject);
+		$smtp->set('To', '"'.$options["sendName"].'" <'.$sendto.'>');
+		$smtp->set('From', '"'.$options["fromName"].'" <admin@webworksau.com>');
+		$smtp->set('Reply-To', '"'.$options["fromName"].'" <'.$options["fromAddress"].'>');
+		$smtp->set('Subject', $options["subject"]);
 		$smtp->set('Content-Type', 'text/html');
-
 
 		// if (file_exists(getcwd()."/".$this->email_template))
 
 		// 	// Use custom email template from client directory
-		// 	$body = Template::instance()->render($this->email_template);
+		$body = Template::instance()->render($template, "text/html", $form);
+
 		// else
 		// {
 		// 	// Temp hive to generate a html snippet
@@ -99,7 +107,7 @@ class fooforms extends Prefab {
 
 		// $f3->DB->exec("INSERT INTO `{$this->namespace}_archived` (contents, `date`) VALUES (?, ?)", [json_encode($contents), time()]);
 
-		$smtp->send("this is a test email.");
+		$smtp->send($body);
 
 		return true;
 	}
@@ -129,28 +137,55 @@ class contactforma extends TagHandler {
 	{
 		$f3 = base::instance();
 
+		$documentation = '<h5 style="padding-top:20px">Example:</h5>
+					<p>'.$f3->highlight('<contactform sendto="joe@example.com" sendname="Joe Smith" template="email_template" src="/contact.html" success="success_page.html">').'</p>
+					<ul style="font-size:15px">
+						<li>sendto:<p>Email address to submit the form to.</p></li>
+						<li>template:<p>html file which is used to send. Located in client directory.</p></li>
+						<li>src:<p>Address to submit too. Use src="*" to post to any page. This provides the ability for contact form to be placed on many pages.</p></li>
+						<li>success: <p>Page to redirect to on success.</p></li>
+						<li>subject: <p>Subject line of email. Default: Website Enquiry</p></li>
+						<li>sendname: <p>Website owners name. Default: Business owner</p></li>
+					</ul>
+				';
+
+		if ($attr == null)
+			$f3->error(1,'&lt;contactform&gt; has no attributes.'.$documentation);
+
 		// Register contact form module
 		if (array_key_exists("id", $attr))
 			$id = $attr["id"];
 		else
 			$id = 0;
 
-
 		if (array_key_exists("src", $attr))
 			$settings["postPath"] = $attr["src"];
+		else
+			$f3->error(1, "No post path provided! Please add src='/contact.html' to &lt;contactform&gt; tag.".$documentation);
+
+		if (array_key_exists("template", $attr))
+		{ $settings["template"] = $attr["template"]; unset($attr["template"]); }
+		else
+			$f3->error(1, "No email template provided! Please add template='email_template.html' to &lt;contactform&gt; tag".$documentation);
 
 		// Always post to the same page the form is located on.
 		$attr["src"] = $f3->SCHEME."://".$f3->HOST.$f3->URI;
 
-		if (array_key_exists("sendto", $attr))
+		if (array_key_exists("success", $attr))
 			{ $settings["successPage"] = $attr["success"]; unset($attr["success"]); }
 		else
-			{ $settings["successPage"] = "?success=true"; }
+			$f3->error(1, "No success redirect page provided. Please add succes='/success_page.html' to &lt;contactform&gt; tag".$documentation);
 
 		if (array_key_exists("sendto", $attr))
 			{ $settings["sendto"] = $attr["sendto"]; unset($attr["sendto"]); }
 		else
-			{ $settings["sendto"] = $f3->$SETTINGS["smtp"]["sendto"]; }
+			$f3->error(1, "No email address provided! Please add sendto='joe@example.com' to &lt;contactform&gt; tag".$documentation);
+
+		if (array_key_exists("subject", $attr))
+			{ $settings["subject"] = $attr["subject"]; unset($attr["subject"]); }
+
+		if (array_key_exists("sendname", $attr))
+			{ $settings["sendname"] = $attr["sendname"]; unset($attr["sendname"]); }
 
 		$content = $this->tmpl->build($content);
 
