@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<title>Web Works CMS</title>
+
+		<!-- Bootstrap -->
+		<link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
+		<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
+		<link href="{{@banner.stylesheet}}" rel="stylesheet">
+		<link href="{{ @CDN }}/dropzone/dropzone.min.css" rel="stylesheet">
+		<link href="{{ @BASE }}/{{@namespace}}/slider.css" rel="stylesheet">
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<style>
+			.images-table {
+				margin-top: 20px;
+			}
+			
+			.banner_images td {
+				width: 400px;
+				vertical-align: middle !important;
+			}
+
+			.banner_images img {
+				max-width: 400px;
+			}
+
+			.dropzone {
+				margin: 30px;
+				border: 2px dashed #777;
+			}
+
+			.dropzone .dz-message {
+				font-weight: bold;
+				font-size: 20px;
+			}
+
+			.admin_banner_display {
+				margin: 0 auto;
+			}
+
+			.admin_banner_display #message {
+				font-size: 20px;
+				font-weight: bold;
+				text-align: center;
+				height: 100%;
+				width: 100%;
+				border: 2px dotted #777;
+				background-color: #ccc;
+				-webkit-border-radius: 8px;
+				-moz-border-radius: 8px;
+				border-radius: 8px;
+			}
+
+			.orderbuttons {
+				width: 10%;
+			}
+
+			.image_upload_settings {
+			  margin-top: 20px; 
+			  width: 100%;
+			}
+			.image_upload_settings .form-group {
+			  display: block;
+			  margin-top: 5px; }
+			.image_upload_settings .form-control {
+			  width: 80px; }
+			.image_upload_settings label {
+			  width: 150px; }
+			.image_upload_settings button {
+			  width: 100%;
+			  margin: 20px 0;
+			  font-weight: bold; }
+			
+			.orderbuttons .up {
+				margin-bottom:2px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<h1><img src="{{ @CDN }}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
+
+		<div class="nav top_nav">
+			<include href="/admin/navigation.html" with="{{nav_active_banners=active}}"  />
+		</div>
+			
+		<div class="container">
+			<include href="admin/toolbar.html">
+
+			<div class="row">
+				<check if="{{@webmaster}}">
+					<true><set colwidth="col-xs-12 col-md-12"></true>
+					<false><set colwidth="col-md-12"></false>
+				</check>
+
+				<div class="{{@colwidth}}">	
+					<div class="box">
+						<h2>Banner images</h2>
+						
+						<check if="{{@banner.images}}">
+						<table class="images-table table table-bordered">
+							<thead>
+								<th width="10%">Order</th>
+								<th>Image</th>
+								<th width="10%">Tools</th>
+							</thead>
+							
+							<tbody>					
+								<repeat group="{{@banner.images}}" value="{{@image}}">
+								<tr class="banner_images">
+									<td align="center" class="orderbuttons">
+										<button class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
+										<button class="down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+									</td>
+									<td width="100%"><a target="_blank" href="{{@BASE}}/{{@image.url}}"><img title="{{@image.filename}}" class="bannerimage" width="100%" src="{{@BASE}}/{{@image.url}}" /></a></td>
+									<td align="center" class="tools">
+										<a class="delete_image" href="{{@BASE}}/admin/{{@namespace}}/delete/{{@image.filename}}"><button>Delete</button></a>
+									</td>
+								</tr>
+								</repeat>
+							</tbody>
+						</table>
+						</check>
+
+						<form method="post" action="{{@BASE}}/admin/{{@namespace}}/dropzone" class="dropzone" id="dropzone">
+						  <div class="dz-message">
+							<div>Drop photos (or click) to add banner images.</div>
+			 				<div>Max file size: {{@max_upload_size}}</div>
+						  </div>
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<include href="admin/_needhelp.html">		
+
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="{{ @CDN }}/dropzone/dropzone.min.js"></script>
+		<script src="{{ @CDN }}/bootstrap/bootstrap.min.js"></script>
+		<script src="{{@banner.javascript}}"></script>
+
+	<script>
+		$(function() {
+			$(".delete_image").click(function (d) {
+				
+				$.ajax(d.currentTarget.href);
+				
+				var msg = $("<div id='message'>Please refresh page to update banner system</div>");
+				msg.css("height", $(".admin_banner_display").height());
+
+				$(".admin_banner_display").html(msg);
+				$(this).parent().parent().remove();
+
+				return false;
+			});
+
+			$(".up,.down").click(function() {
+				var row = $(this).parents("tr:first");
+
+				if ($(this).is(".up")) {
+					row.insertBefore(row.prev());
+				} else {
+					row.insertAfter(row.next());
+				}
+
+				var order = [];
+				$(".bannerimage").each(function () {
+					order.push($(this).attr("title"));
+				});
+				
+				var msg = $("<div id='message'>Please refresh page to update banner system</div>");
+				msg.css("height", $(".admin_banner_display").height());
+
+				$(".admin_banner_display").html(msg);
+
+				$.ajax({
+					method: "POST",
+					url: "{{@BASE}}/admin/{{@namespace}}/update_order",
+					data: { "banners_order": JSON.stringify(order) }
+				});
+			});
+		});
+
+	  Dropzone.autoDiscover = false;
+	  Dropzone.options.dropzone = {
+			init: function() {
+				this.on("queuecomplete", function(file) { 
+					location.reload();  
+				});
+			}
+	  };
+
+	  new Dropzone("#dropzone");
+
+		{{@banner.init}}
+	</script>
+	{{@debug}}
+	</body>
+</html>

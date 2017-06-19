@@ -1,0 +1,70 @@
+
+<div class="col-xs-12">
+	<div class="box">
+		<h2></h2>
+
+		<table class="table table-striped">
+			<thead>
+				<th></th>
+				<th>Menu Item</th>
+				<th style="text-align:right;">Price</th>
+				<th style="text-align:center;">Actions</th>
+			</thead>
+			<tbody class="sortable">
+				<repeat group="{{@data}}" value="{{@row}}">
+				<tr valign="middle" data-id="{{@row.id}}" style="<check if="{{@row.hidden}}">opacity:0.5;</check>">
+					<td class="handle">
+						<span class="ui-sortable-handle">
+							<i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i>
+						</span>
+					</td>
+					<td>
+						<check if="{{!@row.isTitle}}">
+							<true>
+								{{@row.name}} <check if="{{@row.note}}">({{@row.note}})</check>
+							</true>
+							<false>
+								<div style="font-size:16px;font-weight:bold;">{{@row.name}}</div>
+							</false>
+						</check>
+						<check if="{{!@row.isTitle}}">
+						<br>
+						<span style="color: #999;">{{@row.description}}</span>
+						</check>
+					</td>
+					<td style="width:200px;text-align:right;"><check if="{{!@row.isTitle}}">{{@row.price}}</check></td>
+					<td style="text-align: center;" width="200">
+						<a href="{{@BASE}}/admin/{{@namespace}}/update?data_id={{@row.id}}#updateform">Update</a> -
+						<check if="{{@row.hidden}}">
+							<true><a href="{{@BASE}}/admin/{{@namespace}}/toggle?data_id={{@row.id}}">Show</a> -</true>
+							<false><a href="{{@BASE}}/admin/{{@namespace}}/toggle?data_id={{@row.id}}">Hide</a> -</false>
+						</check>
+						<a onclick="return confirm('Delete: Are you sure?');" class="delete" href="{{@BASE}}/admin/{{@namespace}}/delete?data_id={{@row.id}}">Delete</a>
+					</td>
+				</tr>
+				</repeat>
+			</tbody>
+		</table>
+		<form id="updateform" class="form-inline" method="post" action="{{@BASE}}/admin/{{@namespace}}/addupdate#form">
+		<table id="form" class="table" width="100%">
+		<tr>
+			<td>
+				<input required name="name" value="{{@values.name}}" type="text" class="form-control" placeholder="item name"> (<input style="width: 100px;" name="note" value="{{@values.note}}" type="text" class="form-control input-sm" placeholder="ex: GF, V">)
+				 Sub-Title: <input style="background-color: red;" type="checkbox" name="isTitle" <check if="{{@values.isTitle}}">checked</check>>
+				<br>
+				<textarea style="width:100%;margin-top:10px;" name="description" class="form-control" rows="3" placeholder="description">{{@values.description}}</textarea>
+			</td>
+			<td style="vertical-align: top !important;text-align:right;width: 150px;"><input style="width: 150px;" name="price" value="{{@values.price}}" type="text" class="form-control" placeholder="price"></td>
+			<td style="vertical-align: top !important;text-align:right;width: 150px;">
+				<input type="hidden" name="data_id" value="{{@values.id}}">
+				<button type="submit">{{@action}}</button>
+
+				<check if="{{@action == 'Update'}}">
+					<a href="{{@BASE}}/admin/{{@namespace}}/">Cancel</a>
+				</check>
+			</td>
+		</tr>
+		</table>
+		</form>
+	</div>
+</div>

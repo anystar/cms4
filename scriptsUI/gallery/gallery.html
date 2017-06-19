@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>Editting {{@label}}</title>
+
+	<!-- Bootstrap -->
+	<link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
+	<link href="{{ @CDN }}/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
+	<link href="{{ @CDN }}/lity/dist/lity.min.css" rel="stylesheet">
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+	<style>
+		.dropzone {
+			margin: 30px;
+			border: 2px dashed #777;
+		}
+
+		.orderbuttons {
+			width: 10%;
+		}
+
+		.orderbuttons .up {
+			margin-bottom:2px;
+		}
+
+
+
+		.dropzone {
+		  margin: 30px;
+		  border: 2px dashed #020202; }
+
+		.dropzone .dz-message {
+		  font-weight: bold;
+		  font-size: 20px; }
+
+		.image_upload_settings {
+		  margin-top: 20px; }
+		.image_upload_settings .form-group {
+		  display: block;
+		  margin-top: 5px; }
+		.image_upload_settings .form-control {
+		  width: 80px; }
+		.image_upload_settings label {
+		  width: 150px; }
+		.image_upload_settings button {
+		  width: 100%;
+		  margin: 20px 0;
+		  font-weight: bold; }
+
+	</style>
+  </head>
+  <body>
+
+	<div class="container">
+
+		<div class="row">
+
+				<div class="col-xs-12">	
+					<h2>{{@label}}</h2>
+
+					<check if="{{@gallery}}">
+					  <true>
+							<table class="table table-condensed">
+								<tr>
+									<td width="10%">Order</td>
+									<td style="width:{{@image.thumb-size[0]}}px;">Thumb</td>
+									<td>File name</td>
+									<td style="text-align:center;width:150px;">Tools</td>
+								</tr>
+								
+								<repeat group="{{@gallery}}" value="{{@image}}">
+								<tr class="galleryimage" data-image-id="{{@image.filename}}">
+									<td align="center" class="orderbuttons">
+										<button class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
+										<button class="down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+									</td>
+									<td style="width:{{@image.thumb-size[0]}}px;">
+										<img data-lity data-lity-target="{{@image.url}}" width="{{@image.thumb[0]}}" height="{{@image.thumb[1]}}" src="{{@image.thumb}}" />
+									</td>
+									<td class="filename">
+										
+										<input data-filename="{{@image.filename}}" placeholder="File name required" class="form-control caption_save" name="filename" type="text" value="{{@image.filename}}">
+										<check if="{{@enable_captions}}"><input data-filename="{{@image.filename}}" placeholder="Type short caption here" class="form-control caption_save" name="caption" type="text" value="{{@image.caption}}"></check>
+										<check if="{{@enable_tags}}"><input data-filename="{{@image.filename}}" placeholder="Tag" class="form-control tags_save" name="tag" type="text" value="{{@image.tags}}"></check>
+									</td>
+									<td align="center">
+										<a class="delete_image" href="{{@BASE}}/admin/{{@name}}/delete?image={{@image.filename}}"><button>Delete</button></a>
+									</td>
+								</tr>
+								</repeat>
+							</table>
+
+					        <form method="post" action="{{@BASE}}/admin/{{@name}}/dropzone" class="dropzone" id="gallerydropzone">
+					          <div class="dz-message">
+
+					                <div>Drop more photos here.</div>
+					                <div>Max file size: {{@max_upload_size}}</div>
+
+					          </div>
+					        </form>
+					  </true>
+					</check>
+
+					<check if="{{@gallery}}">
+					  <false>
+						<form method="post" action="{{@BASE}}/admin/{{@name}}/dropzone" class="dropzone" id="gallerydropzone">
+						  <div class="dz-message">
+							<div>Drop photos (or click) to create first gallery.</div>
+							<div>Max file size: {{@max_upload_size}}</div>
+						  </div>
+						</form>
+					  </false>
+					</check>
+				</div>
+			</div>
+	</div>
+
+	<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
+	<script src="{{ @CDN }}/dropzone/dist/min/dropzone.min.js"></script>
+	<script src="{{ @CDN }}/lity/dist/lity.min.js"></script>
+
+	<script>
+		$(function() {
+			$(".delete_image").click(function (d) {
+				$.ajax(d.currentTarget.href);
+				$(this).parent().parent().remove();
+				
+				return false;
+			});
+
+			$(".caption_save").on("blur", function (e) {
+		
+				$.post("{{@BASE}}/admin/{{@name}}/update-caption", {
+					caption : $(e.currentTarget).val(), filename : $(e.currentTarget).attr("data-filename")
+				});
+			});
+
+			$(".tags_save").on("blur", function (e) {
+		
+				$.post("{{@BASE}}/admin/{{@name}}/update-tags", {
+					tags : $(e.currentTarget).val(), filename : $(e.currentTarget).attr("data-filename")
+				});
+			});
+
+			$(".up,.down").click(function() {
+				var row = $(this).parents("tr:first");
+
+				if ($(this).is(".up")) {
+					row.insertBefore(row.prev());
+				} else {
+					row.insertAfter(row.next());
+				}
+
+				var order = [];
+				$(".galleryimage").each(function () {
+					order.push($(this).attr("data-image-id"));
+				});
+		
+				$.ajax({
+					method: "POST",
+					url: "{{@BASE}}/admin/{{@name}}/update_order",
+					data: { "gallery_order": JSON.stringify(order) }
+				});
+			});
+		});
+
+	  Dropzone.autoDiscover = false;
+	  Dropzone.options.gallerydropzone = {
+		init: function() {
+		  this.on("queuecomplete", function(file) { location.reload();  });
+		}
+	  };
+
+	  new Dropzone("#gallerydropzone");
+	</script>
+
+    <toolbar />
+
+  </body>
+</html>

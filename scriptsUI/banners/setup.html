@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Web Works CMS</title>
+	
+	    <link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
+	    <link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
+
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<h1><img src="{{ @CDN }}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
+
+		<div class="nav top_nav">
+			<include href="/admin/navigation.html" />
+		</div>
+	
+		<div class="container">
+			<include href="admin/toolbar.html">
+
+			<div class="col-md-6 col-md-offset-3 col-xs-12">
+				<div class="box">
+					<h2>Setup {{@namespace}}</h2>
+
+					<form method="POST" action="{{@BASE}}/admin/{{@namespace}}/setup">
+						<div class="form-group <check if='{{!@banner.routes}}'>has-error</check>">
+							<label>URL routes to load on</label>
+							<input name="routes" value="{{@banner.routes}}" type="text" class="form-control" placeholder="eg: /example">
+							<p class="help-block">Seperate by comma, terminator, or pipe to add multiple routes. Use * as wildcard</p>
+						</div>
+
+						<div class="form-group <check if='{{!@banner.directory}}'>has-error</check>">
+							<label>Image directory</label>
+							
+							<check if="{{@banner.directory}}">
+								<true><input name="directory" value="{{@banner.directory}}" type="text" class="form-control" placeholder="relative path"></true>
+								<false><input name="directory" type="text" class="form-control" placeholder="assets/{{@namespace}}/"></false>
+							</check>
+							<p class="help-block">Location where to save uploaded images</p>
+						</div>
+
+						<div class="form-group <check if="{{!@banner.filetype}}">has-error</check>">
+							<label>File type</label>
+							<select name="filetype" class="form-control">
+								<option>Choose a file type</option>
+								<option value="jpg" <check if="{{@banner.filetype=='jpg'}}">selected</check>>jpg</option>
+								<option value="png" <check if="{{@banner.filetype=='png'}}">selected</check>>png</option>
+								<option value="gif" <check if="{{@banner.filetype=='gif'}}">selected</check>>gif</option>
+							</select>
+							<p class="help-block">File type of saved images.</p>
+						</div>
+
+						<div class="form-group">
+							<label>Banner dimensions (for upload resizing)</label>
+							
+							<input value="{{@banner.dimensions}}" name="dimensions" type="text" class="form-control" placeholder="1000x400">
+							<p class="help-block">ignores aspect ratio. (shrinks and then crops from center)</p>
+						</div>
+
+						<button class="button-fullwidth" type="submit">Save setup</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<include href="admin/_needhelp.html">
+		
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			var editor = ace.edit("editor");
+			var textarea = $('textarea[name="javascript_init"]');
+			editor.setValue(textarea.val(), -1);
+
+			editor.getSession().on("change", function () {
+			    textarea.val(editor.getSession().getValue());
+			});
+
+			editor.getSession().setMode("ace/mode/javascript");
+			editor.setTheme("ace/theme/chrome");
+			editor.setOptions({
+			    showGutter: true,
+			    vScrollBarAlwaysVisible: false,
+			    printMargin: false,
+			    fontSize: 14,
+			    minLines: 12,
+			    maxLines: 1000
+			});
+			editor.container.style.lineHeight = 1.4;
+			editor.renderer.updateFontSize()
+
+			var editor2 = ace.edit("editor2");
+			var textarea2 = $('textarea[name="template_code"]');
+			editor2.setValue(textarea2.val(), -1);
+			editor2.getSession().on("change", function () {
+			    textarea2.val(editor2.getSession().getValue());
+			});
+
+			editor2.getSession().setMode("ace/mode/html");
+			editor2.setTheme("ace/theme/chrome");
+			editor2.setOptions({
+			    showGutter: true,
+			    vScrollBarAlwaysVisible: false,
+			    printMargin: false,
+			    fontSize: 14,
+			    minLines: 12,
+			    maxLines: 1000
+			});
+
+			editor2.container.style.lineHeight = 1.4;
+			editor2.renderer.updateFontSize()
+		</script>
+
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="{{ @CDN }}/bootstrap/bootstrap.min.js"></script>
+	</body>
+</html>

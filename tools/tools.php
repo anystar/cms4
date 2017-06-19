@@ -1,79 +1,22 @@
 <?php
 
-class setting_config {
-	static $namespace = "";
-}
+function check ($type, $cond, ...$messages) {
 
-function setting_use_namespace($namespace)
-{
-	setting_config::$namespace = $namespace."_";
-}
-
-function setting_clear_namespace()
-{
-	setting_config::$namespace = "";
-}
-
-function setting($name, $value=null, $overwrite=true) {
-	$db = base::instance()->DB;
-
-	// Ensure settings table exists
-	$result = $db->exec("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'");
-	if (!$result) return false; // There is no settings table..
-
-	// We only want the setting
-	if ($value === null)
+	if (!is_bool($cond))
+		$cond = (!isset($cond) || $cond == "");
+	
+	if ($cond)
 	{
-		if ($v = base::instance()->get("SETTINGS.".setting_config::$namespace.$name))
-			return $v;
-
-		if ($name=="*" && setting_config::$namespace)
-		{	
-			$result = $db->exec("SELECT setting, value FROM settings WHERE setting LIKE ?", [setting_config::$namespace."%"]);
-			foreach ($result as $x)
-				$compiled[ str_replace(setting_config::$namespace, "", $x["setting"]) ] = $x["value"];
-			return $compiled;
-		}
-		else
-			return $db->exec("SELECT value FROM settings WHERE setting=?", setting_config::$namespace.$name)[0]["value"];
-	}
-	else
-	{
-		if ($overwrite)
-			set_setting(setting_config::$namespace.$name, $value);
-		else
+		foreach ($messages as $m) 
 		{
-			$result = $db->exec("SELECT value FROM settings WHERE setting=?", $name)[0]["value"];
-
-			if (!$result)
-				set_setting(setting_config::$namespace.$name, $value);
+			if (is_string($m))
+				$output .= "<p>".markdown::instance()->convert($m)."</p>";
+			if (is_array($m))
+				$output .= "<pre><code>".base::instance()->highlight(json_encode($m, JSON_PRETTY_PRINT))."</code></pre>";
 		}
-	}
-}
-
-function setting_json($name, $value=null) {
-
-	if (!$value)
-	{
-		$result = setting($name);
-		return json_decode($result, true);
-	}
-	else
-	{	
-		$value = json_encode($value);
-		set_setting($name, $value);
+		base::instance()->error($type, $output);
 	}
 
-}
-
-function set_setting($name, $value) {
-
-	$result = base::instance()->DB->exec("SELECT setting FROM settings WHERE setting=?", $name);
-
-	if ($result)
-		base::instance()->DB->exec("UPDATE settings SET value=? WHERE setting=?", [$value, $name]);
-	else
-		base::instance()->DB->exec("INSERT INTO settings VALUES (?, ?)", [$name, $value]);
 }
 
 function d ($x=null) {
@@ -105,7 +48,7 @@ function d ($x=null) {
         }
         echo "<br><br><hr><br><br>";
 
-        if (class_exists("f3")) f3::instance()->error(0); 
+        if (class_exists("f3")) base::instance()->error(0); 
         exit;
 }
 
@@ -121,17 +64,39 @@ function j ($data) {
 }
 
 
-function k ($x)
+function k ($x, $return = false)
 {
-	if (!isset($GLOBALS["settings"]["paths"]["krumo"]))
+	if (!isset($GLOBALS["krumo"]))
+	{
+		if (class_exists("base"))
+			base::instance()->error(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+		else
+			die('Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+	}
+
+	if (!is_file($GLOBALS["krumo"]))
+	{
+		if (class_exists("base"))
+			base::instance()->error(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+		else
+			die('Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+	}
+
+
+	require_once $GLOBALS["krumo"];
+
+	if (class_exists("base"))
+	{
+		if ($return)
+			krumo($x, KRUMO_RETURN);
+		else
+			base::instance()->error(0, krumo($x, KRUMO_RETURN));
+	}
+	else
 		d($x);
 
-	require_once $GLOBALS["settings"]["paths"]["krumo"];
-
-	krumo($x);
-
     if (class_exists("f3")) 
-   		f3::instance()->error(0);
+   		base::instance()->error(0);
 }
 
 
@@ -139,14 +104,9 @@ function k ($x)
 function writable($path) {
 
 	// Step 0: is even something
-	if (strlen($path)  == 0) {
-		d("No path given");
-		exit;
-	}
+	if (strlen($path)  == 0) base::instance()->error(0, "no path given");
 
 	// Step 1: Lets make sure the directory owner and server own is the same
-
-
 	if (function_exists('posix_getpwuid'))
 	{
 		// For linux
@@ -162,35 +122,32 @@ function writable($path) {
 
 	if ($serverUser != $directoryUser)
 	{
-		echo "Warning!";
-		echo "<br><br>";
-		echo "The webserver is running as a different user than the current folder we are in.";
-		echo "<br><br>";
-		echo "Current Directory: ".$folder;
-		echo "<br><br>";
-		echo "Directory is owned by: ".$directoryUser;
-		echo "<br><br>";
-		echo "While we are trying to create files and folders as: " . $serverUser;;
-		echo "<br><br>";
-		die;
+		base::instance()->error(0, "Warning!".
+		"<br><br>".
+		"The webserver is running as a different user than the current folder we are in.".
+		"<br><br>".
+		"Current Directory: ".$folder.
+		"<br><br>".
+		"Directory is owned by: ".$directoryUser.
+		"<br><br>".
+		"While we are trying to create files and folders as: " . $serverUser.
+		"<br><br>");
 	}
 
 	// Step 2: What does php respond with?
-	if (!file_exists($path)) {
+	if (!file_exists($path))
 		touch($path);
-	}
 
-	if (!is_writable($path)) {
-		echo "PHP is reporting that ".$path." is not writable.";
-		echo "Unfourtantly we cannot say why, sorry.";
-		exit;
-	}
+	if (!is_writable($path))
+		base::instance()->error(0, "PHP is reporting that ".$path." is not writable. Unfourtantly we cannot say why, sorry.");
 
 	return true;
 }
 
 function checkdir($path) {
 	
+	if ($path=="") return false;
+
 	if (file_exists($path))
 	{
 		writable($path);
@@ -312,6 +269,8 @@ function isroute($route, $verb=null)
 	if ($route == null)
 		return;
 
+	determine_path();
+
 	$f3 = base::instance();
 
 	if ($verb!=null)
@@ -342,7 +301,10 @@ function isroute($route, $verb=null)
 	return false;
 }
 
-function determine_path ($f3) {
+function determine_path () {
+	$f3 = base::instance();
+
+	if ($GLOBALS["path_determined"]) return;
 
 	// Get Path and make it relative to working directory
 	$path = urldecode(ltrim($f3->PATH, "/"));
@@ -364,7 +326,8 @@ function determine_path ($f3) {
 			$f3->PATH = "/index";
 			$f3->FILE = "index.htm";
 		}
-
+		
+		$GLOBALS["path_determined"] = true;
 		return;
 	}
 
@@ -382,6 +345,9 @@ function determine_path ($f3) {
 		if (is_file($cwd."/".$path)) { $f3->FILE = $path; $f3->PATH = "/".$path; }
 	}
 
+	$f3->PATH = rtrim($f3->PATH, "/");
+
+	$GLOBALS["path_determined"] = true;
 }
 
 function camelCase($str, array $noStrip = [])
