@@ -8,6 +8,14 @@ body {
     margin-bottom: 55px;
 }
 
+#webworkscms_admintoolbar #webworks_phonenumber {
+  color: #fff;
+  font-weight:bold;
+  font-size: 32px;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 1px rgba(0, 0, 0, 1);
+}
+
 #webworkscms_admintoolbar {
     display: table;
     table-layout: fixed;
@@ -52,7 +60,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e66db3f2', e
 }
 
 #webworkscms_admintoolbar #left_div {
-    text-align: left;
+    text-align: center;
     width: 300px;
 }
 
@@ -199,10 +207,20 @@ cmsjQuery(function() {
 	var right_div = cmsjQuery('<div>').attr('id', 'right_div');
 	main_div.append(right_div);
 
-  left_div.append(cmsjQuery('<img src="{{ @CDN }}/admin/imgs/logo_toolbar.png" height="100%">'));
+  left_div.append(cmsjQuery('<img id="webworks_logo" src="{{ @CDN }}/admin/imgs/logo_toolbar.png" height="100%">'));
+  left_div.append(cmsjQuery('<span id="webworks_phonenumber">(03) 5446 3371</span>').hide());  
 
   right_div.append(cmsjQuery('<a href="{{@BASE}}/admin/logout?previous={{@BASE}}/{{@PATH}}" class="button">Logout</a>'));
 
+  left_div.mouseover(function (evt) {
+    $("#webworks_logo").hide();
+    $("#webworks_phonenumber").show();
+  });
+
+  left_div.mouseout(function (evt) {
+    $("#webworks_logo").show();
+    $("#webworks_phonenumber").hide();
+  });
 
   var mouseX = 0;
   var mouseY = 0;

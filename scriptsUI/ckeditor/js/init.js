@@ -68,7 +68,7 @@ function getConfig (type) {
 			{ name: 'basicstyles', groups: [ 'undo', 'basicstyles', 'cleanup' ] },
 			{ name: 'links', groups: [ 'links' ] },
 			{ name: 'insert', groups: [ 'insert' ] },
-			{ name: 'paragraph', groups: [ 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+			{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
 			{ name: 'editing', groups: [ 'find', 'selection', 'editing', 'others', 'tools' ] },
 			'/',
 			{ name: 'styles', groups: [ 'styles' ] },

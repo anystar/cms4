@@ -8,8 +8,8 @@
 		<title>Web Works CMS</title>
 	
 		<link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
-		<link href="{{ @CDN }}/admin/css/jqueryUI.min.css" rel="stylesheet">
-		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+		<link href="{{ @CDN }}/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+		<link href="{{ @CDN }}/fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
 		
 		<style>
@@ -50,18 +50,12 @@
 		<![endif]-->
 	</head>
 	<body>
-		<h1><img src="{{ @CDN }}/admin/imgs/logo.png" alt="Web Works CMS Login"></h1>
-
-		<div class="nav top_nav">
-			<include href="/admin/navigation.html" />
-		</div>
 	
 		<div class="container">
-			<include href="admin/toolbar.html">
 			
 			<div class="row">
 
-				<include href="{{'/repeat/'.@snippet}}">
+				<include href="{{'/repeat/'.@template}}">				
 
 			</div>
 
@@ -71,7 +65,7 @@
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
-		<script src="{{ @CDN }}/admin/js/jqueryUI.min.js"></script>
+		<script src="{{ @CDN }}/jquery-ui/jquery-ui.min.js"></script>
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="{{ @CDN }}/bootstrap/bootstrap.min.js"></script>
 
@@ -92,7 +86,7 @@
 
 					$.ajax({
 						method: "POST",
-						url: "{{@BASE}}/admin/{{@namespace}}/reorder",
+						url: "{{@BASE}}/admin/{{@name}}/reorder",
 						data: { "order": JSON.stringify(order) }
 					});
 				}
