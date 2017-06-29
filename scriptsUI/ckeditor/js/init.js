@@ -76,7 +76,7 @@ function getConfig (type) {
 			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
 		];
 
-		config.removePlugins += ",liststyle,tabletools,scayt,menubutton,contextmenu";
+		config.removePlugins += ",liststyle,scayt";
 		config.disableNativeSpellChecker = false;
 	}
 

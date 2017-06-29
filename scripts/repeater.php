@@ -3,7 +3,7 @@
 class repeater {
 
 	private $name;
-	public $data;
+	public $jig;
 
 	function __construct($settings) {
 
@@ -29,7 +29,9 @@ class repeater {
 
 		$jig = new \DB\Jig (getcwd()."/.cms/repeaters/", \DB\Jig::FORMAT_JSON );
 
-		$this->data = new \DB\Jig\Mapper($jig, $settings["name"]);
+		$this->jig = new \DB\Jig\Mapper($jig, $settings["name"]);
+
+		$this->data = $this->jig->find();
 
 		$this->name = $settings["name"];
 		$this->settings = $settings;
@@ -38,8 +40,6 @@ class repeater {
 		if (admin::$signed)
 			$this->admin_routes(base::instance());
 
-
-		// $this->routes(base::instance());
 	}
 
 
@@ -51,128 +51,97 @@ class repeater {
 
 			$f3->action = "Create";
 
-			// if (isroute('/admin/'.$this->name.'/update'))
-			// {
-			// 	$row = $f3->DB->exec("SELECT * FROM {$this->name} WHERE id=? ORDER BY rowOrder", $f3->GET["data_id"]);
+			if (isroute('/admin/'.$this->name.'/update'))
+			{
 
-			// 	if (count($row) > 0)
-			// 	{	
-			// 		$row = $row[0];
+				$this->jig->load(["@_id=?", $f3->GET["data_id"]]);
 
-			// 		$temp = json_decode($row["data"], true);
+				if (!$this->jig->dry())
+				{	
+					$f3->values = $this->jig->cast();
 
-			// 		foreach ($temp as $t)
-			// 			$temp[] = $t;
-
-			// 		$temp["id"] = $row["id"];
-
-			// 		$f3->values = $temp;
-
-			// 		$f3->action = "Update";
-			// 	}
-			// }
-
+					$f3->action = "Update";
+					$this->jig->reset();
+				}
+			}
 			
 			$f3->name = $this->name;
-			$f3->data = $this->data->find();
+			$f3->data = $this->jig->find();
 			echo Template::instance()->render("/repeat/repeat.html");
 		});
 
 		$f3->route('POST /admin/'.$this->name.'/addupdate', function ($f3) {
 
-
 			// Upload any files
-			if ($image_directory = setting($this->name . "_image_directory")) {
+			// if ($image_directory = setting($this->name . "_image_directory")) {
 
-				checkdir(getcwd()."/".$image_directory);
+			// 	checkdir(getcwd()."/".$image_directory);
 
-				$imagesize = [0,0];
-				$imagesize = setting($this->name . "_image_size");
+			// 	$imagesize = [0,0];
+			// 	$imagesize = setting($this->name . "_image_size");
 
-				if (strlen($imagesize) > 0)
-					$imagesize = explode("x", $imagesize);
+			// 	if (strlen($imagesize) > 0)
+			// 		$imagesize = explode("x", $imagesize);
 
-				foreach ($f3->FILES as $key => $file)
-				{
-					if (!$file["tmp_name"])
-						continue;
+			// 	foreach ($f3->FILES as $key => $file)
+			// 	{
+			// 		if (!$file["tmp_name"])
+			// 			continue;
 
-					if ($imagesize[0] > 0 && $imagesize[1] > 0)
-					{
-						$this->resize_image ($file["tmp_name"], $imagesize[0], $imagesize[1], getcwd()."/".$image_directory."/".$file["name"]);
-					}
-					else
-						move_uploaded_file($file["tmp_name"], getcwd()."/".$image_directory."/".$file["name"]);
+			// 		if ($imagesize[0] > 0 && $imagesize[1] > 0)
+			// 		{
+			// 			$this->resize_image ($file["tmp_name"], $imagesize[0], $imagesize[1], getcwd()."/".$image_directory."/".$file["name"]);
+			// 		}
+			// 		else
+			// 			move_uploaded_file($file["tmp_name"], getcwd()."/".$image_directory."/".$file["name"]);
 
-					if (checkfile(getcwd()."/".$image_directory."/".$file["name"]))
-						$f3->POST[$key] = ltrim(rtrim($image_directory, "/"), "/") . "/" . $file["name"];
+			// 		if (checkfile(getcwd()."/".$image_directory."/".$file["name"]))
+			// 			$f3->POST[$key] = ltrim(rtrim($image_directory, "/"), "/") . "/" . $file["name"];
 
-				}
-			}
+			// 	}
+			// }
 
-			// Create
-			if ($f3->POST["data_id"] == null) {
+			if ($f3->POST["data_id"])
+				$this->data->load(["@_id=?", $f3->POST["data_id"]]);		
 
-				unset($f3->POST["data_id"]);
-				$json = json_encode($f3->POST);
+			unset($f3->POST["data_id"]);
 
-				$f3->DB->exec("INSERT INTO {$this->name} (data) VALUES (?)", $json);
-				$id = $f3->DB->lastInsertId();
-				$f3->DB->exec("UPDATE {$this->name} SET rowOrder=? WHERE id=?", [$id,$id]);
-			}
+			$this->jig->copyfrom($f3->POST);
 
-			// Update
-			if ($f3->POST["data_id"] != null) {
-				$id = $f3->POST["data_id"];
-				unset($f3->POST["data_id"]);
-			
-				$data = json_decode($f3->DB->exec("SELECT data FROM {$this->name} WHERE id=?", [$id])[0]["data"], true);
-				
-				$data = arrmerge($data, $f3->POST);
-
-				$json = json_encode($data);
-
-				$f3->DB->exec("UPDATE {$this->name} SET data=? WHERE id=?", [$json, $id]);
-			}
+			$this->jig->save();
 
 			$f3->reroute('/admin/'.$this->name.'#form');
 		});
 
 		$f3->route('GET /admin/'.$this->name.'/delete', function ($f3) {
 
-			$f3->DB->exec("DELETE FROM {$this->name} WHERE id=?", $f3->GET["data_id"]);
+			$this->data->erase(["@_id=?", $f3->GET["data_id"]]);
 
-			$f3->reroute('/admin/'.$this->name.'#form');
+			$f3->reroute('/admin/'.$this->name);
 		});
 
 		$f3->route('GET /admin/'.$this->name.'/toggle', function ($f3) {
 
-			$data = $f3->DB->exec("SELECT data FROM {$this->name} WHERE id=?", [$f3->GET["data_id"]]);
-			$data = json_decode($data[0]["data"], true);
+			$this->data->load(["@_id=?", $f3->GET["data_id"]]);
 
-			if (!array_key_exists("hidden", $data))
-				$data["hidden"] = false;
+			if ($this->jig->exists("hidden"))
+			 	$this->jig->clear("hidden");
+			 else
+			 	$this->jig->set("hidden", true);
 
-			$data["hidden"] = !$data["hidden"];
-
-			$data = json_encode($data);
-
-			$f3->DB->exec("UPDATE {$this->name} SET data=? WHERE id=?", [$data, $f3->GET["data_id"]]);
+			$this->jig->update();
 
 			$f3->reroute('/admin/'.$this->name);
 		});
 
 		$f3->route('POST /admin/'.$this->name.'/reorder [ajax]', function ($f3) {
 
-			j("hello");
+			$file = getcwd()."/.cms/repeaters/".$this->settings["name"];
 
-			// $order = json_decode($f3->POST["order"], 1);
-
-			// if (count($order)>0) {
-			// 	foreach ($order as $key=>$id) {
-			// 		$f3->DB->exec("UPDATE {$this->name} SET rowOrder=? WHERE id=?", [$key, $id]);
-			// 	}
-			// }
+			$order = json_decode($f3->POST["order"], true);
+			$data = json_decode($f3->read($file), true);
+			$data = array_replace(array_flip($order), $data);
+			$f3->write($file, json_encode($data, JSON_PRETTY_PRINT));
 
 		});
 	}

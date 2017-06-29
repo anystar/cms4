@@ -237,7 +237,7 @@ cmsjQuery(function() {
       var editor = cmsjQuery(cmsjQuery(evt.currentTarget).attr("editor_id"));
 
       editor.width(evt.currentTarget.clientWidth);           
-      editor.css({top: cmsjQuery(evt.currentTarget).position().top, left: cmsjQuery(evt.currentTarget).offset().left, height: 1});
+      editor.css({top: cmsjQuery(evt.currentTarget).position().top, left: cmsjQuery(evt.currentTarget).position().left, height: 1});
 
       var top = editor.children(".top");
       editor.children(".top").width(evt.currentTarget.clientWidth).css({top: 0, left: 0});

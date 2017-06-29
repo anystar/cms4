@@ -91,13 +91,23 @@
 					});
 				}
 			}).disableSelection();
-			    
+		    
 			function fixWidthHelper(e, ui) {
 			    ui.children().each(function() {
 			        $(this).width($(this).width());
 			    });
 			    return ui;
 			}
+		</script>
+
+		<toolbar>
+
+		<script>
+
+		cmsjQuery(function() {
+			var button = cmsjQuery('<a onclick="closeRefresh()" class="button" href="{{@GET.previous}}">Return to website</a>');
+			cmsjQuery("#webworkscms_admintoolbar").children("#center_div").append(button);
+		});
 		</script>
 	</body>
 </html>

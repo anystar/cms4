@@ -14,6 +14,7 @@ CKEDITOR.plugins.add( 'cmssave',
 
 		editor.addCommand( 'cmssave',
 		{
+				editorFocus: false,
 				exec : function( editor )
 				{
 					var postData = {},
@@ -48,13 +49,5 @@ CKEDITOR.plugins.add( 'cmssave',
 					xhttp.send(payload);
 				}
 		});
-		
-		// editor.ui.addButton( 'cmssave',
-		// {
-		// 	toolbar: 'document',
-		// 	label: 'Save',
-		// 	command: 'cmssave',
-		// 	icon: this.path + 'images/' + iconName
-		// } );
 	}
 } );

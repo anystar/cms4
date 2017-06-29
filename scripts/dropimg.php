@@ -34,9 +34,18 @@ class dropimg extends prefab {
 				$ext = pathinfo(getcwd()."/".$file)["extension"];
 				$size = explode("x", $f3->POST["size"]);
 
-				copy($f3->POST["url"], $file);
+				// If copying from google, trim this silly url
+				$f3->POST["url"] = str_replace("https://www.google.com/imgres?imgurl=", "", $f3->POST["url"]);
 
-				$this->resize($file, $file, $size[0], $size[1], $ext);
+
+				if (copy($f3->POST["url"], $file)) {
+					echo $f3->POST["url"];
+					die;
+					$this->resize($file, $file, $size[0], $size[1], $ext);
+					return;
+				}
+
+				echo $f3->POST["url"];
 
 				return;
 			});
@@ -58,14 +67,26 @@ class dropimg extends prefab {
 
 			check (1, (!$args["@attrib"]["resize"] && !$args["@attrib"]["size"]), "No size attribute found for dropimg tag");
 
+			$size = $args["@attrib"]["size"] ? $args["@attrib"]["size"] : $args["@attrib"]["resize"];
+			$asize = explode("x", $size);
+
+			$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$asize[0]."x".$asize[1]."&w=".$asize[0]."&h=".$asize[1];
+
 			// Does the file exsist?
 			if (!file_exists($path = getcwd()."/".$args["@attrib"]["src"])) {
-				$filename = basename($args["@attrib"]["src"]);
 
-				$size = $args["@attrib"]["size"] ? $args["@attrib"]["size"] : $args["@attrib"]["resize"];
-				$size = explode("x", $size);
+				copy($placeholder_path, $path);
+			}
 
-				copy("https://placeholdit.imgix.net/~text?txtsize=33&txt=placeholder&w=".$size[0]."&h=".$size[1], $path);
+			
+			// Have we changed the image size
+			if (Cache::instance()->exists("dropimg_".sha1($path), $value))
+			{
+				if ($size != $value)
+				{
+					copy($placeholder_path, $path);
+					Cache::instance()->set("dropimg_".sha1($path), $size);
+				}
 			}
 
 			$string .= '<?php if (admin::$signed) {?>';

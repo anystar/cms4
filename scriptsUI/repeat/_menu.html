@@ -57,7 +57,7 @@
 			</td>
 			<td style="vertical-align: top !important;text-align:right;width: 150px;"><input style="width: 150px;" name="price" value="{{@values.price}}" type="text" class="form-control" placeholder="price"></td>
 			<td style="vertical-align: top !important;text-align:right;width: 150px;">
-				<input type="hidden" name="data_id" value="{{@values.id}}">
+				<input type="hidden" name="data_id" value="{{@values['_id']}}">
 				<button type="submit">{{@action}}</button>
 
 				<check if="{{@action == 'Update'}}">
