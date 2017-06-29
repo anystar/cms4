@@ -39,8 +39,6 @@ class dropimg extends prefab {
 
 
 				if (copy($f3->POST["url"], $file)) {
-					echo $f3->POST["url"];
-					die;
 					$this->resize($file, $file, $size[0], $size[1], $ext);
 					return;
 				}
