@@ -14,6 +14,12 @@ class toolbar extends prefab {
 			return '<?php
 				if (admin::$signed)
 					echo Template::instance()->render("/toolbar/toolbar.html", null, toolbar::instance()->getHive(), 0);
+				else if (base::instance()->SESSION["show-login"])
+				{
+					echo Template::instance()->render("/toolbar/login_model.html");
+					base::instance()->SESSION["show-login"] = false;
+				}
+
 			?>';
 
 		});

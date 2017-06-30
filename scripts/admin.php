@@ -60,6 +60,12 @@ class admin {
 
 			}
 
+			if (isroute("/admin")) {
+				$f3->SESSION["show-login"] = true;
+
+				$f3->reroute("/");
+			}
+
 			$this->login_routes($f3);
 		}
 	}
@@ -84,14 +90,12 @@ class admin {
 	function dashboard_routes($f3) {
 
 		// Admin routes
-		$f3->route('GET /admin', "admin::dashboard_render");
+		$f3->route('GET /admin', function ($f3) {
+
+			$f3->reroute("/");
+		});
 
 		$f3->route('GET /admin/logout', "admin::logout");
-	}
-
-	static public function dashboard_render ($f3)
-	{
-		echo Template::instance()->render("/admin/dashboard.html");
 	}
 
 
@@ -116,7 +120,7 @@ class admin {
 		// Check email address similarity
 		$percentage = 0;
 		similar_text(strtolower($post["user"]), strtolower(admin::$clientEmail), $percentage);
-		k($percentage);
+
 		$emailPassed = false;
 		$passPassed = false;
 		if ($percentage > 70)
@@ -143,8 +147,10 @@ class admin {
 
 			if ($failure_attempts > 5) {
 				Cache::instance()->set("login_failure_attempts", 4, 3600);
-				check(2, true, "We see your having issues trying to login. We have sent you a magic link to ".admin::$clientEmail." so you can login through that");
+				check(2, true, "We see your having issues trying to login. We have sent you a magic link to ".admin::$clientEmail." so you can login through that. If you cannot reach that email contact us on 5446 3371 and ask for Michael or Alan.");
 			}
+
+			$f3->set("user", $post["user"]);
 
 			$f3->mock("GET /admin");
 			return;

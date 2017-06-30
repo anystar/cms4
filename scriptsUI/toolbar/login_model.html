@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="{{@CDN}}/admin/css/login.css">
+
+<!-- Tingle big content -->
+<div class="tingle-demo tingle-demo-big">
+    <div class="" id="login">
+      <img width="100%" src="{{ @CDN }}/admin/imgs/logo.png" alt="Web Works CMS Login">
+
+      <form method="post" action="{{ @BASE }}/admin/login">
+        <div class="form-group">
+          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@POST.user}}" autofocus>
+          <check if="{{@login.email_error}}"><span id="helpBlock" class="help-block">Incorrect email address</span></check>
+        </div>
+        <div class="form-group">
+
+          <input id="pass" name="pass" type="password" class="form-control" placeholder="Password" value="{{@POST.pass}}">
+          <check if="{{@login.pass_error}}"><span id="helpBlock" class="help-block">Incorrect password. If you forgot it, call 5446 3371.</span></check>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12">
+            <button class="btn btn-primary" type="submit" name="redirectWhere" value="admin">Website Login</button>
+          </div>
+        </div>
+        
+        <exclude>
+        <div class="row">
+          <div class="col-xs-12">
+            ------ OR ------
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12">
+            <a href="{{@BASE}}/admin/sendmagiclink" class="btn btn-primary">Send Magic Link</a>
+          </div>
+        </div>
+        </exclude>
+         
+      </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{{@CDN}}/tingle/dist/tingle.min.css">
+<script src="{{@CDN}}/tingle/dist/tingle.min.js"></script>
+<script>
+    org_html = document.getElementsByTagName("body")[0].innerHTML;
+    new_html = "<div class='tingle-content-wrapper'>" + org_html + "</div>";
+    document.getElementsByTagName("body")[0].innerHTML = new_html;
+
+    // instanciate new modal
+    var modal = new tingle.modal({
+        footer: false,
+        closeMethods: ['button', 'escape'],
+        closeLabel: "Close",
+        cssClass: ['custom-class-1', 'custom-class-2'],
+        beforeClose: function() {
+            // here's goes some logic
+            // e.g. save content before closing the modal
+            return true; // close the modal
+        }
+    });
+
+    // set content
+    modal.setContent(document.querySelector('.tingle-demo-big').innerHTML);
+
+    // open modal
+    modal.open();
+</script>

@@ -147,13 +147,18 @@ class contactform extends \Prefab {
 			$mime = mime_content_type2(getcwd()."/".$template);
 
 			// Use custom email template from client directory
-			$body = \Template::instance()->render($template, null, $form);
+			echo \Template::instance()->render($template, "text/plain", $form);
+
+			die;
+
 		} else {
 			$mime = 'text/html';
 
 			// Use generic email template
 			$body = \Template::instance()->render("/contactform/generic_email_template.html", null, $form);
 		}
+
+
 
 		$smtp->set('Content-Type', $mime);
 
