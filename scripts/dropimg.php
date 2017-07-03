@@ -36,7 +36,7 @@ class dropimg extends prefab {
 
 				// If copying from google, trim this silly url
 				$f3->POST["url"] = str_replace("https://www.google.com/imgres?imgurl=", "", $f3->POST["url"]);
-
+				$f3->POST["url"] = str_replace("https://www.google.com.au/imgres?imgurl=", "", $f3->POST["url"]);
 
 				if (copy($f3->POST["url"], $file)) {
 					$this->resize($file, $file, $size[0], $size[1], $ext);

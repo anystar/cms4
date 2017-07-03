@@ -4,12 +4,15 @@ class toolbar extends prefab {
 
 	private $buttonList;
 	private $include;
+	public $hasIncluded;
 
 	function __construct($settings = null) {
 
 		// Implement Auto-including
 
 		Template::instance()->extend("toolbar", function ($args) {
+
+			toolbar::instance()->hasIncluded = true;
 
 			return '<?php
 				if (admin::$signed)
@@ -24,20 +27,46 @@ class toolbar extends prefab {
 
 		});
 
+		Template::instance()->extend("body", "Body::render");
 
 		Template::instance()->extend("overlay", "Overlay::render");	
 
 	}
 
 	function append ($code) {
-
 		$this->include[] = $code;
 	}
 
 	function getHive () {
 		$f3 = base::instance();
 
-		return ["include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE];
+		return ["include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH];
+	}
+
+}
+
+class Body extends \Template\TagHandler {
+
+	function build ($attr, $content) {
+
+		if ($attr)
+			$attr = $this->resolveParams($attr);
+
+		if (!toolbar::instance()->hasIncluded)
+		{
+			$toolbar = '<?php
+				if (admin::$signed)
+					echo Template::instance()->render("/toolbar/toolbar.html", null, toolbar::instance()->getHive(), 0);
+				else if (base::instance()->SESSION["show-login"])
+				{
+					echo Template::instance()->render("/toolbar/login_model.html");
+					base::instance()->SESSION["show-login"] = false;
+				}
+			?>';
+		}
+
+		return '<body'.$attr.'>'.$content."\n".
+			$toolbar."\n".'</body>';
 	}
 
 }

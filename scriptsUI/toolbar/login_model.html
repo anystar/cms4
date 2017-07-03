@@ -5,15 +5,15 @@
     <div class="" id="login">
       <img width="100%" src="{{ @CDN }}/admin/imgs/logo.png" alt="Web Works CMS Login">
 
-      <form method="post" action="{{ @BASE }}/admin/login">
+      <form method="post" action="{{@BASE}}{{@PATH}}/login">
         <div class="form-group">
-          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@POST.user}}" autofocus>
-          <check if="{{@login.email_error}}"><span id="helpBlock" class="help-block">Incorrect email address</span></check>
+          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@SESSION.login.user}}" autofocus>
+          <check if="{{@SESSION.login.email_error}}"><span id="helpBlock" class="help-block">Incorrect email address</span></check>
         </div>
         <div class="form-group">
 
-          <input id="pass" name="pass" type="password" class="form-control" placeholder="Password" value="{{@POST.pass}}">
-          <check if="{{@login.pass_error}}"><span id="helpBlock" class="help-block">Incorrect password. If you forgot it, call 5446 3371.</span></check>
+          <input id="pass" name="pass" type="password" class="form-control" placeholder="Password">
+          <check if="{{@SESSION.login.pass_error}}"><span id="helpBlock" class="help-block">Incorrect password. If you forgot it, call 5446 3371.</span></check>
         </div>
 
         <div class="row">

@@ -60,8 +60,6 @@
 			</div>
 
 		</div>
-		
-		<include href="admin/_needhelp.html">
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
@@ -98,12 +96,12 @@
 			    });
 			    return ui;
 			}
+
 		</script>
-
+	
 		<toolbar>
-
+		
 		<script>
-
 		cmsjQuery(function() {
 			var button = cmsjQuery('<a onclick="closeRefresh()" class="button" href="{{@GET.previous}}">Return to website</a>');
 			cmsjQuery("#webworkscms_admintoolbar").children("#center_div").append(button);

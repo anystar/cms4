@@ -36,6 +36,22 @@ class admin {
 		{
 			admin::$signed = true;
 
+			// Capture the last 6 characters and see if it is "/admin"
+			if (substr($f3->PATH, -6, strlen($f3->PATH)) == "/admin") {
+				$path = substr($f3->PATH, 0, strlen($f3->PATH)-6);
+
+				if ($path=="")
+					$f3->reroute("/");
+				else
+					$f3->reroute($path);
+			}
+
+			// Capture the last 6 characters and see if it is "/admin"
+			if (substr($f3->PATH, -7, strlen($f3->PATH)) == "/logout") {
+				admin::logout();
+				$f3->reroute(substr($f3->PATH, 0, strlen($f3->PATH)-7));
+			}
+
 			// Load dashboard routes
 			$this->dashboard_routes($f3);
 
@@ -54,16 +70,28 @@ class admin {
 		{
 			if (isroute("/admin/sendmagiclink")) {
 
-				$mail = new \Mailer();
-
-				k($f3->hive());
-
 			}
 
 			if (isroute("/admin")) {
 				$f3->SESSION["show-login"] = true;
 
 				$f3->reroute("/");
+			}
+
+			if (substr($f3->PATH, -6, strlen($f3->PATH)) == "/login") {
+				
+				if ($f3->VERB == "POST") {
+					admin::login($f3);
+
+					$f3->reroute(substr($f3->PATH, 0, strlen($f3->PATH)-6));
+				}
+			}
+
+			// Capture the last 6 characters and see if it is "/admin"
+			if (substr($f3->PATH, -6, strlen($f3->PATH)) == "/admin") {
+				$f3->SESSION["show-login"] = true;
+
+				$f3->reroute(substr($f3->PATH, 0, strlen($f3->PATH)-6));
 			}
 
 			$this->login_routes($f3);
@@ -81,19 +109,29 @@ class admin {
 			$f3->reroute("/admin");
 		});
 
-		$f3->route("POST /admin/login", function ($f3) {
-			admin::login($f3);
+		$f3->route('GET /admin/login', function ($f3) {
+
+			if ($f3->exists("GET.key"))
+			{
+				if (cache::instance()->get("login.hash")) {
+					if ($f3->get("GET.key") == cache::instance()->get("login.hash"))
+					{
+						$f3->set("SESSION.user", admin::$clientEmail);
+
+						$f3->reroute("/");
+						die;
+					}
+				}
+			}
+
+			$f3->SESSION["show-login"] = true;
+			$f3->reroute("/");
+
 		});
 	}
 
 
 	function dashboard_routes($f3) {
-
-		// Admin routes
-		$f3->route('GET /admin', function ($f3) {
-
-			$f3->reroute("/");
-		});
 
 		$f3->route('GET /admin/logout', "admin::logout");
 	}
@@ -102,9 +140,13 @@ class admin {
 	static public function login ($f3) {
 		$post = $f3->get("POST");
 
+		$f3->clear("SESSION.login.email_error");
+		$f3->clear("SESSION.login.pass_error");
+		$f3->set("SESSION.login.user", "");
+
 		$failure_attempts = Cache::instance()->get("login_failure_attempts");
 
-		if ($failure_attempts > 5)
+		if ($failure_attempts > 4)
 			sleep(2);
 
 		// Check global user and pass
@@ -113,7 +155,6 @@ class admin {
 			$f3->set("SESSION.user", admin::$webmasterEmail);
 			$f3->set("SESSION.root", true);
 
-			$f3->reroute("/");
 			return;
 		}
 
@@ -131,35 +172,69 @@ class admin {
 
 		if ($emailPassed && $passPassed)
 		{
-			$f3->set("SESSION.user", $post["user"]);
+			$f3->set("SESSION.user", admin::$clientEmail);
 
-			$f3->reroute("/");
+			return;
 		}
 		else 
 		{
 			if (!$emailPassed)
-				$f3->set("login.email_error", true);
+				$f3->set("SESSION.login.email_error", true);
 
 			if (!$passPassed)
-				$f3->set("login.pass_error", true);
+				$f3->set("SESSION.login.pass_error", true);
 
 			Cache::instance()->set("login_failure_attempts", $failure_attempts+1, 3600);
 
-			if ($failure_attempts > 5) {
+			if ($failure_attempts > 4) {
+
+				admin::sendMagicLink();
+
 				Cache::instance()->set("login_failure_attempts", 4, 3600);
 				check(2, true, "We see your having issues trying to login. We have sent you a magic link to ".admin::$clientEmail." so you can login through that. If you cannot reach that email contact us on 5446 3371 and ask for Michael or Alan.");
 			}
 
-			$f3->set("user", $post["user"]);
+			$f3->set("SESSION.login.user", $post["user"]);
 
-			$f3->mock("GET /admin");
+			$f3->SESSION["show-login"] = true;
+
 			return;
 		}
 	}
 
-	static public function logout ($f3) {
+	static public function sendMagicLink () {
+
+				if (!cache::instance()->exists("login.hash"))
+					cache::instance()->set("login.hash", str_replace(".", "/", uniqid("", true).uniqid("", true).uniqid("", true).uniqid("", true)));
+
+				$hive["CDN"] = base::instance()->CDN;
+				$hive["URL"] = base::instance()->get("SCHEME")."://".base::instance()->get("HOST").base::instance()->get("BASE")."/admin/login?key=".cache::instance()->get("login.hash");
+				$hive["HOST"] = base::instance()->get("HOST");
+				$hive["SCHEME"] = base::instance()->get("SCHEME");
+
+				$config = base::instance()->CONFIG["mailer"];
+				$smtp = new SMTP(
+								$config["smtp.host"],
+								$config["smtp.port"],
+								$config["smtp.scheme"],
+								$config["smtp.user"],
+								$config["smtp.pw"]
+							);
+
+				$smtp->set('To', '<'.admin::$clientEmail.'>');
+				$smtp->set('From', $config["smtp.from_name"].'<'.$config["smtp.from_mail"].'>');
+				$smtp->set('Subject', 'Login Link');
+
+				$body = \Template::instance()->render("/admin/magiclink.html", null, $hive);
+
+				$smtp->set('Content-Type', "text/html");
+
+				$smtp->send($body);
+	}
+
+	static public function logout () {
 		
-		$f3->clear("SESSION");
+		base::instance()->clear("SESSION");
 
 		if (isset($_SERVER['HTTP_COOKIE'])) {
 		    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
@@ -170,31 +245,5 @@ class admin {
 		        setcookie($name, '', time()-1000, '/');
 		    }
 		}
-		
-		if ($f3->exists["GET.previous"])
-			$f3->reroute($f3->GET["previous"]);
-		else
-			$f3->reroute("/");
-	}
-
-	static public function help($f3) {
-		echo Template::instance()->render("/admin/help.html");
-	}
-
-	static public function settings($f3) {
-
-		echo Template::instance()->render("/admin/settings.html");
-	}
-
-	static public function update_settings($f3) {
-		$settings = $f3->POST;
-
-		foreach ($settings as $setting=>$value) {
-			if (!empty($settings[$setting])) {
-				setting($setting, $value);
-			}
-		}
-
-		$f3->reroute("/admin");
 	}
 }
