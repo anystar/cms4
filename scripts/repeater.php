@@ -102,7 +102,7 @@ class repeater {
 			// }
 
 			if ($f3->POST["data_id"])
-				$this->data->load(["@_id=?", $f3->POST["data_id"]]);		
+				$this->jig->load(["@_id=?", $f3->POST["data_id"]]);		
 
 			unset($f3->POST["data_id"]);
 
@@ -115,14 +115,14 @@ class repeater {
 
 		$f3->route('GET /admin/'.$this->name.'/delete', function ($f3) {
 
-			$this->data->erase(["@_id=?", $f3->GET["data_id"]]);
+			$this->jig->erase(["@_id=?", $f3->GET["data_id"]]);
 
 			$f3->reroute('/admin/'.$this->name);
 		});
 
 		$f3->route('GET /admin/'.$this->name.'/toggle', function ($f3) {
 
-			$this->data->load(["@_id=?", $f3->GET["data_id"]]);
+			$this->jig->load(["@_id=?", $f3->GET["data_id"]]);
 
 			if ($this->jig->exists("hidden"))
 			 	$this->jig->clear("hidden");

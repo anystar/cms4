@@ -5,7 +5,7 @@
     <div class="" id="login">
       <img width="100%" src="{{ @CDN }}/admin/imgs/logo.png" alt="Web Works CMS Login">
 
-      <form method="post" action="{{@BASE}}{{@PATH}}/login">
+      <form id="cms-login-form" method="post" action="{{@BASE}}{{@PATH}}/login">
         <div class="form-group">
           <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@SESSION.login.user}}" autofocus>
           <check if="{{@SESSION.login.email_error}}"><span id="helpBlock" class="help-block">Incorrect email address</span></check>

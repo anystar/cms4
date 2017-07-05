@@ -326,7 +326,9 @@ function determine_path () {
 			$f3->PATH = "/index";
 			$f3->FILE = "index.htm";
 		}
-		
+
+		$f3->MIME = mime_content_type2(getcwd()."/".$f3->FILE);
+
 		$GLOBALS["path_determined"] = true;
 		return;
 	}
@@ -346,6 +348,7 @@ function determine_path () {
 	}
 
 	$f3->PATH = rtrim($f3->PATH, "/");
+	$f3->MIME = mime_content_type2(getcwd()."/".$f3->FILE);
 
 	$GLOBALS["path_determined"] = true;
 }

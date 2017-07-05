@@ -5,6 +5,23 @@ class ckeditor extends prefab {
 	function __construct($settings) {
 		$f3 = base::instance();
 
+		if ($f3->MIME == "text/html")
+		{
+			if (!cache::instance()->exists(base::instance()->hash($f3->FILE))) {
+
+				$contents = file_get_contents(getcwd()."/".$f3->FILE);
+
+				$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
+					
+					$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
+
+					return '<ckeditor id="'.$id.'">';
+				}, $contents);
+
+				file_put_contents(getcwd()."/".$f3->FILE, $contents);
+			}
+		}
+
 		if (admin::$signed)
 		{
 			// Are we permitting uploading of images?

@@ -62,10 +62,12 @@ cmsjQuery(function() {
       editor.css({top: cmsjQuery(evt.currentTarget).position().top, left: cmsjQuery(evt.currentTarget).position().left, height: 1});
 
       var top = editor.children(".top");
-      editor.children(".top").width(evt.currentTarget.clientWidth).css({top: 0, left: 0});
-      editor.children(".left").height(evt.currentTarget.clientHeight).css({top: 0, left: 0});
-      editor.children(".bottom").width(evt.currentTarget.clientWidth).css({top: evt.currentTarget.clientHeight, left: 0});
-      editor.children(".right").height(evt.currentTarget.clientHeight).css({top: 0, left: evt.currentTarget.clientWidth-10});
+      // editor.children(".top").width(evt.currentTarget.clientWidth).css({top: 0, left: 0});
+      // editor.children(".left").height(evt.currentTarget.clientHeight).css({top: 0, left: 0});
+      // editor.children(".bottom").width(evt.currentTarget.clientWidth).css({top: evt.currentTarget.clientHeight, left: 0});
+      // editor.children(".right").height(evt.currentTarget.clientHeight).css({top: 0, left: evt.currentTarget.clientWidth-10});
+
+      cmsjQuery(evt.currentTarget).css("outline", "10px solid #3682E3");
 
       editor.show();
 
@@ -80,10 +82,14 @@ cmsjQuery(function() {
 
           if (mouseY <= nextelement.position().top || mouseY >= (nextelement.height()+nextelement.position().top))
           {
+              nextelement.css("outline", "none");
               cmsjQuery(editors[i]).hide();
           }
           else if (mouseX <= nextelement.offset().left || mouseX >= (nextelement.offset().left+nextelement.width()))
+          {
+              nextelement.css("outline", "none");
               cmsjQuery(editors[i]).hide();
+          }
       }
   }, 500);
 
