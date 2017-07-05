@@ -94,6 +94,7 @@ class ckeditor extends prefab {
 			} else {
 
 				echo "wrong hash!";
+				return;
 			}
 			
 			echo sha1($contents);
