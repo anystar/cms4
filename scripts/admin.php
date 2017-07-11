@@ -158,6 +158,7 @@ class admin {
 			return;
 		}
 
+
 		// Check email address similarity
 		$percentage = 0;
 		similar_text(strtolower($post["user"]), strtolower(admin::$clientEmail), $percentage);

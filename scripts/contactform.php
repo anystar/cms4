@@ -89,6 +89,8 @@ class contactform extends \Prefab {
 				unset($f3->POST["g-recaptcha-response"]);
 			}
 
+			if ($settings["testing"]) $captcha_passed = true;
+
 			if (array_key_exists("captcha", $f3->POST))
 			{
 				if ($f3->POST["captcha"] == $f3->SESSION["captcha_code"])
@@ -147,21 +149,21 @@ class contactform extends \Prefab {
 			$mime = mime_content_type2(getcwd()."/".$template);
 
 			// Use custom email template from client directory
-			echo \Template::instance()->render($template, "text/plain", $form);
-
-			die;
+			$body = \Template::instance()->render($template, null, $form);
 
 		} else {
-			$mime = 'text/html';
 
 			// Use generic email template
 			$body = \Template::instance()->render("/contactform/generic_email_template.html", null, $form);
 		}
 
+		if ($this->settings["testing"]) {			
+			echo $body;
+			die;
+			return;
+		}
 
-
-		$smtp->set('Content-Type', $mime);
-
+		$smtp->set('Content-Type', "text/html");
 		$smtp->send($body);
 
 		return true;
