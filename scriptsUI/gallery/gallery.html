@@ -80,13 +80,14 @@
 								</tr>
 								
 								<repeat group="{{@gallery}}" value="{{@image}}">
+
 								<tr class="galleryimage" data-image-id="{{@image.filename}}">
 									<td align="center" class="orderbuttons">
 										<button class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
 										<button class="down"><span class="glyphicon glyphicon-arrow-down"></span></button>
 									</td>
 									<td style="width:{{@image.thumb-size[0]}}px;">
-										<img data-lity data-lity-target="{{@image.url}}" width="{{@image.thumb[0]}}" height="{{@image.thumb[1]}}" src="{{@image.thumb}}" />
+										<img data-lity data-lity-target="{{@image.url}}" width="{{@image.thumb_width}}" src="{{@image.thumb}}" />
 									</td>
 									<td class="filename">
 										

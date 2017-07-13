@@ -235,6 +235,9 @@ class gallery {
 			$temp["width"] = $img->width();
 			$temp["height"] = $img->height();
 
+			$temp["thumb_width"] = $this->settings["thumb-size"][0];
+			$temp["thumb_height"] = $this->settings["thumb-size"][1];
+
 			if ($temp["width"] != $this->settings["width"] || $temp["height"] != $this->settings["height"])
 				$temp["error_size"] = true;
 
