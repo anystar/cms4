@@ -287,14 +287,11 @@ class gallery {
 		$save_to_full = getcwd()."/".$upload_path."/".$new_name;
 
 		// Where to save the thumb too
-		$save_to_thumb = getcwd()."/".$thumb_path."/".$this->thumb_prefix.$new_name;
+		$save_to_thumb = getcwd()."/".$thumb_path."/thumb_".$new_name;
 
 		// Get settings for image size
 		$image_size = $this->settings["image-size"];
 		$thumb_size = $this->settings["thumb-size"];
-
-		$image_size = $settings["image-size"];
-		$thumb_size = $settings["thumb-size"];
 
 		// Resize full image and save
 		if ($image_size[0] > 0 && $image_size[1] > 0)
