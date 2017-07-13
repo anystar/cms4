@@ -113,6 +113,8 @@ class gallery {
 		});
 
 		$f3->route("GET /admin/{$this->name}/delete", function ($f3, $params) {
+			
+			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
 
 			$image = $f3->GET["image"];
 
