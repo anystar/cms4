@@ -16,7 +16,7 @@ class repeater {
 		check(0, $settings["name"], "No `name` set in **".$settings["name"]."** settings");
 		check(0, $settings["label"], "No `label` set in **".$settings["name"]."** settings");
 		check(0, $settings["template"]
-			, "No `admin-template` set in **".$settings["name"]."** settings",
+			, "No `template` set in **".$settings["name"]."** settings",
 			"Available templates follow",
 			$this->snippets
 		);
