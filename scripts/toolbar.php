@@ -40,7 +40,7 @@ class toolbar extends prefab {
 	function getHive () {
 		$f3 = base::instance();
 
-		return ["include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH];
+		return ["include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH, "VISITS"=>$f3->VISITS];
 	}
 
 }

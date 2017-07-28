@@ -20,12 +20,16 @@
             var id = imgs_for_dropzone[i].getAttribute("id");
             var size = imgs_for_dropzone[i].getAttribute("data-size");
             var file = imgs_for_dropzone[i].getAttribute("data-file");
+            var brightness = imgs_for_dropzone[i].getAttribute("data-brightness");
+            var contrast = imgs_for_dropzone[i].getAttribute("data-contrast");
 
             var dz = new Dropzone("#"+id, { 
                 url: "{{@BASE}}/admin/dropimg/upload",
                 params: {
                     size: size,
-                    file: file
+                    file: file,
+                    brightness: brightness,
+                    contrast: contrast
                 },
                 init: function () {
                     this.on("complete", function (file) {

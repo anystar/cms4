@@ -22,9 +22,42 @@ class dropimg extends prefab {
 				$file = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $file);
 				$ext = pathinfo(getcwd()."/".$file)["extension"];
 				$size = explode("x", $f3->POST["size"]);
-
+				
 				// Resize and overwrite 
-				$this->resize($f3->FILES["file"]["tmp_name"], $file, $size[0], $size[1], $ext);
+				//$this->resize($f3->FILES["file"]["tmp_name"], $file, $size[0], $size[1], $ext);
+
+				$image = $f3->FILES["file"]["tmp_name"];
+				$save_to = $file;
+				$width = $size[0];
+				$height = $size[1];
+				$file_type = $ext;
+
+				// Pull image off the disk into memory
+				$temp_image = new Image($image, false, ''); // Image(filename, filehistory, path)
+
+				// Make sure that width and height are set before resizing image
+				if (($width*$height) > 0)
+				{
+					// Resize image using F3's image plugin
+					$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
+				}
+
+				// Save image depending on user selected file type
+				switch ($file_type)
+				{	
+					case "jpg":
+					case "jpeg":
+						imagejpeg($temp_image->data($file_type, 100), $save_to);
+					break;
+					case "png":
+						imagepng($temp_image->data($file_type, 100), $save_to);
+					break;
+					case "gif":
+						imagegif($temp_image->data($file_type, 100), $save_to);
+					break;
+				}
+
+
 			});
 
 			$f3->route("POST /admin/dropimg/upload_from_url", function ($f3) {
@@ -130,34 +163,5 @@ class dropimg extends prefab {
 			return $string;
 		});
 
-	}
-
-
-	function resize ($image, $save_to, $width, $height, $file_type) {
-
-		// Pull image off the disk into memory
-		$temp_image = new Image($image, false, ''); // Image(filename, filehistory, path)
-
-		// Make sure that width and height are set before resizing image
-		if (($width*$height) > 0)
-		{
-			// Resize image using F3's image plugin
-			$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
-		}
-
-		// Save image depending on user selected file type
-		switch ($file_type)
-		{	
-			case "jpg":
-			case "jpeg":
-				imagejpeg($temp_image->data($file_type, 100), $save_to);
-			break;
-			case "png":
-				imagepng($temp_image->data($file_type, 100), $save_to);
-			break;
-			case "gif":
-				imagegif($temp_image->data($file_type, 100), $save_to);
-			break;
-		}
 	}
 }

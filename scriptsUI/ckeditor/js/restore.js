@@ -55,7 +55,7 @@ CKEDITOR.plugins.add( 'restore',
 							 		id: 'textfield',
 							 		label: 'Restore',
 							 		style : 'float:right;position:relative;top:-3px',
-									revision_id : ckeditor_revisions[i].id,
+									revision_id : ckeditor_revisions[i]["_id"],
 							 		onLoad: function (a) {
 
 							 			CKEDITOR.document.getById(this.domId).on("click", function (e) {

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>Settings Manager</title>
+
+	<!-- Bootstrap -->
+	<link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+	
+
+  </head>
+  <body>
+
+	<div class="container">
+
+		<div class="row">
+
+				<div class="col-xs-12">	
+					<h2>Website Settings</h2>
+					
+					<div class="row" style="margin-top:30px;">
+					
+					<form method="post" action="{{@BASE}}/admin/settings">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="website-login-address">Website login address</label>
+								<input value="{{@website_login_address}}" type="email" class="form-control" name="website-login-address" id="website-login-address" placeholder="Enter email">
+								<small class="form-text text-muted">Must be an email address.</small>
+							</div>
+
+							<div class="form-group">
+								<label for="website-login-password">Website login password</label>
+								<input value="{{@website_login_password}}" type="password" class="form-control" name="website-login-password" id="website-login-password" placeholder="Enter password">
+								<small class="form-text text-muted">Something rememberable but strong.</small>
+							</div>
+							
+							<!--
+							<div class="form-group">
+								<label for="contact-email">Contact email</label>
+								<input value="{{@contact_email}}" type="email" class="form-control" name="contact-email" id="contact-email" placeholder="Enter email">
+								<small class="form-text text-muted">Email used when contact form is submitted</small>
+							</div>
+							-->
+							
+							<div class="form-group text-right">
+								<button class="btn btn-primary">Update Settings</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+	</div>
+
+    <toolbar />
+	
+	<script>
+		cmsjQuery(function() {
+
+			cmsjQuery("#webworkscms_admintoolbar #visit_counter").hide();
+			cmsjQuery("#webworkscms_admintoolbar #settingsbtn").hide();
+
+			var button = cmsjQuery('<a onclick="closeRefresh()" class="button" href="{{@GET.previous}}">Return to website</a>');
+			cmsjQuery("#webworkscms_admintoolbar").children("#center_div").append(button);
+		});
+	</script>
+
+  </body>
+</html>

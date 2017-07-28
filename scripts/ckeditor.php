@@ -186,10 +186,12 @@ class ckeditor extends prefab {
 		});
 
 		$f3->route("POST /admin/ckeditor/getRevision", function ($f3) {
+			
+			$revs = new \DB\Jig\Mapper(base::instance()->JIG, "ckeditor_revisions");
+			
+			$revs->load(["@_id = ?", $f3->POST["id"]]);
 
-			$result = $f3->DB->exec("SELECT content FROM ckeditor_revisions WHERE id=?", $f3->POST["id"]);
-
-			echo $result[0]["content"];
+			echo $revs->content;
 		});
 
 		$f3->route("GET /admin/ckeditor/getRevisions/@ckeditor", function ($f3, $params) {

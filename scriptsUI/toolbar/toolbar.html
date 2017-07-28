@@ -35,6 +35,7 @@ cmsjQuery(function() {
 	main_div.append(left_div);
 
 	var center_div = cmsjQuery('<div>').attr('id', 'center_div');
+  /*<exclude>*/center_div.append(cmsjQuery('<span id="visit_counter">{{@VISITS}} visitors this week</span>'));/*</exclude>*/
 	main_div.append(center_div);
 
 	var right_div = cmsjQuery('<div>').attr('id', 'right_div');
@@ -42,6 +43,7 @@ cmsjQuery(function() {
 
   left_div.append(cmsjQuery('<img id="webworks_logo" src="{{ @CDN }}/admin/imgs/logo_toolbar.png" height="100%">'));
 
+  right_div.append(cmsjQuery('<a href="{{@BASE}}/admin/settings" id="settingsbtn" class="button">Settings</a>'));
   right_div.append(cmsjQuery('<a href="{{@BASE}}{{@PATH}}/logout" class="button">Logout</a>'));
 
   var mouseX = 0;
@@ -93,9 +95,15 @@ cmsjQuery(function() {
       }
   }, 500);
 
-  cmsjQuery(".editable .toolbar .button").click(function (evt) {
+  cmsjQuery(".editable .toolbar .button, #webworkscms_admintoolbar #settingsbtn").click(function (evt) {
+
+    var label = $(this).html();
+
+    $(this).html("Opening");
 
     PopupCenter($(this).attr("href"), "Webworks CMS", "1000", "800");
+
+    $(this).html(label);
 
     evt.preventDefault();
   });

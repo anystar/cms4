@@ -127,53 +127,57 @@
 			</div>
 	</div>
 
-	<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
+    <toolbar />
+
 	<script src="{{ @CDN }}/dropzone/dist/min/dropzone.min.js"></script>
 	<script src="{{ @CDN }}/lity/dist/lity.min.js"></script>
 
 	<script>
-		$(function() {
-			$(".delete_image").click(function (d) {
-				$.ajax(d.currentTarget.href);
-				$(this).parent().parent().remove();
+		cmsjQuery(function() {
+			cmsjQuery(".delete_image").click(function (d) {
+				cmsjQuery.ajax(d.currentTarget.href);
+				cmsjQuery(this).parent().parent().remove();
 				
 				return false;
 			});
 
-			$(".caption_save").on("blur", function (e) {
+			cmsjQuery(".caption_save").on("blur", function (e) {
 		
-				$.post("{{@BASE}}/admin/{{@name}}/update-caption", {
-					caption : $(e.currentTarget).val(), filename : $(e.currentTarget).attr("data-filename")
+				cmsjQuery.post("{{@BASE}}/admin/{{@name}}/update-caption", {
+					caption : cmsjQuery(e.currentTarget).val(), filename : cmsjQuery(e.currentTarget).attr("data-filename")
 				});
 			});
 
-			$(".tags_save").on("blur", function (e) {
+			cmsjQuery(".tags_save").on("blur", function (e) {
 		
-				$.post("{{@BASE}}/admin/{{@name}}/update-tags", {
-					tags : $(e.currentTarget).val(), filename : $(e.currentTarget).attr("data-filename")
+				cmsjQuery.post("{{@BASE}}/admin/{{@name}}/update-tags", {
+					tags : cmsjQuery(e.currentTarget).val(), filename : cmsjQuery(e.currentTarget).attr("data-filename")
 				});
 			});
 
-			$(".up,.down").click(function() {
-				var row = $(this).parents("tr:first");
+			cmsjQuery(".up,.down").click(function() {
+				var row = cmsjQuery(this).parents("tr:first");
 
-				if ($(this).is(".up")) {
+				if (cmsjQuery(this).is(".up")) {
 					row.insertBefore(row.prev());
 				} else {
 					row.insertAfter(row.next());
 				}
 
 				var order = [];
-				$(".galleryimage").each(function () {
-					order.push($(this).attr("data-image-id"));
+				cmsjQuery(".galleryimage").each(function () {
+					order.push(cmsjQuery(this).attr("data-image-id"));
 				});
 		
-				$.ajax({
+				cmsjQuery.ajax({
 					method: "POST",
 					url: "{{@BASE}}/admin/{{@name}}/update_order",
 					data: { "gallery_order": JSON.stringify(order) }
 				});
 			});
+
+			var button = cmsjQuery('<a onclick="closeRefresh()" class="button" href="{{@GET.previous}}">Return to website</a>');
+			cmsjQuery("#webworkscms_admintoolbar").children("#center_div").append(button);
 		});
 
 	  Dropzone.autoDiscover = false;
@@ -185,8 +189,6 @@
 
 	  new Dropzone("#gallerydropzone");
 	</script>
-
-    <toolbar />
 
   </body>
 </html>
