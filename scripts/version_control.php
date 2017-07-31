@@ -16,13 +16,20 @@ class version_control extends prefab {
 
 		require_once (__DIR__."/../../resources/git-php/Git.php");
 
-		check (0, !array_key_exists("git_path", $f3->CONFIG), "No `git_path` set in config.ini");
+		check (0, !array_key_exists("path", $f3->CONFIG["git"]), "No `git_path` set in config.ini");
 
-		Git::set_bin ($f3->CONFIG["git_path"]);
+		Git::set_bin ($f3->CONFIG["git"]["path"]);
 
 		$this->repo = new GitRepo(getcwd(), true);
 
-		$status = $this->repo->run("status --short");
+		// Ensure user and email are setup
+		$check = $this->repo->run("config --get user.name");
+		if ($check == "")
+			$this->repo->run("config user.name '".$f3->CONFIG["git"]["name"]."'");
+
+		$check = $this->repo->run("config --get user.email");
+		if ($check == "")
+			$this->repo->run("config user.email '".$f3->CONFIG["git"]["email"]."'");
 
 		// Add our shortcuts
 		$check = $this->repo->run("config --get alias.next");
@@ -143,8 +150,10 @@ class version_control extends prefab {
 			return;
 		}
 
+
 		$this->repo->add(".");
-		$this->repo->commit("time: ".date("h:i:s"));
+		echo ($this->repo->commit("time: ".date("h:i:s")));
+		die;
 	}
 
 	function undo () {

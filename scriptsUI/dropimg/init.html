@@ -35,10 +35,11 @@
                     brightness: brightness,
                     contrast: contrast
                 },
-                resizeWidth: width,
-                resizeHeight: height,
+                resizeWidth: width*2,
+                resizeHeight: height*2,
                 resizeMimeType: mime,
                 resizeMethod: "crop",
+                resizeQuality: 1,
                 createImageThumbnails: false,
                 uploadMultiple: false,
                 init: function () {
