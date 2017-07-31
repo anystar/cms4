@@ -55,7 +55,7 @@ class version_control extends prefab {
 		}
 
 		$f3->route("POST /admin/versioncontrol/poll [ajax]", function ($f3) {
-			echo version_control::instance()->getState(true);
+			echo $this->getState(true);
 			die;
 		});
 
