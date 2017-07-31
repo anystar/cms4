@@ -67,8 +67,8 @@
 	<script>
 		cmsjQuery(function() {
 
-			cmsjQuery("#webworkscms_admintoolbar #visit_counter").hide();
 			cmsjQuery("#webworkscms_admintoolbar #settingsbtn").hide();
+			cmsjQuery("#webworkscms_admintoolbar .revcontrol").hide();
 
 			var button = cmsjQuery('<a onclick="closeRefresh()" class="button" href="{{@GET.previous}}">Return to website</a>');
 			cmsjQuery("#webworkscms_admintoolbar").children("#center_div").append(button);

@@ -134,6 +134,8 @@
 
 	<script>
 		cmsjQuery(function() {
+			cmsjQuery("#webworkscms_admintoolbar .revcontrol").hide();
+			
 			cmsjQuery(".delete_image").click(function (d) {
 				cmsjQuery.ajax(d.currentTarget.href);
 				cmsjQuery(this).parent().parent().remove();

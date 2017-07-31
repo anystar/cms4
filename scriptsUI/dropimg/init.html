@@ -18,7 +18,10 @@
         for (var i = imgs_for_dropzone.length - 1; i >= 0; i--)
         {
             var id = imgs_for_dropzone[i].getAttribute("id");
-            var size = imgs_for_dropzone[i].getAttribute("data-size");
+            var width = imgs_for_dropzone[i].getAttribute("data-width");
+            var height = imgs_for_dropzone[i].getAttribute("data-height");
+            var mime = imgs_for_dropzone[i].getAttribute("data-mime");
+
             var file = imgs_for_dropzone[i].getAttribute("data-file");
             var brightness = imgs_for_dropzone[i].getAttribute("data-brightness");
             var contrast = imgs_for_dropzone[i].getAttribute("data-contrast");
@@ -26,11 +29,18 @@
             var dz = new Dropzone("#"+id, { 
                 url: "{{@BASE}}/admin/dropimg/upload",
                 params: {
-                    size: size,
+                    width: width,
+                    height: height,
                     file: file,
                     brightness: brightness,
                     contrast: contrast
                 },
+                resizeWidth: width,
+                resizeHeight: height,
+                resizeMimeType: mime,
+                resizeMethod: "crop",
+                createImageThumbnails: false,
+                uploadMultiple: false,
                 init: function () {
                     this.on("complete", function (file) {
                         this.element.src = this.element.src+"?"+new Date().getTime(); 
@@ -51,7 +61,7 @@
                                 }
                             };
 
-                            xhttp.send("url="+url+"&file="+this.element.getAttribute("data-file")+"&size="+this.element.getAttribute("data-size")); 
+                            xhttp.send("url="+url+"&file="+this.element.getAttribute("data-file")+"&width="+this.element.getAttribute("data-width")+"&height="+this.element.getAttribute("data-height")); 
                         }
                     });
                 }

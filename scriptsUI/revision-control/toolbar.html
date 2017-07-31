@@ -1,0 +1,81 @@
+<style>
+	.unsaved {
+		color: red !important;
+	}
+
+	#webworkscms_admintoolbar .button.disabled, .button[disabled] {
+	    cursor: default;
+	    background-image: none;
+	    opacity: 0.65;
+	    filter: alpha(opacity=65);
+	    -webkit-box-shadow: none;
+	    -moz-box-shadow: none;
+	    box-shadow: none;
+	    color: #333;
+	    background-color: #E6E6E6;
+	    pointer-events: none;
+	}
+
+/*	#webworkscms_admintoolbar #undo {
+		background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkNhcGFfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiCgkgdmlld0JveD0iMCAwIDkwIDkwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA5MCA5MDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8Zz4KCTxnPgoJCTxwYXRoIHN0eWxlPSJmaWxsOiMwMzAxMDQ7IiBkPSJNOTAsNzljMCwwLTEwLTQ4LjY2Ny01My44NzUtNDguNjY3VjExTDAsNDMuMjc2bDM2LjEyNSwzMy40NTVWNTQuOTQKCQkJQzU5LjkzOSw1NC45NCw3Ny41ODIsNTcuMDUxLDkwLDc5eiIvPgoJPC9nPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPg==");
+		background-size: 100%;*/
+	}
+</style>
+
+<script>
+  
+  cmsjQuery(function() {
+
+  	var center_div = cmsjQuery("#webworkscms_admintoolbar #center_div");
+  	
+  	var undobtn = cmsjQuery('<a id="undo" href="?undo" class="button revcontrol">Undo</a>');
+  	
+	center_div.append(undobtn);
+
+  	var savebtn = cmsjQuery('<button id="savebtn" class="button revcontrol">Save</button>');
+
+  	savebtn.mouseup(function () {
+  		cmsjQuery.post("{{@BASE}}/admin/versioncontrol/save").done(function (response) {
+  			updateState(response)
+  		});
+  	});
+
+	center_div.append(savebtn);
+
+  	center_div.append(cmsjQuery('<a id="redo" href="?redo" class="button revcontrol">Redo</a>'));
+
+  	updateState ({{@state}});
+
+  	console.log({{@state}});
+
+  	function updateState (state) {
+	 
+	  	if (state.isDirty)
+			cmsjQuery("#webworkscms_admintoolbar #savebtn").addClass("unsaved");
+	  	else
+			cmsjQuery("#webworkscms_admintoolbar #savebtn").removeClass("unsaved");
+
+		if (state.canUndo)
+			cmsjQuery("#webworkscms_admintoolbar #undo").removeClass("disabled");
+		else
+			cmsjQuery("#webworkscms_admintoolbar #undo").addClass("disabled");
+
+		if (state.canRedo)
+			cmsjQuery("#webworkscms_admintoolbar #redo").removeClass("disabled");
+		else
+			cmsjQuery("#webworkscms_admintoolbar #redo").addClass("disabled");
+	}
+
+	poll();
+	function poll (){
+	    cmsjQuery.post('{{@BASE}}/admin/versioncontrol/poll', function(data) {
+	        updateState(cmsjQuery.parseJSON(data));
+	        setTimeout(poll,5000);
+	    });
+	}
+
+
+  });
+
+
+</script>
