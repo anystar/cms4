@@ -34,8 +34,8 @@ cmsjQuery(function() {
 	var left_div = cmsjQuery('<div>').attr('id', 'left_div');
 	main_div.append(left_div);
 
-	var center_div = cmsjQuery('<div>').attr('id', 'center_div');
-	main_div.append(center_div);
+	main_div.append(cmsjQuery('<div>').attr('id', 'center_div'));
+  main_div.append(cmsjQuery('<div>').attr('id', 'status_div'));
 
 	var right_div = cmsjQuery('<div>').attr('id', 'right_div');
 	main_div.append(right_div);
@@ -44,6 +44,15 @@ cmsjQuery(function() {
 
   right_div.append(cmsjQuery('<a href="{{@BASE}}/admin/settings" id="settingsbtn" class="button">Settings</a>'));
   right_div.append(cmsjQuery('<a href="{{@BASE}}{{@PATH}}/logout" class="button">Logout</a>'));
+
+  function status (message) {
+    cmsjQuery("#webworkscms_admintoolbar #center_div").hide();
+    cmsjQuery("#webworkscms_admintoolbar #status_div").show();
+    
+    cmsjQuery("#webworkscms_admintoolbar #status_div").html(message);
+  }
+
+  status("testing");
 
   var mouseX = 0;
   var mouseY = 0;

@@ -16,6 +16,7 @@ class version_control extends prefab {
 
 		require_once (__DIR__."/../../resources/git-php/Git.php");
 
+		check (0, !array_key_exists("git", $f3->CONFIG), "No `git` section in config.ini");
 		check (0, !array_key_exists("path", $f3->CONFIG["git"]), "No `git_path` set in config.ini");
 
 		Git::set_bin ($f3->CONFIG["git"]["path"]);

@@ -1,0 +1,12 @@
+﻿Working on status reports
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch content
+# Your branch is behind 'origin/content' by 2 commits, and can be fast-forwarded.
+#   (use "git pull" to update your local branch)
+#
+# Changes to be committed:
+#	modified:   scripts/version_control.php
+#	modified:   scriptsUI/toolbar/toolbar.html
+#
+
