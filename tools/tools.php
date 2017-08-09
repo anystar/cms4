@@ -12,7 +12,7 @@ function check ($type, $cond, ...$messages) {
 			if (is_string($m))
 				$output .= "<p>".markdown::instance()->convert($m)."</p>";
 			if (is_array($m))
-				$output .= "<pre><code>".base::instance()->highlight(json_encode($m, JSON_PRETTY_PRINT))."</code></pre>";
+				$output .= "<pre><code>".base::instance()->highlight(json_encode($m, JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES))."</code></pre>";
 		}
 		base::instance()->error($type, $output);
 	}

@@ -24,6 +24,16 @@ class contactform extends \Prefab {
 
 		$f3 = base::instance();
 
+		$defaults["class"] = "contactform";
+		$defaults["name"] = "enquiryform";
+		$defaults["label"] = "contact";
+		$defaults["sendto"] = "joe@example.com";
+		$defaults["sendname"] = "Website Enquiry";
+		$defaults["template"] = "email_template.html";
+		$defaults["success"] = "?success=true";
+
+		check(0, (count($settings) < 3), "**Default example:**",$defaults);
+
 		check(0, $settings["label"], "No `label` set in **".$settings["name"]."** settings");
 		check(0, $settings["sendto"], "No `sendto` set in **".$settings["name"]."** settings");
 		check(0, $settings["sendname"], "No `sendname` set in **".$settings["name"]."** settings");

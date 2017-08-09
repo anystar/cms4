@@ -1,32 +1,5 @@
 <?php
 
-// documentation(
-// 	"Required: Script name without extention",
-// 	["class" => "gallery"],
-
-// 	"Required: Template variable name",
-// 	["name" => "gallery"],
-
-// 	"Required: Label to be used for buttons and admin panels",
-// 	["label" => "Gallery"],
-
-// 	"Required: Relative path where to upload images",
-// 	["path" => "/assets/gallery/"],
-	
-// 	"Required: Image size",
-// 	["image-size" => "2000x2000"],
-	
-// 	["thumb-size" => "200x200"],
-	
-// 	["captions-enabled" => true],
-	
-// 	["tags-enabled" => true],
-	
-// 	["crop" => false],
-	
-// 	["enlarge" => false],
-// );
-
 class gallery {
 
 	private $name;
@@ -35,6 +8,20 @@ class gallery {
 	function __construct($settings) {
 
 		$f3 = base::instance();
+
+		$defaults["class"] = "gallery";
+		$defaults["name"] = "gallery";
+		$defaults["label"] = "Gallery";
+		$defaults["route"] = "gallery.html";
+		$defaults["image-size"] = "1500x1500";
+		$defaults["thumb-size"] = "400x400";
+		$defaults["path"] = "assets/gallery/";
+		$defaults["crop"] = "false";
+		$defaults["enlarge"] = "false";
+		$defaults["captions-enabled"] = false;
+		$defaults["tags-enabled"] = false;
+
+		check(0, (count($settings) < 3), "**Default example:**", $defaults);
 
 		check(0, $settings["label"], "No label set in **".$settings["name"]."** settings");
 		check(0, $settings["image-size"], 'Please set a size for **'.$settings["name"].'** settings', "**Example:**",'`image-size: 400x200`', "Leave blank for no resize");
@@ -113,7 +100,7 @@ class gallery {
 		});
 
 		$f3->route("GET /admin/{$this->name}/delete", function ($f3, $params) {
-			
+
 			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
 
 			$image = $f3->GET["image"];

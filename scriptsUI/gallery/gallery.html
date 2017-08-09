@@ -96,7 +96,7 @@
 										<check if="{{@enable_tags}}"><input data-filename="{{@image.filename}}" placeholder="Tag" class="form-control tags_save" name="tag" type="text" value="{{@image.tags}}"></check>
 									</td>
 									<td align="center">
-										<a class="delete_image" href="{{@BASE}}/admin/{{@name}}/delete?image={{@image.filename}}"><button>Delete</button></a>
+										<a class="delete_image" href="{{@BASE}}/admin/{{@name}}/delete?image={{urlencode(@image.filename)}}"><button>Delete</button></a>
 									</td>
 								</tr>
 								</repeat>

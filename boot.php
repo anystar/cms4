@@ -22,7 +22,11 @@ $GLOBALS["config"] = parse_ini_file($ROOTDIR."/config.ini", true);
 
 $f3->CONFIG = $GLOBALS["config"];
 
-$f3->ONERROR = function ($f3) { echo Template::instance()->render("admin/error.html"); };
+$f3->ONERROR = function ($f3) { 
+	header("HTTP/1.0 ".$f3->ERROR["code"]." ".$f3->ERROR["status"]);
+	echo Template::instance()->render("admin/error.html"); 
+};
+
 $f3->ESCAPE = false;
 
 $f3->CDN = $f3->BASE."/".rtrim($config["CDN"], "/");
@@ -235,7 +239,9 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	];
 
 	if (!$f3->FILE)
+	{
 		$f3->error("404");
+	}
 	
 	$f3->MIME = mime_content_type2(getcwd()."/".$f3->FILE);
 
@@ -276,7 +282,7 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 		header("Content-length: ".filesize($file).';');
 		echo readfile($file);
 	} else {
-		$f3->error(404);
+		$f3->error("404");
 	}
 });
 
