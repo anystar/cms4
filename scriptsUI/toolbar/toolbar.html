@@ -31,9 +31,9 @@ cmsjQuery(function() {
 	var main_div = cmsjQuery('<div>').attr('id', 'webworkscms_admintoolbar');
 	cmsjQuery('body').append(main_div);
 
-  var status_bar = cmsjQuery('<div>').attr('id', 'webworkscms_statusbar');
+/*  var status_bar = cmsjQuery('<div>').attr('id', 'webworkscms_statusbar');*/
   /*status_bar.html("Status bar");*/
-  cmsjQuery('body').append(status_bar);
+/*  cmsjQuery('body').append(status_bar);*/
 
 	var left_div = cmsjQuery('<div>').attr('id', 'left_div');
 	main_div.append(left_div);
@@ -55,8 +55,6 @@ cmsjQuery(function() {
     
     cmsjQuery("#webworkscms_admintoolbar #status_div").html(message);
   }
-
-  status("testing");
 
   var mouseX = 0;
   var mouseY = 0;
