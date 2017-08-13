@@ -3,7 +3,7 @@
 class version_control extends prefab {
 
 	private $repo;
-	private $gitignore_sha1 = "d1c34cb3fe4413d01e4dab7bdfb5f8bec872e4c5";
+	private $gitignore_sha1 = "60e12e6160e6c97f366a3971f7c132cd84905517";
 	private $branch;
 
 	function __construct($settings) {
@@ -51,7 +51,7 @@ class version_control extends prefab {
 			$this->repo->run("config --add alias.prev \"checkout HEAD^1\"");
 
 
-		$gitignore = ".cms/tmp".PHP_EOL.".cms/cache".PHP_EOL.".cms/stats.json".PHP_EOL."cms.php";
+		$gitignore = ".cms/tmp".PHP_EOL.".cms/cache".PHP_EOL.".cms/stats.json".PHP_EOL."cms.php".PHP_EOL."error_log";
 
 		// Ensure our .gitignore exists
 		if (!file_exists(getcwd()."/.gitignore"))
