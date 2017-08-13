@@ -39,10 +39,6 @@ $f3->AUTOLOAD = __DIR__."/scripts/;" . getcwd()."/scripts/;".$ROOTDIR."/resource
 $f3->set("DEBUG", 3);
 $f3->set("JAR.expire", time()+31536000);
 
-// Track previous page
-$f3->PREVIOUS = $f3->SESSION["previous"];
-$f3->SESSION["previous"] = $f3->get("BASE").$f3->get("PATH");
-
 // Check folder, file and security, ensure required extentions installed and required settings are set and valid.
 // 	- PHP extensions check, gd.
 // 	- .cms folder is available
@@ -174,6 +170,7 @@ if (admin::$signed) {
 new toolbar($settings);
 new settings_manager($settings);
 new version_control($settings);
+new stats ($settings);
 
 check (0, !array_key_exists("scripts", $settings), "No scripts element in settings.json");
 

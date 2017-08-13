@@ -1,0 +1,26 @@
+<script>
+  
+  cmsjQuery(function() {
+
+  	var left_div = cmsjQuery("#webworkscms_admintoolbar #left_div");
+	
+	var btn = cmsjQuery('<a href="{{@BASE}}/admin/stats" id="views">{{@STATS.views}} views</a>');
+
+	btn.click(function (evt) {
+		var label = $(this).html();
+
+		$(this).html("Opening");
+
+		PopupCenter($(this).attr("href"), "Webworks CMS", "1000", "800");
+
+		$(this).html(label);
+
+		evt.preventDefault();
+	});
+
+	cmsjQuery("#webworkscms_admintoolbar #left_div").append(btn);
+
+  });
+
+
+</script>

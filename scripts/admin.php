@@ -205,32 +205,32 @@ class admin {
 
 	static public function sendMagicLink () {
 
-				if (!cache::instance()->exists("login.hash"))
-					cache::instance()->set("login.hash", str_replace(".", "/", uniqid("", true).uniqid("", true).uniqid("", true).uniqid("", true)));
+		if (!cache::instance()->exists("login.hash"))
+			cache::instance()->set("login.hash", str_replace(".", "/", uniqid("", true).uniqid("", true).uniqid("", true).uniqid("", true)));
 
-				$hive["CDN"] = base::instance()->CDN;
-				$hive["URL"] = base::instance()->get("SCHEME")."://".base::instance()->get("HOST").base::instance()->get("BASE")."/admin/login?key=".cache::instance()->get("login.hash");
-				$hive["HOST"] = base::instance()->get("HOST");
-				$hive["SCHEME"] = base::instance()->get("SCHEME");
+		$hive["CDN"] = base::instance()->CDN;
+		$hive["URL"] = base::instance()->get("SCHEME")."://".base::instance()->get("HOST").base::instance()->get("BASE")."/admin/login?key=".cache::instance()->get("login.hash");
+		$hive["HOST"] = base::instance()->get("HOST");
+		$hive["SCHEME"] = base::instance()->get("SCHEME");
 
-				$config = base::instance()->CONFIG["mailer"];
-				$smtp = new SMTP(
-								$config["smtp.host"],
-								$config["smtp.port"],
-								$config["smtp.scheme"],
-								$config["smtp.user"],
-								$config["smtp.pw"]
-							);
+		$config = base::instance()->CONFIG["mailer"];
+		$smtp = new SMTP(
+						$config["smtp.host"],
+						$config["smtp.port"],
+						$config["smtp.scheme"],
+						$config["smtp.user"],
+						$config["smtp.pw"]
+					);
 
-				$smtp->set('To', '<'.admin::$clientEmail.'>');
-				$smtp->set('From', $config["smtp.from_name"].'<'.$config["smtp.from_mail"].'>');
-				$smtp->set('Subject', 'Login Link');
+		$smtp->set('To', '<'.admin::$clientEmail.'>');
+		$smtp->set('From', $config["smtp.from_name"].'<'.$config["smtp.from_mail"].'>');
+		$smtp->set('Subject', 'Login Link');
 
-				$body = \Template::instance()->render("/admin/magiclink.html", null, $hive);
+		$body = \Template::instance()->render("/admin/magiclink.html", null, $hive);
 
-				$smtp->set('Content-Type', "text/html");
+		$smtp->set('Content-Type', "text/html");
 
-				$smtp->send($body);
+		$smtp->send($body);
 	}
 
 	static public function logout () {

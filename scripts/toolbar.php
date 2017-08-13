@@ -22,9 +22,7 @@ class toolbar extends prefab {
 					echo Template::instance()->render("/toolbar/login_model.html");
 					base::instance()->SESSION["show-login"] = false;
 				}
-
 			?>';
-
 		});
 
 		Template::instance()->extend("body", "Body::render");

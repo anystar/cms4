@@ -42,7 +42,6 @@ class repeater {
 
 	}
 
-
 	function admin_routes($f3) {
 
 		$f3->route(['GET /admin/'.$this->name, 'GET /admin/'.$this->name.'/update' ], function ($f3) {

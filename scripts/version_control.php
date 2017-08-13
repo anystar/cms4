@@ -3,6 +3,8 @@
 class version_control extends prefab {
 
 	private $repo;
+	private $gitignore_sha1 = "d1c34cb3fe4413d01e4dab7bdfb5f8bec872e4c5";
+	private $branch;
 
 	function __construct($settings) {
 
@@ -23,6 +25,8 @@ class version_control extends prefab {
 
 		$this->repo = new GitRepo(getcwd(), true);
 
+		$this->branch = $branch = $this->repo->active_branch();
+
 		// Ensure user and email are setup
 		$check = $this->repo->run("config --get user.name");
 		if ($check == "")
@@ -33,17 +37,28 @@ class version_control extends prefab {
 			$this->repo->run("config user.email '".$f3->CONFIG["git"]["email"]."'");
 
 		// Add our shortcuts
+
+		$nextCmd = "config --add alias.next \"!sh -c 'git log --reverse --pretty=%H ".$this->branch." | awk \\\"/$(git rev-parse HEAD)/{getline;print}\\\" | xargs git checkout'\"";
 		$check = $this->repo->run("config --get alias.next");
-		if ($check == "")
-			$this->repo->run("config --add alias.next \"!sh -c 'git log --reverse --pretty=%H master | awk \\\"/$(git rev-parse HEAD)/{getline;print}\\\" | xargs git checkout'\"");
+		if ($check != $nextCmd)
+		{
+			$this->repo->run("config --unset alias.next");
+			$this->repo->run($nextCmd);
+		}
 
 		$check = $this->repo->run("config --get alias.prev");
 		if ($check == "")
 			$this->repo->run("config --add alias.prev \"checkout HEAD^1\"");
 
+
+		$gitignore = ".cms/tmp".PHP_EOL.".cms/cache".PHP_EOL.".cms/stats.json".PHP_EOL."cms.php";
+
 		// Ensure our .gitignore exists
 		if (!file_exists(getcwd()."/.gitignore"))
-			file_put_contents(getcwd()."/.gitignore", ".cms/tmp".PHP_EOL.".cms/cache");
+			file_put_contents(getcwd()."/.gitignore", $gitignore);
+
+		else if (sha1_file(getcwd()."/.gitignore") != $this->gitignore_sha1)
+			file_put_contents(getcwd()."/.gitignore", $gitignore);
 
 		if (isroute("/admin/versioncontrol/save"))
 		{
@@ -144,7 +159,7 @@ class version_control extends prefab {
 				$this->repo->commit("time: ".date("h:i:s"));
 			}
 
-			$this->repo->checkout("master");
+			$this->repo->checkout($this->branch);
 			$this->repo->run("merge temp --strategy-option=theirs");
 			$this->repo->delete_branch("temp");
 
@@ -200,12 +215,12 @@ class version_control extends prefab {
 
 		$this->repo->run("next");
 
-		// We must be at the start, lets just checkout master
+		// We must be at the start, lets just checkout branch
 		$current_ref = $this->repo->run("rev-parse HEAD");
-		$master_ref = $this->repo->run("rev-parse master");
+		$master_ref = $this->repo->run("rev-parse ".$this->branch);
 
 		if ($current_ref == $master_ref)
-			$this->repo->checkout("master");
+			$this->repo->checkout($this->branch);
 
 		base::instance()->reroute(base::instance()->PATH);
 	}
