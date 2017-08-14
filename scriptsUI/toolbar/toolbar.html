@@ -31,15 +31,15 @@ cmsjQuery(function() {
 	var main_div = cmsjQuery('<div>').attr('id', 'webworkscms_admintoolbar');
 	cmsjQuery('body').append(main_div);
 
-/*  var status_bar = cmsjQuery('<div>').attr('id', 'webworkscms_statusbar');*/
-  /*status_bar.html("Status bar");*/
-/*  cmsjQuery('body').append(status_bar);*/
+  var status_bar = cmsjQuery('<div>').attr('id', 'statusbar');
+  status_bar.hide();
+  status_bar.html("Status bar");
 
 	var left_div = cmsjQuery('<div>').attr('id', 'left_div');
 	main_div.append(left_div);
 
 	main_div.append(cmsjQuery('<div>').attr('id', 'center_div'));
-  main_div.append(cmsjQuery('<div>').attr('id', 'status_div'));
+  main_div.append(status_bar);
 
 	var right_div = cmsjQuery('<div>').attr('id', 'right_div');
 	main_div.append(right_div);
@@ -49,11 +49,12 @@ cmsjQuery(function() {
   right_div.append(cmsjQuery('<a href="{{@BASE}}/admin/settings" id="settingsbtn" class="button">Settings</a>'));
   right_div.append(cmsjQuery('<a href="{{@BASE}}{{@PATH}}/logout" class="button">Logout</a>'));
 
+  /*status ("Loading tools");*/
   function status (message) {
     cmsjQuery("#webworkscms_admintoolbar #center_div").hide();
-    cmsjQuery("#webworkscms_admintoolbar #status_div").show();
-    
-    cmsjQuery("#webworkscms_admintoolbar #status_div").html(message);
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").show();
+
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").html(message);
   }
 
   var mouseX = 0;
