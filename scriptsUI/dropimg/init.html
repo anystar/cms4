@@ -4,14 +4,46 @@
     }
 
     .imgdropzone:hover { 
+        border: 1px dashed #000;
+        opacity: 0.3 !important;
+    }
+    .filedropzone {
+        transition: opacity 0.1s ease-in-out 0s !important;
+    }
+
+    .filedropzone:hover { 
         outline: 1px dashed #777;
         opacity: 0.3 !important;
     }
 </style>
 
 <script src="{{ @CDN }}/dropzone/dist/min/dropzone.min.js"></script>
+<link rel="stylesheet" href="{{ @CDN }}/dropzone/dist/min/dropzone.min.css" type="text/css">  
 <script>
     cmsjQuery(function() {
+
+        var files_for_dropzone = document.getElementsByClassName("filedropzone");
+
+        for (var i = files_for_dropzone.length - 1; i >= 0; i--)
+        {
+            var id = files_for_dropzone[i].getAttribute("id");
+            var file = files_for_dropzone[i].getAttribute("href");
+
+            new Dropzone("#"+id, {
+                url: "{{@BASE}}/admin/dropfile/upload",
+                params: {
+                    file: file
+                },
+                previewsContainer: false,
+                uploadMultiple: false,
+                acceptedFiles: ".pdf",
+                init: function () {
+                    this.on("complete", function (file) {
+                        this.element.href = this.element.href+"?"+new Date().getTime(); 
+                    });
+                }
+            });
+        }
 
         var imgs_for_dropzone = document.getElementsByClassName("imgdropzone");
 
@@ -26,7 +58,7 @@
             var brightness = imgs_for_dropzone[i].getAttribute("data-brightness");
             var contrast = imgs_for_dropzone[i].getAttribute("data-contrast");
 
-            var dz = new Dropzone("#"+id, { 
+            new Dropzone("#"+id, {
                 url: "{{@BASE}}/admin/dropimg/upload",
                 params: {
                     width: width,
@@ -42,6 +74,8 @@
                 resizeQuality: 1,
                 createImageThumbnails: false,
                 uploadMultiple: false,
+                previewsContainer: false,
+                acceptedFiles: "image/*",
                 init: function () {
                     this.on("complete", function (file) {
                         this.element.src = this.element.src+"?"+new Date().getTime(); 

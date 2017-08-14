@@ -58,7 +58,7 @@ function j ($data) {
 	if (is_array($data))
 		echo json_encode($data);
 	else 
-		echo $data;
+		echo json_encode(["response"=>$data]);
 	
 	exit;
 }

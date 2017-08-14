@@ -9,6 +9,25 @@ class dropimg extends prefab {
 
 		if (admin::$signed) {
 
+			$f3->route("POST /admin/dropfile/upload", function ($f3) {
+
+				$file = $f3->POST["file"];
+				$file = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $file);
+				$ext = pathinfo(getcwd()."/".$file)["extension"];
+
+				$dir = getcwd()."/".pathinfo($file)["dirname"];
+
+				if (!is_dir($dir))
+					mkdir($dir);
+
+				if (!is_file($file))
+					touch($file);
+
+				if (is_writeable($file)) {	
+					copy($f3->FILES["file"]["tmp_name"], $file);
+				}
+			});
+
 			$f3->route("POST /admin/dropimg/upload", function ($f3) {
 
 				// Check if current image exists
@@ -167,6 +186,56 @@ class dropimg extends prefab {
 			}
 
 			$string .= ">";
+			$string .= "<?php } ?>";
+
+			return $string;
+		});
+
+
+		Template::instance()->extend("dropfile", function ($args) {
+			$f3 = base::instance();
+
+			$string .= '<?php if (admin::$signed) {?>';
+
+			$string .= '<a ';
+
+			$classFilled = false;
+			foreach ($args["@attrib"] as $key=>$value) {
+
+				if ($key=="class") {
+					$string .= 'class="'.$value.' filedropzone" ';
+					$classFilled = true;
+				} else {
+					$string .= $key.'="'.$value.'" ';
+				}
+			}
+
+			if (!$classFilled)
+				$string .= 'class="filedropzone" ';
+
+			$string .= 'id="'.uniqid("dropfile_").'" ';
+			$string .= 'onclick="return false;" ';
+
+			foreach ($args["@attrib"] as $key=>$value) {
+				$string .= $key.'="'.$value.'" ';
+			}
+
+			$string .= '>';
+			$string .= $args[0];
+			$string .= "</a>";
+			$string .= "<?php } ?>";
+
+			$string .= '<?php if (!admin::$signed) {?>';
+
+			$string .= '<a ';
+
+			foreach ($args["@attrib"] as $key=>$value) {
+				$string .= $key.'="'.$value.'" ';
+			}
+
+			$string .= '>';
+			$string .= $args[0];
+			$string .= "</a>";
 			$string .= "<?php } ?>";
 
 			return $string;
