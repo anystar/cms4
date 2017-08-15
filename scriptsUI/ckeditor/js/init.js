@@ -98,7 +98,7 @@ function init_inline_ckeditors() {
 				e.editor.execCommand("cmssave");
 				e.editor.resetDirty();
 			}
-		} );
+		});
 	}
 }
 

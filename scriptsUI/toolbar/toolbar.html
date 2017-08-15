@@ -49,14 +49,6 @@ cmsjQuery(function() {
   right_div.append(cmsjQuery('<a href="{{@BASE}}/admin/settings" id="settingsbtn" class="button">Settings</a>'));
   right_div.append(cmsjQuery('<a href="{{@BASE}}{{@PATH}}/logout" class="button">Logout</a>'));
 
-  /*status ("Loading tools");*/
-  function status (message) {
-    cmsjQuery("#webworkscms_admintoolbar #center_div").hide();
-    cmsjQuery("#webworkscms_admintoolbar #statusbar").show();
-
-    cmsjQuery("#webworkscms_admintoolbar #statusbar").html(message);
-  }
-
   var mouseX = 0;
   var mouseY = 0;
 
@@ -124,7 +116,26 @@ cmsjQuery(function() {
       mouseX = evt.pageX;
       mouseY = evt.pageY;
   });
+
 });
+
+function status (message) {
+
+  if (typeof message === "undefined")
+  {
+    cmsjQuery("#webworkscms_admintoolbar #center_div").show();
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").hide();
+
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").html("");
+  }
+  else
+  {
+    cmsjQuery("#webworkscms_admintoolbar #center_div").hide();
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").show();
+
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").html(message);
+  }
+}
 </script>
 
 <repeat group="{{@include}}" value="{{@code}}">

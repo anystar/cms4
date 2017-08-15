@@ -25,7 +25,15 @@ class version_control extends prefab {
 
 		$this->repo = new GitRepo(getcwd(), true);
 
-		$this->branch = $branch = $this->repo->active_branch();
+		// If we are in a detached HEAD, lets get branch from cache
+		if ($this->isDetached())
+		{
+			// We have to be careful about this though..
+			$this->branch = Cache::instance()->get("gitbranch");
+		}
+		else
+			$this->branch = $branch = $this->repo->active_branch();
+
 
 		// Ensure user and email are setup
 		$check = $this->repo->run("config --get user.name");
@@ -131,7 +139,7 @@ class version_control extends prefab {
 	function canRedo () {
 
 		// Are we on a detached head?
-		if (substr($this->repo->run("status"), 0, 16) == "HEAD detached at")
+		if ($this->isDetached())
 			return true;
 		else
 			return false;
@@ -140,11 +148,18 @@ class version_control extends prefab {
 	function detachedAndDirty () {
 
 		// Are we in a detached head?
-		if (substr($this->repo->run("status"), 0, 16) == "HEAD detached at")
+		if ($this->isDetached())
 			if ($this->repo->run("status -s") != "")
 				return true;
 
 		return false;
+	}
+
+	function isDetached () {
+		if (substr($this->repo->run("status"), 0, 16) == "HEAD detached at")
+			return true;
+		else
+			return false;
 	}
 
 	function save () 
@@ -168,8 +183,7 @@ class version_control extends prefab {
 
 
 		$this->repo->add(".");
-		echo ($this->repo->commit("time: ".date("h:i:s")));
-		die;
+		$this->repo->commit("time: ".date("h:i:s"));
 	}
 
 	function undo () {
@@ -187,11 +201,16 @@ class version_control extends prefab {
 			}
 		}
 
-
 		// If we are not on a detached head
 		if (substr($this->repo->run("status"), 0, 16) != "HEAD detached at")
+		{
+			// We are moving into a detached HEAD state
+			// Lets save the branch we are on
+			Cache::instance()->set("gitbranch", $this->branch, 0);
+
 			if ($this->repo->run("status -s") != "")
 				$this->save();
+		}
 
 		$this->repo->run("prev");
 
@@ -220,7 +239,9 @@ class version_control extends prefab {
 		$master_ref = $this->repo->run("rev-parse ".$this->branch);
 
 		if ($current_ref == $master_ref)
+		{
 			$this->repo->checkout($this->branch);
+		}
 
 		base::instance()->reroute(base::instance()->PATH);
 	}

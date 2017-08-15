@@ -11,8 +11,11 @@
   	var savebtn = cmsjQuery('<button id="savebtn" class="button revcontrol">Save</button>');
 
   	savebtn.mouseup(function () {
+  		status("Saving changes");
+
   		cmsjQuery.post("{{@BASE}}/admin/versioncontrol/save").done(function (response) {
-  			updateState(response)
+  			status();
+  			updateState(cmsjQuery.parseJSON(response))
   		});
   	});
 
@@ -25,9 +28,15 @@
   	function updateState (state) {
 	 
 	  	if (state.isDirty)
+	  	{
 			cmsjQuery("#webworkscms_admintoolbar #savebtn").addClass("unsaved");
+			cmsjQuery("#webworkscms_admintoolbar #savebtn").removeClass("disabled");
+	  	}
 	  	else
+	  	{
 			cmsjQuery("#webworkscms_admintoolbar #savebtn").removeClass("unsaved");
+			cmsjQuery("#webworkscms_admintoolbar #savebtn").addClass("disabled");
+	  	}
 
 		if (state.canUndo)
 			cmsjQuery("#webworkscms_admintoolbar #undo").removeClass("disabled");

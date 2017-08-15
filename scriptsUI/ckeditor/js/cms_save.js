@@ -37,8 +37,12 @@ CKEDITOR.plugins.add( 'cmssave',
 					// Use pure javascript (no dependencies) and send the data in json format...
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function () {
+
+						if (this.readyState == 1)
+							status("Uploading changes");
+
 						if (this.readyState == 4 && this.status == 200) {
-							console.log(this.responseText);
+							status();
 							editor.element.setAttribute("hash", this.responseText);
 						}
 					};
