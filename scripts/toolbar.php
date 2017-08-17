@@ -13,14 +13,19 @@ class toolbar extends prefab {
 
 		Template::instance()->extend("toolbar", function ($args) {
 
-			if (array_key_exists("popup", $args["@attrib"]))
-				$this->isPopup = true;
-
 			toolbar::instance()->hasIncluded = true;
+
+			if ($args != NULL)
+				if (array_key_exists("popup", $args["@attrib"]))
+					$isPopup = 'array("POPUP"=>true)';
+				else
+					$isPopup = 'array("POPUP"=>false)';
 
 			return '<?php
 				if (admin::$signed)
-					echo Template::instance()->render("/toolbar/toolbar.html", null, toolbar::instance()->getHive(), 0);
+				{
+					echo Template::instance()->render("/toolbar/toolbar.html", null, array_merge(toolbar::instance()->getHive(), '.$isPopup.'), 0);
+				}
 				else if (base::instance()->SESSION["show-login"])
 				{
 					echo Template::instance()->render("/toolbar/login_model.html");
@@ -42,7 +47,7 @@ class toolbar extends prefab {
 	function getHive () {
 		$f3 = base::instance();
 
-		return ["POPUP"=>$this->isPopup, "include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH, "VISITS"=>$f3->VISITS];
+		return ["include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH, "VISITS"=>$f3->VISITS];
 	}
 
 }

@@ -1,11 +1,16 @@
 <link rel="stylesheet" href="{{ @CDN }}/admin/css/admin_toolbar.css">
+
 <check if="{{@POPUP}}">
   <true>
     <style>
-      #webworkscms_admintoolbar #center_div #undo, #webworkscms_admintoolbar #center_div #redo, #webworkscms_admintoolbar #center_div #save {
+      #webworkscms_admintoolbar #settingsbtn, #webworkscms_admintoolbar #views, #webworkscms_admintoolbar #center_div #undo, #webworkscms_admintoolbar #center_div #redo, #webworkscms_admintoolbar #center_div #save {
         display: none;
       }
-      
+
+      #webworkscms_admintoolbar #left_div, #webworkscms_admintoolbar #right_div {
+        width: 350px;
+      }
+      /* show toolbar */
     </style>    
   </true>
   <false>
@@ -15,6 +20,7 @@
           display: none !important;
         }
       }
+      /* do not show toolbar */
     </style>
   </false>
 </check>
