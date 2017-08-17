@@ -79,8 +79,12 @@ class gallery {
 		});
 
 		$f3->route("POST /admin/{$this->name}/dropzone", function ($f3) {
+				
 			$this->upload($f3);
-			exit;
+
+			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
+			$data["order"][] = $f3->FILES["file"]["name"];
+			base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 		});
 
 		$f3->route("POST /admin/{$this->name}/update-caption", function ($f3) {
@@ -157,7 +161,6 @@ class gallery {
 			if (count($files) > 0)
 				$order = array_merge($order, $files);
 
-
 			$data["order"] = $order;
 
 			base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
@@ -168,7 +171,6 @@ class gallery {
 			$f3->reroute("/admin/".$this->namespace);
 		});
 	}
-
 
 	function getImages () {
 		$return = array();

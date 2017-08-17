@@ -5,12 +5,16 @@ class toolbar extends prefab {
 	private $buttonList;
 	private $include;
 	public $hasIncluded;
+	public $isPopup = false;
 
 	function __construct($settings = null) {
 
 		// Implement Auto-including
 
 		Template::instance()->extend("toolbar", function ($args) {
+
+			if (array_key_exists("popup", $args["@attrib"]))
+				$this->isPopup = true;
 
 			toolbar::instance()->hasIncluded = true;
 
@@ -38,7 +42,7 @@ class toolbar extends prefab {
 	function getHive () {
 		$f3 = base::instance();
 
-		return ["include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH, "VISITS"=>$f3->VISITS];
+		return ["POPUP"=>$this->isPopup, "include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH, "VISITS"=>$f3->VISITS];
 	}
 
 }

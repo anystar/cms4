@@ -1,4 +1,23 @@
 <link rel="stylesheet" href="{{ @CDN }}/admin/css/admin_toolbar.css">
+<check if="{{@POPUP}}">
+  <true>
+    <style>
+      #webworkscms_admintoolbar #center_div #undo, #webworkscms_admintoolbar #center_div #redo, #webworkscms_admintoolbar #center_div #save {
+        display: none;
+      }
+      
+    </style>    
+  </true>
+  <false>
+    <style>
+      @media (max-width: 1030px) {
+        #webworkscms_admintoolbar {
+          display: none !important;
+        }
+      }
+    </style>
+  </false>
+</check>
 <script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
 <script>
 function PopupCenter(url, title, w, h) {
