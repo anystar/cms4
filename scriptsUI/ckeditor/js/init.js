@@ -1,3 +1,4 @@
+CKEDITOR.disableAutoInline = true;
 CKEDITOR.plugins.addExternal("cmssave", "{{@BASE}}/admin/ckeditor/cms_save.js");
 CKEDITOR.plugins.addExternal("restore", "{{@BASE}}/admin/ckeditor/restore.js");
 if (typeof upload_path !== 'undefined') CKEDITOR.plugins.addExternal("imagebrowser", "{{@BASE}}/admin/ckeditor/imagebrowser.js");
@@ -40,46 +41,6 @@ function getConfig (type) {
 		config.removePlugins += ',uploadimage';
 	}
 
-	if (type == "image")
-	{
-		config.toolbarGroups = [
-			{ name: 'insert', groups: [ 'insert' ] },
-			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-		];
-		config.removeButtons += ",Table";
-	}
-
-	if (type == "header")
-	{
-		config.toolbarGroups = [
-			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-			{ name: 'paragraph', groups: [ 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-			{ name: 'editing', groups: [ 'find', 'selection', 'editing', 'others', 'tools' ] },
-			'/',
-			{ name: 'styles', groups: [ 'styles' ] },
-			{ name: 'colors', groups: [ 'colors' ] },
-			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-		];
-	}
-
-	if (type == "text" || type == "full")
-	{
-		config.toolbarGroups = [
-			{ name: 'basicstyles', groups: [ 'undo', 'basicstyles', 'cleanup' ] },
-			{ name: 'links', groups: [ 'links' ] },
-			{ name: 'insert', groups: [ 'insert' ] },
-			{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-			{ name: 'editing', groups: [ 'find', 'selection', 'editing', 'others', 'tools' ] },
-			'/',
-			{ name: 'styles', groups: [ 'styles' ] },
-			{ name: 'colors', groups: [ 'colors' ] },
-			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-		];
-
-		config.removePlugins += ",liststyle,scayt";
-		config.disableNativeSpellChecker = false;
-	}
-
 	return config;
 };
 
@@ -91,15 +52,13 @@ function init_inline_ckeditors() {
 		var editorID = editors[i].getAttribute("id");
 		var type = editors[i].getAttribute("type");
 		var editor = CKEDITOR.inline(editorID, getConfig(type));
-		
+
 		editor.on( 'blur', function( e ) {
 			if (e.editor.checkDirty()) {
-				
 				e.editor.execCommand("cmssave");
 				e.editor.resetDirty();
 			}
 		});
+
 	}
 }
-
-init_inline_ckeditors();

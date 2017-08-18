@@ -270,6 +270,9 @@ class gallery {
 		// Temp image path
 		$temp_image = $f3->FILES["file"]["tmp_name"];
 
+		// Check to ensure extension is same as actual file type.
+
+
 		// Add a check if file is too big
 		// ...........
 
