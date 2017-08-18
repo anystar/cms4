@@ -179,7 +179,8 @@ window.onload = function () {
     editors[i].setAttribute('contenteditable', true);
   }
 
-  init_inline_ckeditors();
+  if (typeof init_inline_ckeditors=="function")
+    init_inline_ckeditors();
 
   status();
 }
