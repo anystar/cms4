@@ -26,6 +26,26 @@
 </check>
 <script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
 <script>
+var cmsjQuery = jQuery.noConflict(true);
+
+function status (message) {
+
+  if (typeof message === "undefined")
+  {
+    cmsjQuery("#webworkscms_admintoolbar #center_div").show();
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").hide();
+
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").html("");
+  }
+  else
+  {
+    cmsjQuery("#webworkscms_admintoolbar #center_div").hide();
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").show();
+
+    cmsjQuery("#webworkscms_admintoolbar #statusbar").html(message);
+  }
+}
+
 function PopupCenter(url, title, w, h) {
     // Fixes dual-screen position                         Most browsers      Firefox
     var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
@@ -49,21 +69,20 @@ function closeRefresh() {
   window.onunload = function () { window.opener.location.reload(); }
 }
 
-var cmsjQuery = jQuery.noConflict(true);
-
 cmsjQuery(function() {
 
 	var main_div = cmsjQuery('<div>').attr('id', 'webworkscms_admintoolbar');
 	cmsjQuery('body').append(main_div);
 
   var status_bar = cmsjQuery('<div>').attr('id', 'statusbar');
-  status_bar.hide();
-  status_bar.html("Status bar");
+  status_bar.html("Loading CMS");
 
 	var left_div = cmsjQuery('<div>').attr('id', 'left_div');
 	main_div.append(left_div);
 
-	main_div.append(cmsjQuery('<div>').attr('id', 'center_div'));
+  var center_div = cmsjQuery('<div>').attr('id', 'center_div');
+  center_div.hide();
+	main_div.append(center_div);
   main_div.append(status_bar);
 
 	var right_div = cmsjQuery('<div>').attr('id', 'right_div');
@@ -143,26 +162,26 @@ cmsjQuery(function() {
   });
 
 });
-
-function status (message) {
-
-  if (typeof message === "undefined")
-  {
-    cmsjQuery("#webworkscms_admintoolbar #center_div").show();
-    cmsjQuery("#webworkscms_admintoolbar #statusbar").hide();
-
-    cmsjQuery("#webworkscms_admintoolbar #statusbar").html("");
-  }
-  else
-  {
-    cmsjQuery("#webworkscms_admintoolbar #center_div").hide();
-    cmsjQuery("#webworkscms_admintoolbar #statusbar").show();
-
-    cmsjQuery("#webworkscms_admintoolbar #statusbar").html(message);
-  }
-}
 </script>
 
 <repeat group="{{@include}}" value="{{@code}}">
 {{@code}}
 </repeat>
+
+
+<script>
+window.onload = function () {
+
+  var editors = document.getElementsByClassName("ckeditor");
+
+  for (var i = editors.length - 1; i >= 0; i--)
+  {
+    editors[i].setAttribute('contenteditable', true);
+  }
+
+  if (typeof init_inline_ckeditors=="function")
+    init_inline_ckeditors();
+
+  status();
+}
+</script>
