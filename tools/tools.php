@@ -337,12 +337,13 @@ function determine_path () {
 	} 
 	else // file extension found
 	{	
+		die($cwd."/".$path);
 		if (is_file($cwd."/".$path)) { $f3->FILE = $path; $f3->PATH = "/".$path; }
 	}
 
 	$f3->PATH = rtrim($f3->PATH, "/");
 	$f3->MIME = mime_content_type2(getcwd()."/".$f3->FILE);
-
+die($f3->FILE);
 	$GLOBALS["path_determined"] = true;
 }
 

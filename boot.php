@@ -29,7 +29,8 @@ $accepted_mimetypes = [
 	"text/plain",
 	"application/javascript",
 	"application/x-javascript",
-	"directory"
+	"directory",
+	""
 ];
 
 if (!in_array($f3->MIME, $accepted_mimetypes))
@@ -277,8 +278,8 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 	if (is_file($file = $ROOTDIR."/cdn/".substr($f3->PATH, 9)))
 	{
 		$f3->expire(172800);
-		header('Content-Type: '.mime_content_type2($file).';');
-		header("Content-length: ".filesize($file).';');
+		header('Content-Type: '.mime_content_type2($file));
+		header("Content-Length: ".filesize($file));
 		echo readfile($file);
 	} else {
 		$f3->error("404");

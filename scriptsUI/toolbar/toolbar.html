@@ -171,14 +171,14 @@ cmsjQuery(function() {
 
 <div id="webworkscms_admintoolbar">
   <div id="left_div">
-    <img height="100%" id="webworks_logo" src="/cms-test/cms-cdn/admin/imgs/logo_toolbar.png">
+    <img height="100%" id="webworks_logo" src="{{ @CDN }}/admin/imgs/logo_toolbar.png">
   </div>
   <div id="center_div" style="display: none;"></div>
   <div id="statusbar">
     Loading CMS
   </div>
   <div id="right_div">
-    <a class="button" href="/cms-test/admin/settings" id="settingsbtn">Settings</a><a class="button" href="/cms-test/index/logout">Logout</a>
+    <a class="button" href="{{@BASE}}/admin/settings" id="settingsbtn">Settings</a><a class="button" href="{{@BASE}}/logout">Logout</a>
   </div>
 </div>
 
