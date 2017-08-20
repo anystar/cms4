@@ -20,6 +20,8 @@ class toolbar extends prefab {
 					$isPopup = 'array("POPUP"=>true)';
 				else
 					$isPopup = 'array("POPUP"=>false)';
+			else
+				$isPopup = 'array()';
 
 			return '<?php
 				if (admin::$signed)

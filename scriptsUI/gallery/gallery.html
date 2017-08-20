@@ -204,8 +204,7 @@
                 		status("Uploading..");
                 	});
                 	this.on("error", function (evt) {
-                		console.log(evt);
-                		status("Error: ");
+                		status("Error uploading");
                 	});
                     this.on("success", function (file) {
                     	status("Refreshing page");
