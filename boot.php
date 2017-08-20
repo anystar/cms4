@@ -1,8 +1,5 @@
 <?php
 
-
-
-
 GLOBAL $ROOTDIR;
 $ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);
 

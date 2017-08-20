@@ -30,6 +30,7 @@ var cmsjQuery = jQuery.noConflict(true);
 
 function status (message) {
 
+    console.log("done");
   if (typeof message === "undefined")
   {
     cmsjQuery("#webworkscms_admintoolbar #center_div").show();
@@ -71,27 +72,27 @@ function closeRefresh() {
 
 cmsjQuery(function() {
 
-	var main_div = cmsjQuery('<div>').attr('id', 'webworkscms_admintoolbar');
-	cmsjQuery('body').append(main_div);
+	// var main_div = cmsjQuery('<div>').attr('id', 'webworkscms_admintoolbar');
+	// cmsjQuery('body').append(main_div);
 
-  var status_bar = cmsjQuery('<div>').attr('id', 'statusbar');
-  status_bar.html("Loading CMS");
+ //  var status_bar = cmsjQuery('<div>').attr('id', 'statusbar');
+ //  status_bar.html("Loading CMS");
 
-	var left_div = cmsjQuery('<div>').attr('id', 'left_div');
-	main_div.append(left_div);
+	// var left_div = cmsjQuery('<div>').attr('id', 'left_div');
+	// main_div.append(left_div);
 
-  var center_div = cmsjQuery('<div>').attr('id', 'center_div');
-  center_div.hide();
-	main_div.append(center_div);
-  main_div.append(status_bar);
+ //  var center_div = cmsjQuery('<div>').attr('id', 'center_div');
+ //  center_div.hide();
+	// main_div.append(center_div);
+ //  main_div.append(status_bar);
 
-	var right_div = cmsjQuery('<div>').attr('id', 'right_div');
-	main_div.append(right_div);
+	// var right_div = cmsjQuery('<div>').attr('id', 'right_div');
+	// main_div.append(right_div);
 
-  left_div.append(cmsjQuery('<img id="webworks_logo" src="{{ @CDN }}/admin/imgs/logo_toolbar.png" height="100%">'));
+ //  left_div.append(cmsjQuery('<img id="webworks_logo" src="{{ @CDN }}/admin/imgs/logo_toolbar.png" height="100%">'));
 
-  right_div.append(cmsjQuery('<a href="{{@BASE}}/admin/settings" id="settingsbtn" class="button">Settings</a>'));
-  right_div.append(cmsjQuery('<a href="{{@BASE}}{{@PATH}}/logout" class="button">Logout</a>'));
+ //  right_div.append(cmsjQuery('<a href="{{@BASE}}/admin/settings" id="settingsbtn" class="button">Settings</a>'));
+ //  right_div.append(cmsjQuery('<a href="{{@BASE}}{{@PATH}}/logout" class="button">Logout</a>'));
 
   var mouseX = 0;
   var mouseY = 0;
@@ -168,20 +169,31 @@ cmsjQuery(function() {
 {{@code}}
 </repeat>
 
+<div id="webworkscms_admintoolbar">
+  <div id="left_div">
+    <img height="100%" id="webworks_logo" src="/cms-test/cms-cdn/admin/imgs/logo_toolbar.png">
+  </div>
+  <div id="center_div" style="display: none;"></div>
+  <div id="statusbar">
+    Loading CMS
+  </div>
+  <div id="right_div">
+    <a class="button" href="/cms-test/admin/settings" id="settingsbtn">Settings</a><a class="button" href="/cms-test/index/logout">Logout</a>
+  </div>
+</div>
+
 
 <script>
 window.onload = function () {
 
   var editors = document.getElementsByClassName("ckeditor");
 
-  for (var i = editors.length - 1; i >= 0; i--)
-  {
-    editors[i].setAttribute('contenteditable', true);
-  }
-
   if (typeof init_inline_ckeditors=="function")
     init_inline_ckeditors();
 
-  status();
+
+
+    document.getElementById("statusbar").style.display = "none";
+    document.getElementById("center_div").style.display = "table-cell";
 }
 </script>

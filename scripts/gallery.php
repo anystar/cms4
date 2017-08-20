@@ -65,13 +65,13 @@ class gallery {
 
 		$f3->route("GET /admin/{$this->name}", function ($f3) {
 
-			ToolBar::instance()->append(Template::instance()->render("/gallery/admin-toolbar.html", null));
-
 			$f3->gallery = $this->getImages();
 			$f3->label = $this->settings["label"];
 			$f3->name = $this->settings["name"];
 			$f3->enable_captions = $this->settings["captions-enabled"];
 			$f3->enable_tags = $this->settings["tags-enabled"];
+			$f3->height = $this->settings["image-size"][0];
+			$f3->width = $this->settings["image-size"][1];
 
 			$f3->set("max_upload_size", file_upload_max_size());
 
@@ -79,7 +79,7 @@ class gallery {
 		});
 
 		$f3->route("POST /admin/{$this->name}/dropzone", function ($f3) {
-				
+			
 			$this->upload($f3);
 
 			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
@@ -262,7 +262,7 @@ class gallery {
 		return $temp;
 	}
 
-	function upload($f3) {
+	function upload($f3) {		
 
 		$upload_path = $this->settings["path"];
 		$thumb_path = $this->settings["path"] . "/thumbs/";

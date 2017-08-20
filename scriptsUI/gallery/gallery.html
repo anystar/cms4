@@ -105,7 +105,7 @@
 					          <div class="dz-message">
 
 					                <div>Drop more photos here.</div>
-					                <div>Max file size: {{@max_upload_size}}</div>
+					                <div>Max size per file: 25MB</div>
 
 					          </div>
 					        </form>
@@ -117,7 +117,7 @@
 						<form method="post" action="{{@BASE}}/admin/{{@name}}/dropzone" class="dropzone" id="gallerydropzone">
 						  <div class="dz-message">
 							<div>Drop photos (or click) to create first gallery.</div>
-							<div>Max file size: {{@max_upload_size}}</div>
+							<div>Max size per file: 25MB</div>
 						  </div>
 						</form>
 					  </false>
@@ -129,7 +129,7 @@
     <toolbar popup />
 
 	<script src="{{ @CDN }}/dropzone/dist/min/dropzone.min.js"></script>
-	<script src="{{ @CDN }}/lity/dist/lity.min.js"></script>
+<!-- 	<script src="{{ @CDN }}/lity/dist/lity.min.js"></script> -->
 
 	<script>
 		cmsjQuery(function() {
@@ -181,15 +181,40 @@
 			cmsjQuery("#webworkscms_admintoolbar").children("#center_div").append(button);
 		});
 
-	  Dropzone.autoDiscover = false;
-	  Dropzone.options.gallerydropzone = {
-		init: function() {
-		  this.on("queuecomplete", function(file) { location.reload();  });
-		}
-	  };
 
-	  new Dropzone("#gallerydropzone");
+
+	  var width = {{@width}};
+	  var height = {{@height}};
+
+  		  Dropzone.autoDiscover = false;
+
+			
+            new Dropzone("#gallerydropzone", {
+                resizeWidth: width*2,
+                resizeHeight: height*2,
+                resizeMimeType: "image/png",
+                resizeMethod: "crop",
+                resizeQuality: 1,
+                createImageThumbnails: false,
+                uploadMultiple: false,
+                acceptedFiles: "image/*",
+                maxFilesize: 25,
+                init: function () {
+                	this.on("drop", function () {
+                		status("Uploading..");
+                	});
+                	this.on("error", function (evt) {
+                		console.log(evt);
+                		status("Error: ");
+                	});
+                    this.on("success", function (file) {
+                    	status("Refreshing page");
+						location.reload();
+                    });
+                }
+            });
 	</script>
+
 
   </body>
 </html>
