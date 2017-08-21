@@ -29,7 +29,12 @@ $f3->ONERROR = function ($f3) {
 
 $f3->ESCAPE = false;
 
-$f3->CDN = $f3->BASE."/".rtrim($config["CDN"], "/");
+if (array_key_exists("CDN.EXTERNAL", $config))
+	$f3->CDN = $config["CDN.EXTERNAL"];
+else if (array_key_exists("CDN.INTERNAL", $config))
+	$f3->CDN = $f3->BASE."/".rtrim($config["CDN.INTERNAL"], "/");
+else
+	d("No CDN setting in config.ini");
 
 $f3->TEMP = ".cms/tmp/";
 $f3->CACHE = "folder=.cms/cache/";
