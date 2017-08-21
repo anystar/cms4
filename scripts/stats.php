@@ -30,6 +30,54 @@ class stats extends prefab {
 					$this->stats["perMonth"][$date]++;
 
 				file_put_contents(".cms/stats.json", json_encode($this->stats, JSON_PRETTY_PRINT));
+
+				
+				
+				switch ($this->stats["views"])
+				{
+					case 100:
+						
+					break;
+
+					case 1000:
+
+					break;
+
+					case 2000:
+
+					break;
+
+					case 5000:
+
+					break;
+
+					case 10000:
+
+					break;
+
+					case 25000:
+
+					break;
+					case 50000:
+
+					break;
+
+					case 100000:
+
+					break;
+
+					case 250000:
+
+					break;
+
+					case 500000:
+
+					break;
+
+					case 500000:
+
+					break;
+				}
 			}
 		}
 		
