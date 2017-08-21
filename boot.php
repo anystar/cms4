@@ -1,5 +1,4 @@
 <?php
-
 GLOBAL $ROOTDIR;
 $ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);
 
@@ -20,38 +19,6 @@ $GLOBALS["config"] = parse_ini_file($ROOTDIR."/config.ini", true);
 // Load F3 and Setup
 // Set up error handler and set up any needed template handlers
 (file_exists($fatfree)) ? $f3 = include $fatfree : d("Fat Free Framework not found at '".$fatfree."'. Please download from http://fatfreeframework.com/");
-determine_path();
-
-// Accepted mimetypes to render as a template file
-$accepted_mimetypes = [
-	"text/html",
-	"text/css",
-	"text/plain",
-	"application/javascript",
-	"application/x-javascript",
-	"directory",
-	""
-];
-
-if (!in_array($f3->MIME, $accepted_mimetypes))
-{
-	header('Content-Type: '.$f3->MIME.';');
-	header("Content-length: ".filesize($f3->FILE).';');
-
-	// Render as raw data
-	set_time_limit(0);
-	$file = @fopen(getcwd()."/".$f3->FILE,"rb");
-	while(!feof($file))
-	{
-		print(@fread($file, 1024*8));
-		ob_flush();
-		flush();
-	}
-
-	// file save was a success
-	@fclose($file);
-	exit;
-}
 
 $f3->CONFIG = $GLOBALS["config"];
 
@@ -124,6 +91,8 @@ if (!is_file(".cms/settings.json")) {
 
 	$f3->write(".cms/settings.json", json_encode($default_settings, JSON_PRETTY_PRINT));
 }
+
+determine_path();
 
 // Setup mailer and ensure SMTP server is available
 if ($f3->get("smtp_server_check"))
@@ -238,6 +207,8 @@ if (admin::$signed) {
 	if ($f3->exists("GET.debug"))
 		k($hive);
 
+	if ($f3->exists("GET.phpinfo"))
+		{ phpinfo(); die; }
 }
 
 Template::instance()->filter("krumo", function ($array) {
@@ -248,6 +219,15 @@ Template::instance()->filter("krumo", function ($array) {
 });
 
 $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
+
+	// Accepted mimetypes to render as a template file
+	$accepted_mimetypes = [
+		"text/html",
+		"text/css",
+		"text/plain",
+		"application/javascript",
+		"application/x-javascript",
+	];
 
 	$nocache_mimetypes = [
 		"image/png",
@@ -269,8 +249,27 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	else
 		$f3->expire(172800);
 
-	// Render as a template file
-	echo Template::instance()->render($f3->FILE, $f3->MIME);
+	if (in_array($f3->MIME, $accepted_mimetypes))
+	{
+		// Render as a template file
+		echo Template::instance()->render($f3->FILE, $f3->MIME);
+	}
+	else
+	{
+		if (admin::$signed && in_array($f3->MIME, $nocache_mimetypes))
+		{
+			header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+			header("Cache-Control: post-check=0, pre-check=0", false);
+			header("Pragma: no-cache");
+		}
+
+
+		header('Content-Type: '.$f3->MIME.';');
+		header("Content-length: ".filesize($f3->FILE).';');
+
+		// Render as raw data
+		echo readfile(getcwd()."/".$f3->FILE);
+	}
 });
 
 $f3->route('GET /cms-cdn/*', function ($f3) {
@@ -278,8 +277,8 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 	if (is_file($file = $ROOTDIR."/cdn/".substr($f3->PATH, 9)))
 	{
 		$f3->expire(172800);
-		header('Content-Type: '.mime_content_type2($file));
-		header("Content-Length: ".filesize($file));
+		header('Content-Type: '.mime_content_type2($file).';');
+		header("Content-length: ".filesize($file).';');
 		echo readfile($file);
 	} else {
 		$f3->error("404");

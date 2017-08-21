@@ -249,12 +249,19 @@ function file_upload_max_size() {
 }
 
 function parse_file_size($size) {
+	if ($size == 0) return "unlimted";
+	
+	return $size;
 
-  if ($size == 0) return "unlimted";
-
+  $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
   $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
-
-  return round($size);
+  if ($unit) {
+    // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
+    return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+  }
+  else {
+    return round($size);
+  }
 }
 
 function isroute($route, $verb=null)
@@ -337,13 +344,12 @@ function determine_path () {
 	} 
 	else // file extension found
 	{	
-		die($cwd."/".$path);
 		if (is_file($cwd."/".$path)) { $f3->FILE = $path; $f3->PATH = "/".$path; }
 	}
 
 	$f3->PATH = rtrim($f3->PATH, "/");
 	$f3->MIME = mime_content_type2(getcwd()."/".$f3->FILE);
-die($f3->FILE);
+
 	$GLOBALS["path_determined"] = true;
 }
 
