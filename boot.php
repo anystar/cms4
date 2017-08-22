@@ -277,6 +277,7 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 
 		// Render as raw data
 		echo readfile(getcwd()."/".$f3->FILE);
+		$f3->abort();
 	}
 });
 
@@ -288,6 +289,7 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 		header('Content-Type: '.mime_content_type2($file).';');
 		header("Content-length: ".filesize($file).';');
 		echo readfile($file);
+		$f3->abort();
 	} else {
 		$f3->error("404");
 	}
