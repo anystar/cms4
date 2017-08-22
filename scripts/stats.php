@@ -18,42 +18,53 @@ class stats extends prefab {
 			file_put_contents(".cms/stats.json", json_encode($structure, JSON_PRETTY_PRINT));
 		}
 
-		$this->stats = json_decode(file_get_contents(".cms/stats.json"), true);
-
+		if (admin::$signed)
+			$this->stats = json_decode(file_get_contents(".cms/stats.json"), true);
+		
 		if (!admin::$signed)
 		{
 			if (!Cache::instance()->exists(base::instance()->IP))
 			{
 				Cache::instance()->set(base::instance()->IP, true, 7200); // Cache for 2hrs
-				$this->stats["views"]++;
-				$date = date("F Y");
-				if (!array_key_exists($date, $this->stats["perMonth"]))
-					$this->stats["perMonth"][$date] = 1;
-				else  
-					$this->stats["perMonth"][$date]++;
 
-				file_put_contents(".cms/stats.json", json_encode($this->stats, JSON_PRETTY_PRINT));
+				// Only track views counted within a certain country
+				$config = $GLOBALS["config"];
+				$geo = \Web\Geo::instance()->location();
+				if (array_key_exists("stats", $config))
+				if (array_key_exists("country", $config["stats"]))
+				if (in_array($geo["country_code"], $config["stats"]["country"]))
+				{
+					$this->stats = json_decode(file_get_contents(".cms/stats.json"), true);
+					$this->stats["views"]++;
+					$date = date("F Y");
+					if (!array_key_exists($date, $this->stats["perMonth"]))
+						$this->stats["perMonth"][$date] = 1;
+					else  
+						$this->stats["perMonth"][$date]++;
 
-				$milestones = array(
-					100=>"100 views",
-					1000=>"1000 views",
-					2000=>"2000 views",
-					5000=>"5k views",
-					10000=>"10k views",
-					25000=>"25k views",
-					50000=>"50k views",
-					100000=>"100k views",
-					250000=>"250k views",
-					500000=>"500k views",
-					750000=>"750k views",
-					1000000=>"1 Millon views!!!!",
-					2000000=>"Epic 2 Million views!",
-					5000000=>"Holy cow 5mil views!!",
-					10000000=>"wow 10 Million views!"
-				);
+					file_put_contents(".cms/stats.json", json_encode($this->stats, JSON_PRETTY_PRINT));
 
-				if (array_key_exists($this->stats["views"], $milestones))
-					$this->email_view_alert($milestones[$this->stats["views"]]);
+					$milestones = array(
+						100=>"100 views",
+						1000=>"1000 views",
+						2000=>"2000 views",
+						5000=>"5k views",
+						10000=>"10k views",
+						25000=>"25k views",
+						50000=>"50k views",
+						100000=>"100k views",
+						250000=>"250k views",
+						500000=>"500k views",
+						750000=>"750k views",
+						1000000=>"1 Millon views!!!!",
+						2000000=>"Epic 2 Million views!",
+						5000000=>"Holy cow 5mil views!!",
+						10000000=>"wow 10 Million views!"
+					);
+
+					if (array_key_exists($this->stats["views"], $milestones))
+						$this->email_view_alert($milestones[$this->stats["views"]]);
+				}
 			}
 		}
 		

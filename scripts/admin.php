@@ -65,6 +65,10 @@ class admin {
 
 		}
 
+		// Initilize stats prematurely
+		if (admin::$signed)
+			new stats ($settings);
+
 		// Expose login screen
 		if (!admin::$signed)
 		{
