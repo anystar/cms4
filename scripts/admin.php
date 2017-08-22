@@ -67,7 +67,10 @@ class admin {
 
 		// Initilize stats prematurely
 		if (admin::$signed)
+		{
+			$f3->ADMIN = true;
 			new stats ($settings);
+		}
 
 		// Expose login screen
 		if (!admin::$signed)
