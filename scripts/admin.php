@@ -49,7 +49,12 @@ class admin {
 			// Capture the last 6 characters and see if it is "/admin"
 			if (substr($f3->PATH, -7, strlen($f3->PATH)) == "/logout") {
 				admin::logout();
-				$f3->reroute(substr($f3->PATH, 0, strlen($f3->PATH)-7));
+				$path_without_logout = substr($f3->PATH, 0, strlen($f3->PATH)-7);
+
+				if ($path_without_logout == "")
+					$f3->reroute("/");
+				else
+					$f3->reroute($path_without_logout);
 			}
 
 			// Load dashboard routes
