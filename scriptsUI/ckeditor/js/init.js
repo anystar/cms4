@@ -59,11 +59,5 @@ function init_inline_ckeditors() {
 				e.editor.resetDirty();
 			}
 		});
-
-		editor.on("instanceReady", function (evt) {
-			evt.editor.container.setAttribute('contenteditable', true);
-			evt.editor.readOnly = false;
-		});
-
 	}
 }

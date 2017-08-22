@@ -296,6 +296,8 @@ function isroute($route, $verb=null)
 			return true;
 		else if (fnmatch($item.".htm", $f3->PATH))
 			return true;
+		else if (fnmatch("/".$item, $f3->PATH))
+			return true;
 	}
 
 	return false;

@@ -275,7 +275,7 @@ class ckeditor extends prefab {
 			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
 
 			$out .= '<?php if (admin::$signed) {?>';
-			$out .= "<div file='".urlencode($file)."' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='false'>";
+			$out .= "<div file='".urlencode($file)."' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
 			$out .= "<?php } ?>";
 			$out .= $args[0];
 			$out .= '<?php if (admin::$signed) {?>';

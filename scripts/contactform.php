@@ -67,7 +67,7 @@ class contactform extends \Prefab {
 			return;
 
 		$tmpl = \Template::instance();
-		$tmpl->extend('contactform','contactformHandler::render');
+		$tmpl->extend($this->name, 'contactformHandler::render');
 		$tmpl->extend('input','\Template\Tags\Input::render');
 		$tmpl->extend('textarea','\Template\Tags\Textarea::render');
 		$tmpl->extend('select','\Template\Tags\Select::render');
