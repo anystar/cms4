@@ -7,11 +7,19 @@ class repeater {
 
 	function __construct($settings) {
 
+		$defaults["class"] = "repeater";
+		$defaults["name"] = "example";
+		$defaults["label"] = "example";
+		$defaults["route"] = "*";
+		$defaults["template"] = "_products.html";
+
+		check(0, (count($settings) < 3), "**Default example:**", $defaults);
 
 		$this->snippets[] = "_blog.html";
 		$this->snippets[] = "_menu.html";
 		$this->snippets[] = "_products.html";
 		$this->snippets[] = "_testimonials.html";
+		$this->snippets[] = "_events.html";
 
 		check(0, $settings["name"], "No `name` set in **".$settings["name"]."** settings");
 		check(0, $settings["label"], "No `label` set in **".$settings["name"]."** settings");
@@ -66,6 +74,7 @@ class repeater {
 			
 			$f3->name = $this->name;
 			$f3->data = $this->jig->find();
+
 			echo Template::instance()->render("/repeat/repeat.html");
 		});
 
@@ -159,6 +168,6 @@ class repeater {
 
 
 	function toolbar () {
-		return "<a href='".base::instance()->BASE."/admin/".$this->settings["name"]."' class='button'>Edit ".$this->settings["label"]."</a>";
+		return "<a href='".base::instance()->BASE."/admin/".$this->settings["name"]."' class='button'>Add/Edit ".$this->settings["label"]."</a>";
 	}
 }

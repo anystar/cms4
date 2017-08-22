@@ -11,7 +11,13 @@
 		<link href="{{ @CDN }}/jquery-ui/jquery-ui.min.css" rel="stylesheet">
 		<link href="{{ @CDN }}/fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
-		
+
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
+		<script src="{{ @CDN }}/jquery-ui/jquery-ui.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="{{ @CDN }}/bootstrap/bootstrap.min.js"></script>
+
 		<style>
 			table {
 			    border-spacing: collapse;
@@ -61,11 +67,7 @@
 
 		</div>
 
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
-		<script src="{{ @CDN }}/jquery-ui/jquery-ui.min.js"></script>
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="{{ @CDN }}/bootstrap/bootstrap.min.js"></script>
+
 
 		<script>
 			$('.sortable').sortable({
@@ -99,7 +101,7 @@
 
 		</script>
 	
-		<toolbar>
+		<toolbar popup>
 		
 		<script>
 		cmsjQuery(function() {
