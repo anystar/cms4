@@ -23,6 +23,10 @@ class toolbar extends prefab {
 			else
 				$isPopup = 'array()';
 
+			if ($args != NULL)
+				if (array_key_exists("disable", $args["@attrib"]))
+					if (!$args["@attrib"]["disable"]) return "";
+
 			return '<?php
 				if (admin::$signed)
 				{

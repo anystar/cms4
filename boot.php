@@ -175,7 +175,6 @@ if (admin::$signed) {
 new toolbar($settings);
 new settings_manager($settings);
 new version_control($settings);
-new stats ($settings);
 
 check (0, !array_key_exists("scripts", $settings), "No scripts element in settings.json");
 
@@ -291,3 +290,5 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 });
 
 $f3->run();
+
+new stats ($settings);
