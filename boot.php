@@ -1,4 +1,7 @@
 <?php
+ignore_user_abort(true);
+set_time_limit(0);
+
 GLOBAL $ROOTDIR;
 $ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);
 
@@ -257,6 +260,7 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	{
 		// Render as a template file
 		echo Template::instance()->render($f3->FILE, $f3->MIME);
+		$f3->abort();
 	}
 	else
 	{
