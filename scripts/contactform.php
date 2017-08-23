@@ -150,7 +150,7 @@ class contactform extends \Prefab {
 					);
 
 		$smtp->set('To', '"'.$options["sendName"].'" <'.$sendto.'>');
-		$smtp->set('From', '"'.$options["fromName"].'" <admin@webworksau.com>');
+		$smtp->set('From', '"'.$options["fromName"].'" <'.$config["smtp.from_mail"].'>');
 		$smtp->set('Reply-To', '"'.$options["fromName"].'" <'.$options["fromAddress"].'>');
 		$smtp->set('Subject', $options["subject"]);
 
