@@ -9,7 +9,12 @@ class toolbar extends prefab {
 
 	function __construct($settings = null) {
 
-		// Implement Auto-including
+		base::instance()->route("GET /admin/toolbar.css", function ($f3) {
+
+			echo \Template::instance()->render("toolbar/styles.css", "text/css");
+			//echo \Web::instance()->minify("toolbar/styles.css", "text/css");
+			$f3->abort();
+		});
 
 		Template::instance()->extend("toolbar", function ($args) {
 

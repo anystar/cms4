@@ -7,16 +7,16 @@
 
 		<title>Web Works CMS</title>
 	
-		<link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
-		<link href="{{ @CDN }}/jquery-ui/jquery-ui.min.css" rel="stylesheet">
-		<link href="{{ @CDN }}/fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
-		<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
+		<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
+		<link href="{{ @CDN.jqueryui_css }}" rel="stylesheet">
+		<link href="{{ @CDN.fontawesome_css }}" rel="stylesheet">
+		<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
-		<script src="{{ @CDN }}/jquery-ui/jquery-ui.min.js"></script>
+		<script src="{{ @CDN.jquery }}"></script>
+		<script src="{{ @CDN.jqueryui_js }}"></script>
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="{{ @CDN }}/bootstrap/bootstrap.min.js"></script>
+		<script src="{{ @CDN.bootstrap_js }}"></script>
 
 		<style>
 			table {

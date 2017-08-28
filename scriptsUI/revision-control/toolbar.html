@@ -49,7 +49,7 @@
 			cmsjQuery("#webworkscms_admintoolbar #redo").addClass("disabled");
 	}
 
-	//poll();
+	poll();
 	function poll (){
 	    cmsjQuery.post('{{@BASE}}/admin/versioncontrol/poll', function(data) {
 	        updateState(cmsjQuery.parseJSON(data));

@@ -8,8 +8,8 @@
 	<title>Settings Manager</title>
 
 	<!-- Bootstrap -->
-	<link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
-	<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
+	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
+	<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -26,13 +26,13 @@
 
 		<div class="row">
 
-				<div class="col-xs-12">	
+				<div class="col-12">	
 					<h2>Website Settings</h2>
 					
 					<div class="row" style="margin-top:30px;">
 					
 					<form method="post" action="{{@BASE}}/admin/settings">
-						<div class="col-md-6">
+						<div class="">
 							<div class="form-group">
 								<label for="website-login-address">Website login address</label>
 								<input value="{{@website_login_address}}" type="email" class="form-control" name="website-login-address" id="website-login-address" placeholder="Enter email">

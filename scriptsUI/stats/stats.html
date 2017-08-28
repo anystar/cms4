@@ -8,8 +8,8 @@
 	<title>Website Statistics</title>
 
 	<!-- Bootstrap -->
-	<link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
-	<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
+	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
+	<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -25,12 +25,12 @@
 	<div class="container">
 
 		<div class="row">
-			<p>A view is based on a unqiue hit every 2 hours.</p>
-<canvas id="myChart" width="400" height="200"></canvas>
+			<p style="font-size:20;">A view is based on a unqiue hit every 2 hours. Only Australian views are counted.</p>
+            <canvas id="myChart" width="400" height="200"></canvas>
 		</div>
 	</div>
 
-	<script src="{{ @CDN }}/chart-js/dist.js"></script>
+	<script src="{{ @CDN.chart_js }}"></script>
 
 
 <script>

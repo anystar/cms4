@@ -65,6 +65,7 @@ class gallery {
 
 		$f3->route("GET /admin/{$this->name}", function ($f3) {
 
+
 			$f3->gallery = $this->getImages();
 			$f3->label = $this->settings["label"];
 			$f3->name = $this->settings["name"];
@@ -73,7 +74,8 @@ class gallery {
 			$f3->height = $this->settings["image-size"][0];
 			$f3->width = $this->settings["image-size"][1];
 
-			$f3->set("max_upload_size", file_upload_max_size());
+			$f3->max_upload_count = ini_get('max_file_uploads');
+			$f3->max_upload_size = file_upload_max_size();
 
 			echo Template::instance()->render("/gallery/gallery.html", "text/html");
 		});
@@ -82,9 +84,6 @@ class gallery {
 			
 			$this->upload($f3);
 
-			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
-			$data["order"][] = $f3->FILES["file"]["name"];
-			base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 		});
 
 		$f3->route("POST /admin/{$this->name}/update-caption", function ($f3) {
@@ -169,6 +168,13 @@ class gallery {
 		$f3->route("POST /admin/{$this->name}/upload_settings", function ($f3) {
 			$this->update_settings($f3->POST);
 			$f3->reroute("/admin/".$this->namespace);
+		});
+
+		$f3->route("POST /admin/{$this->name}/traditional_upload", function ($f3) {
+	
+			$this->upload($f3);
+
+			$f3->reroute("/admin/".$this->name);
 		});
 	}
 
@@ -267,47 +273,58 @@ class gallery {
 		$upload_path = $this->settings["path"];
 		$thumb_path = $this->settings["path"] . "/thumbs/";
 
-		// Temp image path
-		$temp_image = $f3->FILES["file"]["tmp_name"];
+		foreach ($f3->FILES as $file)
+		{
+			
+			if ($file["tmp_name"] == "") continue;
 
-		// Check to ensure extension is same as actual file type.
+			$temp_image = $file["tmp_name"];
+
+			// Check to ensure extension is same as actual file type.
 
 
-		// Add a check if file is too big
-		// ...........
+			// Add a check if file is too big
+			// ...........
 
-		// New name
-		$new_name = str_replace(' ', '_', $f3->FILES["file"]["name"]);
-		$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
+			// New name
+			$new_name = str_replace(' ', '_', $file["name"]);
+			$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
 
-		// Where to save the full image too
-		$save_to_full = getcwd()."/".$upload_path."/".$new_name;
+			$pi = pathinfo($new_name);
 
-		// Where to save the thumb too
-		$save_to_thumb = getcwd()."/".$thumb_path."/thumb_".$new_name;
+			$new_name = $pi["filename"] . ".jpg";
 
-		// Get settings for image size
-		$image_size = $this->settings["image-size"];
-		$thumb_size = $this->settings["thumb-size"];
+			// Where to save the full image too
+			$save_to_full = getcwd()."/".$upload_path."/".$new_name;
 
-		// Resize full image and save
-		if ($image_size[0] > 0 && $image_size[1] > 0)
-			$this->resize_image($temp_image, $image_size[0], $image_size[1], $save_to_full);
-		// If no image size set, just move image
-		else
-			copy($temp_image, $save_to_full);
+			// Where to save the thumb too
+			$save_to_thumb = getcwd()."/".$thumb_path."/thumb_".$new_name;
 
-		// Resize thumbnail image and save
-		if ($thumb_size[0] > 0 && $thumb_size[1] > 0)
-			$this->resize_image($temp_image ,$thumb_size[0], $thumb_size[1], $save_to_thumb);
-		
-		// If thumbnail settings are not set just resize as image size
-		else if ($image_size[0] > 0 && $image_size[1] > 0)
-			$this->resize_image($temp_image, $image_size[0], $image_size[1], $save_to_thumb);
+			// Get settings for image size
+			$image_size = $this->settings["image-size"];
+			$thumb_size = $this->settings["thumb-size"];
 
-		// If image settings not set lets just copy the raw file
-		else
-			copy($temp_image, $save_to_thumb);
+			// Resize full image and save
+			if ($image_size[0] > 0 && $image_size[1] > 0)
+				$this->resize_image($temp_image, $image_size[0], $image_size[1], $save_to_full);
+			// If no image size set, just move image
+			else
+				copy($temp_image, $save_to_full);
+
+			// Resize thumbnail image and save
+			if ($thumb_size[0] > 0 && $thumb_size[1] > 0)
+				$this->resize_image($temp_image ,$thumb_size[0], $thumb_size[1], $save_to_thumb);
+			
+			// If thumbnail settings are not set just resize as image size
+			else if ($image_size[0] > 0 && $image_size[1] > 0)
+				$this->resize_image($temp_image, $image_size[0], $image_size[1], $save_to_thumb);
+
+			// If image settings not set lets just copy the raw file
+			else
+				copy($temp_image, $save_to_thumb);
+
+			$this->append_to_order($new_name);
+		}
 	}
 
 	function resize_image ($image, $x, $y, $save_as) {
@@ -318,8 +335,14 @@ class gallery {
 		// Resize image using F3's image plugin
 		$temp_image->resize($x, $y, $this->settings["crop"], $this->settings["enlarge"]);
 		
-		// Save image	
+		// Save image
 		imagejpeg($temp_image->data(), $save_as);
+	}
+
+	function append_to_order ($image_name) {
+		$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
+		$data["order"][] = $image_name;
+		base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 	}
 
 	function toolbar () {

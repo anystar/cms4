@@ -1,4 +1,6 @@
-<link rel="stylesheet" href="{{ @CDN }}/admin/css/admin_toolbar.css">
+<link rel="stylesheet" href="{{ @BASE }}/admin/toolbar.css">
+<link rel="stylesheet" href="{{@CDN.tingle_css}}">
+<script src="{{@CDN.tingle_js}}"></script>
 
 <check if="{{@POPUP}}">
   <true>
@@ -20,17 +22,21 @@
           display: none !important;
         }
       }
+
+      .logoutwarning .tingle-modal-box {
+        width: 750px;
+        font-size: 20px;
+      }
       /* do not show toolbar */
     </style>
   </false>
 </check>
-<script src="{{ @CDN }}/jquery/jquery-3.2.1.min.js"></script>
+<script src="{{ @CDN.jquery }}"></script>
 <script>
 var cmsjQuery = jQuery.noConflict(true);
 
 function status (message) {
 
-    console.log("done");
   if (typeof message === "undefined")
   {
     cmsjQuery("#webworkscms_admintoolbar #center_div").show();
@@ -71,28 +77,6 @@ function closeRefresh() {
 }
 
 cmsjQuery(function() {
-
-	// var main_div = cmsjQuery('<div>').attr('id', 'webworkscms_admintoolbar');
-	// cmsjQuery('body').append(main_div);
-
- //  var status_bar = cmsjQuery('<div>').attr('id', 'statusbar');
- //  status_bar.html("Loading CMS");
-
-	// var left_div = cmsjQuery('<div>').attr('id', 'left_div');
-	// main_div.append(left_div);
-
- //  var center_div = cmsjQuery('<div>').attr('id', 'center_div');
- //  center_div.hide();
-	// main_div.append(center_div);
- //  main_div.append(status_bar);
-
-	// var right_div = cmsjQuery('<div>').attr('id', 'right_div');
-	// main_div.append(right_div);
-
- //  left_div.append(cmsjQuery('<img id="webworks_logo" src="{{ @CDN }}/admin/imgs/logo_toolbar.png" height="100%">'));
-
- //  right_div.append(cmsjQuery('<a href="{{@BASE}}/admin/settings" id="settingsbtn" class="button">Settings</a>'));
- //  right_div.append(cmsjQuery('<a href="{{@BASE}}{{@PATH}}/logout" class="button">Logout</a>'));
 
   var mouseX = 0;
   var mouseY = 0;
@@ -156,11 +140,37 @@ cmsjQuery(function() {
     evt.preventDefault();
   });
 
+  var logoutwarning = new tingle.modal({
+      footer: true,
+      stickyFooter: false,
+      closeMethods: ['overlay', 'button', 'escape'],
+      cssClass: ['logoutwarning'],
+      beforeClose: function() {
+          // here's goes some logic
+          // e.g. save content before closing the modal
+          return true; // close the modal
+      }
+  });
+  
+  logoutwarning.setContent(document.querySelector('.logoutwarninginner').innerHTML);
+
+  logoutwarning.addFooterBtn('LOGOUT NOW', 'button tingle-btn--pull-right', function() {
+      window.location.replace("{{@BASE}}/logout");
+  });
+
+  cmsjQuery("#webworkscms_admintoolbar #logoutbtn").click(function (evt) {
+
+    logoutwarning.open();
+
+    evt.preventDefault();
+  });
+
 
   cmsjQuery(window).mousemove(function (evt) {
       mouseX = evt.pageX;
       mouseY = evt.pageY;
   });
+
 
 });
 </script>
@@ -171,26 +181,40 @@ cmsjQuery(function() {
 
 <div id="webworkscms_admintoolbar">
   <div id="left_div">
-    <img height="100%" id="webworks_logo" src="{{ @CDN }}/admin/imgs/logo_toolbar.png">
+    <img height="100%" id="webworks_logo" src="{{ @BASE }}/admin/logo_sm.png">
   </div>
   <div id="center_div" style="display: none;"></div>
   <div id="statusbar">
     Loading CMS
   </div>
   <div id="right_div">
-    <a class="button" href="{{@BASE}}/admin/settings" id="settingsbtn">Settings</a><a class="button" href="{{@BASE}}/logout">Logout</a>
+    <a class="button" href="{{@BASE}}/admin/settings" id="settingsbtn">Settings</a><a id="logoutbtn" class="button" href="{{@BASE}}/logout">Logout</a>
   </div>
 </div>
 
+<div class="logoutwarninginner" style="display:none;">
+    <div id="login">
+
+      <p style="line-height: 44px;">After you logout please press &nbsp;
+      <span style="border-radius: 4px;border-top:1px solid #fff;padding:6px 18px;box-shadow: 0px 0px 1px 1px rgba(204,204,204,1); background:#eeeeee;">Ctrl</span> + <span style="border-radius: 4px;border-top:1px solid #fff;padding:6px 18px;box-shadow: 0px 0px 1px 1px rgba(204,204,204,1); background:#eeeeee;">F5</span>
+      &nbsp; to refresh the browsers cache. Without doing so you will not see changes made.</p>
+
+    </div>
+</div>
 
 <script>
 window.onload = function () {
   var editors = document.getElementsByClassName("ckeditor");
 
+  if (editors.length == 0)
+  {
+    document.getElementById("statusbar").style.display = "none";
+    document.getElementById("center_div").style.display = "table-cell";
+  }
+
   if (typeof init_inline_ckeditors=="function")
     init_inline_ckeditors();
 
-    document.getElementById("statusbar").style.display = "none";
-    document.getElementById("center_div").style.display = "table-cell";
+
 }
 </script>
