@@ -23,29 +23,32 @@ $GLOBALS["config"] = parse_ini_file($ROOTDIR."/config.ini", true);
 // Set up error handler and set up any needed template handlers
 (file_exists($fatfree)) ? $f3 = include $fatfree : d("Fat Free Framework not found at '".$fatfree."'. Please download from http://fatfreeframework.com/");
 
-$f3->CONFIG = $GLOBALS["config"];
-
+// Setup error handler
 $f3->ONERROR = function ($f3) { 
 	header("HTTP/1.0 ".$f3->ERROR["code"]." ".$f3->ERROR["status"]);
 	echo Template::instance()->render("admin/error.html"); 
 };
 
-$f3->ESCAPE = false;
+// Setup framework configuration
+$f3->config($ROOTDIR."/cms/constants.ini");
 
-if (array_key_exists("CDN.EXTERNAL", $config))
-	$f3->CDN = $config["CDN.EXTERNAL"];
-else if (array_key_exists("CDN.INTERNAL", $config))
-	$f3->CDN = $f3->BASE."/".rtrim($config["CDN.INTERNAL"], "/");
-else
-	d("No CDN setting in config.ini");
+// Setup client folder configuration
+$f3->CONFIG = $GLOBALS["config"];
 
-$f3->TEMP = ".cms/tmp/";
-$f3->CACHE = "folder=.cms/cache/";
-$f3->CASELESS = false;
+// Setup other dynamic framework configuration
 $f3->UI = getcwd()."\;".__DIR__."/scriptsUI/;";
 $f3->AUTOLOAD = __DIR__."/scripts/;" . getcwd()."/scripts/;".$ROOTDIR."/resources/F3-Sugar/FooForms/lib/;".$ROOTDIR."/resources/F3-Sugar/Mailer/lib/;"; 
-$f3->set("DEBUG", 3);
 $f3->set("JAR.expire", time()+31536000);
+
+
+
+
+if (array_key_exists("login", $f3->GET))
+	$f3->PAGE_CACHE = false;
+else
+	$f3->PAGE_CACHE = 3600;
+
+
 
 // Check folder, file and security, ensure required extentions installed and required settings are set and valid.
 // 	- PHP extensions check, gd.
@@ -69,9 +72,6 @@ check(0, !checkdir(".cms/tmp/"), "<strong>tmp</strong> folder does not exist. Pl
 
 // Ensure htaccess is set for rewriting
 checkhtaccess(".htaccess");
-
-// Redirect to admin
-if ($f3->PATH == "/cms.php") $f3->reroute("/admin");
 
 // Turn off web access to .cms folder
 if (!file_exists(".cms/.htaccess"))
@@ -117,17 +117,11 @@ if ($f3->get("smtp_server_check"))
 	}
 	else
 		$f3->set("smtp_server_check", false, 300); // Cache for 3 minutes
-}
-
-if ($f3->get("smtp_server_check")) {
 
 	$f3->set("mailer", $config["mailer"]);
 	$f3->MAILER = new \Mailer();
 	$f3->clear("mailer");
-
-	// k("hit");
 }
-
 
 // Check json directory
 checkdir(".cms/json/");
@@ -141,33 +135,25 @@ $settings = json_decode($f3->read(".cms/settings.json"), 1);
 
 check (0, $settings == "" || $settings == null, "Syntax error in **.cms/settings.json**");
 
-// Redirect the shortcut /cms route to /admin
-if (isroute("/cms")) 
-	$f3->reroute("/admin", true);
-
 // Load authentication
 new admin($settings);
 
 // Handle phpLiteAdmin routing.
 if (admin::$signed) {
 
-	$url = pathinfo($_SERVER["REQUEST_URI"]);
-	$dir = basename($url["dirname"]);
+	// Turn of page caching
+	$f3->PAGE_CACHE = false;
 
-	$dir2 = explode("?", $url["basename"]);
-
-	if ($url["filename"] == "phpliteadmin")
-	{
-		include(__DIR__."/resources/phpliteadmin/dynamic_myAdmin.php");
-		exit;
-	}
-
-	if ($dir == "admindb" || $url["basename"] == "admindb" || $dir2[0] == "admindb")
-	{
-		include(__DIR__."/resources/phpliteadmin/phpliteadmin.php");
-		exit;
-	}
+	// Clear cache
+	unlink_recursive(".cms/cache", "url");
 }
+
+Template::instance()->filter("krumo", function ($array) {
+	if (!isset($GLOBALS["krumo"])) check(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+	if (!is_file($GLOBALS["krumo"])) check(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+	require_once $GLOBALS["krumo"];
+	krumo($array);
+});
 
 // Load scripts
 // 	- Calls isroute($script)
@@ -200,7 +186,6 @@ foreach ($settings["scripts"] as $script) {
 	}
 }
 
-
 // Populate Debug Variable
 // - Tack ?debug on the end of a address to output hive data (provided your login to admin)
 if (admin::$signed) {
@@ -217,13 +202,6 @@ if (admin::$signed) {
 	if ($f3->exists("GET.phpinfo"))
 		{ phpinfo(); die; }
 }
-
-Template::instance()->filter("krumo", function ($array) {
-	if (!isset($GLOBALS["krumo"])) check(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	if (!is_file($GLOBALS["krumo"])) check(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	require_once $GLOBALS["krumo"];
-	krumo($array);
-});
 
 $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 
@@ -253,8 +231,6 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 
 	if ($f3->MIME == "text/html")
 		$f3->expire(0);
-	else
-		$f3->expire(172800);
 
 	if (in_array($f3->MIME, $accepted_mimetypes))
 	{
@@ -279,7 +255,7 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		echo readfile(getcwd()."/".$f3->FILE);
 		$f3->abort();
 	}
-});
+}, $f3->PAGE_CACHE);
 
 $f3->route('GET /cms-cdn/*', function ($f3) {
 	$ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);

@@ -74,8 +74,15 @@ class stats extends prefab {
 
 		base::instance()->route("GET /admin/stats", function ($f3) {
 
-			$months = '"'.implode('","', array_slice(array_keys($this->stats["perMonth"]), -12, 12, true)).'"';
-			$data = '"'.implode('","', array_slice($this->stats["perMonth"], -12, 12, true)).'"';
+			for ($i = 0; $i <= 11; $i++) {
+			    $months[date("F Y", strtotime( date( 'Y-m-01' )." -$i months"))] = 0;
+			}
+
+			$months = array_reverse($months);
+			$data = array_merge($months, $this->stats["perMonth"]);
+
+			$months = '"'.implode('","', array_keys($data)).'"';
+			$data = '"'.implode('","', $data).'"';
 
 			$f3->set("monthsArray", $months);
 			$f3->set("dataArray", $data);

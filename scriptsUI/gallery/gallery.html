@@ -8,10 +8,10 @@
 	<title>Editting {{@label}}</title>
 
 	<!-- Bootstrap -->
-	<link href="{{ @CDN }}/bootstrap/bootstrap.min.css" rel="stylesheet">
-	<link href="{{ @CDN }}/admin/css/main.css" rel="stylesheet">
-	<link href="{{ @CDN }}/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
-	<link href="{{ @CDN }}/lity/dist/lity.min.css" rel="stylesheet">
+	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
+	<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
+	<link href="{{ @CDN.dropzone_css }}" rel="stylesheet">
+	<link href="{{ @CDN.fontawesome_css }}" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -21,6 +21,7 @@
 	<![endif]-->
 
 	<style>
+
 		.dropzone {
 			margin: 30px;
 			border: 2px dashed #777;
@@ -30,11 +31,13 @@
 			width: 10%;
 		}
 
+		.orderbuttons button {
+			cursor: pointer;
+		}
+
 		.orderbuttons .up {
 			margin-bottom:2px;
 		}
-
-
 
 		.dropzone {
 		  margin: 30px;
@@ -61,11 +64,11 @@
   </head>
   <body>
 
-	<div class="container">
+	<div class="container" style="margin-bottom:200px;">
 
 		<div class="row">
 
-				<div class="col-xs-12">	
+				<div class="col-12">	
 					<h2>{{@label}}</h2>
 
 					<check if="{{@gallery}}">
@@ -82,8 +85,8 @@
 
 								<tr class="galleryimage" data-image-id="{{@image.filename}}">
 									<td align="center" class="orderbuttons">
-										<button class="up"><span class="glyphicon glyphicon-arrow-up"></span></button>
-										<button class="down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+										<button class="up"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
+										<button class="down"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
 									</td>
 									<td style="width:{{@image.thumb-size[0]}}px;">
 										<img data-lity data-lity-target="{{@image.url}}" width="{{@image.thumb_width}}" src="{{@image.thumb}}" />
@@ -124,12 +127,29 @@
 					</check>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-6 mx-auto">
+					<h2>Trouble uploading images?</h2>
+					<p>If the above dropzone field does not work please use the traditional upload method below. Select 5 images to upload at a time.</p>
+					
+					<form method="POST" action="{{@BASE}}/admin/{{@name}}/traditional_upload" style="padding-bottom: 50px;" enctype="multipart/form-data">
+
+						<loop from="{{@i=1}}" to="{{@i <= 5 && @i <= @max_upload_count}}" step="{{@i++}}">
+						<div class="form-group">
+							<input type="file" class="form-control" name="file_{{@i}}">
+						</div>
+						</loop>
+
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</form>
+
+				</div>
+			</div>
 	</div>
 
     <toolbar popup />
 
-	<script src="{{ @CDN }}/dropzone/dist/min/dropzone.min.js"></script>
-<!-- 	<script src="{{ @CDN }}/lity/dist/lity.min.js"></script> -->
+	<script src="{{ @CDN.dropzone_js }}"></script>
 
 	<script>
 		cmsjQuery(function() {

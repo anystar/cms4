@@ -46,7 +46,7 @@ class admin {
 					$f3->reroute($path);
 			}
 
-			// Capture the last 6 characters and see if it is "/admin"
+			// Capture the last 6 characters and see if it is "/logout"
 			if (substr($f3->PATH, -7, strlen($f3->PATH)) == "/logout") {
 				admin::logout();
 				$path_without_logout = substr($f3->PATH, 0, strlen($f3->PATH)-7);
@@ -57,8 +57,8 @@ class admin {
 					$f3->reroute($path_without_logout);
 			}
 
-			// Load dashboard routes
-			$this->dashboard_routes($f3);
+			// Provide logout route
+			$f3->route('GET /admin/logout', "admin::logout");
 
 			// Lets redirect away from login screen
 			$f3->route('GET|POST /admin/login', function ($f3) {
@@ -87,7 +87,7 @@ class admin {
 			if (isroute("/admin")) {
 				$f3->SESSION["show-login"] = true;
 
-				$f3->reroute("/");
+				$f3->reroute("/?login");
 			}
 
 			if (substr($f3->PATH, -6, strlen($f3->PATH)) == "/login") {
@@ -108,6 +108,58 @@ class admin {
 
 			$this->login_routes($f3);
 		}
+
+
+		base::instance()->route("GET /admin/logo_xs.png", function ($f3) {
+
+			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_xs.png";
+			header('Content-Type: image/png');
+			header("Content-length: ".filesize($file));
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header("Cache-Control: public"); //HTTP 1.1
+			echo readfile($file);
+			$f3->abort();
+		});
+
+		base::instance()->route("GET /admin/logo_sm.png", function ($f3) {
+
+			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_sm.png";
+			header('Content-Type: image/png');
+			header("Content-length: ".filesize($file));
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header("Cache-Control: public"); //HTTP 1.1
+			echo readfile($file);
+			$f3->abort();
+		});
+
+		base::instance()->route("GET /admin/logo_md.png", function ($f3) {
+
+			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_md.png";
+			header('Content-Type: image/png');
+			header("Content-length: ".filesize($file));
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header("Cache-Control: public"); //HTTP 1.1
+			echo readfile($file);
+			$f3->abort();
+		});
+
+		base::instance()->route("GET /admin/logo_lg.png", function ($f3) {
+
+			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_lg.png";
+			header('Content-Type: image/png');
+			header("Content-length: ".filesize($file));
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header("Cache-Control: public"); //HTTP 1.1
+			echo readfile($file);
+			$f3->abort();
+		});
+
+		base::instance()->route("GET /admin/styles.css", function ($f3) {
+
+			echo \Template::instance()->render("/admin/styles.css", "text/css");
+			$f3->abort();
+		});
+
 	}
 
 
@@ -115,6 +167,7 @@ class admin {
 
 		$f3->route('GET /admin', function ($f3) {
 			echo Template::instance()->render("/admin/login.html");
+			$f3->abort();
 		});
 
 		$f3->route('GET /admin/*', function ($f3) {
@@ -141,13 +194,6 @@ class admin {
 
 		});
 	}
-
-
-	function dashboard_routes($f3) {
-
-		$f3->route('GET /admin/logout', "admin::logout");
-	}
-
 
 	static public function login ($f3) {
 		$post = $f3->get("POST");
