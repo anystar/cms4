@@ -98,31 +98,42 @@ class checkout extends prefab {
 	function gateway_email ($data, $settings) {
 		$f3 = base::instance();
 
-		$body = \Template::instance()->render($settings["invoice_template"], null, ["data"=>$data]);
+		$f3->data = $data;
+		$body = \Template::instance()->render($settings["invoice_template"], null);
 
+		// Send copy to buyer
+		$options = [];
 		$options["sendName"] = $data["name"];
 		$options["fromName"] = $settings["sender-name"];
 		$options["subject"] = Template::instance()->resolve($settings["subject"], $data);
 		$options["sendto"] = $data["email"];
 
-echo $body;
-die;
+		$this->send_email($body, $options);
 
-		k($options);
-		//send_email($body, $options);
+		// Send copy too seller
+		$options = [];
+		$options["sendName"] = $settings["sender-name"];
+		$options["fromName"] = $data["name"];
+		$options["subject"] = Template::instance()->resolve($settings["subject"], $data);
+		$options["sendto"] = $settings["send_receipt_copy"];
 
-		d($settings);
+		$this->send_email($body, $options);
 
-		k("hit");
+		$f3->reroute($settings["success_page"]);		
 	}
 
-	function gateway_paypalexpress ($settings) {
+	function gateway_paypalexpress ($data, $settings) {
+
+		k("PAYPAL Express gateway not implemented yet");
+		$paypal = new PayPal;
 
 
+
+		k($settings);
 
 	}
 
-	function gateway_paypalbutton ($settings) {
+	function gateway_paypalbutton ($data, $settings) {
 
 
 

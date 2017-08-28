@@ -37,7 +37,7 @@ $f3->CONFIG = $GLOBALS["config"];
 
 // Setup other dynamic framework configuration
 $f3->UI = getcwd()."\;".__DIR__."/scriptsUI/;";
-$f3->AUTOLOAD = __DIR__."/scripts/;" . getcwd()."/scripts/;".$ROOTDIR."/resources/F3-Sugar/FooForms/lib/;".$ROOTDIR."/resources/F3-Sugar/Mailer/lib/;"; 
+$f3->AUTOLOAD = __DIR__."/scripts/;" . getcwd()."/scripts/;".$ROOTDIR."/resources/F3-Sugar/FooForms/lib/;".$ROOTDIR."/resources/F3-Sugar/Mailer/lib/;".$ROOTDIR."/resources/F3-Sugar/Mailer/lib/;".$ROOTDIR."/resources/F3-PYPL/lib/;"; 
 $f3->set("JAR.expire", time()+31536000);
 
 
