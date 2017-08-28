@@ -249,7 +249,7 @@ class contactformHandler extends \Template\TagHandler {
 		// 	{ $settings["sendname"] = $attr["sendname"]; unset($attr["sendname"]); }
 
 		// Always post to the same page the form is located on.
-		$attr["src"] = $f3->SCHEME."://".$f3->HOST.$f3->URI;
+		$attr["src"] = '<?= $SCHEME."://".$HOST.$URI ?>';
 
 		$content = $this->tmpl->build($content);
 

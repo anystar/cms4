@@ -169,6 +169,13 @@ if (admin::$signed) {
 	}
 }
 
+Template::instance()->filter("krumo", function ($array) {
+	if (!isset($GLOBALS["krumo"])) check(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+	if (!is_file($GLOBALS["krumo"])) check(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+	require_once $GLOBALS["krumo"];
+	krumo($array);
+});
+
 // Load scripts
 // 	- Calls isroute($script)
 // 	- Throws error if route is not specced in script
@@ -217,13 +224,6 @@ if (admin::$signed) {
 	if ($f3->exists("GET.phpinfo"))
 		{ phpinfo(); die; }
 }
-
-Template::instance()->filter("krumo", function ($array) {
-	if (!isset($GLOBALS["krumo"])) check(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	if (!is_file($GLOBALS["krumo"])) check(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	require_once $GLOBALS["krumo"];
-	krumo($array);
-});
 
 $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 
