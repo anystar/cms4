@@ -80,35 +80,6 @@ class repeater {
 
 		$f3->route('POST /admin/'.$this->name.'/addupdate', function ($f3) {
 
-			// Upload any files
-			// if ($image_directory = setting($this->name . "_image_directory")) {
-
-			// 	checkdir(getcwd()."/".$image_directory);
-
-			// 	$imagesize = [0,0];
-			// 	$imagesize = setting($this->name . "_image_size");
-
-			// 	if (strlen($imagesize) > 0)
-			// 		$imagesize = explode("x", $imagesize);
-
-			// 	foreach ($f3->FILES as $key => $file)
-			// 	{
-			// 		if (!$file["tmp_name"])
-			// 			continue;
-
-			// 		if ($imagesize[0] > 0 && $imagesize[1] > 0)
-			// 		{
-			// 			$this->resize_image ($file["tmp_name"], $imagesize[0], $imagesize[1], getcwd()."/".$image_directory."/".$file["name"]);
-			// 		}
-			// 		else
-			// 			move_uploaded_file($file["tmp_name"], getcwd()."/".$image_directory."/".$file["name"]);
-
-			// 		if (checkfile(getcwd()."/".$image_directory."/".$file["name"]))
-			// 			$f3->POST[$key] = ltrim(rtrim($image_directory, "/"), "/") . "/" . $file["name"];
-
-			// 	}
-			// }
-
 			if ($f3->POST["data_id"])
 				$this->jig->load(["@_id=?", $f3->POST["data_id"]]);		
 

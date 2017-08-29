@@ -93,53 +93,40 @@ class stats extends prefab {
 
 	function email_view_alert ($view_message) {
 
-		$config = $GLOBALS["config"];
+		$config = base::instance()->CONFIG;
+		$emails = array();
+
 		if (array_key_exists("stats", $config))
 		if (array_key_exists("emails", $config["stats"]))
 			$emails = $config["stats"]["emails"];
 
 		base::instance()->view_message = $view_message;
+
 		$webmaster_email_body = \Template::instance()->render("/stats/view_webmaster_alert_email.html", null);
 		$email_body = \Template::instance()->render("/stats/view_alert_email.html", null);
+
 		base::instance()->clear("view_message");
 
-		$config = base::instance()->CONFIG["mailer"];
+		$mailer = base::instance()->MAILER;
 
-		// Webmaster emails
-		foreach ($emails as $email)
+		if (count($emails) > 0)
 		{
-			$smtp = new SMTP(
-							$config["smtp.host"],
-							$config["smtp.port"],
-							$config["smtp.scheme"],
-							$config["smtp.user"],
-							$config["smtp.pw"]
-						);
+			// Webmaster emails
+			$mailer->setHTML($webmaster_email_body);
+			$mailer->addTo(array_shift($emails));
+			foreach ($emails as $email)
+				$mailer->addBcc($email);
 
-			$smtp->set('To', $email);
-			$smtp->set('From', '"'.$config["smtp.from_name"].'"'.' <'.$config["smtp.from_mail"].'>');
-			$smtp->set('Subject', 'Milestone for '.base::instance()->HOST);
-			$smtp->set('Content-Type', "text/html");
-
-			$smtp->send($webmaster_email_body);
+			$mailer->send('Milestone for '.base::instance()->HOST);
+			$mailer->reset();
 		}
 
 		if ($this->email != "")
 		{
-			$smtp = new SMTP(
-							$config["smtp.host"],
-							$config["smtp.port"],
-							$config["smtp.scheme"],
-							$config["smtp.user"],
-							$config["smtp.pw"]
-						);
-
-			$smtp->set('To', $this->email);
-			$smtp->set('From', '"'.$config["smtp.from_name"].'"'.' <'.$config["smtp.from_mail"].'>');
-			$smtp->set('Subject', 'Milestone for '.base::instance()->HOST);
-			$smtp->set('Content-Type', "text/html");
-
-			$smtp->send($email_body);
+			$mailer->addHTML($email_body);
+			$mailer->addTo($this->email);
+			$mailer->send('Milestone for '.base::instance()->HOST);
+			$mailer->reset();
 		}
 	}
 }

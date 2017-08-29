@@ -141,22 +141,12 @@ class checkout extends prefab {
 
 	function send_email ($renderedTemplate, $options) {
 
-		$config = base::instance()->CONFIG["mailer"];
-		$smtp = new SMTP(
-						$config["smtp.host"],
-						$config["smtp.port"],
-						$config["smtp.scheme"],
-						$config["smtp.user"],
-						$config["smtp.pw"]
-					);
+		$mailer = base::instance()->MAILER:
+		$mailer->addTo($options["sendto"], $options["sendName"]);
+		$mailer->setReply($options["fromAddress"] ,$options["fromName"]);
+		$mailer->setHTML($renderedTemplate);
 
-		$smtp->set('To', '"'.$options["sendName"].'" <'.$options["sendto"].'>');
-		$smtp->set('From', '"'.$options["fromName"].'" <'.$config["smtp.from_mail"].'>');
-		$smtp->set('Reply-To', '"'.$options["fromName"].'" <'.$options["fromAddress"].'>');
-		$smtp->set('Subject', $options["subject"]);
-
-		$smtp->set('Content-Type', "text/html");
-		$smtp->send($renderedTemplate);
+		$smtp->send($options["subject"]);
 	}
 
 	function log_payment ($log) {

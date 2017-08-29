@@ -133,48 +133,22 @@ class contactform extends \Prefab {
 
 	function send_email ($sendto, $form, $template, $options)
 	{
-		//$fromAddress = $fromName;
+		// Use custom email template from client directory
+		$body = \Template::instance()->render($template, null, $form);
 
- 		// if ($f3->exists("fromAddress"))
-	 	// 	$fromName = $f3->get("fromName");
-	 	// else
-	 	// 	$fromName = "Website visitor";
+		$mailer = base::instance()->MAILER;
 
-		$config = base::instance()->CONFIG["mailer"];
-		$smtp = new SMTP(
-						$config["smtp.host"],
-						$config["smtp.port"],
-						$config["smtp.scheme"],
-						$config["smtp.user"],
-						$config["smtp.pw"]
-					);
-
-		$smtp->set('To', '"'.$options["sendName"].'" <'.$sendto.'>');
-		$smtp->set('From', '"'.$options["fromName"].'" <'.$config["smtp.from_mail"].'>');
-		$smtp->set('Reply-To', '"'.$options["fromName"].'" <'.$options["fromAddress"].'>');
-		$smtp->set('Subject', $options["subject"]);
-
-		if (file_exists(getcwd()."/".$template))
-		{
-			$mime = mime_content_type2(getcwd()."/".$template);
-
-			// Use custom email template from client directory
-			$body = \Template::instance()->render($template, null, $form);
-
-		} else {
-
-			// Use generic email template
-			$body = \Template::instance()->render("/contactform/generic_email_template.html", null, $form);
-		}
+		$mailer->addTo($sendto, $options["sendName"]);
+		$mailer->setReply($options["fromAddress"], $options["fromName"]);
+		$mailer->setHTML($body);
 
 		if ($this->settings["testing"]) {			
 			echo $body;
 			die;
-			return;
 		}
 
-		$smtp->set('Content-Type', "text/html");
-		$smtp->send($body);
+		$mailer->send($options["subject"]);
+		$mailer->reset();
 
 		return true;
 	}
@@ -213,40 +187,6 @@ class contactformHandler extends \Template\TagHandler {
 					</ul>
 				';
 
-		// if ($attr == null)
-		// 	$f3->error(1,'&lt;contactform&gt; has no attributes.'.$documentation);
-
-		// // Register contact form module
-		// if (array_key_exists("id", $attr))
-		// 	$id = $attr["id"];
-		// else
-		// 	$id = 0;
-
-		// if (array_key_exists("src", $attr))
-		// 	$settings["postPath"] = $attr["src"];
-		// else
-		// 	$f3->error(1, "No post path provided! Please add src='/contact.html' to &lt;contactform&gt; tag.".$documentation);
-
-		// if (array_key_exists("template", $attr))
-		// { $settings["template"] = $attr["template"]; unset($attr["template"]); }
-		// else
-		// 	$f3->error(1, "No email template provided! Please add template='email_template.html' to &lt;contactform&gt; tag".$documentation);
-
-		// if (array_key_exists("success", $attr))
-		// 	{ $settings["successPage"] = $attr["success"]; unset($attr["success"]); }
-		// else
-		// 	$f3->error(1, "No success redirect page provided. Please add succes='/success_page.html' to &lt;contactform&gt; tag".$documentation);
-
-		// if (array_key_exists("sendto", $attr))
-		// 	{ $settings["sendto"] = $attr["sendto"]; unset($attr["sendto"]); }
-		// else
-		// 	$f3->error(1, "No email address provided! Please add sendto='joe@example.com' to &lt;contactform&gt; tag".$documentation);
-
-		// if (array_key_exists("subject", $attr))
-		// 	{ $settings["subject"] = $attr["subject"]; unset($attr["subject"]); }
-
-		// if (array_key_exists("sendname", $attr))
-		// 	{ $settings["sendname"] = $attr["sendname"]; unset($attr["sendname"]); }
 
 		// Always post to the same page the form is located on.
 		$attr["src"] = '<?= $SCHEME."://".$HOST.$URI ?>';

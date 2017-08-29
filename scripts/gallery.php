@@ -208,7 +208,6 @@ class gallery {
 		if (!array_key_exists("captions", $data)) $data["captions"] = array();
 		if (!array_key_exists("tags", $data)) $data["tags"] = array();
 
-
 		foreach ($files as $key=>$file) {
 			$temp = array();
 
@@ -222,10 +221,10 @@ class gallery {
 			// Check for thumb
 			if (!is_file($thumb = $filepath."/thumbs/thumb_".$temp["filename"]))
 				$this->resize_image ($filepath."/".$file, $this->settings["thumb-size"][0], $this->settings["thumb-size"][1], $thumb);
-			
+
 			$temp["thumb"] = base::instance()->BASE."/".$urlpath."/thumbs/thumb_".$temp["filename"];
 
-			$img = new Image($filepath."/".$file);
+			$img = new Image($filepath."/".$file, null, "");
 
 			$temp["width"] = $img->width();
 			$temp["height"] = $img->height();
@@ -330,7 +329,7 @@ class gallery {
 	function resize_image ($image, $x, $y, $save_as) {
 
 		// Pull image off the disk into memory
-		$temp_image = new Image($image, false);
+		$temp_image = new Image($image, null, "");
 
 		// Resize image using F3's image plugin
 		$temp_image->resize($x, $y, $this->settings["crop"], $this->settings["enlarge"]);

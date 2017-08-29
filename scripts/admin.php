@@ -81,8 +81,11 @@ class admin {
 		if (!admin::$signed)
 		{
 			if (isroute("/admin/sendmagiclink")) {
-
+				$this->sendMagicLink();
 			}
+
+			if (array_key_exists("login", $f3->GET))
+				$f3->SESSION["show-login"] = true;				
 
 			if (isroute("/admin")) {
 				$f3->SESSION["show-login"] = true;
@@ -271,24 +274,12 @@ class admin {
 		$hive["HOST"] = base::instance()->get("HOST");
 		$hive["SCHEME"] = base::instance()->get("SCHEME");
 
-		$config = base::instance()->CONFIG["mailer"];
-		$smtp = new SMTP(
-						$config["smtp.host"],
-						$config["smtp.port"],
-						$config["smtp.scheme"],
-						$config["smtp.user"],
-						$config["smtp.pw"]
-					);
-
-		$smtp->set('To', '<'.admin::$clientEmail.'>');
-		$smtp->set('From', $config["smtp.from_name"].'<'.$config["smtp.from_mail"].'>');
-		$smtp->set('Subject', 'Login Link');
-
 		$body = \Template::instance()->render("/admin/magiclink.html", null, $hive);
 
-		$smtp->set('Content-Type', "text/html");
-
-		$smtp->send($body);
+		$mailer = base::instance()->MAILER;
+		$mailer->addTo(admin::$clientEmail);
+		$mailer->setHTML($body);
+		$mailer->send("Login Link");
 	}
 
 	static public function logout () {

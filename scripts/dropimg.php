@@ -128,6 +128,9 @@ class dropimg extends prefab {
 			if (!array_key_exists("src", $args["@attrib"]))
 				$f3->error(1, "DropIMG: no src value found");
 
+			$src = $args["@attrib"]["src"];
+			unset($args["@attrib"]["src"]);
+
 			check (1, (!$args["@attrib"]["resize"] && !$args["@attrib"]["size"]), "No size attribute found for dropimg tag");
 
 			$size = $args["@attrib"]["size"] ? $args["@attrib"]["size"] : $args["@attrib"]["resize"];
@@ -155,10 +158,11 @@ class dropimg extends prefab {
 			$string .= '<?php if (admin::$signed) {?>';
 			$string .= "<img ";
 			$string .= " title='".$size."'";	
-			$string .= " data-file='".$args["@attrib"]["src"]."'";
+			$string .= " data-file='".$src."'";
 			$string .= " data-width='".$asize[0]."'";
 			$string .= " data-height='".$asize[1]."'";
 			$string .= " data-mime='".mime_content_type2($path)."' ";
+			$string .= " src='".$src."?<?=substr(sha1_file('".$src."'), -8);?>'";
 
 			$classFilled = false;
 			foreach ($args["@attrib"] as $key=>$value) {

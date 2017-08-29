@@ -1,5 +1,5 @@
 <style>
-.notransition {
+. {
   -webkit-transition: none !important;
   -moz-transition: none !important;
   -o-transition: none !important;
@@ -107,40 +107,32 @@
 </style>
 
 <!-- Tingle big content -->
-<div class="tingle-demo tingle-demo-big notransition">
-    <div class="notransition" id="login">
-      <img class="notransition" width="100%" src="{{ @BASE }}/admin/logo_md.png" alt="Web Works CMS Login">
+<div class="tingle-demo tingle-demo-big ">
+    <div id="login">
+      <img width="100%" src="{{ @BASE }}/admin/logo_md.png" alt="Web Works CMS Login">
 
-      <form class="notransition" id="cms-login-form" method="post" action="{{@BASE}}{{@PATH}}/login">
-        <div class="form-group notransition">
-          <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@SESSION.login.user}}" autofocus>
-          <check if="{{@SESSION.login.email_error}}"><span id="helpBlock" class="help-block">Incorrect email address</span></check>
-        </div>
-        <div class="notransition form-group">
+      <form id="cms-login-form" method="post" action="{{@BASE}}{{@PATH}}/login">
+        <div class="row">
+          <div class="col-12">
+            <div class="form-group ">
+              <input id="user" name="user" type="email" class="form-control" placeholder="Email" value="{{@SESSION.login.user}}" autofocus>
+              <check if="{{@SESSION.login.email_error}}"><span id="helpBlock" class="help-block">Incorrect email address</span></check>
+            </div>
+            <div class="form-group">
 
-          <input id="pass" name="pass" type="password" class="notransition form-control" placeholder="Password">
-          <check if="{{@SESSION.login.pass_error}}"><span id="helpBlock" class="notransition help-block">Incorrect password. If you forgot it, call 5446 3371.</span></check>
-        </div>
+              <input id="pass" name="pass" type="password" class="form-control" placeholder="Password">
+              <check if="{{@SESSION.login.pass_error}}"><span id="helpBlock" class="help-block">Incorrect password. If you forgot it, call 5446 3371.</span></check>
+            </div>
+          </div>
 
-        <div class="notransition row">
-          <div class="notransition col-xs-12">
-            <button class="notransition btn btn-primary" type="submit" name="redirectWhere" value="admin">Website Login</button>
+          <div class="col-6" style="padding-right:0;">
+            <button style="margin-left:0;" class="btn btn-primary" type="submit" name="redirectWhere" value="admin">Website Login</button>
+          </div>
+          <div class="col-6" style="padding-left:0;">
+            <a style="margin-right:0;width:95%" href="{{@BASE}}/admin/sendmagiclink" class="btn btn-primary">Send Login Link</a>
           </div>
         </div>
-        
-        <exclude>
-        <div class="notransition row">
-          <div class="notransition col-xs-12">
-            ------ OR ------
-          </div>
-        </div>
-
-        <div class="notransition row">
-          <div class="notransition col-xs-12">
-            <a href="{{@BASE}}/admin/sendmagiclink" class="btn btn-primary">Send Magic Link</a>
-          </div>
-        </div>
-        </exclude>
+      
          
       </form>
     </div>
