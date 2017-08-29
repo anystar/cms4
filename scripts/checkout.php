@@ -101,6 +101,9 @@ class checkout extends prefab {
 		$f3->data = $data;
 		$body = \Template::instance()->render($settings["invoice_template"], null);
 
+		echo $body;
+		die;
+
 		// Send copy to buyer
 		$options = [];
 		$options["sendName"] = $data["name"];
@@ -123,11 +126,22 @@ class checkout extends prefab {
 	}
 
 	function gateway_paypalexpress ($data, $settings) {
+		$f3 = base::instance();
 
-		k("PAYPAL Express gateway not implemented yet");
-		$paypal = new PayPal;
+		// Need to setup a DNS record somewhere to loopback to my dev machine
+		k("Implementing paypal gateway");
 
+		$api = $settings["api"];
+		$api["return"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$api["return"];
+		$api["cancel"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$api["cancel"];
 
+		$paypal = new PayPal($settings["api"]);
+
+		$result=$paypal->create("Sale","AUD","10.00");
+
+		k($result);
+
+		$f3->reroute($result['redirect']);
 
 		k($settings);
 
@@ -141,7 +155,7 @@ class checkout extends prefab {
 
 	function send_email ($renderedTemplate, $options) {
 
-		$mailer = base::instance()->MAILER:
+		$mailer = base::instance()->MAILER;
 		$mailer->addTo($options["sendto"], $options["sendName"]);
 		$mailer->setReply($options["fromAddress"] ,$options["fromName"]);
 		$mailer->setHTML($renderedTemplate);

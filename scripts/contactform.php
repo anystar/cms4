@@ -106,7 +106,7 @@ class contactform extends \Prefab {
 				if ($f3->POST["captcha"] == $f3->SESSION["captcha_code"])
 					$captcha_passed = true;
 			}
-			
+
 			if ($captcha_passed) {
 				if (isset($f3->POST["name"]))
 					$fromName = $f3->POST["name"];

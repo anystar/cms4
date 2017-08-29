@@ -140,7 +140,7 @@ class dropimg extends prefab {
 			$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$asize[0]."x".$asize[1]."&w=".$asize[0]."&h=".$asize[1];
 
 			// Does the file exsist?
-			if (!file_exists($path = getcwd()."/".$args["@attrib"]["src"])) {
+			if (!file_exists($path = getcwd()."/".$src)) {
 
 				copy($placeholder_path, $path);
 			}
