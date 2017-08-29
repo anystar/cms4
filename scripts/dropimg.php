@@ -184,6 +184,7 @@ class dropimg extends prefab {
 			
 			$string .= '<?php if (!admin::$signed) {?>';
 			$string .= "<img ";
+			$string .= ' src="'.$src.'"';
 
 			foreach ($args["@attrib"] as $key=>$value) {
 				$string .= $key.'="'.$value.'" ';

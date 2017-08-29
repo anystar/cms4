@@ -25,12 +25,6 @@ $f3->config($ROOTDIR."/cms/constants.ini", true);
 // Load specific configuratoin for this server instance
 $f3->CONFIG = $GLOBALS["config"] = parse_ini_file($ROOTDIR."/config.ini", true);
 
-// Set up error handler
-$f3->ONERROR = function ($f3) { 
-	header("HTTP/1.0 ".$f3->ERROR["code"]." ".$f3->ERROR["status"]);
-	echo Template::instance()->render("admin/error.html"); 
-};
-
 // Setup Krumo for use in Templates
 Template::instance()->filter("krumo", function ($array) {
 	if (!isset($GLOBALS["krumo"])) check(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
@@ -42,6 +36,21 @@ Template::instance()->filter("krumo", function ($array) {
 // Setup Mailer
 $f3->mailer = $f3->CONFIG["mailer"];
 $f3->MAILER = new \Mailer();
+
+// Set up error handler
+$f3->ONERROR = function ($f3) { 
+
+	header("HTTP/1.0 ".$f3->ERROR["code"]." ".$f3->ERROR["status"]);
+	echo Template::instance()->render("admin/error.html");
+	$body = Template::instance()->render("admin/email_error.html");
+
+	$f3->MAILER->addTo("darklocker@gmail.com");
+	$f3->MAILER->setHTML($body);
+	$f3->MAILER->send("Error message fuck");
+	$f3->MAILER->reset();
+
+	$f3->abort();
+};
 
 if (array_key_exists("login", $f3->GET))
 	$f3->PAGE_CACHE = false;
