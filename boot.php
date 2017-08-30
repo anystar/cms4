@@ -44,10 +44,16 @@ $f3->ONERROR = function ($f3) {
 	echo Template::instance()->render("admin/error.html");
 	$body = Template::instance()->render("admin/email_error.html");
 
-	$f3->MAILER->addTo("darklocker@gmail.com");
-	$f3->MAILER->setHTML($body);
-	$f3->MAILER->send("Error message fuck");
-	$f3->MAILER->reset();
+	if (array_key_exists("email_errors", $f3->CONFIG))
+	{
+		if ($f3->CONFIG["email_errors"])
+		{
+			$f3->MAILER->addTo("errors@webworksau.com");
+			$f3->MAILER->setHTML($body);
+			$f3->MAILER->send("CMS3 Error message");
+			$f3->MAILER->reset();
+		}
+	}
 
 	$f3->abort();
 };
