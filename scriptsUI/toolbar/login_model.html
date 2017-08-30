@@ -38,7 +38,7 @@
 }
 
 #login form .btn {
-  width: 100%;
+  width: 48%;
   font: 20px Helvetica,sans-serif;
   color: rgba(0, 0, 0, 0.8);
   text-shadow: 0 0.1em 0 rgba(255, 255, 255, 0.5);
@@ -125,11 +125,9 @@
             </div>
           </div>
 
-          <div class="col-6" style="padding-right:0;">
+          <div style="padding-right:0;">
             <button style="margin-left:0;" class="btn btn-primary" type="submit" name="redirectWhere" value="admin">Website Login</button>
-          </div>
-          <div class="col-6" style="padding-left:0;">
-            <a style="margin-right:0;width:95%" href="{{@BASE}}/admin/sendmagiclink" class="btn btn-primary">Send Login Link</a>
+            <a style="margin-right:0;" href="{{@BASE}}/admin/sendmagiclink" class="btn btn-primary">Send Login Link</a>
           </div>
         </div>
       
