@@ -44,7 +44,7 @@ $f3->ONERROR = function ($f3) {
 	echo Template::instance()->render("admin/error.html");
 	$body = Template::instance()->render("admin/email_error.html");
 
-	if ($f3->ERROR["code"] != 404)
+	if ($f3->ERROR["code"] != "404")
 	{
 		if (array_key_exists("email_errors", $f3->CONFIG))
 		{
