@@ -42,7 +42,17 @@ $f3->ONERROR = function ($f3) {
 
 	header("HTTP/1.0 ".$f3->ERROR["code"]." ".$f3->ERROR["status"]);
 	echo Template::instance()->render("admin/error.html");
-	$body = Template::instance()->render("admin/email_error.html");
+
+	$ERROR = $f3->ERROR;
+
+	$email  = "<h1>CMS3 Error</h1>";
+	$email .= "<h2>".$ERROR["status"]." (".$ERROR["code"].")"."</h2>";
+	$email .= "<p>".$f3->SCHEME."://".$f3->HOST.$f3->BASE.$f3->PATH."</p>";
+	$email .= "<p>";
+	$email .=   $ERROR["text"];
+	$email .=   "<br>";
+	$email .=   "<code><pre>".$ERROR["trace"]."</pre></code>";
+	$email .= "</p>";
 
 	if ($f3->ERROR["code"] != "404")
 	{
@@ -50,8 +60,9 @@ $f3->ONERROR = function ($f3) {
 		{
 			if ($f3->CONFIG["email_errors"])
 			{
-				$f3->MAILER->addTo("errors@webworksau.com");
-				$f3->MAILER->setHTML($body);
+				//$f3->MAILER->addTo("errors@webworksau.com");
+				$f3->MAILER->addTo("darklocker@gmail.com");
+				$f3->MAILER->setHTML($email);
 				$f3->MAILER->send("CMS3 Error message");
 				$f3->MAILER->reset();
 			}
