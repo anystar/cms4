@@ -54,14 +54,13 @@ $f3->ONERROR = function ($f3) {
 	$email .=   "<code><pre>".$ERROR["trace"]."</pre></code>";
 	$email .= "</p>";
 
-	if ($f3->ERROR["code"] != "404")
+	if ($f3->ERROR["code"] != "404" && $f3->ERROR["code"] != "403")
 	{
 		if (array_key_exists("email_errors", $f3->CONFIG))
 		{
 			if ($f3->CONFIG["email_errors"])
 			{
-				//$f3->MAILER->addTo("errors@webworksau.com");
-				$f3->MAILER->addTo("darklocker@gmail.com");
+				$f3->MAILER->addTo("errors@webworksau.com");
 				$f3->MAILER->setHTML($email);
 				$f3->MAILER->send("CMS3 Error message");
 				$f3->MAILER->reset();
