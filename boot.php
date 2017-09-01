@@ -54,7 +54,7 @@ $f3->ONERROR = function ($f3) {
 	$email .=   "<code><pre>".$ERROR["trace"]."</pre></code>";
 	$email .= "</p>";
 
-	if ($f3->ERROR["code"] != "404" && $f3->ERROR["code"] != "403")
+	if ($f3->ERROR["code"] != "404" && $f3->ERROR["code"] != "405")
 	{
 		if (array_key_exists("email_errors", $f3->CONFIG))
 		{
