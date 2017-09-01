@@ -52,6 +52,7 @@ $f3->ONERROR = function ($f3) {
 			{
 				$f3->MAILER->addTo("errors@webworksau.com");
 				$f3->MAILER->setHTML($body);
+				$f3->
 				$f3->MAILER->send("CMS3 Error message");
 				$f3->MAILER->reset();
 			}
@@ -66,6 +67,12 @@ if (array_key_exists("login", $f3->GET))
 else
 	$f3->PAGE_CACHE = 3600;
 
+// Redirect away from
+if (isroute("cms.php"))
+{
+	header("Location: ".$f3->SCHEME."://".$f3->HOST.$f3->BASE."/");
+	die;
+}
 
 // Require apache rewriting
 if (function_exists("apache_get_modules"))

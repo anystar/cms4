@@ -76,6 +76,7 @@ class contactform extends \Prefab {
 
 		// We have submitted the form
 		if ($f3->exists("POST.contactform_submit")) {
+
 			$id = $f3->get("POST.contactform_submit");
 
 			// We've used it, lets unset it.
