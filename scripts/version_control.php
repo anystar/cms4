@@ -87,7 +87,7 @@ class version_control extends prefab {
 
 		$f3->route("POST /admin/versioncontrol/poll [ajax]", function ($f3) {
 			echo $this->getState(true);
-			die;
+			exit;
 		});
 
 		ToolBar::instance()->append(Template::instance()->render("/revision-control/toolbar.html", null, ["state"=>$this->getState(true), "BASE"=>$f3->BASE]));
