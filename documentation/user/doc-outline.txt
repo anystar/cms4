@@ -1,0 +1,9 @@
+
+- The basic concept of editting
+- What your contrainted to
+- Requesting support
+- What happens when something breaks?
+
+- Editting text
+- Replacing an image
+- Editting a gallery

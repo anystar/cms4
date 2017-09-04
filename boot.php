@@ -1,4 +1,5 @@
 <?php
+
 ignore_user_abort(true);
 set_time_limit(0);
 
@@ -75,6 +76,11 @@ if (array_key_exists("login", $f3->GET))
 	$f3->PAGE_CACHE = false;
 else
 	$f3->PAGE_CACHE = 3600;
+
+if (isroute("test")) {
+
+	k($f3->FILES);
+}
 
 
 // Require apache rewriting
