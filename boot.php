@@ -38,6 +38,10 @@ Template::instance()->filter("krumo", function ($array) {
 $f3->mailer = $f3->CONFIG["mailer"];
 $f3->MAILER = new \Mailer();
 
+// $f3->set("mailer.on.failure", function ($error) {
+	
+// });
+
 // Set up error handler
 $f3->ONERROR = function ($f3) { 
 
@@ -55,7 +59,7 @@ $f3->ONERROR = function ($f3) {
 	$email .=   "<code><pre>".$ERROR["trace"]."</pre></code>";
 	$email .= "</p>";
 
-	if ($f3->ERROR["code"] != "404" && $f3->ERROR["code"] != "403")
+	if ($f3->ERROR["code"] != "404" && $f3->ERROR["code"] != "405")
 	{
 		if (array_key_exists("email_errors", $f3->CONFIG))
 		{
@@ -104,6 +108,13 @@ checkhtaccess(".htaccess");
 if (!file_exists(".cms/.htaccess"))
 	file_put_contents(".cms/.htaccess", "Deny from all");
 
+// Redirect away from
+if (isroute("cms.php"))
+{
+	header("Location: ".$f3->SCHEME."://".$f3->HOST.$f3->BASE."/");
+	die;
+}
+
 // Check if .cms/settings.json exists
 // 	- If it does not, copy default settings
 // 	- Check to ensure is valid json
@@ -112,7 +123,7 @@ if (!is_file(".cms/settings.json")) {
 	// Looks like settings.json does not exist
 	$default_settings["user"] = "admin@".$f3->HOST;
 	$default_settings["pass"] = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(7/strlen($x)) )),1,7);
-	$default_settings["version_control"] = "true";
+	$default_settings["version-control"] = "true";
 
 	$default_settings["scripts"][] = [
 		"class"=>"ckeditor",

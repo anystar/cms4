@@ -75,68 +75,96 @@ class contactform extends \Prefab {
 		$tmpl->extend('captcha', 'captcha::render');
 
 		// We have submitted the form
-		if ($f3->exists("POST.contactform_submit")) {
-			$id = $f3->get("POST.contactform_submit");
+		if ($f3->exists("POST.contactform_submit"))
+			$this->check_form($settings);
+	}
 
-			// We've used it, lets unset it.
-			unset($f3->POST["contactform_submit"]);
 
-			$captcha_passed = false;
+	function check_form ($settings) {
+		$f3 = base::instance();
 
-			if (array_key_exists("g-recaptcha-response", $f3->POST))
-			{
-				$recaptcha_response = $f3->POST["g-recaptcha-response"];
-		
-				$options["method"] = "POST";
-				$options["content"] = http_build_query(["secret"=>$settings["recaptcha_privatekey"], "response"=>$f3->POST["g-recaptcha-response"], $f3->IP]);
+		// Get the form ID
+		$id = $f3->get("POST.contactform_submit");
 
-				$response = Web::instance()->request("https://www.google.com/recaptcha/api/siteverify", $options);
-				$response = json_decode($response["body"], 1);
+		// We've used it, lets unset it.
+		unset($f3->POST["contactform_submit"]);
 
-				if ($response["success"] == TRUE)
-					$captcha_passed = true;
+		// Check Recaptcha
+		$captcha_passed = false;
+		if (array_key_exists("g-recaptcha-response", $f3->POST))
+		{
+			$recaptcha_response = $f3->POST["g-recaptcha-response"];
+	
+			$options["method"] = "POST";
+			$options["content"] = http_build_query(["secret"=>$settings["recaptcha_privatekey"], "response"=>$f3->POST["g-recaptcha-response"], $f3->IP]);
 
-				unset($f3->POST["g-recaptcha-response"]);
-			}
+			$response = Web::instance()->request("https://www.google.com/recaptcha/api/siteverify", $options);
+			$response = json_decode($response["body"], 1);
 
-			if ($settings["testing"]) $captcha_passed = true;
+			if ($response["success"] == TRUE)
+				$captcha_passed = true;
 
-			if (array_key_exists("captcha", $f3->POST))
-			{
-				if ($f3->POST["captcha"] == $f3->SESSION["captcha_code"])
-					$captcha_passed = true;
-			}
-
-			if ($captcha_passed) {
-				if (isset($f3->POST["name"]))
-					$fromName = $f3->POST["name"];
-
-				if (isset($f3->POST["email"]))
-					$fromAddress = $f3->POST["email"];
-
-				// email to send to, data, template, options
-				$this->send_email($settings["sendto"], $f3->POST, $settings["template"], [
-					"fromName" => $fromName,
-					"fromAddress" => $fromAddress,
-					"sendName"=>isset($settings["sendname"]) ? $settings["sendname"] : "Business owner",
-					"subject" => isset($settings["subject"]) ? $settings["subject"] : "Website Enquiry"
-				]);
-
-				$f3->reroute($settings["success"]);
-			}
-			else {
-				$f3->VERB = "GET";
-				$f3->POST["captcha"] = "";
-			}
+			unset($f3->POST["g-recaptcha-response"]);
 		}
+
+
+		// Check basic text captcha
+		if ($settings["testing"]) $captcha_passed = true;
+		if (array_key_exists("captcha", $f3->POST))
+		{
+			if ($f3->POST["captcha"] == $f3->SESSION["captcha_code"])
+				$captcha_passed = true;
+		}
+
+		// Captcha Failed!
+		if (!$captcha_passed) {
+
+			// Because we are posting to the same page, change VERB
+			// so F3 route will be call correctly.
+			$f3->VERB = "GET";
+			$f3->POST["captcha"] = "";
+
+			//return;
+		}
+
+		// Get name
+		if (array_key_exists("name", $f3->POST))
+			$fromName = $f3->POST["name"];
+		else
+			$fromName = "Website Visitor";
+
+		// Get email
+		if (array_key_exists("email", $f3->POST))
+			$fromAddress = $f3->POST["email"];
+		else
+			$fromAddress = "noreply@webworksau.com";
+
+		// Send the email !!
+		$this->send_email($settings["sendto"], $f3->POST, $settings["template"], [
+			"fromName" => $fromName,
+			"fromAddress" => $fromAddress,
+			"sendName"=>isset($settings["sendname"]) ? $settings["sendname"] : "Business owner",
+			"subject" => isset($settings["subject"]) ? $settings["subject"] : "Website Enquiry"
+		]);
+
+		$f3->reroute($settings["success"]);
 	}
 
 	function send_email ($sendto, $form, $template, $options)
-	{
+	{	
 		// Use custom email template from client directory
 		$body = \Template::instance()->render($template, null, $form);
 
 		$mailer = base::instance()->MAILER;
+
+		// Attach any files
+		if (base::instance()->FILES != null)
+			foreach (base::instance()->FILES as $file)
+			{
+				if ($file["tmp_name"] != "")
+					if (file_exists($file["tmp_name"]))
+						$mailer->attachFile($file["tmp_name"], $file["name"]);
+			}
 
 		$mailer->addTo($sendto, $options["sendName"]);
 		$mailer->setReply($options["fromAddress"], $options["fromName"]);
