@@ -25,6 +25,9 @@ class version_control extends prefab {
 
 		$this->repo = new GitRepo(getcwd(), true);
 
+		if (array_key_exists("save", $f3->GET))
+			$this->save();
+
 		// If we are in a detached HEAD, lets get branch from cache
 		if ($this->isDetached())
 		{
@@ -44,8 +47,11 @@ class version_control extends prefab {
 		if ($check == "")
 			$this->repo->run("config user.email '".$f3->CONFIG["git"]["email"]."'");
 
-		// Add our shortcuts
+		$check = $this->repo->run("config --get core.safecrlf");
+		if ($check == "")
+			$this->repo->run("config core.safecrlf false");
 
+		// Add our shortcuts
 		$nextCmd = "config --add alias.next \"!sh -c 'git log --reverse --pretty=%H ".$this->branch." | awk \\\"/$(git rev-parse HEAD)/{getline;print}\\\" | xargs git checkout'\"";
 		$check = $this->repo->run("config --get alias.next");
 		if ($check != $nextCmd)
@@ -99,6 +105,7 @@ class version_control extends prefab {
 		$state["canUndo"] = $this->canUndo();
 		$state["canRedo"] = $this->canRedo();
 		$state["detachedDirty"] = $this->detachedAndDirty();
+		$state["locked"] = $this->isLocked();
 
 		if ($json)
 			return json_encode($state);
@@ -162,8 +169,20 @@ class version_control extends prefab {
 			return false;
 	}
 
+	function isLocked () {
+
+		if (file_exists(getcwd()."/.git/index.lock"))
+			return true;
+		else
+			return false;
+	}
+
 	function save () 
 	{
+		// No point continuing if repo is locked
+		if ($this->isLocked())
+			return;
+
 		// If we are in a detached head, we better merge back to master
 		if (substr($this->repo->run("status"), 0, 16) == "HEAD detached at")
 		{
@@ -181,12 +200,15 @@ class version_control extends prefab {
 			return;
 		}
 
-
 		$this->repo->add(".");
 		$this->repo->commit("time: ".date("h:i:s"));
 	}
 
 	function undo () {
+
+		// No point continuing if repo is locked
+		if ($this->isLocked())
+			return;
 
 		// Destory changes
 		if ($this->detachedAndDirty())
@@ -218,6 +240,10 @@ class version_control extends prefab {
 	}
 
 	function redo () {
+
+		// No point continuing if repo is locked
+		if ($this->isLocked())
+			return;
 
 		// Destory changes
 		if ($this->detachedAndDirty())

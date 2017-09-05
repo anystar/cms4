@@ -9,6 +9,7 @@
 	center_div.append(undobtn);
 
   	var savebtn = cmsjQuery('<button id="savebtn" class="button revcontrol">Save</button>');
+  	var lockbtn = cmsjQuery('<button id="lockbtn" class="button revcontrol disabled">Locked</button>');
 
   	savebtn.mouseup(function () {
   		status("Saving changes");
@@ -20,13 +21,28 @@
   	});
 
 	center_div.append(savebtn);
+	center_div.append(lockbtn);
 
   	center_div.append(cmsjQuery('<a id="redo" href="?redo" class="button revcontrol">Redo</a>'));
 
   	updateState ({{@state}});
 
   	function updateState (state) {
-	 
+	 	
+  		if (state.locked)
+  		{
+  			cmsjQuery("#webworkscms_admintoolbar #savebtn").removeClass("unsaved");
+  			cmsjQuery("#webworkscms_admintoolbar #savebtn").addClass("disabled");
+  			cmsjQuery("#webworkscms_admintoolbar #savebtn").hide();
+  			cmsjQuery("#webworkscms_admintoolbar #lockbtn").show();
+  			cmsjQuery("#webworkscms_admintoolbar #undo").addClass("disabled");
+  			cmsjQuery("#webworkscms_admintoolbar #redo").addClass("disabled");
+  			return;
+  		}
+		
+		cmsjQuery("#webworkscms_admintoolbar #savebtn").show();
+  		cmsjQuery("#webworkscms_admintoolbar #lockbtn").hide();
+
 	  	if (state.isDirty)
 	  	{
 			cmsjQuery("#webworkscms_admintoolbar #savebtn").addClass("unsaved");
