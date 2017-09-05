@@ -39,12 +39,12 @@
   			cmsjQuery("#webworkscms_admintoolbar #redo").addClass("disabled");
   			return;
   		}
-		
-		cmsjQuery("#webworkscms_admintoolbar #savebtn").show();
-  		cmsjQuery("#webworkscms_admintoolbar #lockbtn").hide();
+		else
+  			cmsjQuery("#webworkscms_admintoolbar #lockbtn").hide();
 
 	  	if (state.isDirty)
 	  	{
+			cmsjQuery("#webworkscms_admintoolbar #savebtn").show();
 			cmsjQuery("#webworkscms_admintoolbar #savebtn").addClass("unsaved");
 			cmsjQuery("#webworkscms_admintoolbar #savebtn").removeClass("disabled");
 	  	}
