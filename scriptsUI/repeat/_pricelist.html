@@ -1,0 +1,196 @@
+
+<style>
+
+.modal-content {
+    /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
+    width:inherit;
+    height:inherit;
+    /* To center horizontally */
+    margin: 0 auto;
+    pointer-events: all;
+
+    margin-bottom: 100px;
+}
+
+.addproduct {
+
+	margin: 0 15px 15px 15px;
+}
+
+</style>
+
+<button class="btn btn-primary btn-lg addproduct" data-toggle="modal" data-target="#myModal">Add Item</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-lg vertical-align-center">
+            <div class="modal-content">
+
+				<form enctype="multipart/form-data" method="post" action="{{@BASE}}/admin/{{@name}}/addupdate#form">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+
+                    </button>
+                     <h4 class="modal-title" id="myModalLabel">Add Item</h4>
+
+                </div>
+                <div class="modal-body">
+					<div class="form-group">
+						<label>Title</label>
+						<input name="title" type="text" class="form-control" placeholder="Item Title">
+					</div>
+
+					<div class="form-group">
+						<label>Image</label>
+						<input name="image" type="file" class="form-control" placeholder="Item Title">
+					</div>
+
+					<div class="form-group">
+						<label>Description</label>
+						<textarea id="ckeditoradd" name="description" type="text" class="form-control ckeditors" placeholder="Description"></textarea>
+					</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+				</form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-xs-12 col-md-12">
+	<div class="box">
+		<h2>Items</h2>
+
+		<table class="table table-striped">
+			<thead>
+				<td></td>
+				<td width="210">Image</td>
+				<td>Title</td>
+				<td style="text-align:right;width:200px;">Actions</td>
+			</thead>
+			<tbody class="sortable">
+				<repeat group="{{@data}}" value="{{@row}}">
+					<tr data-id="{{@row['_id']}}">
+					<check if="{{@row.isTitle}}">
+					<true>
+						<td class="handle">
+							<span class="ui-sortable-handle">
+								<i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i>
+							</span>
+						</td>
+						<td style="font-size:28px;font-weight:bold;">{{@row.title}}</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td style="text-align:right;">
+							<a class="btn btn-primary" data-toggle="modal" data-target="#product_{{sha1(@row['_id'])}}" href="#">Update</a> -
+							<a class="btn btn-primary" onclick="return confirm('Delete item?')" class="delete" href="{{@BASE}}/admin/{{@name}}/delete?data_id={{@row['_id']}}">Delete</a>
+						</td>
+					</true>				
+					<false>
+						<td class="handle">
+							<span class="ui-sortable-handle">
+								<i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i>
+							</span>
+						</td>
+						<td>
+							<check if="{{@row.image}}">
+								<true><img src="{{@BASE}}/{{@row.image}}" width="200"></true>
+								<false>No image</false>
+							</check>
+						</td>
+						<td>{{@row.title}}</td>
+						<td style="text-align:right;">
+							<a class="btn btn-primary" data-toggle="modal" data-target="#product_{{sha1(@row['_id'])}}" href="#">Update</a> -
+							<a class="btn btn-primary" onclick="return confirm('Delete item?')" class="delete" href="{{@BASE}}/admin/{{@name}}/delete?data_id={{@row['_id']}}">Delete</a>
+						</td>
+					</false>
+					</check>
+					</tr>
+				</repeat>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<repeat group="{{@data}}" value="{{@row}}">
+<div class="modal fade product_window" id="product_{{sha1(@row['_id'])}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-lg vertical-align-center">
+            <div class="modal-content">
+			<form enctype="multipart/form-data" method="post" action="{{@BASE}}/admin/{{@name}}/addupdate#form">
+			<div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+
+			    </button>
+			     <h4 class="modal-title" id="myModalLabel">Update {{@row.title}}</h4>
+
+			</div>
+			<div class="modal-body">
+
+				<div class="form-group">
+					<label>Title</label>
+					<input value="{{@row.title}}" name="title" type="text" class="form-control" placeholder="Item Title">
+				</div>
+
+				<div class="form-group">
+					<label>Image</label>
+					<input name="image" type="file" class="form-control" placeholder="Item Title">
+				</div>
+
+				<div class="form-group">
+					<label>Description</label>
+					<textarea id="ckeditorupdate" name="description" type="text" class="form-control ckeditors" placeholder="Description">{{@row.description}}</textarea>
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<input type="hidden" name="data_id" value="{{@row['_id']}}">
+			    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			    <button type="submit" class="btn btn-primary">Update</button>
+			</div>
+			</form>
+            </div>
+        </div>
+    </div>
+</div>
+</repeat>
+
+<script src="{{ @CDN.ckeditor }}"></script>
+<script>
+	var config = {
+		fontSize_sizes : '8/8px;10/10px;12/12px;14/14px;16/16px;18/18px;20/20px;22/22px;24/24px;26/26px;28/28px;30/30px;32/32px;34/34px;36/36px;38/38px;40/40px;42/42px;44/44px;46/46px;48/48px;50/50px;52/52px;54/54px;56/56px;58/58px;60/60px;62/62px;64/64px;68/68px;70/70px;',
+		removeButtons : 'Inlinesave,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Flash,HorizontalRule,SpecialChar,Smiley,PageBreak,Iframe,Styles,Format,Maximize,ShowBlocks,About',
+		removePlugins : 'ckeditor-gwf-plugin,inlinesave,source',
+		title : '',
+		enterMode : CKEDITOR.ENTER_BR,
+		allowedContent : true,
+		disableNativeSpellChecker: true,
+		toolbarGroups : 
+		[
+			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+			{ name: 'forms', groups: [ 'forms' ] },
+			{ name: 'links', groups: [ 'links' ] },
+			{ name: 'insert', groups: [ 'insert' ] },
+			{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+			{ name: 'editing', groups: [ 'find', 'selection', 'editing', 'others', 'tools' ] },
+			'/',
+			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+			{ name: 'styles', groups: [ 'styles' ] },
+			{ name: 'colors', groups: [ 'colors' ] }
+		]
+	};
+
+	var editors = document.getElementsByClassName("ckeditors");
+
+	for (var i = editors.length - 1; i >= 0; i--)
+	{
+		var editorID = editors[i].getAttribute("id");
+		var editor = CKEDITOR.replace(editorID, config);
+	}
+</script>

@@ -12,10 +12,21 @@
       #webworkscms_admintoolbar #left_div, #webworkscms_admintoolbar #right_div {
         width: 350px;
       }
+
+      #webworkscms_admintoolbar .center_div .revcontrol {
+        display: none;
+      }
       /* show toolbar */
-    </style>    
+    </style>
+    <script>
+      var popup = true;
+    </script> 
   </true>
   <false>
+    <script>
+      var popup = false;
+    </script> 
+
     <style>
       @media (max-width: 1030px) {
         #webworkscms_admintoolbar {
@@ -27,6 +38,7 @@
         width: 750px;
         font-size: 20px;
       }
+
       /* do not show toolbar */
     </style>
   </false>
@@ -36,6 +48,7 @@
 var cmsjQuery = jQuery.noConflict(true);
 
 function status (message) {
+  if (popup) return false;
 
   if (typeof message === "undefined")
   {
@@ -73,7 +86,12 @@ function PopupCenter(url, title, w, h) {
 
 function closeRefresh() {
   window.close();
-  window.onunload = function () { window.opener.location.reload(); }
+  window.onunload = function () { window.opener.location.reload(true); }
+}
+
+function closeRefreshLogout() {
+  window.close();
+  window.onunload = function () { window.opener.location.reload(true); }
 }
 
 cmsjQuery(function() {
@@ -140,31 +158,40 @@ cmsjQuery(function() {
     evt.preventDefault();
   });
 
-  var logoutwarning = new tingle.modal({
-      footer: true,
-      stickyFooter: false,
-      closeMethods: ['overlay', 'button', 'escape'],
-      cssClass: ['logoutwarning'],
-      beforeClose: function() {
-          // here's goes some logic
-          // e.g. save content before closing the modal
-          return true; // close the modal
-      }
-  });
-  
-  logoutwarning.setContent(document.querySelector('.logoutwarninginner').innerHTML);
+  if (!popup)
+  {
+    var logoutwarning = new tingle.modal({
+        footer: true,
+        stickyFooter: false,
+        closeMethods: ['overlay', 'button', 'escape'],
+        cssClass: ['logoutwarning'],
+        beforeClose: function() {
+            // here's goes some logic
+            // e.g. save content before closing the modal
+            return true; // close the modal
+        }
+    });
+    
+    logoutwarning.setContent(document.querySelector('.logoutwarninginner').innerHTML);
 
-  logoutwarning.addFooterBtn('LOGOUT NOW', 'button tingle-btn--pull-right', function() {
-      window.location.replace("{{@BASE}}/logout");
-  });
+    logoutwarning.addFooterBtn('LOGOUT NOW', 'button tingle-btn--pull-right', function() {
+        window.location.replace("{{@BASE}}/logout");
+    });
 
-  cmsjQuery("#webworkscms_admintoolbar #logoutbtn").click(function (evt) {
+    cmsjQuery("#webworkscms_admintoolbar #logoutbtn").click(function (evt) {
 
-    logoutwarning.open();
+      logoutwarning.open();
 
-    evt.preventDefault();
-  });
+      evt.preventDefault();
+    });
+  } else {
+    cmsjQuery("#webworkscms_admintoolbar #logoutbtn").click(function (evt) {
 
+      closeRefreshLogout();
+
+      evt.preventDefault();
+    });
+  }
 
   cmsjQuery(window).mousemove(function (evt) {
       mouseX = evt.pageX;

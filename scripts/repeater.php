@@ -20,6 +20,7 @@ class repeater {
 		$this->snippets[] = "_products.html";
 		$this->snippets[] = "_testimonials.html";
 		$this->snippets[] = "_events.html";
+		$this->snippets[] = "_pricelist.html";
 
 		check(0, $settings["name"], "No `name` set in **".$settings["name"]."** settings");
 		check(0, $settings["label"], "No `label` set in **".$settings["name"]."** settings");
@@ -73,12 +74,45 @@ class repeater {
 			}
 			
 			$f3->name = $this->name;
-			$f3->data = $this->jig->find();
+			$data = $this->jig->find();
+
+			$f3->data = array();
+
+			foreach ($data as $row)
+				$f3->data[] = $row->cast();
 
 			echo Template::instance()->render("/repeat/repeat.html");
 		});
 
 		$f3->route('POST /admin/'.$this->name.'/addupdate', function ($f3) {
+
+			// Upload any files
+			if (array_key_exists("image-directory", $this->settings)) {
+				$image_directory = $this->settings["image-directory"];
+
+				checkdir(getcwd()."/".$image_directory);
+
+				$imagesize = [0, 0];
+				$imagesize = $this->settings["image-size"];
+
+				if (strlen($imagesize) > 0)
+					$imagesize = explode("x", $imagesize);
+
+				foreach ($f3->FILES as $key => $file)
+				{
+					if (!$file["tmp_name"])
+						continue;
+
+					if ($imagesize[0] > 0 && $imagesize[1] > 0)
+						$this->resize_image ($file["tmp_name"], $imagesize[0], $imagesize[1], getcwd()."/".$image_directory."/".$file["name"]);
+					else
+						move_uploaded_file($file["tmp_name"], getcwd()."/".$image_directory."/".$file["name"]);
+
+					if (checkfile(getcwd()."/".$image_directory."/".$file["name"]))
+							$f3->POST[$key] = ltrim(rtrim($image_directory, "/"), "/") . "/" . $file["name"];
+
+				}
+			}
 
 			if ($f3->POST["data_id"])
 				$this->jig->load(["@_id=?", $f3->POST["data_id"]]);		
