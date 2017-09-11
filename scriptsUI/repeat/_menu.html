@@ -1,4 +1,4 @@
-<div class="col-xs-12">
+<div class="col-12">
 	<div class="box">
 		<h2></h2>
 
@@ -13,14 +13,14 @@
 
 				<repeat group="{{@data}}" value="{{@row}}">
 				
-				<tr valign="middle" data-id="{{@row._id}}" style="<check if="{{@row->exists('hidden')}}">opacity:0.5;</check>">
+				<tr valign="middle" data-id="{{@row['_id']}}" style="<check if="{{@row.hidden}}">opacity:0.5;</check>">
 					<td class="handle">
 						<span class="ui-sortable-handle">
 							<i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i>
 						</span>
 					</td>
 					<td>
-						<check if="{{!@row->exists('isTitle')}}">
+						<check if="{{!@isTitle}}">
 							<true>
 								{{@row.name}} <check if="{{@row.note}}">({{@row.note}})</check>
 							</true>
@@ -28,19 +28,19 @@
 								<div style="font-size:16px;font-weight:bold;">{{@row.name}}</div>
 							</false>
 						</check>
-						<check if="{{!@row->exists('isTitle')}}">
+						<check if="{{!@isTitle}}">
 						<br>
 						<span style="color: #999;">{{@row.description}}</span>
 						</check>
 					</td>
-					<td style="width:200px;text-align:right;"><check if="{{!@row->exists('isTitle')}}">{{@row.price}}</check></td>
+					<td style="width:200px;text-align:right;"><check if="{{!@isTitle}}">{{@row.price}}</check></td>
 					<td style="text-align: center;" width="200">
-						<a href="{{@BASE}}/admin/{{@name}}/update?data_id={{@row._id}}#updateform">Update</a> -
-						<check if="{{@row->exists('hidden')}}">
-							<true><a href="{{@BASE}}/admin/{{@name}}/toggle?data_id={{@row._id}}">Show</a> -</true>
-							<false><a href="{{@BASE}}/admin/{{@name}}/toggle?data_id={{@row._id}}">Hide</a> -</false>
+						<a href="{{@BASE}}/admin/{{@name}}/update?data_id={{@row['_id']}}#updateform">Update</a> -
+						<check if="{{@row.hidden}}">
+							<true><a href="{{@BASE}}/admin/{{@name}}/toggle?data_id={{@row['_id']}}">Show</a> -</true>
+							<false><a href="{{@BASE}}/admin/{{@name}}/toggle?data_id={{@row['_id']}}">Hide</a> -</false>
 						</check>
-						<a onclick="return confirm('Delete: Are you sure?');" class="delete" href="{{@BASE}}/admin/{{@name}}/delete?data_id={{@row._id}}">Delete</a>
+						<a onclick="return confirm('Delete: Are you sure?');" class="delete" href="{{@BASE}}/admin/{{@name}}/delete?data_id={{@row['_id']}}">Delete</a>
 					</td>
 				</tr>
 				</repeat>

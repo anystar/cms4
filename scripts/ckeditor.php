@@ -18,7 +18,14 @@ class ckeditor extends prefab {
 					return '<ckeditor id="'.$id.'">';
 				}, $contents);
 
-				file_put_contents(getcwd()."/".$f3->FILE, $contents);
+				// Prevent writing blank files
+				if ($contents == "")
+				{	
+					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data!");
+					return;
+				}
+
+				file_put_contents(getcwd()."/".$f3->FILE, $contents, LOCK_EX);
 			}
 		}
 
@@ -90,7 +97,14 @@ class ckeditor extends prefab {
 					return $return;
 				}, $file);
 
-				file_put_contents(getcwd()."/".$filename, $file);
+				// Prevent writing blank files
+				if ($file == "")
+				{	
+					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data!");
+					return;
+				}
+
+				file_put_contents(getcwd()."/".$filename, $file, LOCK_EX);
 			} else {
 
 				echo "wrong hash!";

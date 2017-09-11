@@ -2,6 +2,8 @@
   
   cmsjQuery(function() {
 
+  	if (popup) return;
+
   	var center_div = cmsjQuery("#webworkscms_admintoolbar #center_div");
   	
   	var undobtn = cmsjQuery('<a id="undo" href="?undo" class="button revcontrol">Undo</a>');

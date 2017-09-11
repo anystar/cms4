@@ -18,8 +18,8 @@
 					<td>{{@row.who}}</td>
 					<td>{{@row.from}}</td>
 					<td>
-						<a href="{{@BASE}}/admin/{{@name}}/update?data_id={{@row._id}}">Update</a> -
-						<a class="delete" href="{{@BASE}}/admin/{{@name}}/delete?data_id={{@row._id}}">Delete</a>
+						<a href="{{@BASE}}/admin/{{@name}}/update?data_id={{@row['_id']}}">Update</a> -
+						<a class="delete" href="{{@BASE}}/admin/{{@name}}/delete?data_id={{@row['_id']}}">Delete</a>
 					</td>
 				</tr>
 				</repeat>
