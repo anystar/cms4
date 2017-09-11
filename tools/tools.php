@@ -413,6 +413,134 @@ function dt ($clear = false) {
     die;
 }
 
+function saveimg ($file, $directory, $options) {
+
+	if ($file == "" || $file == null)
+		base::instance()->error(500, "File argument for saveimg NULL.");
+
+	if ($directory=="")
+		base::instance()->error(500, "No directory provided");
+
+	if (!checkdir($directory = getcwd()."/".$directory))
+		base::instance()->error(500, "Could not create or read directory provided for saveimg()");
+
+	$directory = base::instance()->fixslashes($directory);
+
+	// Are we passed a string
+	if (is_string($file))
+	{
+
+	}
+
+	if (is_array($file)) {
+
+		if ($file["error"] > 0)
+		{
+			$phpFileUploadErrors = array(
+			    0 => 'There is no error, the file uploaded with success',
+			    1 => 'The uploaded file exceeds the maximum upload size',
+			    2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+			    3 => 'The uploaded file was only partially uploaded',
+			    4 => 'No file was uploaded',
+			    6 => 'Missing a temporary folder to upload into',
+			    7 => 'Failed to write file to disk.',
+			    8 => 'An extension stopped the file upload.',
+			);
+
+			// We should always handle this client side so throw a serious error
+			base::instance()->error(500, "Error uploading file ". $phpFileUploadErrors[$file["error"]]);
+		}
+
+		$pi = pathinfo($file["name"]);
+
+		$file = $file["tmp_name"];
+		$filename = $pi["basename"];
+		$file_type = $pi["extension"];
+	}
+
+	// 
+	$GDimg = new \Image($file, false, "");
+
+	k($GDimg);
+
+	// Ensure GD loaded correctly
+	if ($GDimg->data == false)
+		base::instance()->error(500, "This image type ".$file_type." is not supported");
+
+
+
+	echo $GDimg->render();
+	die;
+
+	// Final variables
+	$file = "";
+	$file_type = "";
+
+
+	// Determine size
+	if (array_key_exists("type", $options))
+	{
+
+	}
+
+
+	// Process options
+	if (array_key_exists("size", $options))
+	{
+		if (is_string($options["size"]))
+			$size = explode("x", $size);
+	}
+
+
+
+				// Check if current image exists
+				// if (!file_exists(getcwd()."/".$f3->POST["filename"]))
+				// {
+				// 	echo "HUH, file does not exist??";
+				// 	die;
+				// }
+
+			
+				// Resize and overwrite 
+				//$this->resize($f3->FILES["file"]["tmp_name"], $file, $size[0], $size[1], $ext);
+
+				$image = $f3->FILES["file"]["tmp_name"];
+				$save_to = $file;
+				$file_type = $ext;
+
+				// Pull image off the disk into memory
+				$temp_image = new Image($image, false, ''); // Image(filename, filehistory, path)
+
+				// Make sure that width and height are set before resizing image
+				if (($width*$height) > 0)
+				{
+					// Resize image using F3's image plugin
+					$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
+				}
+
+				// Save image depending on user selected file type
+				switch ($file_type)
+				{	
+					case "jpg":
+					case "jpeg":
+						imagejpeg($temp_image->data($file_type, 100), $save_to);
+					break;
+					case "png":
+						imagepng($temp_image->data($file_type, 100), $save_to);
+					break;
+					case "gif":
+						imagegif($temp_image->data($file_type, 100), $save_to);
+					break;
+				}
+
+
+
+
+
+	k($file);
+	
+}
+
 // @param  string  Target directory
 // @param  string  Target file extension
 // @return boolean True on success, False on failure

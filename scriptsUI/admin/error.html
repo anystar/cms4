@@ -87,10 +87,10 @@ we can at least give the user a proper error page.
 
             <p>Please contact Web Works on 5446 3371 or email alan@webworksau.com</p>
 
-            <p style="padding-top:40px">
+            <p style="padding-top:30px">
               {{@ERROR.text}}
-              <br>
-              <code><pre>{{@ERROR.trace}}</pre></code>
+              <br><br>
+              <pre><code>{{@ERROR.trace}}</code></pre>
             </p>
           </check>
 
@@ -107,7 +107,7 @@ we can at least give the user a proper error page.
           <check if="{{@ERROR.code==0}}">
               {{@ERROR.text}}
               <br>
-              <code><pre>{{@ERROR.trace}}</pre></code>
+              <pre><code>{{@ERROR.trace}}</code></pre>
           </check>
 
           <check if="{{@ERROR.code==3}}">

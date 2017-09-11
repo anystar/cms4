@@ -45,8 +45,19 @@ $f3->MAILER = new \Mailer();
 // Set up error handler
 $f3->ONERROR = function ($f3) { 
 
-	header("HTTP/1.0 ".$f3->ERROR["code"]." ".$f3->ERROR["status"]);
-	echo Template::instance()->render("admin/error.html");
+	if ($f3->AJAX)
+	{	
+		$temp = $f3->ERROR;
+		$temp["trace"] = explode("\n", $temp["trace"]);
+		j($temp);
+	}
+	else
+	{
+		header("HTTP/1.0 ".$f3->ERROR["code"]." ".$f3->ERROR["status"]);
+		echo Template::instance()->render("admin/error.html");
+	}
+
+	$f3->abort();
 
 	$ERROR = $f3->ERROR;
 
@@ -56,7 +67,7 @@ $f3->ONERROR = function ($f3) {
 	$email .= "<p>";
 	$email .=   $ERROR["text"];
 	$email .=   "<br>";
-	$email .=   "<code><pre>".$ERROR["trace"]."</pre></code>";
+	$email .=   "<pre><code>".$ERROR["trace"]."</code></pre>";
 	$email .= "</p>";
 
 	if ($f3->ERROR["code"] != "404" && $f3->ERROR["code"] != "405")
@@ -72,8 +83,6 @@ $f3->ONERROR = function ($f3) {
 			}
 		}
 	}
-
-	$f3->abort();
 };
 
 if (array_key_exists("login", $f3->GET))
@@ -175,6 +184,7 @@ if (admin::$signed) {
 new toolbar($settings);
 new settings_manager($settings);
 new version_control($settings);
+new review($settings);
 
 check (0, !array_key_exists("scripts", $settings), "No scripts element in settings.json");
 
@@ -225,6 +235,19 @@ if (admin::$signed) {
 		$f3->abort();
 	}
 }
+
+// $f3->route("POST /upload_test", function ($f3) {
+
+// 	foreach ($f3->FILES as $file)
+// 		saveimg($file, "images/", [
+// 			"size"=>"500x500",
+// 			"crop"=>true,
+// 			"enlarge"=>true,
+// 			"type"=>"auto"
+// 		]);
+
+// 	k("STAHP");
+// });
 
 $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 

@@ -1,0 +1,79 @@
+<exclude>
+We purposefully used maxcdn assets rather than our own because if the user
+is having an error we'd rather not compound it with broken assets. This way
+we can at least give the user a proper error page.
+</exclude>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Documentation</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+      body {
+        background-color: #C4C0BA;
+      }
+  
+      h1 {
+        font-size: 26px;
+        border-bottom: 1px solid #eee;
+        padding-bottom:10px;
+        margin-bottom: 30px;
+      }
+
+      .container {
+        border: 1px solid grey;
+        border-radius: 10px 10px 10px 10px;
+        -moz-border-radius: 10px 10px 10px 10px;
+        -webkit-border-radius: 10px 10px 10px 10px;
+        background-color: rgb(253,253,253);
+        margin-top: 5%;
+        padding: 50px;
+      }
+
+      .fa-exclamation-triangle {
+        font-size: 8vw;
+      }
+
+      code{word-wrap:break-word;color:black}.comment,.doc_comment,.ml_comment{color:dimgray;font-style:italic}.variable{color:blueviolet}.const,.constant_encapsed_string,.class_c,.dir,.file,.func_c,.halt_compiler,.line,.method_c,.lnumber,.dnumber{color:crimson}.string,.and_equal,.boolean_and,.boolean_or,.concat_equal,.dec,.div_equal,.inc,.is_equal,.is_greater_or_equal,.is_identical,.is_not_equal,.is_not_identical,.is_smaller_or_equal,.logical_and,.logical_or,.logical_xor,.minus_equal,.mod_equal,.mul_equal,.ns_c,.ns_separator,.or_equal,.plus_equal,.sl,.sl_equal,.sr,.sr_equal,.xor_equal,.start_heredoc,.end_heredoc,.object_operator,.paamayim_nekudotayim{color:black}.abstract,.array,.array_cast,.as,.break,.case,.catch,.class,.clone,.continue,.declare,.default,.do,.echo,.else,.elseif,.empty.enddeclare,.endfor,.endforach,.endif,.endswitch,.endwhile,.eval,.exit,.extends,.final,.for,.foreach,.function,.global,.goto,.if,.implements,.include,.include_once,.instanceof,.interface,.isset,.list,.namespace,.new,.print,.private,.public,.protected,.require,.require_once,.return,.static,.switch,.throw,.try,.unset,.use,.var,.while{color:royalblue}.open_tag,.open_tag_with_echo,.close_tag{color:orange}.ini_section{color:black}.ini_key{color:royalblue}.ini_value{color:crimson}.xml_tag{color:dodgerblue}.xml_attr{color:blueviolet}.xml_data{color:red}.section{color:black}.directive{color:blue}.data{color:dimgray}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h1>Review has been delivered too</h1>
+          <ul>
+            <repeat group="{{@delivered_to}}" value="{{@email}}">
+              <li>{{@email}}</li>
+            </repeat>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="{{@BASE}}/admin/review/jquery.keepformdata.min.js"></script>
+
+    <toolbar disable>
+  </body>
+</html>
