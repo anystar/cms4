@@ -24,7 +24,7 @@ class review extends prefab {
 
 			$f3->route("POST /admin/review/submit", function ($f3) {
 				$emails = $f3->CONFIG["review"]["email"];
-
+		
 				if (count($emails) == 0)
 					return;
 
@@ -44,6 +44,11 @@ class review extends prefab {
 				$f3->MAILER->setHTML($emailBody);
 				$f3->MAILER->send("Website Review");
 				$f3->MAILER->reset();
+
+				$reviewLog["last-reviewed"] = time();
+				$reviewLog["next-review"] = time() + $f3->POST["nextreview"];
+				$reviewLog["results"] = $f3->POST;
+				file_put_contents(".cms/reviewlog.json", json_encode($reviewLog, JSON_PRETTY_PRINT));
 			});
 		}
 	}
