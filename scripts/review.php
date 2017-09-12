@@ -8,15 +8,14 @@ class review extends prefab {
 		$f3 = base::instance();
 		$this->settings = $settings;
 
-		if (array_key_exists("review", $f3->GET))
-		{
-			echo Template::instance()->render("/review/review.html");
-			die;
-		}
-
-
 		if (admin::$signed)
 		{
+			if (array_key_exists("review", $f3->GET))
+			{
+				echo Template::instance()->render("/review/review.html");
+				die;
+			}
+
 			$f3->route("GET /admin/review/jquery.keepformdata.js", function ($f3) {
 				echo Template::instance()->render("/review/jquery.keepformdata.js", "application/javascript", null);
 				$f3->abort();
