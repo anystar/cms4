@@ -2,8 +2,9 @@
 
 class repeater {
 
-	private $name;
+	public $name;
 	public $jig;
+	public $data;
 
 	function __construct($settings) {
 
@@ -40,7 +41,9 @@ class repeater {
 
 		$this->jig = new \DB\Jig\Mapper($jig, $settings["name"]);
 
-		$this->data = $this->jig->find();
+		$data = $this->jig->find();
+		foreach ($data as $row)
+			$this->data[] = $row->cast();
 
 		$this->name = $settings["name"];
 		$this->settings = $settings;
@@ -98,13 +101,14 @@ class repeater {
 				if (strlen($imagesize) > 0)
 					$imagesize = explode("x", $imagesize);
 
+
 				foreach ($f3->FILES as $key => $file)
 				{
 					if (!$file["tmp_name"])
 						continue;
 
 					if ($imagesize[0] > 0 && $imagesize[1] > 0)
-						$this->resize_image ($file["tmp_name"], $imagesize[0], $imagesize[1], getcwd()."/".$image_directory."/".$file["name"]);
+						$this->resize_image ($file, $size, getcwd()."/".$image_directory."/".$file["name"]);
 					else
 						move_uploaded_file($file["tmp_name"], getcwd()."/".$image_directory."/".$file["name"]);
 
@@ -161,6 +165,8 @@ class repeater {
 
 	function resize_image ($image, $x, $y, $save_as) {
 
+		k($image);
+		
 		// Pull image off the disk into memory
 		$temp_image = new Image($image, false, "/");
 
