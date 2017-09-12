@@ -65,7 +65,7 @@ $f3->ONERROR = function ($f3) {
 	$email .= "<h2>".$ERROR["status"]." (".$ERROR["code"].")"."</h2>";
 	$email .= "<p>".$f3->SCHEME."://".$f3->HOST.$f3->BASE.$f3->PATH."</p>";
 	$email .= "<p>";
-	$email .=   $ERROR["text"];
+	$email .=   markdown::instance()->convert($ERROR["text"]);
 	$email .=   "<br>";
 	$email .=   "<pre><code>".$ERROR["trace"]."</code></pre>";
 	$email .= "</p>";
@@ -89,11 +89,6 @@ if (array_key_exists("login", $f3->GET))
 	$f3->PAGE_CACHE = false;
 else
 	$f3->PAGE_CACHE = 3600;
-
-if (isroute("test")) {
-
-	k($f3->FILES);
-}
 
 
 // Require apache rewriting
@@ -235,6 +230,7 @@ if (admin::$signed) {
 		$f3->abort();
 	}
 }
+
 
 // $f3->route("POST /upload_test", function ($f3) {
 

@@ -413,6 +413,9 @@ function dt ($clear = false) {
     die;
 }
 
+// @param  array    Same format as the global FILE
+// @param  string   Target directory to save to
+// @return array    size: "100x100" type: "jpg"
 function saveimg ($file, $directory, $options) {
 
 	if ($file == "" || $file == null)
@@ -429,7 +432,7 @@ function saveimg ($file, $directory, $options) {
 	// Are we passed a string
 	if (is_string($file))
 	{
-
+		return;
 	}
 
 	if (is_array($file)) {
@@ -456,32 +459,21 @@ function saveimg ($file, $directory, $options) {
 		$file = $file["tmp_name"];
 		$filename = $pi["basename"];
 		$file_type = $pi["extension"];
+	} else {
+		base::instance()->error("saveimg has not been passed an array");
 	}
 
-	// 
+	// Load up GD
 	$GDimg = new \Image($file, false, "");
-
-	k($GDimg);
 
 	// Ensure GD loaded correctly
 	if ($GDimg->data == false)
 		base::instance()->error(500, "This image type ".$file_type." is not supported");
 
 
-
-	echo $GDimg->render();
-	die;
-
 	// Final variables
 	$file = "";
 	$file_type = "";
-
-
-	// Determine size
-	if (array_key_exists("type", $options))
-	{
-
-	}
 
 
 	// Process options
@@ -489,56 +481,48 @@ function saveimg ($file, $directory, $options) {
 	{
 		if (is_string($options["size"]))
 			$size = explode("x", $size);
+
+		$crop = isset($options["crop"]) ? $options["crop"] : false;
+		$enlarge = isset($options["enlarge"]) ? $options["enlarge"] : false;
+
+		//TODO: Handle null size issues
+		$width = ($size[0] > 0) ? $size[0] : null;
+		$height = ($size[1] > 0) ? $size[1] : null;;
+
+		// Ensure size is something.
+		if (($width*$height) > 0)
+			$GDimg->resize($width, $height, $crop, $enlarge);
 	}
 
 
+	if (!isset($options["quality"]))
+		$options["quality"] = 100;
 
-				// Check if current image exists
-				// if (!file_exists(getcwd()."/".$f3->POST["filename"]))
-				// {
-				// 	echo "HUH, file does not exist??";
-				// 	die;
-				// }
-
-			
-				// Resize and overwrite 
-				//$this->resize($f3->FILES["file"]["tmp_name"], $file, $size[0], $size[1], $ext);
-
-				$image = $f3->FILES["file"]["tmp_name"];
-				$save_to = $file;
-				$file_type = $ext;
-
-				// Pull image off the disk into memory
-				$temp_image = new Image($image, false, ''); // Image(filename, filehistory, path)
-
-				// Make sure that width and height are set before resizing image
-				if (($width*$height) > 0)
-				{
-					// Resize image using F3's image plugin
-					$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
-				}
-
-				// Save image depending on user selected file type
-				switch ($file_type)
-				{	
-					case "jpg":
-					case "jpeg":
-						imagejpeg($temp_image->data($file_type, 100), $save_to);
-					break;
-					case "png":
-						imagepng($temp_image->data($file_type, 100), $save_to);
-					break;
-					case "gif":
-						imagegif($temp_image->data($file_type, 100), $save_to);
-					break;
-				}
+	if (!isset($options[$type]))
+		$options["type"] = $file_type;
 
 
+	if (!in_array(["jpg", "jpeg", "png", "gif"], $options["type"]))
+		$options["type"] = "jpg";
 
 
+	// Save image depending on user selected file type
+	switch ($file_type)
+	{	
+		case "jpg":
+		case "jpeg":
+			$result = imagejpeg($GDimg->data($options["type"], $options["quality"]), $directory);
+		break;
+		case "png":
+			$result = imagepng($GDimg->data($options["type"], $options["quality"]), $directory);
+		break;
+		case "gif":
+			$result = imagegif($GDimg->data($options["type"], $options["quality"]), $directory);
+		break;
+	}	
 
-	k($file);
-	
+	if ($result == FALSE)
+		base::instance()->error("Failed to save image. ```".json_encode(["saveto"=>$saveto, "filetype"=> $file_type, "options"=> $options])."```");
 }
 
 // @param  string  Target directory
