@@ -93,29 +93,22 @@ class repeater {
 			if (array_key_exists("image-directory", $this->settings)) {
 				$image_directory = $this->settings["image-directory"];
 
-				checkdir(getcwd()."/".$image_directory);
-
-				$imagesize = [0, 0];
-				$imagesize = $this->settings["image-size"];
-
-				if (strlen($imagesize) > 0)
-					$imagesize = explode("x", $imagesize);
-
-
-				foreach ($f3->FILES as $key => $file)
+				foreach ($f3->FILES as $file)
 				{
-					if (!$file["tmp_name"])
-						continue;
+					if ($file["tmp_name"] == "") continue;
 
-					if ($imagesize[0] > 0 && $imagesize[1] > 0)
-						$this->resize_image ($file, $size, getcwd()."/".$image_directory."/".$file["name"]);
-					else
-						move_uploaded_file($file["tmp_name"], getcwd()."/".$image_directory."/".$file["name"]);
-
-					if (checkfile(getcwd()."/".$image_directory."/".$file["name"]))
-							$f3->POST[$key] = ltrim(rtrim($image_directory, "/"), "/") . "/" . $file["name"];
-
+					$images[] = saveimg($file, "images/", [
+									"size"=>$this->settings["image-size"],
+									"crop"=>false,
+									"enlarge"=>true,
+									"type"=>"auto"
+								]);
 				}
+
+				if (count($images) == 1)
+					$f3->POST["image"] = $images[0];
+				else if (count($images) > 1)
+					$f3->POST["images"] = $images;
 			}
 
 			if ($f3->POST["data_id"])

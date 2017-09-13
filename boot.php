@@ -231,20 +231,6 @@ if (admin::$signed) {
 	}
 }
 
-
-$f3->route("POST /upload_test", function ($f3) {
-
-	foreach ($f3->FILES as $file)
-		saveimg($file, "images/", [
-			"size"=>"500x500",
-			"crop"=>true,
-			"enlarge"=>true,
-			"type"=>"auto"
-		]);
-
-	k("STAHP");
-});
-
 $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 
 	// Accepted mimetypes to render as a template file

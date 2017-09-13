@@ -415,7 +415,9 @@ function dt ($clear = false) {
 
 // @param  array    Same format as the global FILE
 // @param  string   Target directory to save to
-// @return array    size: "100x100" type: "jpg"
+// @return array    
+//   size: "100x100" 
+//   type: "jpg"
 function saveimg ($file, $directory, $options) {
 
 	if ($file == "" || $file == null)
@@ -424,10 +426,14 @@ function saveimg ($file, $directory, $options) {
 	if ($directory=="")
 		base::instance()->error(500, "No directory provided");
 
-	if (!checkdir($directory = getcwd()."/".$directory))
-		base::instance()->error(500, "Could not create or read directory provided for saveimg()");
-
 	$directory = base::instance()->fixslashes($directory);
+	$directory = ltrim($directory, "/");
+	$directory = rtrim($directory, "/");
+
+	$options["absolute-directory"] = getcwd()."/".$directory;
+
+	if (!checkdir($options["absolute-directory"]))
+		base::instance()->error(500, "Could not create or read directory provided for saveimg()");
 
 	// Are we passed a string
 	if (is_string($file))
@@ -456,15 +462,18 @@ function saveimg ($file, $directory, $options) {
 
 		$pi = pathinfo($file["name"]);
 
-		$file = $file["tmp_name"];
-		$filename = $pi["basename"];
-		$file_type = $pi["extension"];
+		$options["tmp_name"] = $file["tmp_name"];
+		$options["filename"] = $pi["filename"];
+
+		if ($options["type"] == "auto")
+			$options["type"] = $pi["extension"];
+
 	} else {
 		base::instance()->error("saveimg has not been passed an array");
 	}
 
 	// Load up GD
-	$GDimg = new \Image($file, false, "");
+	$GDimg = new \Image($options["tmp_name"], false, "");
 
 	// Ensure GD loaded correctly
 	if ($GDimg->data == false)
@@ -475,54 +484,57 @@ function saveimg ($file, $directory, $options) {
 	$file = "";
 	$file_type = "";
 
-
 	// Process options
 	if (array_key_exists("size", $options))
 	{
 		if (is_string($options["size"]))
-			$size = explode("x", $size);
+			$options["size"] = explode("x", $options["size"]);
 
-		$crop = isset($options["crop"]) ? $options["crop"] : false;
-		$enlarge = isset($options["enlarge"]) ? $options["enlarge"] : false;
+		$options["crop"] = isset($options["crop"]) ? $options["crop"] : false;
+		$options["enlarge"] = isset($options["enlarge"]) ? $options["enlarge"] : false;
 
 		//TODO: Handle null size issues
-		$width = ($size[0] > 0) ? $size[0] : null;
-		$height = ($size[1] > 0) ? $size[1] : null;;
+		$options["size"][0] = ($options["size"][0] > 0) ? $options["size"][0] : null;
+		$options["size"][1] = ($options["size"][1] > 0) ? $options["size"][1] : null;;
 
 		// Ensure size is something.
-		if (($width*$height) > 0)
-			$GDimg->resize($width, $height, $crop, $enlarge);
+		if (($options["size"][0] + $options["size"][1]) > 0)
+			$GDimg->resize($options["size"][0], $options["size"][1], $options["crop"], $options["enlarge"]);
 	}
 
 
 	if (!isset($options["quality"]))
 		$options["quality"] = 100;
 
-	if (!isset($options[$type]))
-		$options["type"] = $file_type;
-
+	if (!isset($options["type"]))
+		$options["type"] = "jpg";
 
 	if (!in_array($options["type"], ["jpg", "jpeg", "png", "gif"]))
 		$options["type"] = "jpg";
 
+
+	$options["final-file"] = $options["absolute-directory"]."/".$options["filename"].".".$options["type"];
 
 	// Save image depending on user selected file type
 	switch ($options["type"])
 	{	
 		case "jpg":
 		case "jpeg":
-			$result = imagejpeg($GDimg->data($options["type"], $options["quality"]), $directory);
+			$result = imagejpeg($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
 		break;
 		case "png":
-			$result = imagepng($GDimg->data($options["type"], $options["quality"]), $directory);
+			$result = imagepng($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
 		break;
 		case "gif":
-			$result = imagegif($GDimg->data($options["type"], $options["quality"]), $directory);
+			$result = imagegif($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
 		break;
 	}	
 
 	if ($result == FALSE)
-		base::instance()->error("Failed to save image. ```".json_encode(["saveto"=>$saveto, "filetype"=> $file_type, "options"=> $options])."```");
+		base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
+
+	// Return relative path to image
+	return $directory."/".$options["filename"].".".$options["type"];
 }
 
 // @param  string  Target directory
