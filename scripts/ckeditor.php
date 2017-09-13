@@ -5,30 +5,6 @@ class ckeditor extends prefab {
 	function __construct($settings) {
 		$f3 = base::instance();
 
-		if ($f3->MIME == "text/html")
-		{
-			if (!cache::instance()->exists(base::instance()->hash($f3->FILE))) {
-
-				$contents = file_get_contents(getcwd()."/".$f3->FILE);
-
-				$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
-					
-					$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
-
-					return '<ckeditor id="'.$id.'">';
-				}, $contents);
-
-				// Prevent writing blank files
-				if ($contents == "")
-				{	
-					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data!");
-					return;
-				}
-
-				file_put_contents(getcwd()."/".$f3->FILE, $contents, LOCK_EX);
-			}
-		}
-
 		if (admin::$signed)
 		{
 			// Are we permitting uploading of images?
@@ -263,6 +239,36 @@ class ckeditor extends prefab {
 
 	public $id_list = array();
 	function template_filters ($f3) {
+
+		Template::instance()->beforerender(function ($view) {
+
+			if (mime_content_type2($view) == "text/html")
+			{
+				$contents = file_get_contents($view);
+
+				$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
+					
+					$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
+
+					return '<ckeditor id="'.$id.'">';
+				}, $contents);
+
+				// Prevent writing blank files
+				if ($contents == "")
+				{	
+					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data!");
+					return;
+				}
+
+				file_put_contents($view, $contents, LOCK_EX);
+			}
+
+		});
+
+		Template::instance()->afterrender(function ($template) {
+
+			return $template;
+		});
 
 		Template::instance()->extend("ckeditor", function ($args) {
 			$documentation = '

@@ -502,12 +502,12 @@ function saveimg ($file, $directory, $options) {
 		$options["type"] = $file_type;
 
 
-	if (!in_array(["jpg", "jpeg", "png", "gif"], $options["type"]))
+	if (!in_array($options["type"], ["jpg", "jpeg", "png", "gif"]))
 		$options["type"] = "jpg";
 
 
 	// Save image depending on user selected file type
-	switch ($file_type)
+	switch ($options["type"])
 	{	
 		case "jpg":
 		case "jpeg":
