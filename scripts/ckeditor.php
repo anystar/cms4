@@ -242,6 +242,9 @@ class ckeditor extends prefab {
 
 		Template::instance()->beforerender(function ($view) {
 
+			if (!is_writable($view))
+				return;
+			
 			if (mime_content_type2($view) == "text/html")
 			{
 				$contents = file_get_contents($view);
