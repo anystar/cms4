@@ -1,7 +1,7 @@
 <?php
 
 ignore_user_abort(true);
-set_time_limit(0);
+set_time_limit(300); // 5 minutes
 
 GLOBAL $ROOTDIR;
 $ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);
