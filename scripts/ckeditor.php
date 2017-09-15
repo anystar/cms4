@@ -268,11 +268,6 @@ class ckeditor extends prefab {
 
 		});
 
-		Template::instance()->afterrender(function ($template) {
-
-			return $template;
-		});
-
 		Template::instance()->extend("ckeditor", function ($args) {
 			$documentation = '
 
