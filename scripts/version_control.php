@@ -64,7 +64,6 @@ class version_control extends prefab {
 		if ($check == "")
 			$this->repo->run("config --add alias.prev \"checkout HEAD^1\"");
 
-
 		$gitignore = ".cms/tmp".PHP_EOL.".cms/cache".PHP_EOL.".cms/stats.json".PHP_EOL."cms.php".PHP_EOL."error_log";
 
 		// Ensure our .gitignore exists
@@ -97,6 +96,11 @@ class version_control extends prefab {
 		});
 
 		ToolBar::instance()->append(Template::instance()->render("/revision-control/toolbar.html", null, ["state"=>$this->getState(true), "BASE"=>$f3->BASE]));
+
+
+		// $this->push();
+
+		// k("STAHP");
 	}
 
 	function getState ($json = false) {
@@ -111,6 +115,22 @@ class version_control extends prefab {
 			return json_encode($state);
 		else
 			return $state;
+	}
+
+	function hasUpstream () {
+
+		$remote = preg_split("/\\r\\n|\\r|\\n/", rtrim($this->repo->run("remote"), "\n\r"));
+
+		if ($remote == "")
+			return false;
+		else if ($remote == "origin")
+			return true;
+		else if (is_array($remote))
+			if (in_array("origin", $remote))
+				return true;
+
+		return false;
+
 	}
 
 	function isDirty() {
@@ -270,6 +290,19 @@ class version_control extends prefab {
 		}
 
 		base::instance()->reroute(base::instance()->PATH);
+	}
+
+	function push () {
+
+		// Make sure we have an upstream
+		if (!$this->hasUpstream())
+			return false;
+
+		// Prevent pushing on master branch
+		if ($this->branch == "master")
+			return false;
+
+		//$this->repo->run("push origin ".$this->branch);
 	}
 
 }

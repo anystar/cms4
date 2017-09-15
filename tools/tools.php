@@ -479,11 +479,6 @@ function saveimg ($file, $directory, $options) {
 	if ($GDimg->data == false)
 		base::instance()->error(500, "This image type ".$file_type." is not supported");
 
-
-	// Final variables
-	$file = "";
-	$file_type = "";
-
 	// Process options
 	if (array_key_exists("size", $options))
 	{
