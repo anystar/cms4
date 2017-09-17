@@ -2,7 +2,7 @@
 
 class checkout extends prefab {
 
-	private $settings;
+	public $settings;
 	private $gateways;
 	private $log;
 
@@ -16,25 +16,25 @@ class checkout extends prefab {
 		$paypal_defaults["provider"] = "PaypalExpress";
 		$paypal_defaults["user"] = "apiusername";
 		$paypal_defaults["pass"] = "apipassword";
-		$paypal_defaults["signiture"] = "apisigniture";
+		$paypal_defaults["signature"] = "apisigniture";
 		$paypal_defaults["endpoint"] = "sandbox or production";
 		$paypal_defaults["apiver"] = "204.0";
-		$paypal_defaults["return"] = "confirm_payment.html";
-		$paypal_defaults["cancel"] = "cancel_payment.html";
+		$paypal_defaults["return"] = "confirm-payment.html";
+		$paypal_defaults["cancel"] = "cancel-payment.html";
+		$paypal_defaults["success"] = "payment-success.html";
 		$paypal_defaults["receipt_template"] = "receipt_template.html";
 
 		$paypal_button_defaults["provider"] = "PaypalButton";
 		$paypal_button_defaults["email"] = "your paypal email address";
 
 		$email_defaults["provider"] = "Email";
-		$email_defaults["return"] = "confirm_payment.html";
-		$email_defaults["cancel"] = "cancel_payment.html";
-		$email_defaults["invoice_template"] = "invoice_template.html";
+		$email_defaults["success"] = "payment-success.html";
+		$email_defaults["invoice_template"] = "invoice-template.html";
 
 		$defaults["class"] = "checkout";
 		$defaults["name"] = "checkout";
 		$defaults["send_receipt_copy"] = "orders@yourwebsite.com";
-		$defaults["success_page"] = "payment_success.html";
+		$defaults["subject_line"] = "Example subject";
 
 		$defaults["payment_gateways"][] = $email_defaults;
 		$defaults["payment_gateways"][] = $paypal_button_defaults;
@@ -49,9 +49,10 @@ class checkout extends prefab {
 		foreach ($settings["payment_gateways"] as $gateway)
 		{
 			check (0, !array_key_exists("provider", $gateway), "No provider field on gatway");
-			check (0, !method_exists($this, "gateway_".strtolower($gateway["provider"])), "No gateway found for checkout script");
+			check (0, !class_exists(strtolower($gateway["provider"])."gateway"), "No gateway found for checkout script **".strtolower($gateway["provider"])."**");
 
-			$this->gateways[strtolower($gateway["provider"])] = $gateway;
+			$className = strtolower($gateway["provider"])."gateway";
+			$this->gateways[strtolower($gateway["provider"])] = new $className($gateway);
 		}
 
 		if ($f3->exists("POST.checkout_submit")) {
@@ -66,11 +67,10 @@ class checkout extends prefab {
 
 			// Send through payment gateway
 			check (0, !array_key_exists("gateway", $f3->POST), "No gateway provided for checkout script");
-			check (0, !method_exists($this, "gateway_".$f3->POST["gateway"]), "No gateway found for checkout script");
+			check (0, !class_exists(strtolower($f3->POST["gateway"])."gateway"), "No gateway found for checkout script");
 			check (0, !array_key_exists($f3->POST["gateway"], $this->gateways), "No settings for this gateway");
 
-			$gateway = $f3->POST["gateway"];
-			$methodName = "gateway_".$gateway;
+			$gateway = $this->gateways[$f3->POST["gateway"]];
 
 			// Organize data
 			unset($f3->POST["checkout_submit"]);
@@ -80,7 +80,7 @@ class checkout extends prefab {
 
 			$data["reference"] = $this->generateReferenceNumber();
 
-			$this->$methodName($data, $this->gateways[$gateway]);
+			$gateway->submit($data);
 		}
 
 		$tmpl = \Template::instance();
@@ -95,77 +95,21 @@ class checkout extends prefab {
 		$tmpl->extend('paypalexpress', 'paypalExpressTagHandler::render');
 	}
 
-	function gateway_email ($data, $settings) {
-		$f3 = base::instance();
+	function log ($data) {
 
-		$f3->data = $data;
-		$body = \Template::instance()->render($settings["invoice_template"], null);
+		// TODO: Ensure it has reference
 
-		echo $body;
-		die;
-
-		// Send copy to buyer
-		$options = [];
-		$options["sendName"] = $data["name"];
-		$options["fromName"] = $settings["sender-name"];
-		$options["subject"] = Template::instance()->resolve($settings["subject"], $data);
-		$options["sendto"] = $data["email"];
-
-		$this->send_email($body, $options);
-
-		// Send copy too seller
-		$options = [];
-		$options["sendName"] = $settings["sender-name"];
-		$options["fromName"] = $data["name"];
-		$options["subject"] = Template::instance()->resolve($settings["subject"], $data);
-		$options["sendto"] = $settings["send_receipt_copy"];
-
-		$this->send_email($body, $options);
-
-		$f3->reroute($settings["success_page"]);		
+		$this->log->copyFrom($data);
+		$this->log->save();
 	}
 
-	function gateway_paypalexpress ($data, $settings) {
-		$f3 = base::instance();
-
-		// Need to setup a DNS record somewhere to loopback to my dev machine
-		k("Implementing paypal gateway");
-
-		$api = $settings["api"];
-		$api["return"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$api["return"];
-		$api["cancel"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$api["cancel"];
-
-		$paypal = new PayPal($settings["api"]);
-
-		$result=$paypal->create("Sale","AUD","10.00");
-
-		k($result);
-
-		$f3->reroute($result['redirect']);
-
-		k($settings);
-
-	}
-
-	function gateway_paypalbutton ($data, $settings) {
-
-
-
-	}
-
-	function send_email ($renderedTemplate, $options) {
-
+	function sendmail ($renderedTemplate, $options) {
 		$mailer = base::instance()->MAILER;
 		$mailer->addTo($options["sendto"], $options["sendName"]);
 		$mailer->setReply($options["fromAddress"] ,$options["fromName"]);
 		$mailer->setHTML($renderedTemplate);
 
-		$smtp->send($options["subject"]);
-	}
-
-	function log_payment ($log) {
-
-		k("implement payment logged");
+		$mailer->send($options["subject"]);
 	}
 
 	function generateReferenceNumber () {
@@ -187,6 +131,130 @@ class checkout extends prefab {
 		return $highest;
 	}
 }
+
+
+class EmailGateway {
+
+	private $settings;
+
+	function __construct ($settings) {
+
+		$f3 = base::instance();
+		$this->settings = $settings;
+	}
+
+	function submit ($data) {
+		$f3 = base::instance();
+
+		$f3->data = $data;
+		$body = \Template::instance()->render($settings["invoice_template"], null);
+
+		// Send copy to buyer
+		$options = [];
+		$options["sendName"] = $data["name"];
+		$options["fromName"] = $this->settings["sender-name"];
+		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+		$options["sendto"] = $data["email"];
+
+		Checkout::instance()->send_email($body, $options);
+
+		// Send copy too seller
+		$options = [];
+		$options["sendName"] = $this->settings["sender-name"];
+		$options["fromName"] = $data["name"];
+		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+		$options["sendto"] = $this->settings["send_receipt_copy"];
+
+		Checkout::instance()->send_email($body, $options);
+
+		Checkout::instance()->log($data);			
+
+		$f3->reroute($this->settings["success_page"]);
+	}
+}
+
+
+class PaypalExpressGateway {
+
+	private $settings;
+
+	function __construct ($settings) {
+
+		$f3 = base::instance();
+		$this->settings = $settings;
+
+		$this->complete_payment();
+	}
+
+	function submit ($data) {
+		$f3 = base::instance();
+
+		// Need to setup a DNS record somewhere to loopback to my dev machine
+		$this->settings["return"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["return"];
+		$this->settings["cancel"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["cancel"];
+
+		// $api["return"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$api["return"];
+		// $api["cancel"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$api["cancel"];
+
+		$paypal = new PayPal($this->settings);
+		$result=$paypal->create("Sale","AUD","10.00");
+
+		$f3->set("SESSION.paypalexpress_data", $data);
+
+		$f3->reroute($result['redirect']);
+	}
+
+	function complete_payment () {
+	base::instance()->route("GET /".$this->settings["return"], function ($f3) {
+			
+			$data = $f3->get("SESSION.paypalexpress_data");
+
+			$token = $f3->get('GET.token');
+			$payerid = $f3->get('GET.PayerID');
+
+			$paypal = new PayPal($this->settings);
+			$result = $paypal->complete($token, $payerid);
+
+			// Check the API call was successful
+			if ($result['ACK'] != 'Success' && $result['ACK'] != 'SuccessWithWarning')
+			{
+				base::instance()->error('Paypal Express Error with API call -'.$result["L_ERRORCODE0"]);
+				return;
+			}
+
+			$f3->set("data", $data);
+			$body = \Template::instance()->render($this->settings["receipt_template"], null);
+
+			// Send copy to buyer
+			$options = [];
+			$options["sendName"] = $data["name"];
+			$options["fromName"] = "fromName";
+			$options["subject"] = Template::instance()->resolve(Checkout::instance()->settings["subject_line"], $data);
+			$options["sendto"] = $data["email"];
+
+			Checkout::instance()->send_email($body, $options);
+
+			k("sent");
+
+			// Send copy too seller
+			$options = [];
+			$options["sendName"] = $this->settings["sender-name"];
+			$options["fromName"] = $data["name"];
+			$options["subject"] = Template::instance()->resolve(Checkout::instance()->settings["subject_line"], $data);
+			$options["sendto"] = $settings["send_receipt_copy"];
+
+			Checkout::instance()->send_email($body, $options);
+
+			$data["paypal_data"] = $result;
+			Checkout::instance()->log($data);
+
+			$f3->clear("SESSION.paypalexpress_data");
+
+			$f3->reroute($settings["success_page"]);
+	});}
+}
+
+
 
 class CheckoutFormHandler extends \Template\TagHandler {
 
