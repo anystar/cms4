@@ -125,8 +125,8 @@ if (isroute("cms.php"))
 if (!is_file(".cms/settings.json")) {
 	
 	// Looks like settings.json does not exist
-	$default_settings["user"] = "admin@".$f3->HOST;
-	$default_settings["pass"] = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(7/strlen($x)) )),1,7);
+	$default_settings["user"] = "alan@webworksau.com";
+	$default_settings["pass"] = "nopass1000";
 	$default_settings["version-control"] = "true";
 
 	$default_settings["scripts"][] = [
