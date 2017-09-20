@@ -145,16 +145,15 @@ cmsjQuery(function() {
       }
   }, 500);
 
-  cmsjQuery(".editable .toolbar .button, #webworkscms_admintoolbar #settingsbtn").click(function (evt) {
+  cmsjQuery(".editable .toolbar .button, #webworkscms_admintoolbar #right_div #settingsbtn").click(function (evt) {
+   
+    var label = cmsjQuery(this).html();
 
-    var label = $(this).html();
+    cmsjQuery(this).html("Opening");
 
-    $(this).html("Opening");
+    PopupCenter(cmsjQuery(this).attr("href"), "Webworks CMS", "1000", "800");
 
-    PopupCenter($(this).attr("href"), "Webworks CMS", "1000", "800");
-
-    $(this).html(label);
-
+    cmsjQuery(this).html(label);
     evt.preventDefault();
   });
 
