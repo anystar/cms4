@@ -162,9 +162,6 @@ class EmailGateway {
 		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
 		$options["sendto"] = $data["email"];
 
-		echo $body;
-		die;
-
 		$this->checkout->sendmail($body, $options);
 
 		// Send copy too seller
