@@ -156,7 +156,7 @@ class dropimg extends prefab {
 			}
 
 			$string .= '<?php if (admin::$signed) {?>';
-			$string .= "<img ";
+			$string .= "<img";
 			$string .= " title='".$size."'";	
 			$string .= " data-file='".$src."'";
 			$string .= " data-width='".$asize[0]."'";
@@ -183,8 +183,8 @@ class dropimg extends prefab {
 			$string .= "<?php } ?>";
 			
 			$string .= '<?php if (!admin::$signed) {?>';
-			$string .= "<img ";
-			$string .= ' src="'.$src.'"';
+			$string .= "<img";
+			$string .= ' src="'.$src.'" ';
 
 			foreach ($args["@attrib"] as $key=>$value) {
 				$string .= $key.'="'.$value.'" ';

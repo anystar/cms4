@@ -36,6 +36,7 @@ class stats extends prefab {
 				{
 					$this->stats = json_decode(file_get_contents(".cms/stats.json"), true);
 					$this->stats["views"]++;
+					
 					$date = date("F Y");
 					if (!array_key_exists($date, $this->stats["perMonth"]))
 						$this->stats["perMonth"][$date] = 1;

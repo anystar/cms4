@@ -299,6 +299,7 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 	}
 });
 
+
 $f3->run();
 
 new stats ($settings);
