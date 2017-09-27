@@ -5,6 +5,7 @@ class repeater {
 	public $name;
 	public $jig;
 	public $data;
+	public $snippet;
 
 	function __construct($settings) {
 
@@ -16,12 +17,24 @@ class repeater {
 
 		check(0, (count($settings) < 3), "**Default example:**", $defaults);
 
-		$this->snippets[] = "_blog.html";
-		$this->snippets[] = "_menu.html";
-		$this->snippets[] = "_products.html";
-		$this->snippets[] = "_testimonials.html";
-		$this->snippets[] = "_events.html";
-		$this->snippets[] = "_pricelist.html";
+		$from_cms = scandir($GLOBALS["ROOTDIR"]."/cms/scriptsUI/repeat/");
+		$from_cms = array_diff($from_cms, array('.', '..', 'repeat.html'));
+
+		$client_dir = getcwd()."/.cms/repeat-snippets/";
+		$from_client = array();
+		if (is_dir($client_dir))
+		{
+			$from_client = scandir($client_dir);
+			$from_client = array_diff($from_client, array('.', '..'));
+
+			foreach ($from_client as $snippet) {
+				if (in_array($snippet, $from_cms)) {
+					base::instance()->error(500, "Duplicated named repeating snippets ".$snippet);
+				}
+			}
+		}
+
+		$this->snippets = array_merge($from_client, $from_cms);
 
 		check(0, $settings["name"], "No `name` set in **".$settings["name"]."** settings");
 		check(0, $settings["label"], "No `label` set in **".$settings["name"]."** settings");
@@ -36,6 +49,13 @@ class repeater {
 			"Available templates follow",
 			$this->snippets
 		);
+
+		// Is it in the CMS directory
+		if (in_array($settings["template"], $from_cms))
+			$settings["template"] = "/repeat/" . $settings["template"];
+
+		else if (in_array($settings["template"], $from_client)) 
+			$settings["template"] = "/.cms/repeat-snippets/" . $settings["template"];
 
 		$jig = new \DB\Jig (getcwd()."/.cms/repeaters/", \DB\Jig::FORMAT_JSON );
 
@@ -97,7 +117,7 @@ class repeater {
 				{
 					if ($file["tmp_name"] == "") continue;
 
-					$images[] = saveimg($file, "images/", [
+					$images[] = saveimg($file, $image_directory, [
 									"size"=>$this->settings["image-size"],
 									"crop"=>false,
 									"enlarge"=>true,
@@ -155,21 +175,6 @@ class repeater {
 
 		});
 	}
-
-	function resize_image ($image, $x, $y, $save_as) {
-
-		k($image);
-		
-		// Pull image off the disk into memory
-		$temp_image = new Image($image, false, "/");
-
-		// Resize image using F3's image plugin
-		$temp_image->resize($x, $y, false, true);
-		
-		// Save image	
-		imagejpeg($temp_image->data(), $save_as);
-	}
-
 
 	function toolbar () {
 		return "<a href='".base::instance()->BASE."/admin/".$this->settings["name"]."' class='button'>Add/Edit ".$this->settings["label"]."</a>";

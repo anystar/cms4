@@ -138,6 +138,19 @@ class checkout extends prefab {
 }
 
 
+// https://stackoverflow.com/questions/6322247/dynamic-paypal-button-generation-isnt-it-very-insecure
+class PaypalButtonGateway {
+
+	private $settings;
+
+	function __construct ($checkout, $settings) {
+
+		$f3 = base::instance();
+		$this->settings = $settings;
+		$this->checkout = $checkout;
+	}
+}
+
 class EmailGateway {
 
 	private $settings;
