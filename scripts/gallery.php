@@ -18,6 +18,8 @@ class gallery {
 		$defaults["path"] = "assets/gallery/";
 		$defaults["crop"] = "false";
 		$defaults["enlarge"] = "false";
+		$defaults["type"] = "jpg";
+		$defaults["quality"] = "100";
 		$defaults["captions-enabled"] = false;
 		$defaults["tags-enabled"] = false;
 
@@ -28,17 +30,17 @@ class gallery {
 		check(0, $settings["thumb-size"], 'Please set a thumb size for **'.$settings["name"].'** settings', "**Example:**",'`thumb-size: 100x50`', "Leave blank for no resize");
 		check(0, $settings["path"], "No path set for **".$settings["name"]."**");
 
+		// Set some defaults
+		if (!array_key_exists("type", $settings)) $settings["type"] = $defaults["type"];
+		if (!array_key_exists("quality", $settings)) $settings["quality"] = $defaults["quality"];
+		if (!array_key_exists("captions-enabled", $settings)) $settings["captions-enabled"] = $defaults["captions-enabled"];
+		if (!array_key_exists("tags-enabled", $settings)) $settings["tags-enabled"] = $defaults["tags-enabled"];
+
 		// Make path absolute
 		$settings["filepath"] = getcwd()."/".ltrim($settings["path"], "/");
 
 		checkdir($settings["filepath"]);
 		checkdir($settings["filepath"]."/thumbs/");
-
-		if (is_string($settings["image-size"]))
-			$settings["image-size"] = explode("x", $settings["image-size"]);
-
-		if (is_string($settings["thumb-size"]))
-			$settings["thumb-size"] = explode("x", $settings["thumb-size"]);
 
 		$settings["captions-enabled"] = $settings["captions-enabled"]=="true" || $settings["captions-enabled"]=="1" ? true : false;
 		$settings["tags-enabled"] = $settings["tags-enabled"]=="true" || $settings["tags-enabled"]=="1" ? true : false;
@@ -172,7 +174,33 @@ class gallery {
 
 		$f3->route("POST /admin/{$this->name}/traditional_upload", function ($f3) {
 	
-			$this->upload($f3);
+			$this->upload();
+
+			$f3->reroute("/admin/".$this->name);
+		});
+
+		$f3->route("POST /admin/{$this->name}/url_upload", function ($f3) {
+
+			$upload_path = $this->settings["path"];
+			$thumb_path = $this->settings["path"] . "/thumbs/";
+
+			$name = saveimg ($f3->POST["url"], $upload_path, [
+				"size"=>$this->settings["image-size"],
+				"crop"=>$this->settings["crop"],
+				"enlarge"=>$this->settings["enlarge"],
+				"quality"=>$this->settings["quality"],
+				"type"=>$this->settings["type"],
+				"overwrite"=>$this->settings["overwrite"]
+			]);
+
+			$name = saveimg ($f3->POST["url"], $thumb_path, [
+				"size"=>$this->settings["thumb-size"],
+				"crop"=>$this->settings["crop"],
+				"enlarge"=>$this->settings["enlarge"],
+				"quality"=>$this->settings["quality"],
+				"type"=>$this->settings["type"],
+				"overwrite"=>$this->settings["overwrite"]
+			]);
 
 			$f3->reroute("/admin/".$this->name);
 		});
@@ -181,7 +209,7 @@ class gallery {
 	function getImages () {
 		$return = array();
 
-		$urlpath = $this->settings["path"];
+		$urlpath = ltrim(rtrim($this->settings["path"], "/"), "/");
 		$filepath = $this->settings["filepath"];
 
 		// Scan filepath
@@ -215,25 +243,12 @@ class gallery {
 			if (is_dir($filepath."/".$file))
 				continue;
 
+			if (!is_file($filepath."/".$file))
+				continue;
+
 			$temp["url"] = base::instance()->BASE."/".$urlpath."/".$file;
 			$temp["filename"] = $file;
-
-			// Check for thumb
-			if (!is_file($thumb = $filepath."/thumbs/thumb_".$temp["filename"]))
-				$this->resize_image ($filepath."/".$file, $this->settings["thumb-size"][0], $this->settings["thumb-size"][1], $thumb);
-
-			$temp["thumb"] = base::instance()->BASE."/".$urlpath."/thumbs/thumb_".$temp["filename"];
-
-			$img = new Image($filepath."/".$file, null, "");
-
-			$temp["width"] = $img->width();
-			$temp["height"] = $img->height();
-
-			$temp["thumb_width"] = $this->settings["thumb-size"][0];
-			$temp["thumb_height"] = $this->settings["thumb-size"][1];
-
-			if ($temp["width"] != $this->settings["width"] || $temp["height"] != $this->settings["height"])
-				$temp["error_size"] = true;
+			$temp["thumb"] = base::instance()->BASE."/".$urlpath."/"."thumbs/".$temp["filename"];
 
 			// Add captions and tags from data array
 			if (array_key_exists($temp["filename"], $data["captions"]))
@@ -267,62 +282,36 @@ class gallery {
 		return $temp;
 	}
 
-	function upload($f3) {		
+	function upload() {		
 
 		$upload_path = $this->settings["path"];
 		$thumb_path = $this->settings["path"] . "/thumbs/";
 
-		foreach ($f3->FILES as $file)
+		foreach (base::instance()->FILES as $file)
 		{
-			
-			if ($file["tmp_name"] == "") continue;
+			// Save primary image
+			$name = saveimg ($file, $upload_path, [
+				"size"=>$this->settings["image-size"],
+				"crop"=>$this->settings["crop"],
+				"enlarge"=>$this->settings["enlarge"],
+				"quality"=>$this->settings["quality"],
+				"type"=>$this->settings["type"],
+				"overwrite"=>$this->settings["overwrite"]
+			]);
 
-			$temp_image = $file["tmp_name"];
+			// Save thumbnail
+			saveimg ($file, $thumb_path, [
+				"filename"=>$name["filename"],
+				"size"=>$this->settings["thumb-size"],
+				"crop"=>$this->settings["crop"],
+				"enlarge"=>$this->settings["enlarge"],
+				"quality"=>$this->settings["quality"],
+				"type"=>$this->settings["type"]
+			]);
 
-			// Check to ensure extension is same as actual file type.
+			unlink($file["tmp_name"]);
 
-
-			// Add a check if file is too big
-			// ...........
-
-			// New name
-			$new_name = str_replace(' ', '_', $file["name"]);
-			$new_name = filter_var($new_name, FILTER_SANITIZE_EMAIL);
-
-			$pi = pathinfo($new_name);
-
-			$new_name = $pi["filename"] . ".jpg";
-
-			// Where to save the full image too
-			$save_to_full = getcwd()."/".$upload_path."/".$new_name;
-
-			// Where to save the thumb too
-			$save_to_thumb = getcwd()."/".$thumb_path."/thumb_".$new_name;
-
-			// Get settings for image size
-			$image_size = $this->settings["image-size"];
-			$thumb_size = $this->settings["thumb-size"];
-
-			// Resize full image and save
-			if ($image_size[0] > 0 && $image_size[1] > 0)
-				$this->resize_image($temp_image, $image_size[0], $image_size[1], $save_to_full);
-			// If no image size set, just move image
-			else
-				copy($temp_image, $save_to_full);
-
-			// Resize thumbnail image and save
-			if ($thumb_size[0] > 0 && $thumb_size[1] > 0)
-				$this->resize_image($temp_image ,$thumb_size[0], $thumb_size[1], $save_to_thumb);
-			
-			// If thumbnail settings are not set just resize as image size
-			else if ($image_size[0] > 0 && $image_size[1] > 0)
-				$this->resize_image($temp_image, $image_size[0], $image_size[1], $save_to_thumb);
-
-			// If image settings not set lets just copy the raw file
-			else
-				copy($temp_image, $save_to_thumb);
-
-			$this->append_to_order($new_name);
+			$this->append_to_order($name["filename"]);
 		}
 	}
 

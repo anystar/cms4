@@ -155,7 +155,7 @@ function checkdir($path) {
 	}
 	else
 	{
-		mkdir($path);
+		mkdir($path, null, true);
 		return true;
 	}
 }
@@ -209,6 +209,22 @@ function mime_content_type2($filename) {
 		return;
 
 	require("mime_types.php");
+
+	if (filter_var($filename, FILTER_VALIDATE_URL))
+	{
+		$pi = pathinfo($filename);
+
+		if (array_key_exists("extension", $pi))
+			if (array_key_exists($pi["extension"], $mime_types))
+			    return $mime_types[$pi["extension"]];
+
+		$exif = exif_read_data($filename);
+
+		if (in_array($exif["MimeType"], $mime_types))
+			return $exif["MimeType"];
+
+		return "application/octet-stream";
+	}
 		
 	$tmp = explode('.',$filename);
 	$tmp = array_pop($tmp);
@@ -219,8 +235,10 @@ function mime_content_type2($filename) {
     }
     elseif (function_exists('finfo_open')) {
         $finfo = finfo_open(FILEINFO_MIME);
+
         $mimetype = finfo_file($finfo, $filename);
         finfo_close($finfo);
+
         return $mimetype;
     }
     else {
@@ -413,125 +431,6 @@ function dt ($clear = false) {
     die;
 }
 
-// @param  array    Same format as the global FILE
-// @param  string   Target directory to save to
-// @return array    
-//   size: "100x100" 
-//   type: "jpg"
-function saveimg ($file, $directory, $options) {
-
-	if ($file == "" || $file == null)
-		base::instance()->error(500, "File argument for saveimg NULL.");
-
-	if ($directory=="")
-		base::instance()->error(500, "No directory provided");
-
-	$directory = base::instance()->fixslashes($directory);
-	$directory = ltrim($directory, "/");
-	$directory = rtrim($directory, "/");
-
-	$options["absolute-directory"] = getcwd()."/".$directory;
-
-	if (!checkdir($options["absolute-directory"]))
-		base::instance()->error(500, "Could not create or read directory provided for saveimg()");
-
-	// Are we passed a string
-	if (is_string($file))
-	{
-		return;
-	}
-
-	if (is_array($file)) {
-
-		if ($file["error"] > 0)
-		{
-			$phpFileUploadErrors = array(
-			    0 => 'There is no error, the file uploaded with success',
-			    1 => 'The uploaded file exceeds the maximum upload size',
-			    2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
-			    3 => 'The uploaded file was only partially uploaded',
-			    4 => 'No file was uploaded',
-			    6 => 'Missing a temporary folder to upload into',
-			    7 => 'Failed to write file to disk.',
-			    8 => 'An extension stopped the file upload.',
-			);
-
-			// We should always handle this client side so throw a serious error
-			base::instance()->error(500, "Error uploading file ". $phpFileUploadErrors[$file["error"]]);
-		}
-
-		$pi = pathinfo($file["name"]);
-
-		$options["tmp_name"] = $file["tmp_name"];
-		$options["filename"] = $pi["filename"];
-
-		if ($options["type"] == "auto")
-			$options["type"] = $pi["extension"];
-
-	} else {
-		base::instance()->error("saveimg has not been passed an array");
-	}
-
-	// Load up GD
-	$GDimg = new \Image($options["tmp_name"], false, "");
-
-	// Ensure GD loaded correctly
-	if ($GDimg->data == false)
-		base::instance()->error(500, "This image type ".$file_type." is not supported");
-
-	// Process options
-	if (array_key_exists("size", $options))
-	{
-		if (is_string($options["size"]))
-			$options["size"] = explode("x", $options["size"]);
-
-		$options["crop"] = isset($options["crop"]) ? $options["crop"] : false;
-		$options["enlarge"] = isset($options["enlarge"]) ? $options["enlarge"] : false;
-
-		//TODO: Handle null size issues
-		$options["size"][0] = ($options["size"][0] > 0) ? $options["size"][0] : null;
-		$options["size"][1] = ($options["size"][1] > 0) ? $options["size"][1] : null;;
-
-		// Ensure size is something.
-		if (($options["size"][0] + $options["size"][1]) > 0)
-			$GDimg->resize($options["size"][0], $options["size"][1], $options["crop"], $options["enlarge"]);
-	}
-
-
-	if (!isset($options["quality"]))
-		$options["quality"] = 100;
-
-	if (!isset($options["type"]))
-		$options["type"] = "jpg";
-
-	if (!in_array($options["type"], ["jpg", "jpeg", "png", "gif"]))
-		$options["type"] = "jpg";
-
-
-	$options["final-file"] = $options["absolute-directory"]."/".$options["filename"].".".$options["type"];
-
-	// Save image depending on user selected file type
-	switch ($options["type"])
-	{	
-		case "jpg":
-		case "jpeg":
-			$result = imagejpeg($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
-		break;
-		case "png":
-			$result = imagepng($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
-		break;
-		case "gif":
-			$result = imagegif($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
-		break;
-	}	
-
-	if ($result == FALSE)
-		base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
-
-	// Return relative path to image
-	return $directory."/".$options["filename"].".".$options["type"];
-}
-
 // @param  string  Target directory
 // @param  string  Target file extension
 // @return boolean True on success, False on failure
@@ -568,3 +467,29 @@ function unlink_recursive($dir_name, $ext) {
     return true;
 
 }
+
+// Extremely simple function to get human filesize.
+function human_filesize($bytes, $decimals = 2) {
+  $sz = 'BKMGTP';
+  $factor = floor((strlen($bytes) - 1) / 3);
+  return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+}
+
+
+
+function toByteSize($p_sFormatted) {
+    $aUnits = array('B'=>0, 'KB'=>1, 'MB'=>2, 'GB'=>3, 'TB'=>4, 'PB'=>5, 'EB'=>6, 'ZB'=>7, 'YB'=>8);
+    $sUnit = strtoupper(trim(substr($p_sFormatted, -2)));
+    if (intval($sUnit) !== 0) {
+        $sUnit = 'B';
+    }
+    if (!in_array($sUnit, array_keys($aUnits))) {
+        return false;
+    }
+    $iUnits = trim(substr($p_sFormatted, 0, strlen($p_sFormatted) - 2));
+    if (!intval($iUnits) == $iUnits) {
+        return false;
+    }
+    return $iUnits * pow(1024, $aUnits[$sUnit]);
+}
+
