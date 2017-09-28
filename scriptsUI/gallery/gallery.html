@@ -140,7 +140,23 @@
 						</div>
 						</loop>
 
-						<button type="submit" class="btn btn-primary">Submit</button>
+						<button type="submit" class="btn btn-primary">Upload</button>
+					</form>
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6 mx-auto">
+					<h2>Upload from URL</h2>
+					<p>Paste a url of an actual image and the server will download.</p>
+					
+					<form method="POST" action="{{@BASE}}/admin/{{@name}}/url_upload" style="padding-bottom: 50px;">
+
+						<div class="form-group">
+							<input value="https://fanart.tv/fanart/music/1c3919b2-43ca-4a4a-935d-9d50135ec0ef/artistbackground/afi-5063f9f372b79.jpg" type="text" class="form-control" name="url">
+						</div>
+
+						<button type="submit" class="btn btn-primary">Upload</button>
 					</form>
 
 				</div>

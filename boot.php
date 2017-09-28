@@ -12,6 +12,9 @@ $krumo = $ROOTDIR."/resources/krumo/class.krumo.php";
 // Load tools.php Contains super useful utils.
 require_once(__DIR__."/tools/tools.php");
 
+// Robust Utils for handling images.
+require_once(__DIR__."/tools/image_handler.php");
+
 // Path to F3, download at http://fatfreeframework.com/
 // Load F3 and Setup
 $fatfree = $ROOTDIR."/resources/fatfree-core/base.php";
@@ -90,6 +93,7 @@ if (array_key_exists("login", $f3->GET))
 else
 	$f3->PAGE_CACHE = 3600;
 
+// k(mime_content_type2("http://webserver/test_image_without_extension"));
 
 // Require apache rewriting
 if (function_exists("apache_get_modules"))
