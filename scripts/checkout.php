@@ -160,6 +160,9 @@ class EmailGateway {
 		$f3 = base::instance();
 		$this->settings = $settings;
 		$this->checkout = $checkout;
+
+		if (!is_array($this->settings["send_receipt_copy"]))
+			$this->settings["send_receipt_copy"] = array($this->settings["send_receipt_copy"]);
 	}
 
 	function submit ($data) {
@@ -177,14 +180,17 @@ class EmailGateway {
 
 		$this->checkout->sendmail($body, $options);
 
-		// Send copy too seller
-		$options = [];
-		$options["sendName"] = $this->settings["sender-name"];
-		$options["fromName"] = $data["name"];
-		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
-		$options["sendto"] = $this->settings["send_receipt_copy"];
+		foreach ($this->settings["send_receipt_copy"] as $email)
+		{
+			// Send copy too seller
+			$options = [];
+			$options["sendName"] = $this->settings["sender-name"];
+			$options["fromName"] = $data["name"];
+			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+			$options["sendto"] = $email;
 
-		$this->checkout->sendmail($body, $options);
+			$this->checkout->sendmail($body, $options);
+		}
 
 		$this->checkout->log($data);
 
