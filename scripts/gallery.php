@@ -242,7 +242,7 @@ class gallery {
 
 			$temp["url"] = base::instance()->BASE."/".$urlpath."/".$file;
 			$temp["filename"] = $file;
-			$temp["thumb"] = base::instance()->BASE."/".$urlpath."/"."thumbs/".$temp["filename"];
+			$temp["thumb"] = base::instance()->BASE."/".$urlpath."/"."thumbs/thumb_".$temp["filename"];
 
 			// Add captions and tags from data array
 			if (array_key_exists($temp["filename"], $data["captions"]))
