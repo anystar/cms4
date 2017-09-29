@@ -13,21 +13,31 @@ class gallery {
 		$defaults["name"] = "gallery";
 		$defaults["label"] = "Gallery";
 		$defaults["route"] = "gallery.html";
-		$defaults["image-size"] = "1500x1500";
-		$defaults["thumb-size"] = "400x400";
 		$defaults["path"] = "assets/gallery/";
-		$defaults["crop"] = "false";
-		$defaults["enlarge"] = "false";
-		$defaults["type"] = "jpg";
-		$defaults["quality"] = "100";
+
+			$image_defaults["size"] = "1500x1500";
+			$image_defaults["thumbnail"] = [
+				"size"=>"500x500",
+				"crop"=>true,
+				"enlarge"=>true,
+				"quality"=>100
+			];
+
+			$image_defaults["crop"] = false;
+			$image_defaults["enlarge"] = false;
+			$image_defaults["quality"] = 100;
+			$image_defaults["type"] = "jpg/png/gif/auto";
+			$image_defaults["overwrite"] = true;
+			$image_defaults["mkdir"] = true;
+			$image_defaults["keep-original"] = true;
+
+		$defaults["image-settings"] = $image_defaults;
 		$defaults["captions-enabled"] = false;
 		$defaults["tags-enabled"] = false;
 
 		check(0, (count($settings) < 3), "**Default example:**", $defaults);
 
 		check(0, $settings["label"], "No label set in **".$settings["name"]."** settings");
-		check(0, $settings["image-size"], 'Please set a size for **'.$settings["name"].'** settings', "**Example:**",'`image-size: 400x200`', "Leave blank for no resize");
-		check(0, $settings["thumb-size"], 'Please set a thumb size for **'.$settings["name"].'** settings', "**Example:**",'`thumb-size: 100x50`', "Leave blank for no resize");
 		check(0, $settings["path"], "No path set for **".$settings["name"]."**");
 
 		// Set some defaults
@@ -67,14 +77,13 @@ class gallery {
 
 		$f3->route("GET /admin/{$this->name}", function ($f3) {
 
-
 			$f3->gallery = $this->getImages();
 			$f3->label = $this->settings["label"];
 			$f3->name = $this->settings["name"];
 			$f3->enable_captions = $this->settings["captions-enabled"];
 			$f3->enable_tags = $this->settings["tags-enabled"];
-			$f3->height = $this->settings["image-size"][0];
-			$f3->width = $this->settings["image-size"][1];
+			$f3->height = $this->settings["image-settings"]["size"][0];
+			$f3->width = $this->settings["image-settings"]["size"][1];
 
 			$f3->max_upload_count = ini_get('max_file_uploads');
 			$f3->max_upload_size = file_upload_max_size();
@@ -182,25 +191,10 @@ class gallery {
 		$f3->route("POST /admin/{$this->name}/url_upload", function ($f3) {
 
 			$upload_path = $this->settings["path"];
-			$thumb_path = $this->settings["path"] . "/thumbs/";
 
-			$name = saveimg ($f3->POST["url"], $upload_path, [
-				"size"=>$this->settings["image-size"],
-				"crop"=>$this->settings["crop"],
-				"enlarge"=>$this->settings["enlarge"],
-				"quality"=>$this->settings["quality"],
-				"type"=>$this->settings["type"],
-				"overwrite"=>$this->settings["overwrite"]
-			]);
+			$name = saveimg ($f3->POST["url"], $upload_path, $this->settings["image-settings"]);
 
-			$name = saveimg ($f3->POST["url"], $thumb_path, [
-				"size"=>$this->settings["thumb-size"],
-				"crop"=>$this->settings["crop"],
-				"enlarge"=>$this->settings["enlarge"],
-				"quality"=>$this->settings["quality"],
-				"type"=>$this->settings["type"],
-				"overwrite"=>$this->settings["overwrite"]
-			]);
+			$this->append_to_order($name["filename"]);
 
 			$f3->reroute("/admin/".$this->name);
 		});
@@ -285,46 +279,14 @@ class gallery {
 	function upload() {		
 
 		$upload_path = $this->settings["path"];
-		$thumb_path = $this->settings["path"] . "/thumbs/";
 
 		foreach (base::instance()->FILES as $file)
 		{
 			// Save primary image
-			$name = saveimg ($file, $upload_path, [
-				"size"=>$this->settings["image-size"],
-				"crop"=>$this->settings["crop"],
-				"enlarge"=>$this->settings["enlarge"],
-				"quality"=>$this->settings["quality"],
-				"type"=>$this->settings["type"],
-				"overwrite"=>$this->settings["overwrite"]
-			]);
-
-			// Save thumbnail
-			saveimg ($file, $thumb_path, [
-				"filename"=>$name["filename"],
-				"size"=>$this->settings["thumb-size"],
-				"crop"=>$this->settings["crop"],
-				"enlarge"=>$this->settings["enlarge"],
-				"quality"=>$this->settings["quality"],
-				"type"=>$this->settings["type"]
-			]);
-
-			unlink($file["tmp_name"]);
+			$name = saveimg ($file, $upload_path, $this->settings["image-settings"]);
 
 			$this->append_to_order($name["filename"]);
 		}
-	}
-
-	function resize_image ($image, $x, $y, $save_as) {
-
-		// Pull image off the disk into memory
-		$temp_image = new Image($image, null, "");
-
-		// Resize image using F3's image plugin
-		$temp_image->resize($x, $y, $this->settings["crop"], $this->settings["enlarge"]);
-		
-		// Save image
-		imagejpeg($temp_image->data(), $save_as);
 	}
 
 	function append_to_order ($image_name) {
