@@ -109,6 +109,7 @@ class checkout extends prefab {
 		$mailer->setHTML($renderedTemplate);
 
 		$mailer->send($options["subject"]);
+		$mailer->reset();
 	}
 
 	function generateReferenceNumber () {
