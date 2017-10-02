@@ -276,10 +276,11 @@ class admin {
 
 		$body = \Template::instance()->render("/admin/magiclink.html", null, $hive);
 
-		$mailer = base::instance()->MAILER;
+		$mailer = new \Mailer();
 		$mailer->addTo(admin::$clientEmail);
 		$mailer->setHTML($body);
 		$mailer->send("Login Link");
+		unset($mailer);
 	}
 
 	static public function logout () {

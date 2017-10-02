@@ -103,13 +103,12 @@ class checkout extends prefab {
 	}
 
 	function sendmail ($renderedTemplate, $options) {
-		$mailer = base::instance()->MAILER;
+		$mailer = new \Mailer();
 		$mailer->addTo($options["sendto"], $options["sendName"]);
-		$mailer->setReply($options["fromAddress"] ,$options["fromName"]);
+		$mailer->setReply($options["fromAddress"], $options["fromName"]);
 		$mailer->setHTML($renderedTemplate);
 
-		$mailer->send($options["subject"]);
-		$mailer->reset();
+		$mailer->queue($options["subject"]);
 	}
 
 	function generateReferenceNumber () {
@@ -195,7 +194,7 @@ class EmailGateway {
 
 		$this->checkout->log($data);
 
-		$f3->reroute($this->settings["success_page"]);
+		redirect($this->settings["success_page"]);
 	}
 }
 
@@ -233,7 +232,7 @@ class PaypalExpressGateway {
 
 		$f3->set("SESSION.paypalexpress_data", $data);
 
-		$f3->reroute($result['redirect']);
+		redirect($result['redirect']);
 	}
 
 	function complete_payment () {
@@ -280,7 +279,7 @@ class PaypalExpressGateway {
 
 			$f3->clear("SESSION.paypalexpress_data");
 
-			$f3->reroute($this->settings["success_page"]);
+			redirect($this->settings["success_page"]);
 	});}
 }
 

@@ -147,7 +147,7 @@ class contactform extends \Prefab {
 			"subject" => isset($settings["subject"]) ? $settings["subject"] : "Website Enquiry"
 		]);
 
-		$f3->reroute($settings["success"]);
+		redirect($settings["success"]);
 	}
 
 	function send_email ($sendto, $form, $template, $options)
@@ -155,7 +155,7 @@ class contactform extends \Prefab {
 		// Use custom email template from client directory
 		$body = \Template::instance()->render($template, null, $form);
 
-		$mailer = base::instance()->MAILER;
+		$mailer = new \Mailer();
 
 		// Attach any files
 		if (base::instance()->FILES != null)
@@ -175,8 +175,7 @@ class contactform extends \Prefab {
 			die;
 		}
 
-		$mailer->send($options["subject"]);
-		$mailer->reset();
+		$mailer->queue($options["subject"]);
 
 		return true;
 	}

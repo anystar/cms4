@@ -108,7 +108,7 @@ class stats extends prefab {
 
 		base::instance()->clear("view_message");
 
-		$mailer = base::instance()->MAILER;
+		$mailer = new \Mailer();
 
 		if (count($emails) > 0)
 		{

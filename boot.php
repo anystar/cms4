@@ -23,6 +23,9 @@ $fatfree = $ROOTDIR."/resources/fatfree-core/base.php";
 // Set ROOTDIR for usage in F3
 $f3->ROOTDIR = $ROOTDIR;
 
+// Used to skip the ->run command
+$f3->REDIRECTING = false;
+
 // Setup framework configuration
 $f3->config($ROOTDIR."/cms/constants.ini", true);
 
@@ -39,7 +42,6 @@ Template::instance()->filter("krumo", function ($array) {
 
 // Setup Mailer
 $f3->mailer = $f3->CONFIG["mailer"];
-$f3->MAILER = new \Mailer();
 
 // $f3->set("mailer.on.failure", function ($error) {
 	
@@ -47,6 +49,9 @@ $f3->MAILER = new \Mailer();
 
 // Set up error handler
 $f3->ONERROR = function ($f3) { 
+
+	if ($f3->ERROR["code"] == "405")
+		return;
 
 	if ($f3->AJAX)
 	{	
@@ -79,10 +84,11 @@ $f3->ONERROR = function ($f3) {
 		{
 			if ($f3->CONFIG["email_errors"])
 			{
-				$f3->MAILER->addTo("errors@webworksau.com");
-				$f3->MAILER->setHTML($email);
-				$f3->MAILER->send("CMS3 Error message");
-				$f3->MAILER->reset();
+				$mailer = new Mailer();
+				$mailer->addTo("errors@webworksau.com");
+				$mailer->setHTML($email);
+				$mailer->send("CMS3 Error message");
+				unset($mailer);
 			}
 		}
 	}
@@ -303,7 +309,8 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 	}
 });
 
+if (!$f3->REDIRECTING)
+	$f3->run();
 
-$f3->run();
-
+Mailer::processQueue();
 new stats ($settings);
