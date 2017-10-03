@@ -296,7 +296,7 @@ function saveimg ($file, $directory, $options) {
 			$GDimg->resize($options["thumbnail"]["size"][0], $options["thumbnail"]["size"][1], $options["thumbnail"]["crop"], $options["thumbnail"]["enlarge"]);
 	}
 
-	$options["thumbnail"]["final-file"] = $options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]."/".$options["filename"].".".$options["type"];
+	$options["thumbnail"]["final-file"] = $options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
 
 	// Save image depending on user selected file type
 	switch ($options["type"])

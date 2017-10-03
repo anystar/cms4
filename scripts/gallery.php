@@ -85,6 +85,8 @@ class gallery {
 			$f3->height = $this->settings["image-settings"]["size"][0];
 			$f3->width = $this->settings["image-settings"]["size"][1];
 
+			k($f3->gallery);
+
 			$f3->max_upload_count = ini_get('max_file_uploads');
 			$f3->max_upload_size = file_upload_max_size();
 
