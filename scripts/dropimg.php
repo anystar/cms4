@@ -30,50 +30,18 @@ class dropimg extends prefab {
 
 			$f3->route("POST /admin/dropimg/upload", function ($f3) {
 
-				// Check if current image exists
-				// if (!file_exists(getcwd()."/".$f3->POST["filename"]))
-				// {
-				// 	echo "HUH, file does not exist??";
-				// 	die;
-				// }
-
-				$file = $f3->POST["file"];
-				$file = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $file);
-				$ext = pathinfo(getcwd()."/".$file)["extension"];
-				$width = $f3->POST["width"];
-				$height = $f3->POST["height"];
+				$saveto = $f3->POST["file"];
+				$saveto = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $saveto);
+				$ext = pathinfo(getcwd()."/".$saveto)["extension"];
 				
-				// Resize and overwrite 
-				//$this->resize($f3->FILES["file"]["tmp_name"], $file, $size[0], $size[1], $ext);
-
-				$image = $f3->FILES["file"]["tmp_name"];
-				$save_to = $file;
-				$file_type = $ext;
-
-				// Pull image off the disk into memory
-				$temp_image = new Image($image, false, ''); // Image(filename, filehistory, path)
-
-				// Make sure that width and height are set before resizing image
-				if (($width*$height) > 0)
-				{
-					// Resize image using F3's image plugin
-					$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
-				}
-
-				// Save image depending on user selected file type
-				switch ($file_type)
-				{	
-					case "jpg":
-					case "jpeg":
-						imagejpeg($temp_image->data($file_type, 100), $save_to);
-					break;
-					case "png":
-						imagepng($temp_image->data($file_type, 100), $save_to);
-					break;
-					case "gif":
-						imagegif($temp_image->data($file_type, 100), $save_to);
-					break;
-				}
+				$return = saveimg ($f3->FILES["file"], $saveto, [
+					"size"=>[$f3->POST["width"], $f3->POST["height"]],
+					"crop"=>true,
+					"enlarge"=>true,
+					"overwrite"=>true,
+					"quality"=>100,
+					"type"=>$ext
+				]);
 			});
 
 			$f3->route("POST /admin/dropimg/upload_from_url", function ($f3) {

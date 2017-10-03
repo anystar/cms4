@@ -129,6 +129,9 @@ function saveimg ($file, $directory, $options) {
 	} 
 	else if (is_string($file))
 	{
+
+		// https://www.google.com.au/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwik-NmukdTWAhWHG5QKHcVnAYMQjRwIBw&url=https%3A%2F%2Fwww.nasa.gov%2Ftopics%2Fearth%2Ffeatures%2F2012-alignment.html&psig=AOvVaw2rxdHWm00fR3Xjno6zCfbs&ust=1507109150797713
+
 		$stream = $file;
 		$file = array();
 
@@ -156,6 +159,14 @@ function saveimg ($file, $directory, $options) {
 	if ($directory=="")
 		base::instance()->error(500, "No directory provided");
 
+	// Check if it is a file or a directory
+	if (is_file($directory))
+	{
+		$pi = pathinfo($directory);
+		$file["name"] = $pi["basename"];
+		$directory = $pi["dirname"];
+	}
+
 	$directory = base::instance()->fixslashes($directory);
 	$directory = ltrim($directory, "/");
 	$directory = rtrim($directory, "/");
@@ -165,8 +176,9 @@ function saveimg ($file, $directory, $options) {
 	if (!checkdir($options["absolute-directory"]))
 		base::instance()->error(500, "Could not create or read directory provided for saveimg()");
 
-	if (!checkdir($options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]))
-		base::instance()->error(500, "Could not create or read subfolder directory provided for saveimg()");
+	if (array_key_exists("thumbnail", $options))
+		if (!checkdir($options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]))
+			base::instance()->error(500, "Could not create or read subfolder directory provided for saveimg()");
 
 
 	#########################################################

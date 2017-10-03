@@ -63,6 +63,28 @@ class checkout extends prefab {
 			// Do any validation?
 
 			// Check Captcha?
+			$captcha_passed = false;
+			if (array_key_exists("g-recaptcha-response", $f3->POST))
+			{
+				$recaptcha_response = $f3->POST["g-recaptcha-response"];
+		
+				$options["method"] = "POST";
+				$options["content"] = http_build_query(["secret"=>$settings["recaptcha_privatekey"], "response"=>$f3->POST["g-recaptcha-response"], $f3->IP]);
+
+				$response = Web::instance()->request("https://www.google.com/recaptcha/api/siteverify", $options);
+				$response = json_decode($response["body"], 1);
+
+				if ($response["success"] == TRUE)
+					$captcha_passed = true;
+
+				unset($f3->POST["g-recaptcha-response"]);
+			}
+
+			if (!$captcha_passed)
+			{
+				$f3->VERB = "GET";
+				return;
+			}
 
 			// Send through payment gateway
 			check (0, !array_key_exists("gateway", $f3->POST), "No gateway provided for checkout script");
@@ -88,6 +110,7 @@ class checkout extends prefab {
 		$tmpl->extend('textarea','\Template\Tags\Textarea::render');
 		$tmpl->extend('select','\Template\Tags\Select::render');
 		$tmpl->extend('option','\Template\Tags\Option::render');
+		$tmpl->extend('captcha', 'checkout_captcha::render');
 
 		$tmpl->extend('email', 'emailTagHandler::render');
 		$tmpl->extend('paypalbutton', 'paypalButtonTagHandler::render');
@@ -362,5 +385,30 @@ class paypalExpressTagHandler extends \Template\TagHandler {
 		$content = $this->tmpl->build($content);
 
 		return '<button ' . $attr . '>'. $content . '</button>';
+	}
+}
+
+class checkout_captcha extends \Template\TagHandler {
+	function build ($attr, $content)
+	{
+
+		$centered = "";
+		if (array_key_exists("centered", $attr))
+			$centered = ' style="display: inline-block" ';
+
+		$attr["src"] = base::instance()->BASE.base::instance()->PATH."?captcha";
+
+		if ($attr["recaptcha"])
+		{
+			$string .= "<script src='https://www.google.com/recaptcha/api.js'></script>".PHP_EOL;
+			$string .= '<div class="g-recaptcha" data-sitekey="'.$attr["recaptcha"].'"'.$centered.'></div>'.PHP_EOL;
+
+			return $string;
+		}
+
+		if ($attr!=null)
+			$attr = $this->resolveParams($attr);
+
+		return '<img ' . $attr . '>';
 	}
 }

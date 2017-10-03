@@ -82,10 +82,8 @@ class gallery {
 			$f3->name = $this->settings["name"];
 			$f3->enable_captions = $this->settings["captions-enabled"];
 			$f3->enable_tags = $this->settings["tags-enabled"];
-			$f3->height = $this->settings["image-settings"]["size"][0];
-			$f3->width = $this->settings["image-settings"]["size"][1];
 
-			k($f3->gallery);
+			list($f3->width, $f3->height) = explode("x", $this->settings["image-settings"]["size"]);
 
 			$f3->max_upload_count = ini_get('max_file_uploads');
 			$f3->max_upload_size = file_upload_max_size();
@@ -245,6 +243,20 @@ class gallery {
 			$temp["url"] = base::instance()->BASE."/".$urlpath."/".$file;
 			$temp["filename"] = $file;
 			$temp["thumb"] = base::instance()->BASE."/".$urlpath."/"."thumbs/thumb_".$temp["filename"];
+
+			$img = new Image($filepath."/".$file, null, "");
+
+			$temp["width"] = $img->width();
+			$temp["height"] = $img->height();
+
+			$thumbnail_size = $this->settings["image-settings"]["thumbnail"]["size"];
+			$thumbnail_size = explode("x", $thumbnail_size);
+
+			$temp["thumb_width"] = $thumbnail_size[0];
+			$temp["thumb_height"] = $thumbnail_size[1];
+
+			if ($temp["width"] != $this->settings["width"] || $temp["height"] != $this->settings["height"])
+				$temp["error_size"] = true;
 
 			// Add captions and tags from data array
 			if (array_key_exists($temp["filename"], $data["captions"]))

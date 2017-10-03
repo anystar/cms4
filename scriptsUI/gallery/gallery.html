@@ -31,7 +31,7 @@
 			width: 10%;
 		}
 
-		.orderbuttons button {
+		.orderbuttons button, .delete_image button {
 			cursor: pointer;
 		}
 
@@ -234,8 +234,25 @@
                 acceptedFiles: "image/*",
                 maxFilesize: 25,
                 init: function () {
-                	this.on("drop", function () {
-                		status("Uploading..");
+                	this.on("drop", function (evt) {
+                 		status("Uploading..");
+
+                        var that = this;
+                        var url = evt.dataTransfer.getData('URL');
+
+                        if (url != "") {
+                            var xhttp = new XMLHttpRequest();
+                            xhttp.open("POST", "{{@BASE}}/admin/{{@name}}/url_upload", true);
+                            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                            xhttp.onreadystatechange = function() {
+                                if (this.readyState == 4 && this.status == 200) {
+			                    	status("Refreshing page");
+									location.reload();
+                                }
+                            };
+
+                            xhttp.send("url="+url); 
+                        }
                 	});
                 	this.on("error", function (evt) {
                 		status("Error uploading");
