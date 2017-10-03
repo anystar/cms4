@@ -151,7 +151,13 @@ function writable($path) {
 		touch($path);
 
 	if (!is_writable($path))
+	{
+		// Because Template handling requires a tmp directory, lets output this as a string
+		if ($path == ".cms/tmp/")
+			die ("PHP is reporting that ".$path." is not writable. Check folder permissions!");
+
 		base::instance()->error(0, "PHP is reporting that ".$path." is not writable. Unfourtantly we cannot say why, sorry.");
+	}
 
 	return true;
 }
@@ -167,7 +173,7 @@ function checkdir($path) {
 	}
 	else
 	{
-		mkdir($path, null, true);
+		mkdir($path, 0755, true);
 		return true;
 	}
 }

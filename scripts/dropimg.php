@@ -77,7 +77,7 @@ class dropimg extends prefab {
 			});
 
 			$f3->route("POST /admin/dropimg/upload_from_url", function ($f3) {
-			
+
 				$file = $f3->POST["file"];
 				$file = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $file);
 				$ext = pathinfo(getcwd()."/".$file)["extension"];
