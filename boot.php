@@ -167,6 +167,10 @@ $settings = json_decode($f3->read(".cms/settings.json"), 1);
 
 check (0, $settings == "" || $settings == null, "Syntax error in **.cms/settings.json**");
 
+// If a mailer is set in settings then use that instead
+if (array_key_exists("mailer", $settings))
+	$f3->mailer = $settings["mailer"];
+
 // Load authentication
 new admin($settings);
 
