@@ -297,36 +297,40 @@ function saveimg ($file, $directory, $options) {
 	$GDimg->__destruct();
 	unset($GDimg);
 
-	// Load up GD
-	$GDimg = new \Image($options["tmp_name"], false, "");
-
-	// Resize for thumbnail
+	// Generate Thumbnail
 	if (array_key_exists("thumbnail", $options))
 	{
+		// Load up GD again for thumbnail
+		$GDimg = new \Image($options["tmp_name"], false, "");
+
 		// Ensure size is something.
 		if (($options["thumbnail"]["size"][0] + $options["thumbnail"]["size"][1]) > 0)
 			$GDimg->resize($options["thumbnail"]["size"][0], $options["thumbnail"]["size"][1], $options["thumbnail"]["crop"], $options["thumbnail"]["enlarge"]);
+
+		$options["thumbnail"]["final-file"] = $options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
+
+		// Save image depending on user selected file type
+		switch ($options["type"])
+		{	
+			case "jpg":
+			case "jpeg":
+				$result = imagejpeg($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+			break;
+			case "png":
+				$result = imagepng($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+			break;
+			case "gif":
+				$result = imagegif($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+			break;
+		}
+
+		if ($result == FALSE)
+			base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
+		else {
+			$options["thumbnail"]["path"] = $options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
+			$options["thumbnail"]["filename"] = $options["filename"].".".$options["type"];
+		}
 	}
-
-	$options["thumbnail"]["final-file"] = $options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
-
-	// Save image depending on user selected file type
-	switch ($options["type"])
-	{	
-		case "jpg":
-		case "jpeg":
-			$result = imagejpeg($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
-		break;
-		case "png":
-			$result = imagepng($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
-		break;
-		case "gif":
-			$result = imagegif($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
-		break;
-	}
-
-	if ($result == FALSE)
-		base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
 
 	unset($result);
 
@@ -341,10 +345,8 @@ function saveimg ($file, $directory, $options) {
 	else
 		unlink($options["tmp_name"]);
 
+	$options["path"] = $directory."/".$options["filename"].".".$options["type"];
+	$options["filename"] = $options["filename"].".".$options["type"];
 
-	// Return relative path to image
-	return [
-		"path"=>$directory."/".$options["filename"].".".$options["type"],
-		"filename"=>$options["filename"].".".$options["type"],
-	];
+	return $options;
 }
