@@ -76,7 +76,7 @@ class ckeditor extends prefab {
 				// Prevent writing blank files
 				if ($file == "")
 				{	
-					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data!");
+					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on Save Route! <br><br>"."Filename: ".$filename."<br><br>Path".$path."<br><br>id".$id."<br><br>contents".$contents);
 					return;
 				}
 
@@ -259,7 +259,7 @@ class ckeditor extends prefab {
 				// Prevent writing blank files
 				if ($contents == "")
 				{	
-					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data!");
+					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View".$view."<br><br>Contents".$contents);
 					return;
 				}
 
