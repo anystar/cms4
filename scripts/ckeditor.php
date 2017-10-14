@@ -61,6 +61,9 @@ class ckeditor extends prefab {
 			// the right content.
 			if ($sentHash == $checkHash) {
 
+				ini_set('pcre.backtrack_limit', 200000);
+				ini_set('pcre.recursion_limit', 200000);
+				
 				$file = preg_replace_callback("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents, $filename, $id) {
 
 					$return .= $matches[1];
@@ -249,6 +252,9 @@ class ckeditor extends prefab {
 			{
 				$contents = file_get_contents($view);
 
+				ini_set('pcre.backtrack_limit', 200000);
+				ini_set('pcre.recursion_limit', 200000);
+
 				$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
 					
 					$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
@@ -259,11 +265,12 @@ class ckeditor extends prefab {
 				// Prevent writing blank files
 				if ($contents == "")
 				{	
-					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View".$view."<br><br>Contents".$contents);
+					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View: ".$view."<br><br>ID: ".$id);
 					return;
 				}
-
-				file_put_contents($view, $contents, LOCK_EX);
+				else {
+					file_put_contents($view, $contents, LOCK_EX);
+				}
 			}
 
 		});
