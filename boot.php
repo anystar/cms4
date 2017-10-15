@@ -289,7 +289,6 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 			header("Pragma: no-cache");
 		}
 
-
 		header('Content-Type: '.$f3->MIME.';');
 		header("Content-length: ".filesize($f3->FILE).';');
 

@@ -63,7 +63,6 @@ class ckeditor extends prefab {
 
 				ini_set('pcre.backtrack_limit', 200000);
 				ini_set('pcre.recursion_limit', 200000);
-				
 				$file = preg_replace_callback("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents, $filename, $id) {
 
 					$return .= $matches[1];
@@ -244,12 +243,13 @@ class ckeditor extends prefab {
 	function template_filters ($f3) {
 
 		Template::instance()->beforerender(function ($view) {
-
+					
 			if (!is_writable($view))
 				return;
 			
 			if (mime_content_type2($view) == "text/html")
 			{
+
 				$contents = file_get_contents($view);
 
 				ini_set('pcre.backtrack_limit', 200000);
@@ -257,6 +257,8 @@ class ckeditor extends prefab {
 
 				$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
 					
+					die("hit");
+
 					$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
 
 					return '<ckeditor id="'.$id.'">';
@@ -265,7 +267,7 @@ class ckeditor extends prefab {
 				// Prevent writing blank files
 				if ($contents == "")
 				{	
-					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View: ".$view."<br><br>ID: ".$id);
+					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View: ".$view."<br><br>Is Signed In: " . admin::$signed ? 'true' : 'false');
 					return;
 				}
 				else {

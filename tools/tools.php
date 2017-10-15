@@ -42,7 +42,7 @@ function d ($x=null) {
 				exit;
 			}
  		}
- 		
+
         echo "<pre>";
  		if (class_exists("f3"))
  		{
@@ -60,7 +60,7 @@ function d ($x=null) {
         }
         echo "<br><br><hr><br><br>";
 
-        if (class_exists("f3")) base::instance()->error(0); 
+        if (class_exists("f3")) base::instance()->error(0);
         exit;
 }
 
