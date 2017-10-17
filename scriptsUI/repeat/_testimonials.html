@@ -17,9 +17,9 @@
 					<td>{{@row.testimonials}}</td>
 					<td>{{@row.who}}</td>
 					<td>{{@row.from}}</td>
-					<td>
-						<a href="{{@BASE}}/admin/{{@name}}/update?data_id={{@row['_id']}}">Update</a> -
-						<a class="delete" href="{{@BASE}}/admin/{{@name}}/delete?data_id={{@row['_id']}}">Delete</a>
+					<td style="text-align:center;">
+						<a href="{{@BASE}}/admin/{{@name}}/update?data_id={{@row['_id']}}">Update</a> <br>
+						<a onclick="return confirm('Delete Testimonial');" class="delete" href="{{@BASE}}/admin/{{@name}}/delete?data_id={{@row['_id']}}">Delete</a>
 					</td>
 				</tr>
 				</repeat>
@@ -32,7 +32,7 @@
 <div class="col-xs-12 col-md-5">
 	<div class="box">
 	
-		<h2>Create new News post</h2>
+		<h2>Create New Testimonial</h2>
 
 		<form method="post" action="{{@BASE}}/admin/{{@name}}/addupdate">
 			<div class="form-group">

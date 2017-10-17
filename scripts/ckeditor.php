@@ -67,9 +67,6 @@ class ckeditor extends prefab {
 					$return .= $contents;
 					$return .= $matches[3];
 
-					// Store for revision control
-					$this->addRevision($id, $filename, $matches[2]);
-
 					return $return;
 				}, $file);
 
@@ -174,43 +171,6 @@ class ckeditor extends prefab {
 
 			echo json_encode($compiled);
 		});
-
-		$f3->route("POST /admin/ckeditor/getRevision", function ($f3) {
-			
-			$revs = new \DB\Jig\Mapper(base::instance()->JIG, "ckeditor_revisions");
-			
-			$revs->load(["@_id = ?", $f3->POST["id"]]);
-
-			echo $revs->content;
-		});
-
-		$f3->route("GET /admin/ckeditor/getRevisions/@ckeditor", function ($f3, $params) {
-
-			$revs = new \DB\Jig\Mapper(base::instance()->JIG, "ckeditor_revisions");
-			$revs->load(["@ckeditor = ?", $params["ckeditor"]]);
-
-			$return = array();
-			while (!$revs->dry()) {
-			 	$revs->date = time_elapsed_string($revs->time);
-
-			 	$return[] = $revs->cast();
-			 	$revs->next();
-			}
-
-			j($return);
-		});
-	}
-
-
-	function addRevision ($id, $file, $contents) {
-		$revs = new \DB\Jig\Mapper(base::instance()->JIG, "ckeditor_revisions");
-
-		$revs->ckeditor = $id;
-		$revs->file = $file;
-		$revs->content = $contents;
-		$revs->time = time();
-
-		$revs->save();
 	}
 
 	function assets($f3) {
@@ -228,7 +188,6 @@ class ckeditor extends prefab {
 		$f3->route('GET /admin/ckeditor/images/inlinesave-color.svg', function () { echo View::instance()->render("/ckeditor/images/save-color.png", "image/png"); });
 		$f3->route('GET /admin/ckeditor/images/inlinesave-label.svg', function () { echo View::instance()->render("/ckeditor/images/save-label.png", "image/png"); });
 		$f3->route('GET /admin/ckeditor/cms_save.js', function () { echo Template::instance()->render("/ckeditor/js/cms_save.js", "application/javascript"); });
-		$f3->route('GET /admin/ckeditor/restore.js', function () { echo Template::instance()->render("/ckeditor/js/restore.js", "application/javascript"); });
 		$f3->route('GET /admin/ckeditor/imagebrowser.js', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/plugin.js", "application/javascript"); });
 		$f3->route('GET /admin/ckeditor/browser/browser.html', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.html", "text/html"); });
 		$f3->route('GET /admin/ckeditor/browser/browser.css', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.css", "text/css"); });

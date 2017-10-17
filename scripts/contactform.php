@@ -26,14 +26,13 @@ class contactform extends \Prefab {
 
 		$defaults["class"] = "contactform";
 		$defaults["routes"] = "contact-us.html";
-		$defaults["sendto"] = "joe@example.com";
+		$defaults["sendto"] = "darklocker@gmail.com";
 		$defaults["sendname"] = "Website Enquiry";
 		$defaults["template"] = "email_template.html";
 		$defaults["success"] = "?success=true";
 		$defaults["recaptcha_privatekey"] = "6LfF9yUUAAAAAFFt9sajMnKFGlmYbVKPsDx9n7wm";
 
-
-		check(0, (count($settings) < 3), "**Default example:**",$defaults);
+		check(0, (count($settings) < 3), "**Default example:**", $defaults, '`<captcha centered recaptcha="6LfF9yUUAAAAAAQRdSwSfJWCccL0qYGsfzfMBKSM">`');
 
 		check(0, $settings["sendto"], "No `sendto` set in **".$settings["name"]."** settings");
 		check(0, $settings["sendname"], "No `sendname` set in **".$settings["name"]."** settings");
@@ -244,7 +243,19 @@ class captcha extends \Template\TagHandler {
 		if ($attr["recaptcha"])
 		{
 			$string .= "<script src='https://www.google.com/recaptcha/api.js'></script>".PHP_EOL;
+
+			if (array_key_exists("centered", $attr))
+			{
+				$string .= "<style> .text-xs-center { text-align: center; } .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
+				$string .= '<div class="text-xs-center">';
+			}
+
 			$string .= '<div class="g-recaptcha" data-sitekey="'.$attr["recaptcha"].'"></div>'.PHP_EOL;
+
+			if (array_key_exists("centered", $attr))
+			{
+				$string .= '</div>'.PHP_EOL;
+			}
 
 			return $string;
 		}
