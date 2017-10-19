@@ -58,7 +58,7 @@ class version_control extends prefab {
 
 		if ($check != $nextCmd)
 		{
-			$this->repo->run("config --unset alias.next");
+			$this->repo->run("config --unset-all alias.next");
 			$this->repo->run("config --add alias.next \"!sh -c 'git log --reverse --pretty=%H ".$this->branch." | awk \\\"/$(git rev-parse HEAD)/{getline;print}\\\" | xargs git checkout'\"");
 		}
 
