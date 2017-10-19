@@ -52,12 +52,14 @@ class version_control extends prefab {
 			$this->repo->run("config core.safecrlf false");
 
 		// Add our shortcuts
-		$nextCmd = "config --add alias.next \"!sh -c 'git log --reverse --pretty=%H ".$this->branch." | awk \\\"/$(git rev-parse HEAD)/{getline;print}\\\" | xargs git checkout'\"";
-		$check = $this->repo->run("config --get alias.next");
+		$nextCmd = "!sh -c 'git log --reverse --pretty=%H ".$this->branch." | awk \"/$(git rev-parse HEAD)/{getline;print}\" | xargs git checkout'";
+
+		$check = $this->repo->run("config --get alias.next --quiet");
+
 		if ($check != $nextCmd)
 		{
 			$this->repo->run("config --unset alias.next");
-			$this->repo->run($nextCmd);
+			$this->repo->run("config --add alias.next \"!sh -c 'git log --reverse --pretty=%H ".$this->branch." | awk \\\"/$(git rev-parse HEAD)/{getline;print}\\\" | xargs git checkout'\"");
 		}
 
 		$check = $this->repo->run("config --get alias.prev");
