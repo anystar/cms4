@@ -54,7 +54,19 @@ class version_control extends prefab {
 		// Add our shortcuts
 		$nextCmd = "!sh -c 'git log --reverse --pretty=%H ".$this->branch." | awk \"/$(git rev-parse HEAD)/{getline;print}\" | xargs git checkout'";
 
-		$check = $this->repo->run("config --get alias.next --quiet");
+		$check = $this->repo->run("config --get-all alias.next");
+		$check = preg_split("/\\r\\n|\\r|\\n/", $check);
+		$check = array_filter($check);
+		$check = array_values($check);
+		
+		if (count($check) > 1)
+		{
+			$this->repo->run("config --unset-all alias.next");
+			$check = "";
+		}
+		else {
+			$check = end($check);
+		}
 
 		if ($check != $nextCmd)
 		{
