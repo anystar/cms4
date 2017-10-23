@@ -215,8 +215,6 @@ class ckeditor extends prefab {
 				ini_set('pcre.recursion_limit', 200000);
 
 				$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
-					
-					die("hit");
 
 					$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
 

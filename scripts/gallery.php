@@ -12,7 +12,7 @@ class gallery {
 		$defaults["class"] = "gallery";
 		$defaults["name"] = "gallery";
 		$defaults["label"] = "Gallery";
-		$defaults["route"] = "gallery.html";
+		$defaults["routes"] = "gallery.html";
 		$defaults["path"] = "assets/gallery/";
 
 			$image_defaults["size"] = "1500x1500";

@@ -330,15 +330,15 @@ function saveimg ($file, $directory, $options) {
 			$options["thumbnail"]["path"] = $options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
 			$options["thumbnail"]["filename"] = $options["filename"].".".$options["type"];
 		}
+
+		$GDimg->__destruct();
+		unset($GDimg);
 	}
 
 	unset($result);
 
 	// Set back to previous memory limit
 	ini_set('memory_limit', $old_memory_limit.'M');
-
-	$GDimg->__destruct();
-	unset($GDimg);
 
 	if (isset($tmp))
 		fclose($tmp);
