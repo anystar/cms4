@@ -290,10 +290,11 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		}
 
 		header('Content-Type: '.$f3->MIME.';');
-		header("Content-length: ".filesize($f3->FILE).';');
+		header("Content-length: ".getcwd()."/".filesize($f3->FILE).';');
 
 		// Render as raw data
-		echo readfile(getcwd()."/".$f3->FILE);
+		readfile(getcwd()."/".$f3->FILE);
+
 		$f3->abort();
 	}
 }, $f3->PAGE_CACHE);
@@ -305,7 +306,7 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 		$f3->expire(172800);
 		header('Content-Type: '.mime_content_type2($file).';');
 		header("Content-length: ".filesize($file).';');
-		echo readfile($file);
+		readfile($file);
 		$f3->abort();
 	} else {
 		$f3->error("404");
