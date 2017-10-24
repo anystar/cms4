@@ -137,7 +137,8 @@ function saveimg ($file, $directory, $options) {
 
 		if (filter_var($stream, FILTER_VALIDATE_URL))
 		{
-			$data = file_get_contents($stream);
+
+			$data = file_get_contents(str_replace(" ", "%20", $stream));
 
 			if ($data === false)
 				return false;

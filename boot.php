@@ -53,7 +53,13 @@ $f3->ONERROR = function ($f3) {
 	if ($f3->ERROR["code"] == "405")
 		return;
 
-	if ($f3->AJAX)
+	if ($f3->ERROR["code"] == "404" && $f3->handler404 != "")
+	{
+		header("HTTP/1.0 ".$f3->ERROR["code"]." ".$f3->ERROR["status"]);
+		echo Template::instance()->render($f3->handler404);
+	}
+
+	else if ($f3->AJAX)
 	{	
 		$temp = $f3->ERROR;
 		$temp["trace"] = explode("\n", $temp["trace"]);
@@ -170,6 +176,10 @@ check (0, $settings == "" || $settings == null, "Syntax error in **.cms/settings
 // If a mailer is set in settings then use that instead
 if (array_key_exists("mailer", $settings))
 	$f3->mailer = $settings["mailer"];
+
+// If a mailer is set in settings then use that instead
+if (array_key_exists("404-handler", $settings))
+	$f3->handler404 = $settings["404-handler"];
 
 // Load authentication
 new admin($settings);
