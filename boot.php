@@ -292,7 +292,7 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	{
 		// Render as a template file
 
-		ob_start('ob_gzhandler');
+		ob_start('ob_gzhandler') OR ob_start();
 
 		echo Template::instance()->render($f3->FILE, $f3->MIME);
 		
