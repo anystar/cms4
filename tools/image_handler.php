@@ -126,7 +126,7 @@ function saveimg ($file, $directory, $options) {
 			// We should always handle this client side so throw a serious error
 			base::instance()->error(500, "Error uploading file ". $phpFileUploadErrors[$file["error"]]);
 		}
-	} 
+	}
 	else if (is_string($file))
 	{
 

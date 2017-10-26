@@ -46,48 +46,14 @@ class dropimg extends prefab {
 
 			$f3->route("POST /admin/dropimg/upload_from_url", function ($f3) {
 
-				// saveimg($f3->POST["url"], $f3->POST["file"], array(
-				// 	"size" => [$f3->POST["width"], $f3->POST["height"]],
-				// 	"crop" => true,
-				// 	"enlarge" => true,
-				// 	"quality" => 100,
-				// 	"type" => "auto",
-				// 	"overwrite" => true
-				// ));
-
-				// die();
-
-				$file = $f3->POST["file"];
-				$file = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $file);
-				$ext = pathinfo(getcwd()."/".$file)["extension"];
-				$width = $f3->POST["width"];
-				$height = $f3->POST["height"];
-
-				// If copying from google, trim this silly url
-				$f3->POST["url"] = str_replace("https://www.google.com/imgres?imgurl=", "", $f3->POST["url"]);
-				$f3->POST["url"] = str_replace("https://www.google.com.au/imgres?imgurl=", "", $f3->POST["url"]);
-
-				if (copy(str_replace(" ", "%20", $f3->POST["url"]), $file)) {
-					$temp_image = new Image($file, false, '');
-
-					$temp_image->resize($width, $height, true, true); // resize(width, height, crop, enlarge)
-
-					// Save image depending on user selected file type
-					switch ($ext)
-					{	
-						case "jpg":
-						case "jpeg":
-							imagejpeg($temp_image->data($ext, 100), $file);
-						break;
-						case "png":
-							imagepng($temp_image->data($ext, 100), $file);
-						break;
-						case "gif":
-							imagegif($temp_image->data($ext, 100), $file);
-						break;
-					}
-					return;
-				}
+				saveimg($f3->POST["url"], $f3->POST["file"], array(
+					"size" => [$f3->POST["width"], $f3->POST["height"]],
+					"crop" => true,
+					"enlarge" => true,
+					"quality" => 100,
+					"type" => "auto",
+					"overwrite" => true
+				));
 
 				return;
 			});

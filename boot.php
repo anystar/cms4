@@ -1,5 +1,8 @@
 <?php
 
+
+
+
 ignore_user_abort(true);
 set_time_limit(300); // 5 minutes
 
@@ -144,6 +147,7 @@ if (!is_file(".cms/settings.json")) {
 	$default_settings["user"] = "alan@webworksau.com";
 	$default_settings["pass"] = "nopass1000";
 	$default_settings["version-control"] = "true";
+	$default_settings["404-handler"] = "";
 
 	$default_settings["scripts"][] = [
 		"class"=>"ckeditor",
@@ -287,8 +291,26 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	if (in_array($f3->MIME, $accepted_mimetypes))
 	{
 		// Render as a template file
+
+		ob_start('ob_gzhandler');
+
 		echo Template::instance()->render($f3->FILE, $f3->MIME);
-		$f3->abort();
+		
+		if (!headers_sent() && session_status()!=PHP_SESSION_ACTIVE)
+			session_start();
+		$out='';
+		while (ob_get_level())
+			$out=ob_get_clean().$out;
+
+		header('Content-Type: '.$f3->MIME);
+		header('Content-Length: '.strlen($out));
+		header('Connection: close');
+		session_commit();
+		echo $out;
+		flush();
+		if (function_exists('fastcgi_finish_request'))
+			fastcgi_finish_request();
+
 	}
 	else
 	{
