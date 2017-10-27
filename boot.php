@@ -321,7 +321,9 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 			header("Cache-Control: post-check=0, pre-check=0", false);
 			header("Pragma: no-cache");
 		}
-
+		else
+			$f3->expire(604800);
+	
 		header('Content-Type: '.$f3->MIME.';');
 		header("Content-length: ".getcwd()."/".filesize($f3->FILE).';');
 
