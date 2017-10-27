@@ -103,10 +103,11 @@ $f3->ONERROR = function ($f3) {
 	}
 };
 
-if (array_key_exists("login", $f3->GET))
+if (array_key_exists("login", $f3->GET) || $f3->SESSION["show-login"] == true)
 	$f3->PAGE_CACHE = false;
 else
 	$f3->PAGE_CACHE = 3600;
+
 
 // k(mime_content_type2("http://webserver/test_image_without_extension"));
 
@@ -301,7 +302,9 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		while (ob_get_level())
 			$out=ob_get_clean().$out;
 
-		$f3->expire(604800);
+
+		if ($f3->MIME != "text/html")
+			$f3->expire(604800);
 
 		header('Content-Type: '.$f3->MIME);
 		header('Content-Length: '.strlen($out));
