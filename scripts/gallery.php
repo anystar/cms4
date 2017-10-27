@@ -46,6 +46,31 @@ class gallery {
 		if (!array_key_exists("captions-enabled", $settings)) $settings["captions-enabled"] = $defaults["captions-enabled"];
 		if (!array_key_exists("tags-enabled", $settings)) $settings["tags-enabled"] = $defaults["tags-enabled"];
 
+
+		// Does image-settings exsist?
+		if (!array_key_exists("image-settings", $settings))
+		{
+			$tmp = [];
+
+			if (array_key_exists("crop", $settings))
+				$tmp["crop"] = $settings["crop"];
+
+			if (array_key_exists("image-size", $settings))
+				$tmp["size"] = $settings["image-size"];
+
+			$tmp["overwrite"] = false;
+
+			if (array_key_exists("thumb-size", $settings))
+				$tmp["thumbnail"]["size"] = $settings["image-size"];
+
+			$tmp["thumnail"]["crop"] = true;
+			$tmp["thumnail"]["enlarge"] = true;
+			$tmp["thumnail"]["quality"] = 100;
+
+
+			$settings["image-settings"] = $tmp;
+		}
+
 		// Make path absolute
 		$settings["filepath"] = getcwd()."/".ltrim($settings["path"], "/");
 

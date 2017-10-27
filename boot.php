@@ -291,7 +291,6 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	if (in_array($f3->MIME, $accepted_mimetypes))
 	{
 		// Render as a template file
-
 		ob_start('ob_gzhandler') OR ob_start();
 
 		echo Template::instance()->render($f3->FILE, $f3->MIME);
@@ -301,6 +300,8 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		$out='';
 		while (ob_get_level())
 			$out=ob_get_clean().$out;
+
+		$f3->expire(604800);
 
 		header('Content-Type: '.$f3->MIME);
 		header('Content-Length: '.strlen($out));
