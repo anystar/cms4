@@ -336,7 +336,7 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 	$ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);
 	if (is_file($file = $ROOTDIR."/cdn/".substr($f3->PATH, 9)))
 	{
-		$f3->expire(172800);
+		$f3->expire(604800);
 		header('Content-Type: '.mime_content_type2($file).';');
 		header("Content-length: ".filesize($file).';');
 		readfile($file);
