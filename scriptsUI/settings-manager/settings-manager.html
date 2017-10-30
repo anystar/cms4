@@ -11,6 +11,12 @@
 	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
 	<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
 
+	<style>
+		body {
+			background-color: #418CEB;
+		}
+	</style>
+
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -32,37 +38,35 @@
 					<div class="row" style="margin-top:30px;">
 					
 					<form method="post" action="{{@BASE}}/admin/settings">
-						<div class="">
-							<div class="form-group">
-								<label for="website-login-address">Website login address</label>
-								<input value="{{@website_login_address}}" type="email" class="form-control" name="website-login-address" id="website-login-address" placeholder="Enter email">
-								<small class="form-text text-muted">Must be an email address.</small>
-							</div>
+						<div class="form-group">
+							<label for="website-login-address">Website login address</label>
+							<input value="{{@website_login_address}}" type="email" class="form-control" name="website-login-address" id="website-login-address" placeholder="Enter email">
+							<small class="form-text text-muted">Must be an email address.</small>
+						</div>
 
-							<div class="form-group">
-								<label for="website-login-password">Website login password</label>
-								<input value="{{@website_login_password}}" type="password" class="form-control" name="website-login-password" id="website-login-password" placeholder="Enter password">
-								<small class="form-text text-muted">Something rememberable but strong.</small>
-							</div>
-							
-							<!--
-							<div class="form-group">
-								<label for="contact-email">Contact email</label>
-								<input value="{{@contact_email}}" type="email" class="form-control" name="contact-email" id="contact-email" placeholder="Enter email">
-								<small class="form-text text-muted">Email used when contact form is submitted</small>
-							</div>
-							-->
-							
-							<div class="form-group text-right">
-								<button class="btn btn-primary">Update Settings</button>
-							</div>
+						<div class="form-group">
+							<label for="website-login-password">Website login password</label>
+							<input value="{{@website_login_password}}" type="password" class="form-control" name="website-login-password" id="website-login-password" placeholder="Enter password">
+							<small class="form-text text-muted">Something rememberable but strong.</small>
+						</div>
+						
+						<!--
+						<div class="form-group">
+							<label for="contact-email">Contact email</label>
+							<input value="{{@contact_email}}" type="email" class="form-control" name="contact-email" id="contact-email" placeholder="Enter email">
+							<small class="form-text text-muted">Email used when contact form is submitted</small>
+						</div>
+						-->
+						
+						<div class="form-group text-right">
+							<button class="btn btn-primary">Update Settings</button>
 						</div>
 					</form>
 				</div>
 			</div>
 	</div>
 
-    <toolbar popup />
+    <toolbar hidden />
 	
 	<script>
 		cmsjQuery(function() {

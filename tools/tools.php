@@ -268,20 +268,25 @@ function mime_content_type2($filename) {
 // Drupal has this implemented fairly elegantly:
 // http://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 function file_upload_max_size() {
-  $max_size = -1;
+	
+	// Start with post_max_size.
+	$post_max_size = (int)parse_file_size(ini_get('post_max_size'));
 
-  if ($max_size < 0) {
-    // Start with post_max_size.
-    $max_size = parse_file_size(ini_get('post_max_size'));
+	// If upload_max_size is less, then reduce. Except if upload_max_size is
+	// zero, which indicates no limit.
+	$upload_max = (int)parse_file_size(ini_get('upload_max_filesize'));
 
-    // If upload_max_size is less, then reduce. Except if upload_max_size is
-    // zero, which indicates no limit.
-    $upload_max = parse_file_size(ini_get('upload_max_filesize'));
-    if ($upload_max > 0 && $upload_max < $max_size) {
-      $max_size = $upload_max;
-    }
-  }
-  return $max_size;
+	if ($upload_max < $post_max_size)
+		$max = $upload_max;
+	else
+		$max = $post_max_size;
+
+	// If for some reason we get a value less than 0
+	// lets just set to the typical known minimum
+	if ($max <= 0)
+		$max = 8;
+
+	return $max;
 }
 
 function parse_file_size($size) {

@@ -123,7 +123,7 @@ class contactform extends \Prefab {
 			$f3->VERB = "GET";
 			$f3->POST["captcha"] = "";
 
-			//return;
+			return;
 		}
 
 		// Get name
