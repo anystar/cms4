@@ -2,6 +2,12 @@
 <link rel="stylesheet" href="{{@CDN.tingle_css}}">
 <script src="{{@CDN.tingle_js}}"></script>
 
+<aside id="webworks-flyout">
+<div id="webworks-flyout-body">
+  <iframe height="100%" width="100%" src="{{@BASE}}/admin/settings" id="webworks-flyoutframe"></iframe>
+</div>
+</aside>
+
 <check if="{{@POPUP}}">
   <true>
     <style>
@@ -145,7 +151,24 @@ cmsjQuery(function() {
       }
   }, 500);
 
-  cmsjQuery(".editable .toolbar .button, #webworkscms_admintoolbar #right_div #settingsbtn").click(function (evt) {
+
+  var $flyout = cmsjQuery('#webworks-flyout'),
+  overlay = cmsjQuery('.overlay'),
+  flyoutToggle = cmsjQuery('#webworkscms_admintoolbar #right_div #settingsbtn');
+ 
+  flyoutToggle.bind("click", function(e) {
+    e.preventDefault();
+    $flyout.toggleClass('active');
+    $overlay.toggleClass('active');
+  });
+   
+  overlay.bind("click", function(e) {
+  e.preventDefault();
+    $flyout.toggleClass('active');
+    $overlay.toggleClass('active');
+  });
+
+  cmsjQuery(".editable .toolbar .button").click(function (evt) {
    
     var label = cmsjQuery(this).html();
 
@@ -196,7 +219,6 @@ cmsjQuery(function() {
       mouseX = evt.pageX;
       mouseY = evt.pageY;
   });
-
 
 });
 </script>

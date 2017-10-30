@@ -201,3 +201,44 @@ body {
   font-size: 14px !important;
   padding: 0.1rem 1em 0.1rem !important;
 }
+
+
+#webworks-flyout {
+  bottom: 0;
+  height: 100%;
+  overflow-y: auto;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transform: translate3d(100%, 0, 0);
+  max-width: 320px;
+  width: 100%;
+  z-index: 9999998;
+  background-color: #fff;
+  -webkit-box-shadow: -2px 0px 2px 0px rgba(0,0,0,0.39);
+  -moz-box-shadow: -2px 0px 2px 0px rgba(0,0,0,0.39);
+  box-shadow: -2px 0px 2px 0px rgba(0,0,0,0.39);
+
+  border-left: 1px solid #ccc;
+
+  -webkit-transition: 250ms ease-in-out;
+  -moz-transition: 250ms ease-in-out;
+  -ms-transition: 250ms ease-in-out;
+  -o-transition: 250ms ease-in-out;
+  transition: 250ms ease-in-out;
+}
+#webworks-flyout.active {
+  transform: translate3d(0, 0, 0);
+}
+
+#webworks-flyout-body {
+  overflow-y: auto;
+  flex: 0 1 0;
+  height: 100%;
+}
+
+#webworks-flyoutframe {
+  height: 98%;
+  width: 100%;
+  border: none;
+}
