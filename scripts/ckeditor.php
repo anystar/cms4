@@ -202,7 +202,7 @@ class ckeditor extends prefab {
 	function template_filters ($f3) {
 
 		Template::instance()->beforerender(function ($view) {
-					
+			
 			if (!is_writable($view))
 				return;
 			
@@ -210,6 +210,7 @@ class ckeditor extends prefab {
 			{
 
 				$contents = file_get_contents($view);
+				$orginal = $contents;
 
 				ini_set('pcre.backtrack_limit', 200000);
 				ini_set('pcre.recursion_limit', 200000);
@@ -221,14 +222,41 @@ class ckeditor extends prefab {
 					return '<ckeditor id="'.$id.'">';
 				}, $contents);
 
+				if (array_key_exists("ckeditor-fix-ids", base::instance()->GET))
+				{
+					// Check for duplicates
+					preg_match_all("#<ckeditor.*id=[\"'](.*)[\"']>.*<\/ckeditor>#siU", $contents, $output_array);
+
+					if ($output_array[1]) {
+						$dups = array_not_unique($output_array[1]);
+						$dups = array_unique($dups);
+
+						foreach ($dups as $id)
+						{
+							$contents = preg_replace_callback("#(<ckeditor.*id=[\"'])(".$id.")([\"'].*>.*<\/ckeditor>)#siU", function ($matches) {
+
+								$return .= $matches[1];
+								$return .= substr("cid-".md5(uniqid(rand(), true)), 0, 12);
+								$return .= $matches[3];
+
+								return $return;
+							}, $contents);
+
+						}
+					}
+				}
+
 				// Prevent writing blank files
 				if ($contents == "")
 				{	
 					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View: ".$view."<br><br>Is Signed In: " . admin::$signed ? 'true' : 'false');
 					return;
 				}
-				else {
-					file_put_contents($view, $contents, LOCK_EX);
+				else 
+				{
+					// Make sure its actually changed
+					if ($orginal != $contents)
+						file_put_contents($view, $contents, LOCK_EX);
 				}
 			}
 
@@ -238,8 +266,13 @@ class ckeditor extends prefab {
 			$documentation = '
 
 				<h5>Syntax:</h5>
-			'.base::instance()->highlight('<ckeditor id="{unique id}">').
-			'<h5 style="padding-top:20px;">Example:</h5>'.base::instance()->highlight('<ckeditor id="main_header">')."<br>or<br>".base::instance()->highlight('<ckeditor id="mSXuS234fd2">');
+			'.
+			base::instance()->highlight('<ckeditor id="{unique id}">').
+			'<h5 style="padding-top:20px;">Example:</h5>'.
+			base::instance()->highlight('<ckeditor id="main_header">').
+			"<br>or<br>".
+			base::instance()->highlight('<ckeditor id="mSXuS234fd2">').
+			"<br><br><a href='?ckeditor-fix-ids' class='btn btn-danger'>Auto Fix Duplicate IDs</a>";
 
 			if (!isset($args["@attrib"]))
 				base::instance()->error(1, 'A CKEditor has no attributes'.$documentation);

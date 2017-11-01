@@ -242,7 +242,11 @@ class captcha extends \Template\TagHandler {
 
 		if ($attr["recaptcha"])
 		{
-			$string .= "<script src='https://www.google.com/recaptcha/api.js'></script>".PHP_EOL;
+			if (!base::instance()->RECAPTCHA_LOADED)
+			{
+				$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
+				$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
+			}
 
 			if (array_key_exists("centered", $attr))
 			{
@@ -256,6 +260,8 @@ class captcha extends \Template\TagHandler {
 			{
 				$string .= '</div>'.PHP_EOL;
 			}
+
+			base::instance()->RECAPTCHA_LOADED = true;
 
 			return $string;
 		}
