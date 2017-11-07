@@ -265,10 +265,7 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	// Accepted mimetypes to render as a template file
 	$accepted_mimetypes = [
 		"text/html",
-		"text/css",
-		"text/plain",
-		"application/javascript",
-		"application/x-javascript",
+		"text/plain"
 	];
 
 	$nocache_mimetypes = [
