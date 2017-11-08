@@ -254,6 +254,7 @@ class captcha extends \Template\TagHandler {
 				$string .= '<div class="text-xs-center">';
 			}
 
+			$string .= '<style> @media screen and (max-height: 575px){ #rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;} } </style>'.PHP_EOL;
 			$string .= '<div class="g-recaptcha" data-sitekey="'.$attr["recaptcha"].'"></div>'.PHP_EOL;
 
 			if (array_key_exists("centered", $attr))
