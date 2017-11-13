@@ -103,8 +103,20 @@ $f3->ONERROR = function ($f3) {
 	}
 };
 
-if (array_key_exists("login", $f3->GET) || $f3->SESSION["show-login"] == true)
-	$f3->PAGE_CACHE = false;
+
+// Attempt to start session.
+try {
+   session_start();
+} catch(ErrorExpression $e) {
+   session_regenerate_id();
+   session_start();
+} 
+
+if (array_key_exists("login", $f3->GET) || array_key_exists("show-login", $f3->SESSION))
+{
+	if ($f3->SESSION["show-login"] == true)
+		$f3->PAGE_CACHE = false;
+}
 else
 	$f3->PAGE_CACHE = 3600;
 
