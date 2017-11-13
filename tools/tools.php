@@ -307,6 +307,12 @@ function parse_file_size($size) {
 
 function isroute($route, $verb=null)
 {
+	// contact.html == contact
+	// contact.htm  == contact
+	// contact.html == contact.htm
+	// contact 		== contact
+
+
 	if ($route == null)
 		return;
 
@@ -331,13 +337,45 @@ function isroute($route, $verb=null)
 		else
 			$item = "/index";
 
+
+		// If it is a direct match
 		if (fnmatch($item, $f3->PATH))
 			return true;
+
+		// Direct match with slash
+		else if (fnmatch("/".$item, $f3->PATH))
+			return true;
+
+		// Add an extention
 		else if (fnmatch($item.".html", $f3->PATH))
 			return true;
+
+		// Add a slash and extension
+		else if (fnmatch("/".$item, $f3->PATH.".html"))
+			return true;
+
+		// Add a slash and extension
+		else if (fnmatch("/".$item, $f3->PATH.".htm"))
+			return true;
+
+		// Add a slash and extension
+		else if (fnmatch("/".$item.".html", $f3->PATH))
+			return true;
+
+		// Add the abbrivated extension
 		else if (fnmatch($item.".htm", $f3->PATH))
 			return true;
-		else if (fnmatch("/".$item, $f3->PATH))
+
+		// Add the abbrivated extension and slash
+		else if ("/".$item.".htm" == $f3->PATH)
+			return true;
+
+		// Add the extension to the path
+		else if ($item == $f3->PATH.".html")
+			return true;
+
+		// Add the abbreviated extension to the path
+		else if ($item == $f3->PATH.".htm")
 			return true;
 	}
 
@@ -347,17 +385,19 @@ function isroute($route, $verb=null)
 function determine_path () {
 	$f3 = base::instance();
 
+	// Prevent doing this multiple times
 	if ($GLOBALS["path_determined"]) return;
 
 	// Get Path and make it relative to working directory
 	$path = urldecode(ltrim($f3->PATH, "/"));
 
+	// Kill any
 	if ($pos = strpos($path, "@"))
 		$path = substr($path, 0, $pos);
 
 	$cwd = getcwd();
 
-	// If no path, find index file.
+	// If no path, assume index file.
 	if ($path == "") {
 		if (is_file($cwd."/index.html"))
 		{
@@ -390,7 +430,7 @@ function determine_path () {
 		if (is_file($cwd."/".$path)) { $f3->FILE = $path; $f3->PATH = "/".$path; }
 	}
 
-	$f3->PATH = rtrim($f3->PATH, "/");
+	//$f3->PATH = rtrim($path, "/");
 	$f3->MIME = mime_content_type2(getcwd()."/".$f3->FILE);
 
 	$GLOBALS["path_determined"] = true;
