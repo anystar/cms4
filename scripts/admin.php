@@ -32,42 +32,45 @@ class admin {
 			base::instance()->error(0, "There are no login credentials available whatsoever. Please check config.ini in cms folder or settings.json for client folder.");
 
 		// Are we logged in?
-		if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
+		if (isset($_SESSION))
 		{
-			admin::$signed = true;
+			if ($f3->SESSION["user"] == admin::$clientEmail || $f3->SESSION["user"] == admin::$webmasterEmail)
+			{
+				admin::$signed = true;
 
-			// Capture the last 6 characters and see if it is "/admin"
-			if (substr($f3->PATH, -6, strlen($f3->PATH)) == "/admin") {
-				$path = substr($f3->PATH, 0, strlen($f3->PATH)-6);
+				// Capture the last 6 characters and see if it is "/admin"
+				if (substr($f3->PATH, -6, strlen($f3->PATH)) == "/admin") {
+					$path = substr($f3->PATH, 0, strlen($f3->PATH)-6);
 
-				if ($path=="")
-					$f3->reroute("/");
-				else
-					$f3->reroute($path);
+					if ($path=="")
+						$f3->reroute("/");
+					else
+						$f3->reroute($path);
+				}
+
+				// Capture the last 6 characters and see if it is "/logout"
+				if (substr($f3->PATH, -7, strlen($f3->PATH)) == "/logout") {
+					admin::logout();
+					$path_without_logout = substr($f3->PATH, 0, strlen($f3->PATH)-7);
+
+					if ($path_without_logout == "")
+						$f3->reroute("/");
+					else
+						$f3->reroute($path_without_logout);
+				}
+
+				// Provide logout route
+				$f3->route('GET /admin/logout', "admin::logout");
+
+				// Lets redirect away from login screen
+				$f3->route('GET|POST /admin/login', function ($f3) {
+					$f3->reroute("/admin");
+				});
+
+				if ($f3->SESSION["root"]==true)
+					$f3->set("webmaster", true);
+
 			}
-
-			// Capture the last 6 characters and see if it is "/logout"
-			if (substr($f3->PATH, -7, strlen($f3->PATH)) == "/logout") {
-				admin::logout();
-				$path_without_logout = substr($f3->PATH, 0, strlen($f3->PATH)-7);
-
-				if ($path_without_logout == "")
-					$f3->reroute("/");
-				else
-					$f3->reroute($path_without_logout);
-			}
-
-			// Provide logout route
-			$f3->route('GET /admin/logout', "admin::logout");
-
-			// Lets redirect away from login screen
-			$f3->route('GET|POST /admin/login', function ($f3) {
-				$f3->reroute("/admin");
-			});
-
-			if ($f3->SESSION["root"]==true)
-				$f3->set("webmaster", true);
-
 		}
 
 		// Initilize stats prematurely
@@ -120,7 +123,7 @@ class admin {
 			header("Content-length: ".filesize($file));
 			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
 			header("Cache-Control: public"); //HTTP 1.1
-			echo readfile($file);
+			readfile($file);
 			$f3->abort();
 		});
 
@@ -129,9 +132,9 @@ class admin {
 			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_sm.png";
 			header('Content-Type: image/png');
 			header("Content-length: ".filesize($file));
-			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (160 * 60 * 24 * 30))); // 1 hour
 			header("Cache-Control: public"); //HTTP 1.1
-			echo readfile($file);
+			readfile($file);
 			$f3->abort();
 		});
 
@@ -140,9 +143,9 @@ class admin {
 			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_md.png";
 			header('Content-Type: image/png');
 			header("Content-length: ".filesize($file));
-			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (160 * 60 * 24 * 30))); // 1 hour
 			header("Cache-Control: public"); //HTTP 1.1
-			echo readfile($file);
+			readfile($file);
 			$f3->abort();
 		});
 
@@ -153,7 +156,7 @@ class admin {
 			header("Content-length: ".filesize($file));
 			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
 			header("Cache-Control: public"); //HTTP 1.1
-			echo readfile($file);
+			readfile($file);
 			$f3->abort();
 		});
 

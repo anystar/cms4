@@ -124,6 +124,7 @@ class version_control extends prefab {
 		$state["canRedo"] = $this->canRedo();
 		$state["detachedDirty"] = $this->detachedAndDirty();
 		$state["locked"] = $this->isLocked();
+		$state["canPush"] = $this->canPush();
 
 		if ($json)
 			return json_encode($state);
@@ -144,7 +145,6 @@ class version_control extends prefab {
 				return true;
 
 		return false;
-
 	}
 
 	function isDirty() {
@@ -304,6 +304,10 @@ class version_control extends prefab {
 		}
 
 		base::instance()->reroute(base::instance()->PATH);
+	}
+
+	function canPush () {
+
 	}
 
 	function push () {

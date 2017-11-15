@@ -114,30 +114,35 @@ class repeater {
 				$image_directory = $this->settings["image-directory"];
 
 				$images = array();
-				foreach ($f3->FILES as $file)
+				
+				foreach ($f3->FILES as $key=>$file)
 				{
 					if ($file["tmp_name"] == "") continue;
 
-					$returned_images[] = saveimg($file, $image_directory, $this->settings["image-settings"]);
+					$fill = [];
+					saveimg($file, $image_directory, $this->settings["image-settings"], $fill);
 
-					foreach ($returned_images as $image)
+					foreach ($fill as $image)
 					{
 						$tmp["image"] = $image["path"];
 
 						if (array_key_exists("thumbnail", $image))
 							$tmp["thumbnail"] = $image["thumbnail"]["path"];
 
-						$images[] = $tmp;
+						$images[$key][] = $tmp;
 					}
 				}
 
-				if (count($images) == 1)
+				foreach ($images as $key=>$image)
 				{
-					$f3->POST["image"] = $images[0]["image"];
-					$f3->POST["thumbnail"] = $images[0]["thumbnail"];
+					if (count($image) == 1)
+					{
+						$f3->POST[$key]["image"] = $image[0]["image"];
+						$f3->POST[$key]["thumbnail"] = $image[0]["thumbnail"];
+					}
+					else if (count($images) > 1)
+						$f3->POST[$key] = $image;
 				}
-				else if (count($images) > 1)
-					$f3->POST["images"] = $images;
 			}
 
 			if ($f3->POST["data_id"])

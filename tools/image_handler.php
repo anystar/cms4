@@ -5,7 +5,7 @@
 // @return array    
 //   size: "100x100" 
 //   type: "jpg"
-function saveimg ($file, $directory, $options) {
+function saveimg ($file, $directory, $options, &$fill=null) {
 
 	#######################################################
 	################ HANDLE DEFAULT OPTIONS ###############
@@ -69,10 +69,13 @@ function saveimg ($file, $directory, $options) {
 			base::instance()->error("No size set for thumbnail property");
 		else 
 		{
-			$options["thumbnail"]["size"] = explode("x", $options["thumbnail"]["size"]);
+			if (is_string($options["thumbnail"]["size"]))
+			{
+				$options["thumbnail"]["size"] = explode("x", $options["thumbnail"]["size"]);
 
-			$options["thumbnail"]["size"][0] = ((int)$options["thumbnail"]["size"][0] > 0) ? (int)$options["thumbnail"]["size"][0] : NULL;
-			$options["thumbnail"]["size"][1] = ((int)$options["thumbnail"]["size"][1] > 0) ? (int)$options["thumbnail"]["size"][1] : NULL;
+				$options["thumbnail"]["size"][0] = ((int)$options["thumbnail"]["size"][0] > 0) ? (int)$options["thumbnail"]["size"][0] : NULL;
+				$options["thumbnail"]["size"][1] = ((int)$options["thumbnail"]["size"][1] > 0) ? (int)$options["thumbnail"]["size"][1] : NULL;
+			}
 		}
 
 		if (!isset($options["thumbnail"]["crop"]))
@@ -97,6 +100,32 @@ function saveimg ($file, $directory, $options) {
 	if (in_array(NULL, $options["size"]))
 		base::instance()->error(500, "Incorrect size set for image!");
 
+	##################################################
+	################ MULTI FILE UPLOAD ###############
+	##################################################
+	// Handle name='image[]' requests.
+
+	if (array_key_exists("tmp_name", $file))
+	{
+		if (is_array($file["tmp_name"]))
+		{	
+			foreach ($file as $x=>$item) {
+				foreach ($item as $y=>$value)
+				{
+					$files[$y][$x] = $value;
+				}
+			}
+
+			foreach ($files as $file)
+			{
+				if ($file["tmp_name"] != "")
+					$fill[] = saveimg($file, $directory, $options);
+			}
+
+			return true;
+		}
+	}
+
 	###############################################
 	################ VALIDITY CHECK ###############
 	###############################################
@@ -108,7 +137,7 @@ function saveimg ($file, $directory, $options) {
 		// When uploading multiple images often some upload fields wont
 		// be set so lets just ignore those.
 		if ($file["tmp_name"] == "")
-			return false;
+			return null;
 
 		if ($file["error"] > 0)
 		{
@@ -328,7 +357,7 @@ function saveimg ($file, $directory, $options) {
 		if ($result == FALSE)
 			base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
 		else {
-			$options["thumbnail"]["path"] = $options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
+			$options["thumbnail"]["path"] = $directory."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
 			$options["thumbnail"]["filename"] = $options["filename"].".".$options["type"];
 		}
 
@@ -348,6 +377,9 @@ function saveimg ($file, $directory, $options) {
 
 	$options["path"] = $directory."/".$options["filename"].".".$options["type"];
 	$options["filename"] = $options["filename"].".".$options["type"];
+
+	if (is_array($fill))
+		$fill[] = $options;
 
 	return $options;
 }

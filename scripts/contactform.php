@@ -32,7 +32,7 @@ class contactform extends \Prefab {
 		$defaults["success"] = "?success=true";
 		$defaults["recaptcha_privatekey"] = "6LfF9yUUAAAAAFFt9sajMnKFGlmYbVKPsDx9n7wm";
 
-		check(0, (count($settings) < 3), "**Default example:**", $defaults, '`<captcha centered recaptcha="6LfF9yUUAAAAAAQRdSwSfJWCccL0qYGsfzfMBKSM">`');
+		check(0, (count($settings) < 3), "**Default example:**", $defaults, '`<captcha centered recaptcha="6LfF9yUUAAAAAAQRdSwSfJWCccL0qYGsfzfMBKSM">`', '**Email Template**','`https://gist.github.com/sevn/bc53002c6e3c8b33bf79fd6d868ce2a8`');
 
 		check(0, $settings["sendto"], "No `sendto` set in **".$settings["name"]."** settings");
 		check(0, $settings["sendname"], "No `sendname` set in **".$settings["name"]."** settings");
@@ -247,14 +247,15 @@ class captcha extends \Template\TagHandler {
 				$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
 				$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
 			}
-
+	
+			$string .= '<style> @media screen and (max-height: 575px){ #rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;} } </style>'.PHP_EOL;
+	
 			if (array_key_exists("centered", $attr))
 			{
 				$string .= "<style> .text-xs-center { text-align: center; } .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
 				$string .= '<div class="text-xs-center">';
 			}
 
-			$string .= '<style> @media screen and (max-height: 575px){ #rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;} } </style>'.PHP_EOL;
 			$string .= '<div class="g-recaptcha" data-sitekey="'.$attr["recaptcha"].'"></div>'.PHP_EOL;
 
 			if (array_key_exists("centered", $attr))
