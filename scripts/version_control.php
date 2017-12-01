@@ -109,6 +109,12 @@ class version_control extends prefab {
 			exit;
 		});
 
+		if (isroute("/admin/versioncontrol/push")) {
+			$this->push();
+			echo $this->getState(true);
+			die;
+		}
+
 		ToolBar::instance()->append(Template::instance()->render("/revision-control/toolbar.html", null, ["state"=>$this->getState(true), "BASE"=>$f3->BASE]));
 
 
@@ -308,19 +314,32 @@ class version_control extends prefab {
 
 	function canPush () {
 
-	}
-
-	function push () {
-
 		// Make sure we have an upstream
 		if (!$this->hasUpstream())
 			return false;
 
 		// Prevent pushing on master branch
-		if ($this->branch == "master")
+		if ($this->branch != "remote")
 			return false;
 
-		//$this->repo->run("push origin ".$this->branch);
+		// Prevent pushing when changes need to be saved 
+		if ($this->isDirty())
+			return false;
+
+		// Only push when we need too
+		if ($this->repo->run("rev-list --count origin/remote...remote") == 0)
+			return false;
+
+		return true;
+
+	}
+
+	function push () {
+
+		if (!$this->canPush())
+			return false;
+
+		$this->repo->run("push origin remote");
 	}
 
 }

@@ -62,8 +62,11 @@ class repeater {
 		$this->jig = new \DB\Jig\Mapper($jig, $settings["name"]);
 
 		$data = $this->jig->find();
-		foreach ($data as $row)
-			$this->data[] = $row->cast();
+
+		if (count($data) > 0 && is_array($data)){
+			foreach ($data as $row)
+				$this->data[] = $row->cast();
+		}
 
 		$this->name = $settings["name"];
 		$this->settings = $settings;
