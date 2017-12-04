@@ -61,9 +61,12 @@ class checkout extends prefab {
 				return; // Wrong checkout script.
 
 			// Do any validation?
+			if (!array_key_exists("recaptcha_privatekey", $settings))
+				$captcha_passed = true;
+			else
+				$captcha_passed = false;
 
 			// Check Captcha?
-			$captcha_passed = false;
 			if (array_key_exists("g-recaptcha-response", $f3->POST))
 			{
 				$recaptcha_response = $f3->POST["g-recaptcha-response"];
