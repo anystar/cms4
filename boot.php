@@ -103,6 +103,10 @@ $f3->ONERROR = function ($f3) {
 	}
 };
 
+// Google
+if (isroute("google71e58acf252a99b8.html"))
+	die ("google-site-verification: google71e58acf252a99b8.html");
+
 
 // Attempt to start session.
 try {
