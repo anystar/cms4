@@ -55,7 +55,8 @@
 
         var imgs_for_dropzone = document.getElementsByClassName("imgdropzone");
 
-        for (var i = imgs_for_dropzone.length - 1; i >= 0; i--)
+        
+        if (imgs_for_dropzone.length > 0) { for (var i = imgs_for_dropzone.length - 1; i >= 0; i--)
         {
             var id = imgs_for_dropzone[i].getAttribute("id");
             var width = imgs_for_dropzone[i].getAttribute("data-width");
@@ -115,6 +116,7 @@
                     });
                 }
             });
-        }
+        }}
+
     });
 </script>
