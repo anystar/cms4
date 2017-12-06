@@ -256,9 +256,15 @@ class captcha extends \Template\TagHandler {
 				$string .= '<div class="text-xs-center">';
 			}
 
+			if (array_key_exists("right", $attr))
+			{
+				$string .= "<style> .text-xs-right { text-align: right; } .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
+				$string .= '<div class="text-xs-right">';
+			}
+
 			$string .= '<div class="g-recaptcha" data-sitekey="'.$attr["recaptcha"].'"></div>'.PHP_EOL;
 
-			if (array_key_exists("centered", $attr))
+			if (array_key_exists("centered", $attr) OR array_key_exists("right", $attr))
 			{
 				$string .= '</div>'.PHP_EOL;
 			}

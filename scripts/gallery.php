@@ -312,6 +312,8 @@ class gallery {
 		if (count($return) > 0)
 			$temp = array_merge($temp, $return);
 
+		$temp = array_values($temp);
+
 		return $temp;
 	}
 
