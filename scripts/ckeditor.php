@@ -249,7 +249,7 @@ class ckeditor extends prefab {
 				// Prevent writing blank files
 				if ($contents == "")
 				{	
-					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View: ".$view."<br><br>Is Signed In: " . admin::$signed ? 'true' : 'false');
+					//base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View: ".$view."<br><br>Is Signed In: " . admin::$signed ? 'true' : 'false');
 					return;
 				}
 				else 

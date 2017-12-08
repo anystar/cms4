@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Settings Manager</title>
+
+	<!-- Bootstrap -->
+	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
+	<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+  </head>
+  <body>
+	
+	<h1>Search Engine Settings</h1>
+
+	<div class="container">
+		
+		<div class="col-xs-12" style="margin-top:30px;">
+
+			<a href="{{@BASE}}/admin/settings?page={{@GET.page}}">Go Back</a>
+
+			<form style="margin-top: 40px;" method="post" action="{{@BASE}}/admin/seo-settings?page={{@GET.page}}">
+				<div class="form-group">
+					<label for="website-login-address">Page title</label>
+					<input id="page-title" value="{{@TITLE}}" type="text" class="form-control" name="page-title">
+					<small class="form-text text-muted">Used in web browser and search engines. <a href="https://www.webpagefx.com/blog/web-design/5-common-seo-mistakes-with-web-page-titles/" target="_blank">Learn more</a></small>
+				</div>
+
+				<div class="form-group">
+					<label for="website-login-password">Page description</label>
+					<textarea rows="8" class="form-control" name="page-description">{{@DESCRIPTION}}</textarea>
+					<small class="form-text text-muted">Used in search engines and linking on social media. <a href="https://www.webpagefx.com/blog/web-design/5-common-seo-mistakes-with-web-page-titles/" target="_blank">Learn more</a></small>
+				</div>
+							
+				<div class="form-group">
+					<input id="page" type="hidden" name="page" value="{{@GET.page}}">
+					<button class="webworkscms_button btn-fullwidth">Save Details</button>
+				</div>
+			</form>
+
+		</div>
+	</div>
+
+	<script src="{{ @CDN.jquery }}"></script>
+	<script>
+		var cmsjQuery = jQuery.noConflict(true);
+
+		cmsjQuery( document ).ready(function() {
+			
+			cmsjQuery("#page-title").keyup(function (e) {
+
+				window.parent.document.title = cmsjQuery(this).val();
+			});
+
+		});
+	</script>
+
+    <toolbar hidden />
+
+  </body>
+</html>

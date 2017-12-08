@@ -574,3 +574,30 @@ function array_not_unique($raw_array) {
         $old_key   = $key;
     } return $dupes;
 }
+
+
+// https://gist.github.com/jeremiahlee/785766
+function parseDescription($html, $replace=null) {
+	// Get the 'content' attribute value in a <meta name="description" ... />
+	$matches = array();
+	// Search for <meta name="description" content="Buy my stuff" />
+	preg_match('/<meta.*?name=("|\')description("|\').*?content=("|\')(.*?)("|\')/i', $html, $matches);
+	if (count($matches) > 4) {
+
+		if ($replace != NULL)
+			return preg_replace('/<meta.*?name=("|\')description("|\').*?content=("|\')(.*?)("|\')/i', '<meta name="description" content="'.$replace.'"', $html);
+
+		return trim($matches[4]);
+	}
+	// Order of attributes could be swapped around: <meta content="Buy my stuff" name="description" />
+	preg_match('/<meta.*?content=("|\')(.*?)("|\').*?name=("|\')description("|\')/i', $html, $matches);
+	if (count($matches) > 2) {
+
+		if ($replace != NULL)
+			return preg_replace('/<meta.*?content=("|\')(.*?)("|\').*?name=("|\')description("|\')/i', '<meta name="description" content="'.$replace.'"', $html);
+
+		return trim($matches[2]);
+	}
+	// No match
+	return null;
+}

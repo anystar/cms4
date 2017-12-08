@@ -21,12 +21,15 @@
   </head>
   <body>
 	
-	<h1>Website Settings</h1>
+	<h1>Login Settings</h1>
 
 	<div class="container">
 		
-		<div class="col-md-4 col-xs-12" style="margin-top:30px;">
-			<form method="post" action="{{@BASE}}/admin/settings">
+		<div class="col-xs-12" style="margin-top:30px;">
+
+			<a href="{{@BASE}}/admin/settings?page={{@GET.page}}">Go Back</a>
+
+			<form style="margin-top: 40px;" method="post" action="{{@BASE}}/admin/login-settings">
 				<div class="form-group">
 					<label for="website-login-address">Website login address</label>
 					<input value="{{@website_login_address}}" type="email" class="form-control" name="website-login-address" id="website-login-address" placeholder="Enter email">
@@ -51,21 +54,11 @@
 					<button class="webworkscms_button btn-fullwidth">Save Details</button>
 				</div>
 			</form>
+
 		</div>
 	</div>
 
     <toolbar hidden />
-	
-	<script>
-		cmsjQuery(function() {
-
-			cmsjQuery("#webworkscms_admintoolbar #settingsbtn").hide();
-			cmsjQuery("#webworkscms_admintoolbar .revcontrol").hide();
-
-			var button = cmsjQuery('<a onclick="closeRefresh()" class="button" href="{{@GET.previous}}">Return to website</a>');
-			cmsjQuery("#webworkscms_admintoolbar").children("#center_div").append(button);
-		});
-	</script>
 
   </body>
 </html>

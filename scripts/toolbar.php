@@ -29,8 +29,8 @@ class toolbar extends prefab {
 				$isPopup = 'array()';
 
 			if ($args != NULL)
-				if (array_key_exists("disable", $args["@attrib"]))
-					if (!$args["@attrib"]["disable"]) return "";
+				if (array_key_exists("disable", $args["@attrib"]) OR array_key_exists("hidden", $args["@attrib"]))
+					if (!$args["@attrib"]["disable"] OR !$args["@attrib"]["hidden"]) return "";
 
 			return '<?php
 				if (admin::$signed)
@@ -58,7 +58,7 @@ class toolbar extends prefab {
 	function getHive () {
 		$f3 = base::instance();
 
-		return ["include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH, "VISITS"=>$f3->VISITS];
+		return ["include"=>$this->include, "buttonList"=>$this->buttonList, "CDN"=>$f3->CDN, "BASE"=>$f3->BASE, "PATH"=>$f3->PATH, "FILE"=>$f3->FILE, "VISITS"=>$f3->VISITS];
 	}
 
 }

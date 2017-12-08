@@ -4,7 +4,7 @@
 
 <aside id="webworks-flyout">
 <div id="webworks-flyout-body">
-  <iframe height="100%" width="100%" src="{{@BASE}}/admin/settings" id="webworks-flyoutframe"></iframe>
+  <iframe height="100%" width="100%" src="{{@BASE}}/admin/settings?page={{@FILE}}" id="webworks-flyoutframe"></iframe>
 </div>
 </aside>
 
@@ -51,6 +51,8 @@
 </check>
 <script src="{{ @CDN.jquery }}"></script>
 <script>
+document.currentPage = '{{@FILE}}';
+
 var cmsjQuery = jQuery.noConflict(true);
 
 function status (message) {
@@ -153,16 +155,16 @@ cmsjQuery(function() {
 
 
   var $flyout = cmsjQuery('#webworks-flyout'),
-  overlay = cmsjQuery('.overlay'),
+  $overlay = cmsjQuery('.overlay'),
   flyoutToggle = cmsjQuery('#webworkscms_admintoolbar #right_div #settingsbtn');
- 
+
   flyoutToggle.bind("click", function(e) {
     e.preventDefault();
     $flyout.toggleClass('active');
     $overlay.toggleClass('active');
   });
    
-  overlay.bind("click", function(e) {
+  $overlay.bind("click", function(e) {
   e.preventDefault();
     $flyout.toggleClass('active');
     $overlay.toggleClass('active');
@@ -228,13 +230,13 @@ cmsjQuery(function() {
 </repeat>
 
 <div id="webworkscms_admintoolbar">
-  <div id="left_div"><img height="100%" id="webworks_logo" src="{{ @BASE }}/admin/logo_sm.png"></div>
+  <div id="left_div"><img height="100%" id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_sm.png"></div>
   <div id="center_div" style="display: none;"></div>
   <div id="statusbar">
     Loading CMS
   </div>
   <div id="right_div">
-    <a class="button" href="{{@BASE}}/admin/settings" id="settingsbtn">Settings</a><a id="logoutbtn" class="button" href="{{@BASE}}/logout">Logout</a>
+    <a class="button" href="{{@BASE}}/admin/settings?page={{@FILE}}" id="settingsbtn">Settings</a><a id="logoutbtn" class="button" href="{{@BASE}}/logout">Logout</a>
   </div>
 </div>
 
