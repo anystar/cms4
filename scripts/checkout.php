@@ -4,7 +4,7 @@ class checkout extends prefab {
 
 	public $settings;
 	private $gateways;
-	private $log;
+	public $log;
 
 	private $referenceNumber;
 
