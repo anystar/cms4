@@ -215,6 +215,21 @@ if (admin::$signed) {
 	unlink_recursive(".cms/cache", "url");
 }
 
+// Redirect any requests to the canonical address
+if (array_key_exists("canonical-url", $settings))
+{
+	if (!$f3->CONFIG["developer"])
+	{
+		if (filter_var($settings["canonical-url"], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED))
+		{
+			if (($f3->SCHEME."://".$f3->HOST) != $settings["canonical-url"]) {
+				header("Location: ".$settings["canonical-url"].$f3->URI, true, 301);
+				exit();
+			}
+		}
+	}
+}
+
 // Load scripts
 // 	- Calls isroute($script)
 // 	- Throws error if route is not specced in script
