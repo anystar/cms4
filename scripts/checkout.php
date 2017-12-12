@@ -89,6 +89,10 @@ class checkout extends prefab {
 				return;
 			}
 
+			// A simple check to ensure an amount due was generated
+			if ($f3->POST["amount_due"] <= 0)
+				return;
+
 			// Send through payment gateway
 			check (0, !array_key_exists("gateway", $f3->POST), "No gateway provided for checkout script");
 			check (0, !class_exists(strtolower($f3->POST["gateway"])."gateway"), "No gateway found for checkout script");
