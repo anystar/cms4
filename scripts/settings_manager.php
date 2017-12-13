@@ -52,7 +52,10 @@ class settings_manager extends prefab {
 			$contents = file_get_contents($page);
 
 			$contents = preg_replace("/<title>(.+)<\/title>/i", "<title>".$f3->POST["page-title"]."</title>", $contents);
-			$contents = parseDescription($contents, $f3->POST["page-description"]);
+			$return = parseDescription($contents, $f3->POST["page-description"]);
+
+			if ($return !== null)
+				$contents = $return;
 
 			check (0, strlen($contents) == 0, "Critial: Stopping settings manager from writing blank data!");
 
@@ -63,7 +66,10 @@ class settings_manager extends prefab {
 				file_put_contents(getcwd()."/sitemap.txt", $f3->POST["sitemap"]);
 			}
 			else
-				unlink(getcwd()."/sitemap.txt");
+			{
+				if (file_exists(getcwd()."/sitemap.txt"))
+					unlink(getcwd()."/sitemap.txt");
+			}
 
 			// Update canonical address
 			setting("canonical-url", $f3->POST["canonical"]);

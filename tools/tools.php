@@ -602,7 +602,7 @@ function parseDescription($html, $replace=null) {
 	preg_match('/<meta.*?name=("|\')description("|\').*?content=("|\')(.*?)("|\')/i', $html, $matches);
 	if (count($matches) > 4) {
 
-		if ($replace != NULL)
+		if ($replace !== NULL)
 			return preg_replace('/<meta.*?name=("|\')description("|\').*?content=("|\')(.*?)("|\')/i', '<meta name="description" content="'.$replace.'"', $html);
 
 		return trim($matches[4]);
@@ -611,7 +611,7 @@ function parseDescription($html, $replace=null) {
 	preg_match('/<meta.*?content=("|\')(.*?)("|\').*?name=("|\')description("|\')/i', $html, $matches);
 	if (count($matches) > 2) {
 
-		if ($replace != NULL)
+		if ($replace !== NULL)
 			return preg_replace('/<meta.*?content=("|\')(.*?)("|\').*?name=("|\')description("|\')/i', '<meta name="description" content="'.$replace.'"', $html);
 
 		return trim($matches[2]);
@@ -621,5 +621,5 @@ function parseDescription($html, $replace=null) {
 	if ($replace != null)
 		return $html;
 	else
-		return "";
+		return null;
 }
