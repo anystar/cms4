@@ -34,6 +34,10 @@ class settings_manager extends prefab {
 			     $f3->TITLE = "";
 
 			$f3->DESCRIPTION = parseDescription($contents);
+			$f3->CANONICAL = $this->settings["canonical-url"];
+
+			if (file_exists(getcwd()."/sitemap.txt"))
+				$f3->SITEMAP = file_get_contents(getcwd()."/sitemap.txt");
 
 			echo Template::instance()->render("/settings-manager/seo-settings.html", "text/html");
 		});
@@ -53,6 +57,16 @@ class settings_manager extends prefab {
 			check (0, strlen($contents) == 0, "Critial: Stopping settings manager from writing blank data!");
 
 			file_put_contents($page, $contents);
+
+			// Update sitemap
+			if ($f3->POST["sitemap"] != "") {
+				file_put_contents(getcwd()."/sitemap.txt", $f3->POST["sitemap"]);
+			}
+			else
+				unlink(getcwd()."/sitemap.txt");
+
+			// Update canonical address
+			setting("canonical-url", $f3->POST["canonical"]);
 
 			$f3->reroute("/admin/seo-settings?page=".$f3->POST["page"]);
 

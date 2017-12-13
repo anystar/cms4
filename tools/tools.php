@@ -1,5 +1,21 @@
 <?php
 
+function setting($name, $value=null, $overwrite=true) {
+
+	$settings = json_decode(file_get_contents(getcwd() . "/.cms/settings.json"), true);
+
+	// We only want the setting
+	if ($value !== null)
+	{
+		$settings[$name] = $value;
+		file_put_contents(getcwd() . "/.cms/settings.json", json_encode($settings, JSON_PRETTY_PRINT));
+
+		base::instance()->SETTINGS = $settings;
+	}
+
+	return $settings[$name];
+}
+
 function redirect ($url) {
 	$f3 = base::instance();
 
@@ -578,8 +594,10 @@ function array_not_unique($raw_array) {
 
 // https://gist.github.com/jeremiahlee/785766
 function parseDescription($html, $replace=null) {
+
 	// Get the 'content' attribute value in a <meta name="description" ... />
 	$matches = array();
+
 	// Search for <meta name="description" content="Buy my stuff" />
 	preg_match('/<meta.*?name=("|\')description("|\').*?content=("|\')(.*?)("|\')/i', $html, $matches);
 	if (count($matches) > 4) {
@@ -598,6 +616,10 @@ function parseDescription($html, $replace=null) {
 
 		return trim($matches[2]);
 	}
+
 	// No match
-	return null;
+	if ($replace != null)
+		return $html;
+	else
+		return "";
 }

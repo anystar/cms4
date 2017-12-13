@@ -190,20 +190,20 @@ $f3->JIG = new \DB\Jig(".cms/json/", \DB\Jig::FORMAT_JSON);
 // Loads settings from .cms/settings.json
 // 	- This is the only place settings are configured
 // 	- This contains all the script settings
-$settings = json_decode($f3->read(".cms/settings.json"), 1);
+$f3->SETTINGS = json_decode($f3->read(".cms/settings.json"), 1);
 
-check (0, $settings == "" || $settings == null, "Syntax error in **.cms/settings.json**");
-
-// If a mailer is set in settings then use that instead
-if (array_key_exists("mailer", $settings))
-	$f3->mailer = $settings["mailer"];
+check (0, $f3->SETTINGS == "" || $f3->SETTINGS == null, "Syntax error in **.cms/settings.json**");
 
 // If a mailer is set in settings then use that instead
-if (array_key_exists("404-handler", $settings))
-	$f3->handler404 = $settings["404-handler"];
+if (array_key_exists("mailer", $f3->SETTINGS))
+	$f3->mailer = $f3->SETTINGS["mailer"];
+
+// If a mailer is set in settings then use that instead
+if (array_key_exists("404-handler", $f3->SETTINGS))
+	$f3->handler404 = $f3->SETTINGS["404-handler"];
 
 // Load authentication
-new admin($settings);
+new admin($f3->SETTINGS);
 
 // Handle phpLiteAdmin routing.
 if (admin::$signed) {
@@ -216,14 +216,14 @@ if (admin::$signed) {
 }
 
 // Redirect any requests to the canonical address
-if (array_key_exists("canonical-url", $settings))
+if (array_key_exists("canonical-url", $f3->SETTINGS))
 {
 	if (!$f3->CONFIG["developer"])
 	{
-		if (filter_var($settings["canonical-url"], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED))
+		if (filter_var($f3->SETTINGS["canonical-url"], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED))
 		{
-			if (($f3->SCHEME."://".$f3->HOST) != $settings["canonical-url"]) {
-				header("Location: ".$settings["canonical-url"].$f3->URI, true, 301);
+			if (($f3->SCHEME."://".$f3->HOST) != $f3->SETTINGS["canonical-url"]) {
+				header("Location: ".$f3->SETTINGS["canonical-url"].$f3->URI, true, 301);
 				exit();
 			}
 		}
@@ -236,14 +236,14 @@ if (array_key_exists("canonical-url", $settings))
 // 	- Calls each script with settings
 
 // Core scripts that always load
-new toolbar($settings);
-new settings_manager($settings);
-new version_control($settings);
-new review($settings);
+new toolbar($f3->SETTINGS);
+new settings_manager($f3->SETTINGS);
+new version_control($f3->SETTINGS);
+new review($f3->SETTINGS);
 
-check (0, !array_key_exists("scripts", $settings), "No scripts element in settings.json");
+check (0, !array_key_exists("scripts", $f3->SETTINGS), "No scripts element in settings.json");
 
-foreach ($settings["scripts"] as $script) {
+foreach ($f3->SETTINGS["scripts"] as $script) {
 
 	check(0, !array_key_exists("class", $script) || $script["class"]=="", "Misconfigured script in .cms/settings.ini<br>The class property is missing.", $script);
 
@@ -383,4 +383,4 @@ if (!$f3->REDIRECTING)
 	$f3->run();
 
 Mailer::processQueue();
-new stats ($settings);
+new stats ($f3->SETTINGS);
