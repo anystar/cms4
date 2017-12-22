@@ -116,11 +116,6 @@ class version_control extends prefab {
 		}
 
 		ToolBar::instance()->append(Template::instance()->render("/revision-control/toolbar.html", null, ["state"=>$this->getState(true), "BASE"=>$f3->BASE]));
-
-
-		// $this->push();
-
-		// k("STAHP");
 	}
 
 	function getState ($json = false) {
@@ -131,6 +126,8 @@ class version_control extends prefab {
 		$state["detachedDirty"] = $this->detachedAndDirty();
 		$state["locked"] = $this->isLocked();
 		$state["canPush"] = $this->canPush();
+		$state["canPull"] = $this->canPull();
+		$state["isRemoteBehind"] = $this->isRemoteBehind();
 
 		if ($json)
 			return json_encode($state);
@@ -326,12 +323,41 @@ class version_control extends prefab {
 		if ($this->isDirty())
 			return false;
 
-		// Only push when we need too
-		if ($this->repo->run("rev-list --count origin/remote...remote") == 0)
+		// Only push when we are ahead
+		if (!$this->isAhead())
 			return false;
+
+		// Do not push when we are behind
+		// if (!$this->isBehind())
+		// 	return false;
 
 		return true;
 
+	}
+
+	function canPull () {
+
+		// Make sure we have an upstream
+		if (!$this->hasUpstream())
+			return false;
+
+		// Prevent pulling on any other branch
+		if ($this->branch != "remote")
+			return false;
+
+		// Prevent pulling when changes need to be saved 
+		if ($this->isDirty())
+			return false;
+
+		// Prevent pulling when we are ahead
+		if ($this->isAhead())
+			return false;
+
+		// Only pull when we are behind
+		 if (!$this->isBehind())
+		 	return false;
+
+		return true;
 	}
 
 	function push () {
@@ -340,6 +366,45 @@ class version_control extends prefab {
 			return false;
 
 		$this->repo->run("push origin remote");
+	}
+
+	function isBehind () {
+
+		//$this->fetch();
+
+		if ($this->repo->run("rev-list --count remote..origin/remote") > 0)
+			return true;
+		else
+			return false;
+	}
+
+	function isAhead () {
+
+		//$this->fetch();
+
+		if ($this->repo->run("rev-list --count origin/remote...remote") > 0)
+			return true;
+		else
+			return false;
+	}
+
+	function isRemoteBehind ()
+	{
+		//$this->fetch();
+
+		if ($this->repo->run("rev-list --count origin/master...remote") > 0)
+			return true;
+		else
+			return false;
+	}
+
+	function fetch () {
+		
+		if (!$this->hasFetched)
+			$this->repo->run("fetch --dry-run");
+
+		$this->hasFetched = true;
+
 	}
 
 }

@@ -34,8 +34,6 @@ body {
     background: -webkit-linear-gradient(top, rgba(109,179,242,0.9) 0%,rgba(84,163,238,0.9) 50%,rgba(54,144,240,0.9) 51%,rgba(30,105,222,0.9) 100%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to bottom, rgba(109,179,242,0.9) 0%,rgba(84,163,238,0.9) 50%,rgba(54,144,240,0.9) 51%,rgba(30,105,222,0.9) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e66db3f2', endColorstr='#e61e69de',GradientType=0 ); /* IE6-9 */
-
-
 }
 
 #webworkscms_admintoolbar div {
@@ -46,13 +44,22 @@ body {
 
 #webworkscms_admintoolbar #webworks_logo {
   vertical-align: middle;
-  width: 289px;
+  margin-left: 10px;
+  width: 35px;
 }
 
 #webworkscms_admintoolbar #right_div {
     text-align: right;
     padding-right: 20px;
-    width: 450px;
+    width: 33.333%;
+}
+
+#webworkscms_admintoolbar #left_div {
+    width: 33.333%;
+}
+
+#webworkscms_admintoolbar #center_div {
+    width: 33.333%;
 }
 
 #webworkscms_admintoolbar #center_div, #webworkscms_admintoolbar #statusbar{
@@ -63,9 +70,7 @@ body {
     font-weight: 500;
 }
 
-#webworkscms_admintoolbar #left_div {
-    width: 450px;
-}
+
 
 #webworkscms_admintoolbar .spacer {
     display: inline-block;
@@ -90,7 +95,7 @@ body {
   display: inline-block;
   outline: none !important;
   cursor: pointer !important;
-  padding: 0.5rem 2em 0.5rem !important;
+  padding: 0.5rem 2rem 0.5rem !important;
   border-radius: 5px !important;
   -moz-border-radius: 5px !important;
   -webkit-border-radius: 5px !important;
@@ -115,7 +120,7 @@ body {
   transition: all 0.1s !important;
   line-height: 24px !important;
 }
-#webworkscms_admintoolbar .button:active, #webworkscms_admintoolbar #views:active, .editable .toolbar .button:active, .logoutwarning .button:active {
+#webworkscms_admintoolbar .button:active, #webworkscms_admintoolbar .button-active, #webworkscms_admintoolbar #views:active, .editable .toolbar .button:active, .logoutwarning .button:active {
   border-color: #a2a2a2 #bbbbbb #eee !important;
   background-size: 100% !important;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e1e1e1), color-stop(100%, #eeeeee)) !important;
@@ -154,24 +159,24 @@ body {
 
 .editable .border {
     position: absolute !important;
-    z-index: 9999 !important;
+    z-index: 99999 !important;
     pointer-events: none;
 }
 
 .editable .top {
-    border-bottom: 10px solid #3682E3;
+    border-bottom: 20px dashed red !important;
 }
 
 .editable .bottom {
-    border-top: 10px solid #3682E3;
+    border-top: 20px dashed red !important;
 }
 
 .editable .right {
-    border-left: 10px solid #3682E3;
+    border-left: 20px dashed red !important;
 }
 
 .editable .left {
-    border-right: 10px solid #3682E3;
+    border-right: 20px dashed red !important;
 }
 
 .editable .toolbar .button {
@@ -205,22 +210,24 @@ body {
 
 
 #webworks-flyout {
+  opacity: 1;
   bottom: 0;
   height: 100%;
   overflow-y: auto;
   position: fixed;
-  right: 0;
+  left: 0;
   top: 0;
-  transform: translate3d(100%, 0, 0);
+  transform: translate3d(-100%, 0, 0);
   max-width: 420px;
   width: 100%;
   z-index: 9999998;
   background-color: #fff;
-  -webkit-box-shadow: -2px 0px 2px 0px rgba(0,0,0,0.39);
-  -moz-box-shadow: -2px 0px 2px 0px rgba(0,0,0,0.39);
-  box-shadow: -2px 0px 2px 0px rgba(0,0,0,0.39);
 
-  border-left: 1px solid #ccc;
+  -webkit-box-shadow: 0px -2px 0px 2px rgba(0,0,0,0.39);
+  -moz-box-shadow: 0px -2px 0px 2px rgba(0,0,0,0.39);
+  box-shadow: 0px -2px 0px 2px rgba(0,0,0,0.39);
+
+  border-right: 1px solid #ccc;
 
   -webkit-transition: 250ms ease-in-out;
   -moz-transition: 250ms ease-in-out;
@@ -228,6 +235,7 @@ body {
   -o-transition: 250ms ease-in-out;
   transition: 250ms ease-in-out;
 }
+
 #webworks-flyout.active {
   transform: translate3d(0, 0, 0);
 }
@@ -242,4 +250,21 @@ body {
   height: 98%;
   width: 100%;
   border: none;
+}
+
+#webworks-flyout-overlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1031;
+  opacity: 0;
+  background-color:#888;
+}
+
+.webworks-overlayactive {
+  display: block !important;
+  opacity: 0.5 !important;
+  transition: opacity .25s ease-in-out;
 }

@@ -21,13 +21,19 @@
   </head>
   <body>
 	
-	<h1>Login Settings</h1>
+	<h1><img height="100%" id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_sm.png"><button id="closeflyout">X</button></h1>
+
+	<button class="webworkscms_button" onclick="goBack()">Go Back</button>
 
 	<div class="container">
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
-			<a href="{{@BASE}}/admin/settings?page={{@GET.page}}">Go Back</a>
+			<check if="{{@GET.alert}}">
+			<div class="alert">
+				Login settings updated
+			</div>
+			</check>
 
 			<form style="margin-top: 40px;" method="post" action="{{@BASE}}/admin/login-settings">
 				<div class="form-group">
@@ -58,6 +64,7 @@
 		</div>
 	</div>
 
+	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
     <toolbar hidden />
 
   </body>

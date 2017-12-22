@@ -12,7 +12,7 @@ html, body {
 h1 {
   font-size: 22px;
   font-weight: normal;
-  margin: 0 auto;
+  margin: 0 auto 20px 0;
   padding: 10px 0;
   border-bottom: 1px solid !important;
   border-color: #d5d5d5 #a2a2a2 #888888 !important;
@@ -23,7 +23,13 @@ h1 {
   background-image: -webkit-linear-gradient(#eeeeee, #d5d5d5) !important;
   background-image: linear-gradient(#eeeeee, #d5d5d5) !important;
   box-shadow: 0px 1px 1px #085a9b !important;
-  text-align: center;
+}
+
+h1 button {
+  float: right;
+  margin-right: 15px;
+  font-weight: bold;
+  top: 10px;
 }
 
 body > .container-fluid {
@@ -96,5 +102,14 @@ body > .container-fluid {
 }
 
 a.btn-fullwidth {
-  padding: 20px 0 !important;
+  padding: 10px 0 !important;
+}
+
+.alert {
+  font-size: 20px;
+  padding: 10;
+  background-color: #FFEFB9;
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
 }

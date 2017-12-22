@@ -4,9 +4,13 @@
 
 <aside id="webworks-flyout">
 <div id="webworks-flyout-body">
-  <iframe height="100%" width="100%" src="{{@BASE}}/admin/settings?page={{@FILE}}" id="webworks-flyoutframe"></iframe>
+  <iframe style="background-color:transparent" height="100%" width="100%" src="?settings&amp;page={{@FILE}}" id="webworks-flyoutframe" allowtransparency="true"></iframe>
 </div>
 </aside>
+
+<div id="webworks-flyout-overlay">
+
+</div>
 
 <check if="{{@POPUP}}">
   <true>
@@ -104,9 +108,6 @@ function closeRefreshLogout() {
 
 cmsjQuery(function() {
 
-  var mouseX = 0;
-  var mouseY = 0;
-
   cmsjQuery(".editable").append(cmsjQuery("<div class='top border'></div><div class='left border'></div><div class='right border'></div><div class='bottom border'></div>"));
 
   var editors = document.getElementsByClassName("editable");
@@ -130,38 +131,21 @@ cmsjQuery(function() {
       cmsjQuery(evt.currentTarget).css("outline", "10px solid #3682E3");
 
       editor.show();
-
   });
-
-  setInterval(function () {
-      var editors = document.getElementsByClassName("editable");
-
-      for (var i = editors.length - 1; i >= 0; i--)
-      {
-          var nextelement = cmsjQuery(editors[i]).next();
-
-          if (mouseY <= nextelement.position().top || mouseY >= (nextelement.height()+nextelement.position().top))
-          {
-              nextelement.css("outline", "none");
-              cmsjQuery(editors[i]).hide();
-          }
-          else if (mouseX <= nextelement.offset().left || mouseX >= (nextelement.offset().left+nextelement.width()))
-          {
-              nextelement.css("outline", "none");
-              cmsjQuery(editors[i]).hide();
-          }
-      }
-  }, 500);
-
 
   var $flyout = cmsjQuery('#webworks-flyout'),
   $overlay = cmsjQuery('.overlay'),
-  flyoutToggle = cmsjQuery('#webworkscms_admintoolbar #right_div #settingsbtn');
+  flyoutToggle = cmsjQuery('#webworkscms_admintoolbar #left_div #settingsbtn');
+  flyoutOverlay = cmsjQuery('#webworks-flyout-overlay');
+
+  document.flyoutToggle = flyoutToggle;
 
   flyoutToggle.bind("click", function(e) {
     e.preventDefault();
     $flyout.toggleClass('active');
     $overlay.toggleClass('active');
+    flyoutToggle.toggleClass('button-active');
+    flyoutOverlay.toggleClass('webworks-overlayactive');
   });
    
   $overlay.bind("click", function(e) {
@@ -218,8 +202,8 @@ cmsjQuery(function() {
   }
 
   cmsjQuery(window).mousemove(function (evt) {
-      mouseX = evt.pageX;
-      mouseY = evt.pageY;
+      document.mouseX = evt.pageX;
+      document.mouseY = evt.pageY;
   });
 
 });
@@ -230,13 +214,16 @@ cmsjQuery(function() {
 </repeat>
 
 <div id="webworkscms_admintoolbar">
-  <div id="left_div"><img height="100%" id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_sm.png"></div>
+  <div id="left_div">
+    <img id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_icon.png">
+    <a class="button" href="?settings&amp;page={{@FILE}}" id="settingsbtn">Dashboard</a>
+  </div>
   <div id="center_div" style="display: none;"></div>
   <div id="statusbar">
     Loading CMS
   </div>
   <div id="right_div">
-    <a class="button" href="{{@BASE}}/admin/settings?page={{@FILE}}" id="settingsbtn">Settings</a><a id="logoutbtn" class="button" href="{{@BASE}}/logout">Logout</a>
+    <a id="logoutbtn" class="button" href="{{@BASE}}/logout">Logout</a>
   </div>
 </div>
 
@@ -263,6 +250,25 @@ window.onload = function () {
   if (typeof init_inline_ckeditors=="function")
     init_inline_ckeditors();
 
+  setInterval(function () {
+      var editors = document.getElementsByClassName("editable");
+
+      for (var i = editors.length - 1; i >= 0; i--)
+      {
+          var nextelement = cmsjQuery(editors[i]).next();
+
+          if (document.mouseY <= nextelement.position().top || document.mouseY >= (nextelement.height()+nextelement.position().top))
+          {
+              nextelement.css("outline", "none");
+              cmsjQuery(editors[i]).hide();
+          }
+          else if (document.mouseX <= nextelement.offset().left || document.mouseX >= (nextelement.offset().left+nextelement.width()))
+          {
+              nextelement.css("outline", "none");
+              cmsjQuery(editors[i]).hide();
+          }
+      }
+  }, 500);
 
 }
 </script>

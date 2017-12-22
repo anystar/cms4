@@ -623,3 +623,12 @@ function parseDescription($html, $replace=null) {
 	else
 		return null;
 }
+
+function file_put_json ($filename, $contents) {
+
+	check(0, !writable($filename), "Cannot write to ".$filename);
+
+	$file = json_decode(file_get_contents($filename), true);
+	$file[] = $contents;
+	file_put_contents($filename, json_encode($file, JSON_PRETTY_PRINT));
+}

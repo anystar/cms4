@@ -8,16 +8,31 @@ class settings_manager extends prefab {
 
 		$this->settings = $settings;
 
+		if (isset(base::instance()->GET["settings"]))
+		{
+
+			// Load buttons from scripts
+			foreach (base::instance()->SETTINGS["scripts"] as $script) 
+			{
+				if (method_exists($script["class"], "dashboard"))
+				{
+					$methodChecker = new ReflectionMethod($script["class"], "dashboard");
+
+					check (0, !$methodChecker->isStatic(), "Dashboard class is not static for **".$script["class"]."**");
+
+					base::instance()->script_buttons[] = $script["class"]::dashboard($script);
+				}
+			}
+
+			echo Template::instance()->render("/settings-manager/settings-navigation.html", "text/html");
+			exit;
+		}
+
 		if (admin::$signed)
 			$this->routes(base::instance());
 	}
 
 	function routes($f3) {
-
-		$f3->route("GET /admin/settings", function ($f3) {
-
-			echo Template::instance()->render("/settings-manager/settings-navigation.html", "text/html");
-		});
 
 		$f3->route("GET /admin/seo-settings", function ($f3) {
 
@@ -31,7 +46,7 @@ class settings_manager extends prefab {
 			if(preg_match("/<title>(.+)<\/title>/i", $contents, $matches))
 			     $f3->TITLE = $matches[1];
 			else
-			     $f3->TITLE = "";
+			     $f3->TITLE = null;
 
 			$f3->DESCRIPTION = parseDescription($contents);
 			$f3->CANONICAL = $this->settings["canonical-url"];
@@ -52,7 +67,7 @@ class settings_manager extends prefab {
 			$contents = file_get_contents($page);
 
 			$contents = preg_replace("/<title>(.+)<\/title>/i", "<title>".$f3->POST["page-title"]."</title>", $contents);
-			$return = parseDescription($contents, $f3->POST["page-description"]);
+			$return = parseDescription($contents, preg_replace( "/\r|\n/", "", $f3->POST["page-description"]));
 
 			if ($return !== null)
 				$contents = $return;
@@ -72,9 +87,9 @@ class settings_manager extends prefab {
 			}
 
 			// Update canonical address
-			setting("canonical-url", $f3->POST["canonical"]);
+			setting("canonical-url", rtrim($f3->POST["canonical"]), "/");
 
-			$f3->reroute("/admin/seo-settings?page=".$f3->POST["page"]);
+			$f3->reroute("/admin/seo-settings?alert=updated&page=".$f3->POST["page"]);
 
 		});
 
@@ -103,7 +118,14 @@ class settings_manager extends prefab {
 
 			$f3->write(getcwd()."/.cms/settings.json", json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-			$f3->reroute("/admin/login-settings");
+			$f3->reroute("/admin/login-settings?alert=updated");
+		});
+
+
+		$f3->route("GET /admin/dashboard/script.js", function ($f3) {
+
+			echo \Template::instance()->render("/settings-manager/script.js", "application/javascript");
+			$f3->abort();
 		});
 
 	}

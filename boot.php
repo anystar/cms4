@@ -251,10 +251,10 @@ foreach ($f3->SETTINGS["scripts"] as $script) {
 
 	$script["name"] = (array_key_exists("name", $script)) ? $script["name"] : $script["class"];
 
+	$f3->set("SETTINGS.".$script["name"], $script);
+
 	if (isroute($script["routes"]) || !isset($script["routes"]) || isroute("/admin/".$script["name"]) || isroute("/admin/".$script["name"]."/*"))
 	{
-		$f3->set("SETTINGS.".$script["name"], $script);
-
 		if (is_subclass_of($script["class"], "prefab"))
 			$f3->set($script["name"], $script["class"]::instance($script));
 		else
@@ -382,5 +382,20 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 if (!$f3->REDIRECTING)
 	$f3->run();
 
-Mailer::processQueue();
+
+// Process mail queue
+if (isset(Mailer::$queue))
+{
+	if (count(Mailer::$queue) != 0)
+	{	
+		foreach (Mailer::$queue as $mailer)
+		{
+			$mailer->send($mailer->subject);
+			file_put_json(".cms/mail_log.json", $mailer);
+		}
+	}
+}
+
+
+
 new stats ($f3->SETTINGS);

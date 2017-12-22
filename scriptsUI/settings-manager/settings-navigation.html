@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Settings Manager</title>
+	<title>Website Dashboard</title>
 
 	<!-- Bootstrap -->
 	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
@@ -21,23 +21,25 @@
   </head>
   <body>
 	
-	<h1>Website Settings</h1>
+	<h1><img height="100%" id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_sm.png"><button id="closeflyout">X</button></h1>
 
 	<div class="container">
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
-			<a href="{{@BASE}}/admin/login-settings" class="webworkscms_button btn-fullwidth">CMS Login Settings</a>
-			<a id="seosettings" href="{{@BASE}}/admin/seo-settings?page={{@GET.page}}" class="webworkscms_button btn-fullwidth">Search Engine Settings</a>
+			<repeat group="{{@script_buttons}}" value="{{@button}}">
+				{{@button}}
+			</repeat>
 
+			<hr>
+
+			<a href="{{@BASE}}/admin/stats" class="webworkscms_button btn-fullwidth" target="_blank">Statistics</a>
+			<a id="seosettings" href="{{@BASE}}/admin/seo-settings?page={{@FILE}}" class="webworkscms_button btn-fullwidth">Search Engine Settings</a>
+			<a href="{{@BASE}}/admin/login-settings" class="webworkscms_button btn-fullwidth">CMS Login Settings</a>
 		</div>
 	</div>
 
-	<script>
-		var a = document.getElementById('seosettings');
-		a.href = "{{@BASE}}/admin/seo-settings?page="+window.parent.document.currentPage;
-	</script>
-
+	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
     <toolbar hidden />
 
   </body>

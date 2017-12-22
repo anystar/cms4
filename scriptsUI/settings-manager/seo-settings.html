@@ -27,24 +27,40 @@
   </head>
   <body>
 	
-	<h1>Search Engine Settings</h1>
+	<h1><img height="100%" id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_sm.png"><button id="closeflyout">X</button></h1>
+	
+	<button class="webworkscms_button" onclick="goBack()">Go Back</button>
 
 	<div class="container" style="margin-bottom: 80px;">
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
-			<a href="{{@BASE}}/admin/settings?page={{@GET.page}}">Go Back</a>
+			<check if="{{@GET.alert}}">
+			<div class="alert">
+				SEO settings updated
+			</div>
+			</check>
 
 			<form style="margin-top: 40px;" method="post" action="{{@BASE}}/admin/seo-settings?page={{@GET.page}}">
 				<div class="form-group">
-					<label for="website-login-address">Page title</label>
-					<input id="page-title" value="{{@TITLE}}" type="text" class="form-control" name="page-title">
-					<small class="form-text text-muted">Used in web browser and search engines. <a href="https://www.webpagefx.com/blog/web-design/5-common-seo-mistakes-with-web-page-titles/" target="_blank">Learn more</a></small>
+					<label for="website-login-address">Page Title</label>
+
+					<check if="{{@TITLE === NULL}}">
+						<true>
+							<input disabled id="page-title" value="{{@TITLE}}" type="text" class="form-control" name="page-title">
+							<small class="form-text text-danger">Page title disabled for this page</small>							
+						</true>
+
+						<false>
+							<input id="page-title" value="{{@TITLE}}" type="text" class="form-control" name="page-title">
+							<small class="form-text text-muted">Used in web browser and search engines. <a href="https://www.webpagefx.com/blog/web-design/5-common-seo-mistakes-with-web-page-titles/" target="_blank">Learn more</a></small>
+						</false>
+					</check>
 				</div>
 
 				<div class="form-group">
 					<label for="website-login-password">Page description</label>
-					<textarea wrap="soft" rows="8" class="form-control" name="page-description">{{@DESCRIPTION}}</textarea>
+					<textarea rows="8" class="form-control" name="page-description">{{@DESCRIPTION}}</textarea>
 					<small class="form-text text-muted">Used in search engines and linking on social media. <a href="https://www.webpagefx.com/blog/web-design/5-common-seo-mistakes-with-web-page-titles/" target="_blank">Learn more</a></small>
 				</div>
 
@@ -70,6 +86,7 @@
 	</div>
 
 	<script src="{{ @CDN.jquery }}"></script>
+	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
 	<script>
 		var cmsjQuery = jQuery.noConflict(true);
 

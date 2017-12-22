@@ -164,6 +164,17 @@ class admin {
 			$f3->abort();
 		});
 
+		base::instance()->route("GET /admin/logo_icon.png", function ($f3) {
+
+			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_icon.png";
+			header('Content-Type: image/png');
+			header("Content-length: ".filesize($file));
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header("Cache-Control: public"); //HTTP 1.1
+			readfile($file);
+			$f3->abort();
+		});
+
 		base::instance()->route("GET /admin/styles.css", function ($f3) {
 
 			echo \Template::instance()->render("/admin/styles.css", "text/css");

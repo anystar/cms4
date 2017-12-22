@@ -43,12 +43,6 @@ class ckeditor extends prefab {
 			$sentHash = $f3->POST["hash"];
 			$contents = $f3->POST["contents"];
 
-			if ($path != "null" && $filename == "null")
-			{
-				content::set($id, $path, $contents);
-				echo "saved";
-				return;
-			}
 			// Load in to replace contents with
 			$file = file_get_contents(getcwd()."/".$filename);
 
