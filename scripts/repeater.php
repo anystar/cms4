@@ -198,7 +198,7 @@ class repeater {
 	}
 
 	static function dashboard ($settings) {
-		
+
 		if (isroute($settings["routes"]))
 			return '<a target="_blank" href="'.base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
 	}

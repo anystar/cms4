@@ -237,7 +237,7 @@ if (array_key_exists("canonical-url", $f3->SETTINGS))
 
 // Core scripts that always load
 new toolbar($f3->SETTINGS);
-new settings_manager($f3->SETTINGS);
+new dashboard($f3->SETTINGS);
 new version_control($f3->SETTINGS);
 new review($f3->SETTINGS);
 
@@ -391,7 +391,11 @@ if (isset(Mailer::$queue))
 		foreach (Mailer::$queue as $mailer)
 		{
 			$mailer->send($mailer->subject);
-			file_put_json(".cms/mail_log.json", $mailer);
+			
+			//file_put_contents(".cms/mail/test.txt", $mailer->log);
+			//$mailer->save(uniqid().".txt");
+
+			//file_put_json(".cms/mail_log.json", $mailer);
 		}
 	}
 }

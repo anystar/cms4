@@ -20,7 +20,7 @@
 						</span>
 					</td>
 					<td>
-						<check if="{{!@isTitle}}">
+						<check if="{{!@row.isTitle}}">
 							<true>
 								{{@row.name}} <check if="{{@row.note}}">({{@row.note}})</check>
 							</true>
@@ -28,7 +28,7 @@
 								<div style="font-size:16px;font-weight:bold;">{{@row.name}}</div>
 							</false>
 						</check>
-						<check if="{{!@isTitle}}">
+						<check if="{{!@row.isTitle}}">
 						<br>
 						<span style="color: #999;">{{@row.description}}</span>
 						</check>

@@ -1,6 +1,6 @@
 <?php
 
-class settings_manager extends prefab {
+class dashboard extends prefab {
 
 	private $settings;
 
@@ -24,7 +24,7 @@ class settings_manager extends prefab {
 				}
 			}
 
-			echo Template::instance()->render("/settings-manager/settings-navigation.html", "text/html");
+			echo Template::instance()->render("/dashboard/settings-navigation.html", "text/html");
 			exit;
 		}
 
@@ -54,7 +54,7 @@ class settings_manager extends prefab {
 			if (file_exists(getcwd()."/sitemap.txt"))
 				$f3->SITEMAP = file_get_contents(getcwd()."/sitemap.txt");
 
-			echo Template::instance()->render("/settings-manager/seo-settings.html", "text/html");
+			echo Template::instance()->render("/dashboard/seo-settings.html", "text/html");
 		});
 
 		$f3->route("POST /admin/seo-settings", function ($f3) {
@@ -99,7 +99,7 @@ class settings_manager extends prefab {
 			$f3->set("website_login_password", $this->settings["pass"]);
 			$f3->set("contact_email", $this->settings["contact-email"]);
 
-			echo Template::instance()->render("/settings-manager/login-settings.html", "text/html");
+			echo Template::instance()->render("/dashboard/login-settings.html", "text/html");
 		});
 
 		$f3->route("POST /admin/login-settings", function ($f3) {
@@ -124,7 +124,7 @@ class settings_manager extends prefab {
 
 		$f3->route("GET /admin/dashboard/script.js", function ($f3) {
 
-			echo \Template::instance()->render("/settings-manager/script.js", "application/javascript");
+			echo \Template::instance()->render("/dashboard/script.js", "application/javascript");
 			$f3->abort();
 		});
 
