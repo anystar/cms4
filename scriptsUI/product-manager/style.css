@@ -1,0 +1,17 @@
+
+#filter {
+	margin: 0.5rem 0.35rem 2rem 0.35rem !important;
+}
+
+
+.index-product-actions {
+	text-align: right;
+}
+
+#product-list {
+
+}
+
+#product-list .list .row {
+	padding: 0.2rem 0;
+}

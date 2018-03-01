@@ -12,7 +12,7 @@ class repeater {
 		$defaults["class"] = "repeater";
 		$defaults["name"] = "example";
 		$defaults["label"] = "example";
-		$defaults["route"] = "*";
+		$defaults["routes"] = "*";
 		$defaults["template"] = "_products.html";
 
 		check(0, (count($settings) < 3), "**Default example:**", $defaults);

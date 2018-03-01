@@ -1,19 +1,42 @@
 <?php
 
-function setting($name, $value=null, $overwrite=true) {
+function setting($key, $value=null, $overwrite=true) {
 
-	$settings = json_decode(file_get_contents(getcwd() . "/.cms/settings.json"), true);
+	$f3 = base::instance();
+
+	$f3->settings = json_decode(file_get_contents(getcwd() . "/.cms/settings.json"), true);
+
+
+	// Fix up $settings[scripts] array with named indexes
+	$temp = [];
+	foreach ($f3->settings["scripts"] as $script) {
+
+		$indexName = array_key_exists("name", $script) ? $script["name"] : $script["class"];
+		$temp[$indexName] = $script;
+	}
+
+	$f3->set("settings.scripts", $temp);
 
 	// We only want the setting
 	if ($value !== null)
 	{
-		$settings[$name] = $value;
-		file_put_contents(getcwd() . "/.cms/settings.json", json_encode($settings, JSON_PRETTY_PRINT));
-
-		base::instance()->SETTINGS = $settings;
+		if ($f3->exists("settings.".$key) && !$overwrite)
+			return $f3->get("settings.".$key);
 	}
 
-	return $settings[$name];
+	// Set the value
+	$f3->set("settings.".$key, $value);
+
+	$temp = [];
+	foreach ($f3->get("settings.scripts") as $script) {
+		$temp[] = $script;
+	}
+
+	$f3->set("settings.scripts", $temp);
+
+	file_put_contents(getcwd() . "/.cms/settings.json", json_encode($f3->settings, JSON_PRETTY_PRINT));
+
+	return $value;
 }
 
 function redirect ($url) {

@@ -25,9 +25,9 @@ class contactform extends \Prefab {
 		$f3 = base::instance();
 
 		$defaults["class"] = "contactform";
-		$defaults["routes"] = "contact-us.html";
+		$defaults["routes"] = "*";
 		$defaults["sendto"] = "darklocker@gmail.com";
-		$defaults["sendname"] = "Website Enquiry";
+		$defaults["subject"] = "Website Enquiry";
 		$defaults["template"] = "email_template.html";
 		$defaults["success"] = "?success=true";
 		$defaults["recaptcha_privatekey"] = "6LfF9yUUAAAAAFFt9sajMnKFGlmYbVKPsDx9n7wm";
@@ -35,7 +35,6 @@ class contactform extends \Prefab {
 		check(0, (count($settings) < 3), "**Default example:**", $defaults, '`<captcha centered recaptcha="6LfF9yUUAAAAAAQRdSwSfJWCccL0qYGsfzfMBKSM">`', '**Email Template**','`https://gist.github.com/sevn/bc53002c6e3c8b33bf79fd6d868ce2a8`');
 
 		check(0, $settings["sendto"], "No `sendto` set in **".$settings["name"]."** settings");
-		check(0, $settings["sendname"], "No `sendname` set in **".$settings["name"]."** settings");
 		check(0, $settings["template"], "No `template` set in **".$settings["name"]."** settings");
 		check(0, $settings["success"], "No `success` set in **".$settings["name"]."** settings");
 
@@ -179,17 +178,68 @@ class contactform extends \Prefab {
 		return true;
 	}
 
+	function renderDashboard ($f3) {
+
+			$f3->settings = $this->settings;
+
+			echo \Template::instance()->render("/contactform/dashboard.html");
+	}
+
 	function admin_routes () {
 
 		base::instance()->route("GET /admin/".$this->name, function ($f3) {
-
-			echo \Template::instance()->render("/contactform/contact.html");
+			$this->renderDashboard($f3);
 		});
 
+		base::instance()->route("POST /admin/".$this->name."/save-settings", function ($f3) {
+
+			if (filter_var($f3->POST["sendto"], FILTER_VALIDATE_EMAIL)) 
+			{
+				$this->settings["sendto"] = setting("scripts.".$this->name.".sendto", $f3->POST["sendto"]);
+			}
+			else
+			{
+				
+			}
+
+			$this->settings["sendname"] = setting("scripts.".$this->name.".sendname", $f3->POST["sendname"]);
+			$this->settings["subject"] = setting("scripts.".$this->name.".subject", $f3->POST["subject"]);
+
+			$this->renderDashboard($f3);
+		});
+
+		base::instance()->route("GET /admin/contactform/screenshots/gmail.jpg", function ($f3) {
+
+			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/contactform/screenshots/gmail-example-contact-form.jpg";
+			header('Content-Type: image/jpg');
+			header("Content-length: ".filesize($file));
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header("Cache-Control: public"); //HTTP 1.1
+			readfile($file);
+			$f3->abort();
+		});
+
+		base::instance()->route("GET /admin/contactform/screenshots/thunderbird.jpg", function ($f3) {
+
+			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/contactform/screenshots/thunderbird-example-contact-form.jpg";
+			header('Content-Type: image/jpg');
+			header("Content-length: ".filesize($file));
+			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
+			header("Cache-Control: public"); //HTTP 1.1
+			readfile($file);
+			$f3->abort();
+		});
 	}
 
-	function toolbar () {
-		return "<a href='".base::instance()->BASE."/admin/".$this->name."' class='button'>Edit contact settings</a>";
+	static function dashboard ($settings) {
+
+		if (isroute($settings["routes"]))
+		{
+			$settings["name"] = isset($settings["name"]) ? $settings["name"] : "contactform";
+			$settings["label"] = isset($settings["label"]) ? $settings["label"] : "Contact Form";
+
+			return '<a href="'.base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
+		}
 	}
 
 }

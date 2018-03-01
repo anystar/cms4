@@ -104,19 +104,8 @@ class dashboard extends prefab {
 
 		$f3->route("POST /admin/login-settings", function ($f3) {
 
-			$config = json_decode($f3->read(getcwd()."/.cms/settings.json"), true);
-
-			unset($config["user"]);
-			unset($config["pass"]);
-			unset($config["email-contact"]);
-
-			$temp["user"] = $f3->POST["website-login-address"];
-			$temp["pass"] = $f3->POST["website-login-password"];
-			$temp["contact-email"] = $f3->POST["contact-email"];
-
-			$config = array_merge($temp, $config);
-
-			$f3->write(getcwd()."/.cms/settings.json", json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+			setting("user", $f3->POST["website-login-address"]);
+			setting("pass", $f3->POST["website-login-password"]);
 
 			$f3->reroute("/admin/login-settings?alert=updated");
 		});
