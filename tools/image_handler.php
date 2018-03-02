@@ -129,15 +129,11 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	###############################################
 	################ VALIDITY CHECK ###############
 	###############################################
+
 	if ($file == "" || $file == null)
 		base::instance()->error(500, "File argument for saveimg NULL.");
 
 	if (is_array($file)) {
-
-		// When uploading multiple images often some upload fields wont
-		// be set so lets just ignore those.
-		if ($file["tmp_name"] == "")
-			return null;
 
 		if ($file["error"] > 0)
 		{
@@ -155,6 +151,11 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 			// We should always handle this client side so throw a serious error
 			base::instance()->error(500, "Error uploading file ". $phpFileUploadErrors[$file["error"]]);
 		}
+
+		// When uploading multiple images often some upload fields wont
+		// be set so lets just ignore those.
+		if ($file["tmp_name"] == "")
+			return null;
 	}
 	else if (is_string($file))
 	{
@@ -197,11 +198,22 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		$directory = $pi["dirname"];
 	}
 
-	$directory = base::instance()->fixslashes($directory);
-	$directory = ltrim($directory, "/");
-	$directory = rtrim($directory, "/");
 
-	$options["absolute-directory"] = getcwd()."/".$directory;
+	//
+	if ($directory[0] === DIRECTORY_SEPARATOR || preg_match('~\A[A-Z]:(?![^/\\\\])~i',$directory) > 0)
+	{
+		$options["absolute-directory"] = $directory;
+	}
+	else 
+	{
+		// Convert to absolute
+		$directory = base::instance()->fixslashes($directory);
+		$directory = ltrim($directory, "/");
+		$directory = rtrim($directory, "/");
+
+		// Make directory absolute
+		$options["absolute-directory"] = getcwd()."/".$directory;
+	}
 
 	if (!checkdir($options["absolute-directory"]))
 		base::instance()->error(500, "Could not create or read directory provided for saveimg()");
@@ -242,7 +254,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 
 	// Calculating the needed memory
 	$new_memory_limit = $new_memory_limit + floor(($width * $height * 4 * 1.5 + 1048576) / 1048576);
-		
+
 	// Prevent going over the hard limit
 	if ($new_memory_limit > $maxMemoryUsage)
 	    base::instance()->error(500, "We will run out of memory if we process this image! Estimated size: ".$new_memory_limit."M");
@@ -250,7 +262,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	// Updating the default value
 	if ($new_memory_limit > $old_memory_limit)
 		ini_set('memory_limit', $new_memory_limit.'M');
-	
+
 	$new_memory_limit = 0;
 
 	#########################################################

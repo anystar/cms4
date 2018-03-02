@@ -45,30 +45,29 @@
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
-			<form method="post" action="{{@BASE}}/admin/{{@settings.name}}/add-product" id="add-product" class="keepFormData" data-keep-form-data-clear-on-submit="no">
+			<form method="post" action="{{@BASE}}/admin/{{@settings.name}}/add-product" id="add-product" class="keepFormData" data-keep-form-data-clear-on-submit="no" enctype="multipart/form-data">
 
 				<div class="form-group">
 					<label for="productname">Product name</label>
-					<input value="" type="text" class="form-control" id="productname" name="productname">
+					<input value="" type="text" class="form-control" id="productname" name="product_name">
 				</div>
 
 				<div class="form-group">
 					<label for="price">Product price</label>
-					<input value="" type="text" class="form-control" id="price" name="price">
+					<input value="" type="text" class="form-control" id="price" name="product_price">
 				</div>
 
 				<div class="form-group">
 					<label for="description">Product description</label>
-					<textarea rows="8" class="form-control myckeditor" name="description" id="description-ckeditor"></textarea>
+					<textarea rows="8" class="form-control myckeditor" name="product_description" id="description-ckeditor"></textarea>
 				</div>
 
 				<div class="form-group">
 					<label for="product">Primary Image</label>
-					<input name="image" type="file" class="form-control">
+					<input name="product_primary_image" type="file" class="form-control">
 				</div>
 
 				<div class="form-group">
-					<input id="page" type="hidden" name="page" value="{{@GET.page}}">
 					<button class="webworkscms_button btn-fullwidth">Add Product</button>
 				</div>
 			</form>

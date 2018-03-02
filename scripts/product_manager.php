@@ -49,8 +49,8 @@ class product_manager extends prefab {
 		if (!is_dir($settings["folder"]."/product-images")) 
 			mkdir($settings["folder"]."/product-images");
 
-		if (!is_dir($settings["folder"]."/product-images-thumbs")) 
-			mkdir($settings["folder"]."/product-images-thumbs");
+		if (!is_dir($settings["folder"]."/product-images/thumbs")) 
+			mkdir($settings["folder"]."/product-images/thumbs");
 
 		// Deny from product-data folder
 		if (!is_file($settings["folder"]."/product-data/.htaccess"))
@@ -80,6 +80,8 @@ class product_manager extends prefab {
 			$f3->settings = $this->settings;
 			$f3->name = $this->name;
 
+			$f3->products = $this->products->find();
+
 			echo \Template::instance()->render("/product-manager/index.html");
 		});
 
@@ -93,14 +95,35 @@ class product_manager extends prefab {
 
 		base::instance()->route("POST /admin/".$this->name."/add-product", function ($f3) {
 
+			// Product identifier
+			for ($i=0; $i < 10; $i++)
+			{
+				$id = substr(sha1(uniqid("")), -8);
 
-			///$product[""]
+				// Check if see if there is a collision
+				if (!$this->products->find(["@product_id=?", $id]))
+				{	
+					$f3->POST["product_id"] = $id;
+					$id = null;
+					$i = 99;
+				}
+			}
 
+			if ($i != 100)
+				base::instance()->error(500, "We actually collided?");
 
-			//$this->add_product ($product);
+			$primary_image = $f3->FILES["product_primary_image"];
+
+			// Rename
+			$primary_image["name"] = $this->create_product_name("primary", $f3->POST["product_id"], $f3->POST["product_name"], $primary_image["name"]);
+
+			$this->products->copyfrom($f3->POST);
+			$this->products->insert();
+
+			saveimg($primary_image, $this->settings["folder"]."product-images/", $this->settings["image-settings"]);
 
 			// Product successfully added, lets reroute to its manage page
-			$f3->reroute("/admin/".$this->name."/manage-product?product="."productID");
+			$f3->reroute("/admin/".$this->name."/manage-product?product=".$f3->POST["product_id"]);
 
 		});
 
@@ -113,6 +136,8 @@ class product_manager extends prefab {
 		base::instance()->route("GET /admin/".$this->name."/edit-product", function ($f3) {
 			$f3->name = $this->name;
 
+			$f3->product = $this->products->find(["@product_id=?", $f3->GET["product"]])[0];
+
 			echo \Template::instance()->render("/product-manager/edit-product.html");
 		});
 
@@ -122,23 +147,23 @@ class product_manager extends prefab {
 			echo \Template::instance()->render("/product-manager/edit-product.html");
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/add-image", function ($f3) {
+		base::instance()->route("GET /admin/".$this->name."/manage-images", function ($f3) {
 			$f3->name = $this->name;
 
-			echo \Template::instance()->render("/product-manager/add-image.html");
-		});
+			$f3->product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$f3->product_primary_image = $this->primary_image($f3->product);
 
-		base::instance()->route("GET /admin/".$this->name."/arrange-images", function ($f3) {
-			$f3->name = $this->name;
-
-			echo \Template::instance()->render("/product-manager/arrange-images.html");
+			echo \Template::instance()->render("/product-manager/manage-images.html");
 		});
 
 		base::instance()->route("GET /admin/".$this->name."/delete-product", function ($f3) {
 
-			k("delete product ".$f3->GET["product"]);
+			$this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$this->products->erase();
 
-			echo \Template::instance()->reroute("/product-manager/index.html");
+			$this->delete_products_images($this->products->products_id);
+
+			$f3->reroute("/admin/".$this->name);
 		});
 
 		base::instance()->route("GET /admin/product-manager/style.css", function ($f3) {
@@ -154,27 +179,74 @@ class product_manager extends prefab {
 		});
 	}
 
-	function add_product ($product) {
+	function create_product_name ($prefix, $id, $product_name, $filename) {
 
+		$product_name = product_manager::normalizeString($product_name);
+		$filename = product_manager::normalizeString($filename);
 
+		return $prefix."_".$id."_".$product_name."_".$filename;
+	}
 
-		//$this->product
+	function primary_image ($product) {
+
+		$image_folder = $this->settings["folder"]."product-images/";
+
+		$images = glob($image_folder."primary_".$product->product_id."_*");
+
+		// Really should be == 0 or else we have mutliply primary images
+		// if (count($images) > 0)
+		// {
+		// 	finfo($images[0]);
+		// }
 
 	}
 
-	function upload_image ($settings) {
+	function delete_products_images ($id) {
 
+		$image_folder = $this->settings["folder"]."product-images/";
 
-		// Rename images
-		
-		// productname_primary_imgname
+		// Delete primary images
+		$images = glob($image_folder."primary_".$id."_*");
 
+		if ($images != null)
+			foreach ($images as $image)
+				unlink($image);
 
-		// Resize images
+		// Delete primary image thumb
+		$images = glob($image_folder."thumbs/"."thumb_primary_".$id."_*");
 
-		// Save images
+		if ($images != null)
+			foreach ($images as $image)
+				unlink($image);
 
+		// Delete additional images
+		$images = glob($image_folder."additional_".$id."_*");
 
+		if ($images != null)
+			foreach ($images as $image)
+				unlink($image);
+
+		// Delete additional image thumb
+		$images = glob($image_folder."thumbs/"."thumb_additional_".$id."_*");
+
+		if ($images != null)
+			foreach ($images as $image)
+				unlink($image);
+	}
+
+	public static function normalizeString ($str = '')
+	{
+	    $str = strip_tags($str); 
+	    $str = preg_replace('/[\r\n\t ]+/', ' ', $str);
+	    $str = preg_replace('/[\"\*\/\:\<\>\?\'\|]+/', ' ', $str);
+	    $str = strtolower($str);
+	    $str = html_entity_decode( $str, ENT_QUOTES, "utf-8" );
+	    $str = htmlentities($str, ENT_QUOTES, "utf-8");
+	    $str = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $str);
+	    $str = str_replace(' ', '-', $str);
+	    $str = rawurlencode($str);
+	    $str = str_replace('%', '-', $str);
+	    return $str;
 	}
 
 	static function dashboard ($settings) {

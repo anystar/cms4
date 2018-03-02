@@ -33,21 +33,22 @@
 
 				<div class="form-group">
 					<label for="productname">Product name</label>
-					<input value="" type="text" class="form-control" id="productname" name="productname">
+					<input value="{{@product->product_name}}" type="text" class="form-control" id="productname" name="productname">
 				</div>
 
 				<div class="form-group">
 					<label for="price">Product price</label>
-					<input value="" type="text" class="form-control" id="price" name="price">
+					<input value="{{@product->product_price}}" type="text" class="form-control" id="price" name="price">
 				</div>
 
 				<div class="form-group">
 					<label for="description">Product description</label>
-					<textarea rows="8" class="form-control myckeditor" name="description" id="description-ckeditor"></textarea>
+					<textarea rows="8" class="form-control myckeditor" name="description" id="description-ckeditor">{{@product->product_description}}</textarea>
 				</div>
 
 				<div class="form-group">
 					<label for="product">Primary Image</label>
+					
 					<input name="image" type="file" class="form-control">
 				</div>
 

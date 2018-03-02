@@ -37,16 +37,16 @@
  		<input id="filter" placeholder="Filter Products" type="text" class="form-control search">
 
 		<div class="list">
-			<loop from="{{ @i=0 }}" to="{{ @i < 15 }}" step="{{ @i++ }}">
+			<repeat group="{{@products}}" value="{{@product}}">
 
 			<div class="row">
-				<div class="col-8 product-name">Product {{@i}}</div>
+				<div class="col-8 product-name">{{@product->product_name}}</div>
 				<div class="col-4 index-product-actions">
-					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@i}}" class="edit_button">Manage</a>
+					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
 				</div>
 			</div>
 
-			</loop>
+			</repeat>
 
 		</div>
 	</div>
