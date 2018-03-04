@@ -30,7 +30,8 @@
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
-			<h2 class="product-title">My Favoirate Hat</h2>
+			<h2 class="product-title">{{@product.product_name}}</h2>
+			<img src="{{@BASE}}/{{@product.primary_image_thumb}}" class="img-fluid product-image">
 			<a href="{{@BASE}}/admin/{{@name}}/edit-product?product={{@GET.product}}" class="webworkscms_button btn-fullwidth">Edit Basic Details</a>
 			<a href="{{@BASE}}/admin/{{@name}}/manage-images?product={{@GET.product}}" class="webworkscms_button btn-fullwidth">Manage Images</a>
 			<a href="{{@BASE}}/admin/{{@name}}/delete-product?product={{@GET.product}}" class="webworkscms_button btn-fullwidth">Delete Product</a>

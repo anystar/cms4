@@ -23,9 +23,10 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	$defaults["enlarge"] = false;
 	$defaults["quality"] = 100;
 	$defaults["type"] = "jpg/png/gif/auto";
+	$defaults["placeholder"] = "Placeholder Text or False for no placeholder";
 	$defaults["overwrite"] = true;
-	$defaults["mkdir"] = true;
-	$defaults["keep-original"] = true;
+	//$defaults["mkdir"] = true;
+	//$defaults["keep-original"] = true;
 
 	check(0, (count($options) == 0), "**Default example:**", $defaults);
 
@@ -131,12 +132,26 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	###############################################
 
 	if ($file == "" || $file == null)
-		base::instance()->error(500, "File argument for saveimg NULL.");
+	{
+		if ($options["placeholder"])
+			saveplaceholder(null, $directory, $options);
+		else
+			base::instance()->error(500, "File argument for saveimg is NULL.");
+	}
 
 	if (is_array($file)) {
 
 		if ($file["error"] > 0)
 		{
+
+			if ($file["error"] == 4) {
+				if ($options["placeholder"])
+				{
+					saveplaceholder($file["name"], $directory, $options);
+					return;
+				}
+			}
+
 			$phpFileUploadErrors = array(
 			    0 => 'There is no error, the file uploaded with success',
 			    1 => 'The uploaded file exceeds the maximum upload size',
@@ -394,4 +409,25 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		$fill[] = $options;
 
 	return $options;
+}
+
+
+function saveplaceholder ($filename, $directory, $options) {
+
+	if ($filename == null || $filename == "")
+		$filename = "placeholder_".uniqid().".png";
+
+	$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".urlencode($options["placeholder"])."&w=".$options["size"][0]."&h=".$options["size"][1];
+
+	// Ensure size is something.
+	if (($options["size"][0] + $options["size"][1]) > 0)
+		copy($placeholder_path, $directory."/".$filename);
+
+	if (array_key_exists("thumbnail", $options))
+	{
+		$thumb_placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=25&txt=".urlencode($options["placeholder"])."&w=".$options["thumbnail"]["size"][0]."&h=".$options["thumbnail"]["size"][1];
+
+		if (($options["thumbnail"]["size"][0] + $options["thumbnail"]["size"][1]) > 0)
+			copy($thumb_placeholder_path, $directory."/".$options["thumbnail"]["subfolder"]."/thumb_".$filename);
+	}
 }

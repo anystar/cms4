@@ -15,3 +15,8 @@
 #product-list .list .row {
 	padding: 0.2rem 0;
 }
+
+.product-image {
+	display: block;
+	max-width: 200px;
+}

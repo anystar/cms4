@@ -26,46 +26,84 @@ class product_manager extends prefab {
 		$image_defaults["enlarge"] = false;
 		$image_defaults["quality"] = 100;
 		$image_defaults["type"] = "jpg/png/gif/auto";
+		$image_defaults["placeholder"] = "Product Placeholder";
 
 		$defaults["image-settings"] = $image_defaults;
 
 		// Throw the default settings example up
 		check(0, (count($settings) < 3), "**Default example:**", $defaults);
 
-	
 		// Make path absolute
-		$settings["folder"] = getcwd()."/".ltrim($settings["folder"], "/");
+		$settings["absfolder"] = getcwd()."/".ltrim($settings["folder"], "/");
 
 		// Ensure folder and file structure is valid
-		if (!is_dir($settings["folder"]))
-			mkdir($settings["folder"]);
+		if (!is_dir($settings["absfolder"]))
+			mkdir($settings["absfolder"]);
 
-		if (!is_dir($settings["folder"]."/product-data")) 
-			mkdir($settings["folder"]."/product-data");
+		if (!is_dir($settings["absfolder"]."/product-data")) 
+			mkdir($settings["absfolder"]."/product-data");
 
-		if (!is_dir($settings["folder"]."/product-images")) 
-			mkdir($settings["folder"]."/product-images");
+		if (!is_dir($settings["absfolder"]."/product-images")) 
+			mkdir($settings["absfolder"]."/product-images");
 
-		if (!is_dir($settings["folder"]."/product-images")) 
-			mkdir($settings["folder"]."/product-images");
+		if (!is_dir($settings["absfolder"]."/product-images")) 
+			mkdir($settings["absfolder"]."/product-images");
 
-		if (!is_dir($settings["folder"]."/product-images/thumbs")) 
-			mkdir($settings["folder"]."/product-images/thumbs");
+		if (!is_dir($settings["absfolder"]."/product-images/thumbs")) 
+			mkdir($settings["absfolder"]."/product-images/thumbs");
 
 		// Deny from product-data folder
-		if (!is_file($settings["folder"]."/product-data/.htaccess"))
-			file_put_contents($settings["folder"]."/product-data/.htaccess", "Deny From All");
+		if (!is_file($settings["absfolder"]."/product-data/.htaccess"))
+			file_put_contents($settings["absfolder"]."/product-data/.htaccess", "Deny From All");
+
+		$this->settings = $settings;
+		$this->name = $settings["name"];
 
 		$this->jig = new \DB\Jig ($settings["folder"]."/product-data/", \DB\Jig::FORMAT_JSON );
 
 		$this->products = new \DB\Jig\Mapper($this->jig, "products.json");
+		$this->products->onload(function($self){
+			
+			// Get any primary images..
+			$image_folder = $this->settings["absfolder"]."product-images/";
+
+			$images = glob($image_folder."primary_".$self->product_id."_*");
+
+			if (count($images) == 1)
+			{
+				$self->primary_image = rtrim($this->settings["folder"], "/")."/"."product-images/".basename($images[0]);
+				$self->primary_image_file = $images[0];
+			}
+			else
+			{
+				$self->primary_image = "";
+				$self->primary_image_file = "";
+			}
+
+			$image_folder .= "thumbs/";
+
+			if (file_exists($image_folder."thumb_".basename($images[0])))
+			{
+				$self->primary_image_thumb = rtrim($this->settings["folder"], "/")."/"."product-images/thumbs/"."thumb_".basename($images[0]);
+				$self->primary_image_thumb_file = $image_folder."thumb_".basename($images[0]);
+			}
+			else
+			{
+				$self->primary_image_thumb = "";
+				$self->primary_image_thumb_file = "";
+			}
+
+		});
+
+		$this->products->beforeupdate(function ($self) {
+			$self->clear("primary_image");
+			$self->clear("primary_image_file");
+			$self->clear("primary_image_thumb");
+			$self->clear("primary_image_thumb_file");
+		});
 
 		//$data = $this->jig->find();
 
-
-
-		$this->settings = $settings;
-		$this->name = $settings["name"];
 
 		$this->routes(base::instance());
 	}
@@ -115,6 +153,9 @@ class product_manager extends prefab {
 			$primary_image = $f3->FILES["product_primary_image"];
 
 			// Rename
+			if ($primary_image["name"] == "")
+				$primary_image["name"] = "placeholder.png";
+
 			$primary_image["name"] = $this->create_product_name("primary", $f3->POST["product_id"], $f3->POST["product_name"], $primary_image["name"]);
 
 			$this->products->copyfrom($f3->POST);
@@ -130,6 +171,9 @@ class product_manager extends prefab {
 		base::instance()->route("GET /admin/".$this->name."/manage-product", function ($f3) {
 			$f3->name = $this->name;
 
+			$this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$f3->product = $this->products;
+
 			echo \Template::instance()->render("/product-manager/manage-product.html");
 		});
 
@@ -144,24 +188,49 @@ class product_manager extends prefab {
 		base::instance()->route("POST /admin/".$this->name."/edit-product", function ($f3) {
 			$f3->name = $this->name;
 
-			echo \Template::instance()->render("/product-manager/edit-product.html");
+			$product = $this->products->load(["@product_id=?", $f3->POST["product"]]);
+
+			$primary_image = $f3->FILES["product_primary_image"];
+
+			if ($primary_image["name"]!="")
+			{
+				if (file_exists($product->primary_image_file))
+					unlink($product->primary_image_file);
+				if (file_exists($product->primary_image_thumb_file))
+					unlink($product->primary_image_thumb_file);
+
+				$primary_image["name"] = $this->create_product_name("primary", $product->product_id, $product->product_name , $primary_image["name"]);
+				saveimg($primary_image, $this->settings["folder"]."product-images/", $this->settings["image-settings"]);
+			}
+
+			$product->product_name = $f3->POST["product_name"];
+			$product->product_price = $f3->POST["product_price"];
+			$product->product_description = $f3->POST["product_description"];
+
+			$product->update();
+
+			\Base::instance()->reroute("/admin/".$this->name."/edit-product?product=".$f3->POST["product"]);
 		});
 
 		base::instance()->route("GET /admin/".$this->name."/manage-images", function ($f3) {
 			$f3->name = $this->name;
 
 			$f3->product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
-			$f3->product_primary_image = $this->primary_image($f3->product);
+			//$f3->product_primary_image = $this->primary_image($f3->product);
 
 			echo \Template::instance()->render("/product-manager/manage-images.html");
 		});
 
 		base::instance()->route("GET /admin/".$this->name."/delete-product", function ($f3) {
 
-			$this->products->load(["@product_id=?", $f3->GET["product"]]);
-			$this->products->erase();
+			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
 
-			$this->delete_products_images($this->products->products_id);
+			if (file_exists($product->primary_image_file))
+				unlink($product->primary_image_file);
+			if (file_exists($product->primary_image_thumb_file))
+				unlink($product->primary_image_thumb_file);
+
+			$product->erase();
 
 			$f3->reroute("/admin/".$this->name);
 		});
@@ -185,20 +254,6 @@ class product_manager extends prefab {
 		$filename = product_manager::normalizeString($filename);
 
 		return $prefix."_".$id."_".$product_name."_".$filename;
-	}
-
-	function primary_image ($product) {
-
-		$image_folder = $this->settings["folder"]."product-images/";
-
-		$images = glob($image_folder."primary_".$product->product_id."_*");
-
-		// Really should be == 0 or else we have mutliply primary images
-		// if (count($images) > 0)
-		// {
-		// 	finfo($images[0]);
-		// }
-
 	}
 
 	function delete_products_images ($id) {

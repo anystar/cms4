@@ -29,30 +29,32 @@
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
-			<form method="post" action="{{@BASE}}/admin/{{@name}}/edit-product" id="edit-product">
+			<form method="post" action="{{@BASE}}/admin/{{@name}}/edit-product" id="edit-product" enctype="multipart/form-data">
 
 				<div class="form-group">
 					<label for="productname">Product name</label>
-					<input value="{{@product->product_name}}" type="text" class="form-control" id="productname" name="productname">
+					<input value="{{@product->product_name}}" type="text" class="form-control" id="productname" name="product_name">
 				</div>
 
 				<div class="form-group">
 					<label for="price">Product price</label>
-					<input value="{{@product->product_price}}" type="text" class="form-control" id="price" name="price">
+					<input value="{{@product->product_price}}" type="text" class="form-control" id="price" name="product_price">
 				</div>
 
 				<div class="form-group">
 					<label for="description">Product description</label>
-					<textarea rows="8" class="form-control myckeditor" name="description" id="description-ckeditor">{{@product->product_description}}</textarea>
+					<textarea rows="8" class="form-control myckeditor" name="product_description" id="description-ckeditor">{{@product->product_description}}</textarea>
 				</div>
 
 				<div class="form-group">
 					<label for="product">Primary Image</label>
-					
-					<input name="image" type="file" class="form-control">
+					<img src="{{@BASE}}/{{@product.primary_image_thumb}}" class="img-fluid product-image">
+					<input style="margin-top: 10px;" name="product_primary_image" type="file" class="form-control">
+					<small class="form-text text-muted">Current image will be replaced if a file is selected</small>
 				</div>
 
 				<div class="form-group">
+					<input type="hidden" name="product" value="{{@GET.product}}">
 					<button class="webworkscms_button btn-fullwidth">Edit Product</button>
 				</div>
 			</form>
