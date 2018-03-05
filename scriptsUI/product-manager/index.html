@@ -11,6 +11,7 @@
 	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
 	<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
 	<link href="{{@BASE}}/admin/product-manager/style.css" rel="stylesheet">
+	<link href="{{ @CDN.fontawesome_css }}" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -32,11 +33,23 @@
 			<a href="{{@BASE}}/admin/{{@name}}/organise" class="webworkscms_button btn-fullwidth">Edit Collections</a>
 		</div>
 		<div class="col-xs-12">
-			<select class="collection-select" name="collection">
-				<option selected value="all">All products</option>
-				<option value="Kenda">Kenda</option>
-			</select>
-			
+
+			<div class="dropdown">
+				<check if="{{@in_collection}}">
+					<true><button class="btn dropdown-toggle" type="button" data-toggle="dropdown"> {{@in_collection}} <span class="caret"></span></button></true>
+					<false><button class="btn dropdown-toggle" type="button" data-toggle="dropdown"> All products <span class="caret"></span></button></false>
+				</check>
+
+				<ul class="dropdown-menu">
+					<check if="{{@in_collection}}">
+						<true><li><a href="{{@BASE}}/admin/{{@name}}/">All products</a></li></true>
+					</check>
+					<repeat group="{{@collections}}" value="{{@collection}}">
+						<li><a href="{{@BASE}}/admin/{{@name}}/?collection={{@collection->name}}">{{@collection->name}}</a></li>
+					</repeat>
+				</ul>
+			</div>
+
 			<div style="padding-top: 0.5rem;display:none">
 				<a href="{{@BASE}}/admin/{{@name}}/collection-shift-up" class="webworkscms_button btn-small">Shift up</a>
 				<a href="{{@BASE}}/admin/{{@name}}/collection-shift-down" class="webworkscms_button btn-small">Shift down</a>
@@ -48,34 +61,91 @@
 	<div class="container" id="product-list">
  		<input id="filter" placeholder="Filter Products" type="text" class="form-control search">
 
-		<div class="list">
-			<repeat group="{{@products}}" value="{{@product}}">
+ 		<check if="{{@in_collection}}">
+ 			<true>
+			<div class="list" id="sortable">
 
-			<div class="row">
-				<div class="col-8 product-name">{{@product->product_name}}</div>
-				<div class="col-4 index-product-actions">
-					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">X</a> -
-					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
-					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+				<repeat group="{{@products_in_collection}}" value="{{@product}}">
+				<div class="row">
+					<div class="col-8 product-name">
+						<span class="handle"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></span>
+						{{@product->product_name}}
+					</div>
+					<div class="col-4 index-product-actions">
+						<a title="Remove from Collection" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">X</a> -
+						<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
+						<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+					</div>
 				</div>
+				</repeat>
+
 			</div>
 
-			</repeat>
+			<hr class="collection-splitter" />
 
-		</div>
+			<div class="list">
+				<repeat group="{{@products}}" value="{{@product}}">
+				<div class="row not-in-collection">
+					<div class="col-8 product-name">{{@product->product_name}}</div>
+					<div class="col-4 index-product-actions">
+						<a title="Add to collection" href="{{@BASE}}/admin/{{@name}}/collection-add-product?collection={{@in_collection}}&amp;product={{@product->product_id}}" class="edit_button">+</a> -
+						<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
+						<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+					</div>
+				</div>
+				</repeat>
+			</div>
+			</true>
+			<false>
+				<repeat group="{{@products}}" value="{{@product}}">
+				<div class="row">
+					<div class="col-8 product-name">{{@product->product_name}}</div>
+					<div class="col-4 index-product-actions">
+						<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
+						<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+					</div>
+				</div>
+				</repeat>
+			</false>
+		</check>
 	</div>
 
 	<script src="{{ @CDN.jquery }}"></script>
+	<script src="{{ @CDN.jqueryui_js }}"></script>
+	<script src="{{ @CDN.popper_js }}"></script>
+	<script src="{{ @CDN.bootstrap_js }}"></script>
 	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
 	<script src="{{@BASE}}/admin/product-manager/script.js"></script>
 	<script>
-		var options = {
-			valueNames: [ 'product-name' ]
-		};
+		$(function() {
+			var options = {
+				valueNames: [ 'product-name' ]
+			};
 
-		var productList = new List('product-list', options);
+			var productList = new List('product-list', options);
 
-		console.log(productList);
+			$('#sortable').sortable({
+				handle: '.handle',
+				axis: 'y',
+				stop: function (event, ui) {
+					
+					// var parent = $(ui.item).parent(); 
+					
+					// var order = [];
+					// parent.children("tr").each(function () {
+					// 	if ($(this).attr("data-id"))
+					// 	 	order.push($(this).attr("data-id"));
+					// });
+
+					// $.ajax({
+					// 	method: "POST",
+					// 	url: "{{@BASE}}/admin/{{@name}}/reorder",
+					// 	data: { "order": JSON.stringify(order) }
+					// });
+
+				}
+			}).disableSelection();
+		});
 	</script>
 
     <toolbar hidden />

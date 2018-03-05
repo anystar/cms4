@@ -29,10 +29,17 @@
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
+			<switch expr="{{@GET.alert}}">
+				<case value="0">
+					<div class="alert">Product Duplicated</div>
+				</case>
+				<case value="1">
+					<div class="alert">Product updated</div>
+				</case>
+			</switch>
+
 			<check if="{{@GET.alert}}">
-			<div class="alert">
-				Product updated
-			</div>
+
 			</check>
 
 			<form method="post" action="{{@BASE}}/admin/{{@name}}/edit-product" id="edit-product" enctype="multipart/form-data">
@@ -61,7 +68,7 @@
 
 				<div class="form-group">
 					<input type="hidden" name="product" value="{{@GET.product}}">
-					<button class="webworkscms_button btn-fullwidth">Edit Product</button>
+					<button class="webworkscms_button btn-fullwidth">Update Product</button>
 				</div>
 			</form>
 

@@ -119,8 +119,28 @@ class product_manager extends prefab {
 			$f3->settings = $this->settings;
 			$f3->name = $this->name;
 
-			$f3->products = $this->products->find();
+			$f3->collections = $this->collections->find();
 
+			// // Generate collection dropdown array
+			$f3->in_collection = false;
+			foreach ($f3->collections as $collection)
+			{	
+				if ($collection->name == $f3->GET["collection"])
+				{
+					$f3->in_collection = $collection->name;
+					$collection->active = true;
+				}
+				else
+					$collection->active = false;
+			}
+
+			$f3->products_in_collection = $this->products->find(['isset(@collections) && in_array("'.$f3->in_collection.'", @collections)']);
+
+			if ($f3->in_collection)
+				$f3->products = $this->products->find(['isset(@collections) && !in_array("'.$f3->in_collection.'", @collections)']);
+			else
+				$f3->products = $this->products->find();
+			
 			echo \Template::instance()->render("/product-manager/index.html");
 		});
 
@@ -134,22 +154,7 @@ class product_manager extends prefab {
 
 		base::instance()->route("POST /admin/".$this->name."/add-product", function ($f3) {
 
-			// Product identifier
-			for ($i=0; $i < 10; $i++)
-			{
-				$id = substr(sha1(uniqid("")), -8);
-
-				// Check if see if there is a collision
-				if (!$this->products->find(["@product_id=?", $id]))
-				{	
-					$f3->POST["product_id"] = $id;
-					$id = null;
-					$i = 99;
-				}
-			}
-
-			if ($i != 100)
-				base::instance()->error(500, "We actually collided?");
+			$f3->POST["product_id"] = $this->generateID();
 
 			$primary_image = $f3->FILES["product_primary_image"];
 
@@ -223,13 +228,20 @@ class product_manager extends prefab {
 
 		base::instance()->route("GET /admin/".$this->name."/duplicate-product", function ($f3) {
 
+			$this->products->onload(null);
+			
 			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$product->copyto("temp_product");
+			$f3->temp_product["product_id"] = $this->generateID();
+			$product->reset();
+			$product->copyfrom("temp_product");
+			$product->insert();
 
-			$product->save();
+			// Generate new images
+			$primary_image["name"] = $this->create_product_name("primary", $product->product_id, $product->product_name , "placeholder.png");
+			saveimg($primary_image, $this->settings["folder"]."product-images/", $this->settings["image-settings"]);
 
-			k("duplicated?");
-
-			k($product);
+			$f3->reroute("/admin/".$this->name."/edit-product?alert=0&product=".$product->product_id);
 
 		});
 
@@ -261,6 +273,21 @@ class product_manager extends prefab {
 			$this->collections->insert();
 
 			$f3->reroute("/admin/".$this->name."/organise?alert=1&collection=".$this->collections["_id"]);
+		});
+
+		base::instance()->route("GET /admin/".$this->name."/collection-add-product", function ($f3) {
+
+			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+
+			if (!array_key_exists("collections", $product))
+				$product->collections = [];
+
+			if (!in_array($f3->GET["collection"], $product->collections))
+				$product->collections[] = $f3->GET["collection"];
+
+			$product->update();
+
+			$f3->reroute("/admin/".$this->name."/?alert=2&collection=".$f3->GET["collection"]);
 		});
 
 		base::instance()->route("GET /admin/".$this->name."/delete-collection", function ($f3) {
@@ -351,6 +378,25 @@ class product_manager extends prefab {
 	    $str = rawurlencode($str);
 	    $str = str_replace('%', '-', $str);
 	    return $str;
+	}
+
+	function generateID () {
+		// Product identifier
+		for ($i=0; $i < 10; $i++)
+		{
+			$id = substr(sha1(uniqid("")), -8);
+
+			// Check if see if there is a collision
+			if (!$this->products->find(["@product_id=?", $id]))
+			{	
+				return $id;
+				$id = null;
+				$i = 99;
+			}
+		}
+
+		if ($i != 100)
+			base::instance()->error(500, "We actually collided?");
 	}
 
 	static function dashboard ($settings) {

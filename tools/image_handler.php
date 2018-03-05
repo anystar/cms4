@@ -141,6 +141,15 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 
 	if (is_array($file)) {
 
+		if (!array_key_exists("error", $file))
+		{
+			if ($options["placeholder"])
+			{
+				saveplaceholder($file["name"], $directory, $options);
+				return;
+			}
+		}
+
 		if ($file["error"] > 0)
 		{
 
