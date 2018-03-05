@@ -250,6 +250,7 @@ class product_manager extends prefab {
 		base::instance()->route("GET /admin/".$this->name."/organise", function ($f3) {
 			$f3->name = $this->name;
 			$f3->products = $this->products->find();
+			$f3->collections = $this->collections->find();
 
 			echo \Template::instance()->render("/product-manager/organise.html");
 		});

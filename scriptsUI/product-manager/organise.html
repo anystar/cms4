@@ -28,35 +28,21 @@
 
 	<div class="container">
 		<div class="col-xs-12" style="margin-top:30px;">
-			<button href="{{@BASE}}/admin/{{@name}}/add-product" class="webworkscms_button btn-fullwidth">New Collection</button>
-
 			<form method="POST" action="{{@BASE}}/admin/{{@name}}/add-collection">
 	 			<input name="collection_name" id="new-collection" placeholder="New Collection" type="text" class="form-control">
 	 		</form>
 		</div>
-		<div class="col-xs-12">
-			<select class="collection-select" name="collection">
-				<option selected value="Kenda">Kenda</option>
-			</select>
-			
-			<div style="padding-top: 0.5rem">
-				<a href="{{@BASE}}/admin/{{@name}}/collection-shift-up" class="webworkscms_button btn-small">Shift up</a>
-				<a href="{{@BASE}}/admin/{{@name}}/collection-shift-down" class="webworkscms_button btn-small">Shift down</a>
-				<a href="{{@BASE}}/admin/{{@name}}/delete-collection" class="webworkscms_button btn-small">Delete Collection</a>
-			</div>
-		</div>
 	</div>
 
 	<div class="container" id="product-list">
- 		<input id="filter" placeholder="Filter Products" type="text" class="form-control search">
-
 		<div class="list">
-			<repeat group="{{@products}}" value="{{@product}}">
+			<repeat group="{{@collections}}" value="{{@collection}}">
 
 			<div class="row">
-				<div class="col-8 product-name">{{@product->product_name}}</div>
+				<div class="col-8 product-name">{{@collection->name}}</div>
 				<div class="col-4 index-product-actions">
-					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Remove from collection</a>
+					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Empty</a> - 
+					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Delete</a>
 				</div>
 			</div>
 
@@ -68,15 +54,6 @@
 	<script src="{{ @CDN.jquery }}"></script>
 	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
 	<script src="{{@BASE}}/admin/product-manager/script.js"></script>
-	<script>
-		var options = {
-			valueNames: [ 'product-name' ]
-		};
-
-		var productList = new List('product-list', options);
-
-
-	</script>
 
     <toolbar hidden />
 
