@@ -101,6 +101,11 @@ body > .container-fluid {
   border: 1px solid red;
 }
 
+.btn-small {
+  padding: 0.2rem 0.4rem !important;
+  font-size: 14px !important;
+}
+
 a.btn-fullwidth {
   padding: 10px 0 !important;
 }

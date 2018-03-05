@@ -3,6 +3,10 @@
 	margin: 0.5rem 0.35rem 2rem 0.35rem !important;
 }
 
+#new-collection {
+	margin: 0.5rem 0.35rem 0.5rem 0.35rem !important;
+
+}
 
 .index-product-actions {
 	text-align: right;
@@ -19,4 +23,9 @@
 .product-image {
 	display: block;
 	max-width: 200px;
+}
+
+.collection-select {
+	width: 100%;
+	margin: 0.5rem 0.35rem 0 0.35rem !important;
 }

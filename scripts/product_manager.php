@@ -2,8 +2,8 @@
 
 class product_manager extends prefab {
 
-	public $settings, $name;
-	private $jig, $products;
+	public $settings, $name, $products;
+	private $jig;
 
 	function __construct($settings) {
 
@@ -61,6 +61,8 @@ class product_manager extends prefab {
 
 		$this->jig = new \DB\Jig ($settings["folder"]."/product-data/", \DB\Jig::FORMAT_JSON );
 
+		$this->collections = new \DB\Jig\Mapper($this->jig, "collections.json");
+
 		$this->products = new \DB\Jig\Mapper($this->jig, "products.json");
 		$this->products->onload(function($self){
 			
@@ -103,7 +105,6 @@ class product_manager extends prefab {
 		});
 
 		//$data = $this->jig->find();
-
 
 		$this->routes(base::instance());
 	}
@@ -209,16 +210,27 @@ class product_manager extends prefab {
 
 			$product->update();
 
-			\Base::instance()->reroute("/admin/".$this->name."/edit-product?product=".$f3->POST["product"]);
+			\Base::instance()->reroute("/admin/".$this->name."/edit-product?alert=1&product=".$f3->POST["product"]);
 		});
 
 		base::instance()->route("GET /admin/".$this->name."/manage-images", function ($f3) {
 			$f3->name = $this->name;
 
 			$f3->product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
-			//$f3->product_primary_image = $this->primary_image($f3->product);
 
 			echo \Template::instance()->render("/product-manager/manage-images.html");
+		});
+
+		base::instance()->route("GET /admin/".$this->name."/duplicate-product", function ($f3) {
+
+			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+
+			$product->save();
+
+			k("duplicated?");
+
+			k($product);
+
 		});
 
 		base::instance()->route("GET /admin/".$this->name."/delete-product", function ($f3) {
@@ -233,6 +245,42 @@ class product_manager extends prefab {
 			$product->erase();
 
 			$f3->reroute("/admin/".$this->name);
+		});
+
+		base::instance()->route("GET /admin/".$this->name."/organise", function ($f3) {
+			$f3->name = $this->name;
+			$f3->products = $this->products->find();
+
+			echo \Template::instance()->render("/product-manager/organise.html");
+		});
+
+		base::instance()->route("POST /admin/".$this->name."/add-collection", function ($f3) {
+
+			$this->collections->name = $f3->POST["collection_name"];
+			$this->collections->insert();
+
+			$f3->reroute("/admin/".$this->name."/organise?alert=1&collection=".$this->collections["_id"]);
+		});
+
+		base::instance()->route("GET /admin/".$this->name."/delete-collection", function ($f3) {
+
+			k("delete collection");
+
+			$f3->reroute("/admin/".$this->name."/organise?alert=2&collection=".$this->collections["_id"]);
+		});
+
+		base::instance()->route("GET /admin/".$this->name."/collection-shift-up", function ($f3) {
+
+			k("shift collection up");
+
+			$f3->reroute("/admin/".$this->name."/organise?alert=2&collection=".$this->collections["_id"]);
+		});
+
+		base::instance()->route("GET /admin/".$this->name."/collection-shift-down", function ($f3) {
+
+			k("shift collection down");
+
+			$f3->reroute("/admin/".$this->name."/organise?alert=2&collection=".$this->collections["_id"]);
 		});
 
 		base::instance()->route("GET /admin/product-manager/style.css", function ($f3) {
