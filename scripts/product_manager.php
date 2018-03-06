@@ -2,7 +2,7 @@
 
 class product_manager extends prefab {
 
-	public $settings, $name, $products;
+	public $settings, $name, $products, $collections;
 	private $jig;
 
 	function __construct($settings) {
@@ -119,7 +119,7 @@ class product_manager extends prefab {
 			$f3->settings = $this->settings;
 			$f3->name = $this->name;
 
-			$f3->collections = $this->collections->find();
+			$f3->collections = $this->collections->find([], ["order"=>"order SORT_DESC"]);
 
 			// // Generate collection dropdown array
 			$f3->in_collection = false;
@@ -134,10 +134,24 @@ class product_manager extends prefab {
 					$collection->active = false;
 			}
 
-			$f3->products_in_collection = $this->products->find(['isset(@collections) && in_array("'.$f3->in_collection.'", @collections)']);
+			$f3->products_in_collection = $this->products->find(['isset(@collections) && isset(@collections["'.$f3->in_collection.'"])']);
+
+			$rearranged = [];
+			$unorderedIndex = 0;
+			foreach ($f3->products_in_collection as $product)
+			{
+				if ($product->collections[$f3->in_collection] == 0)
+					$rearranged[$unorderedIndex--] = $product;
+				else
+					$rearranged[$product->collections[$f3->in_collection]] = $product;
+			}
+
+			krsort($rearranged);
+
+			$f3->products_in_collection = $rearranged;
 
 			if ($f3->in_collection)
-				$f3->products = $this->products->find(['isset(@collections) && !in_array("'.$f3->in_collection.'", @collections)']);
+				$f3->products = $this->products->find(['isset(@collections) && !isset(@collections["'.$f3->in_collection.'"])']);
 			else
 				$f3->products = $this->products->find();
 			
@@ -164,7 +178,9 @@ class product_manager extends prefab {
 
 			$primary_image["name"] = $this->create_product_name("primary", $f3->POST["product_id"], $f3->POST["product_name"], $primary_image["name"]);
 
-			$this->products->copyfrom($f3->POST);
+			$this->products->copyfrom($f3->POST);	
+			$this->products["collections"] = [];
+
 			$this->products->insert();
 
 			saveimg($primary_image, $this->settings["folder"]."product-images/", $this->settings["image-settings"]);
@@ -262,14 +278,16 @@ class product_manager extends prefab {
 		base::instance()->route("GET /admin/".$this->name."/organise", function ($f3) {
 			$f3->name = $this->name;
 			$f3->products = $this->products->find();
-			$f3->collections = $this->collections->find();
+			$f3->collections = $this->collections->find([], ["order"=>"order SORT_DESC"]);
 
 			echo \Template::instance()->render("/product-manager/organise.html");
 		});
 
 		base::instance()->route("POST /admin/".$this->name."/add-collection", function ($f3) {
 
+			$this->collections->reset();
 			$this->collections->name = $f3->POST["collection_name"];
+			$this->collections->order = 0;
 			$this->collections->insert();
 
 			$f3->reroute("/admin/".$this->name."/organise?alert=1&collection=".$this->collections["_id"]);
@@ -282,33 +300,86 @@ class product_manager extends prefab {
 			if (!array_key_exists("collections", $product))
 				$product->collections = [];
 
-			if (!in_array($f3->GET["collection"], $product->collections))
-				$product->collections[] = $f3->GET["collection"];
+			if (!isset($product->collections[$f3->GET["collection"]]))
+				$product->collections[$f3->GET["collection"]] = 0;
 
 			$product->update();
 
 			$f3->reroute("/admin/".$this->name."/?alert=2&collection=".$f3->GET["collection"]);
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/delete-collection", function ($f3) {
+		base::instance()->route("GET /admin/".$this->name."/collection-remove-product", function ($f3) {
 
-			k("delete collection");
+			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+
+			if (!array_key_exists("collections", $product))
+				$product->collections = [];
+
+			if (!isset($product->collections[$f3->GET["collection"]]))
+				unset($product->collections[$f3->GET["collection"]]);
+
+			$product->update();
+
+			$f3->reroute("/admin/".$this->name."/?alert=3&collection=".$f3->GET["collection"]);
+		});
+
+		base::instance()->route("GET /admin/".$this->name."/collection-delete", function ($f3) {
+
+			$products = $this->products->find(['isset(@collections) && isset(@collections["'.$f3->GET["collection"].'"])']);
+
+			foreach ($products as $product) {
+				unset($product->collections[$f3->GET["collection"]]);
+				$product->update();
+			}
+
+			$collection = $this->collections->load(["@name=?", $f3->GET["collection"]]);
+
+			$collection->erase();
 
 			$f3->reroute("/admin/".$this->name."/organise?alert=2&collection=".$this->collections["_id"]);
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/collection-shift-up", function ($f3) {
+		base::instance()->route("GET /admin/".$this->name."/collection-empty", function ($f3) {
 
-			k("shift collection up");
+			$products = $this->products->find(['isset(@collections) && isset(@collections["'.$f3->GET["collection"].'"])']);
 
-			$f3->reroute("/admin/".$this->name."/organise?alert=2&collection=".$this->collections["_id"]);
+			foreach ($products as $product) {
+				unset($product->collections[$f3->GET["collection"]]);
+				$product->update();
+			}
+
+			$f3->reroute("/admin/".$this->name."/organise?alert=3");
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/collection-shift-down", function ($f3) {
+		base::instance()->route("POST /admin/".$this->name."/collection-order-products", function ($f3) {
 
-			k("shift collection down");
+			$collection = $f3->POST["collection"];
+			$order = json_decode($f3->POST["order"], true);
 
-			$f3->reroute("/admin/".$this->name."/organise?alert=2&collection=".$this->collections["_id"]);
+			foreach ($order as $key=>$product_id) 
+			{
+				$product = $this->products->load(["@product_id=?", $product_id]);
+
+				$product->collections[$collection] = count($order)-$key;
+				$product->update();
+			}
+
+			exit();
+		});
+
+		base::instance()->route("POST /admin/".$this->name."/collection-order-collections", function ($f3) {
+
+			$order = json_decode($f3->POST["order"], true);
+
+			foreach ($order as $key=>$collection)
+			{
+				$collection = $this->collections->load(["@name=?", $collection]);
+
+				$collection->order = count($order)-$key;
+				$collection->update();
+			}
+
+			exit();
 		});
 
 		base::instance()->route("GET /admin/product-manager/style.css", function ($f3) {

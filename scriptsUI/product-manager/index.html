@@ -63,49 +63,57 @@
 
  		<check if="{{@in_collection}}">
  			<true>
-			<div class="list" id="sortable">
+ 			<div id="lista">
+				<div class="list" id="sortable">
 
-				<repeat group="{{@products_in_collection}}" value="{{@product}}">
-				<div class="row">
-					<div class="col-8 product-name">
-						<span class="handle"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></span>
-						{{@product->product_name}}
+					<repeat group="{{@products_in_collection}}" value="{{@product}}">
+					<div data-productid="{{@product->product_id}}" class="row">
+						<div title="{{@product->product_name}}" class="col-8 product-name">
+							<span class="handle"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></span>
+							{{@product->product_name}}
+						</div>
+						<div class="col-4 index-product-actions">
+							<a title="Remove from Collection" href="{{@BASE}}/admin/{{@name}}/collection-remove-product?collection={{@in_collection}}&amp;product={{@product->product_id}}" class="edit_button">x</a> -
+							<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/delete-product?product={{@product->product_id}}" class="edit_button">D</a> -
+							<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+						</div>
 					</div>
-					<div class="col-4 index-product-actions">
-						<a title="Remove from Collection" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">X</a> -
-						<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
-						<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
-					</div>
+					</repeat>
+
 				</div>
-				</repeat>
-
 			</div>
 
 			<hr class="collection-splitter" />
 
-			<div class="list">
-				<repeat group="{{@products}}" value="{{@product}}">
-				<div class="row not-in-collection">
-					<div class="col-8 product-name">{{@product->product_name}}</div>
-					<div class="col-4 index-product-actions">
-						<a title="Add to collection" href="{{@BASE}}/admin/{{@name}}/collection-add-product?collection={{@in_collection}}&amp;product={{@product->product_id}}" class="edit_button">+</a> -
-						<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
-						<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+				<div id="listb">
+					<div class="list">
+						<repeat group="{{@products}}" value="{{@product}}">
+						<div data-productid="{{@product->product_id}}" class="row not-in-collection">
+							<div title="{{@product->product_name}}" class="col-8 product-name">{{@product->product_name}}</div>
+							<div class="col-4 index-product-actions">
+								<a title="Add to collection" href="{{@BASE}}/admin/{{@name}}/collection-add-product?collection={{@in_collection}}&amp;product={{@product->product_id}}" class="edit_button">+</a> -
+								<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/delete-product?product={{@product->product_id}}" class="edit_button">D</a> -
+								<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+							</div>
+						</div>
+						</repeat>
 					</div>
 				</div>
-				</repeat>
-			</div>
 			</true>
 			<false>
-				<repeat group="{{@products}}" value="{{@product}}">
-				<div class="row">
-					<div class="col-8 product-name">{{@product->product_name}}</div>
-					<div class="col-4 index-product-actions">
-						<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
-						<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+				<div id="lista">
+					<div class="list">
+						<repeat group="{{@products}}" value="{{@product}}">
+								<div data-productid="{{@product->product_id}}" class="row">
+									<div title="{{@product->product_name}}" class="col-8 product-name">{{@product->product_name}}</div>
+									<div class="col-4 index-product-actions">
+										<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
+										<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+									</div>
+								</div>
+						</repeat>
 					</div>
 				</div>
-				</repeat>
 			</false>
 		</check>
 	</div>
@@ -122,26 +130,34 @@
 				valueNames: [ 'product-name' ]
 			};
 
-			var productList = new List('product-list', options);
+			var list1 = new List("lista", options);
+			var list2 = new List("listb", options);
+
+			$("#filter").keyup(function(){
+				list1.search($(this).val());
+
+				console.log(list2);
+				if (list2.listContainer != null) list2.search($(this).val());
+			});
 
 			$('#sortable').sortable({
 				handle: '.handle',
 				axis: 'y',
 				stop: function (event, ui) {
 					
-					// var parent = $(ui.item).parent(); 
+					var parent = $(ui.item).parent(); 
 					
-					// var order = [];
-					// parent.children("tr").each(function () {
-					// 	if ($(this).attr("data-id"))
-					// 	 	order.push($(this).attr("data-id"));
-					// });
+					var order = [];
+					parent.children(".row").each(function () {
+						if ($(this).attr("data-productid"))
+						 	order.push($(this).attr("data-productid"));
+					});
 
-					// $.ajax({
-					// 	method: "POST",
-					// 	url: "{{@BASE}}/admin/{{@name}}/reorder",
-					// 	data: { "order": JSON.stringify(order) }
-					// });
+					$.ajax({
+						method: "POST",
+						url: "{{@BASE}}/admin/{{@name}}/collection-order-products",
+						data: { "order": JSON.stringify(order), "collection": "{{@GET.collection}}" }
+					});
 
 				}
 			}).disableSelection();

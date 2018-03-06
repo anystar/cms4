@@ -11,6 +11,7 @@
 	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
 	<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
 	<link href="{{@BASE}}/admin/product-manager/style.css" rel="stylesheet">
+	<link href="{{ @CDN.fontawesome_css }}" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -27,6 +28,17 @@
 	<a class="webworkscms_button" href="{{@BASE}}/admin/{{@name}}">Go Back</a>
 
 	<div class="container">
+		<switch expr="{{@GET.alert}}">
+			<case value="2">
+				<div class="alert">Collection Deleted</div>
+			</case>
+			<case value="3">
+				<div class="alert">Collection Emptied</div>
+			</case>
+		</switch>
+	</div>
+
+	<div class="container">
 		<div class="col-xs-12" style="margin-top:30px;">
 			<form method="POST" action="{{@BASE}}/admin/{{@name}}/add-collection">
 	 			<input name="collection_name" id="new-collection" placeholder="New Collection" type="text" class="form-control">
@@ -35,14 +47,14 @@
 	</div>
 
 	<div class="container" id="product-list">
-		<div class="list">
+		<div id="sortable" class="list">
 			<repeat group="{{@collections}}" value="{{@collection}}">
 
-			<div class="row">
-				<div class="col-8 product-name">{{@collection->name}}</div>
+			<div data-collection="{{@collection->name}}" class="row">
+				<div class="col-8 product-name"><span class="handle"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></span> {{@collection->name}}</div>
 				<div class="col-4 index-product-actions">
-					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Empty</a> - 
-					<a href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Delete</a>
+					<a title="Remove all products from collection" href="{{@BASE}}/admin/{{@name}}/collection-empty?collection={{@collection->name}}" class="edit_button">Empty</a> - 
+					<a title="Permanently delete collection" href="{{@BASE}}/admin/{{@name}}/collection-delete?collection={{@collection->name}}" class="edit_button">Delete</a>
 				</div>
 			</div>
 
@@ -52,8 +64,36 @@
 	</div>
 
 	<script src="{{ @CDN.jquery }}"></script>
+	<script src="{{ @CDN.jqueryui_js }}"></script>
 	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
 	<script src="{{@BASE}}/admin/product-manager/script.js"></script>
+
+	<script>
+		$(function() {
+
+			$('#sortable').sortable({
+				handle: '.handle',
+				axis: 'y',
+				stop: function (event, ui) {
+					
+					var parent = $(ui.item).parent(); 
+					
+					var order = [];
+					parent.children(".row").each(function () {
+						if ($(this).attr("data-collection"))
+						 	order.push($(this).attr("data-collection"));
+					});
+
+					$.ajax({
+						method: "POST",
+						url: "{{@BASE}}/admin/{{@name}}/collection-order-collections",
+						data: { "order": JSON.stringify(order) }
+					});
+
+				}
+			}).disableSelection();
+		});
+	</script>
 
     <toolbar hidden />
 

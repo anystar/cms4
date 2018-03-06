@@ -20,6 +20,12 @@
 	padding: 0.2rem 0;
 }
 
+#product-list .list .row .product-name {
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .product-image {
 	display: block;
 	max-width: 200px;
