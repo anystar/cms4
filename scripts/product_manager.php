@@ -382,6 +382,15 @@ class product_manager extends prefab {
 			exit();
 		});
 
+		base::instance()->route("POST /admin/".$this->name."/collection-rename", function ($f3) {
+
+			$collection = $this->collections->load(["@name=?", $f3->POST["old"]]);
+			$collection->name = $f3->POST["new"];
+			$collection->update();
+
+			exit();
+		});
+
 		base::instance()->route("GET /admin/product-manager/style.css", function ($f3) {
 
 			echo \Template::instance()->render("/product-manager/style.css", "text/css");
