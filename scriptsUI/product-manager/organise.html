@@ -51,7 +51,7 @@
 			<repeat group="{{@collections}}" value="{{@collection}}">
 
 			<div data-collection="{{@collection->name}}" class="row">
-				<div class="col-8 product-name"><span class="handle"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></span> {{@collection->name}}</div>
+				<div class="col-8 product-name"><span class="handle"><i class="fa fa-ellipsis-v"></i> <i class="fa fa-ellipsis-v"></i></span> <input data-name="{{@collection->name}}" class="form-control collection-name-input" type="text" value="{{@collection->name}}"></div>
 				<div class="col-4 index-product-actions">
 					<a title="Remove all products from collection" href="{{@BASE}}/admin/{{@name}}/collection-empty?collection={{@collection->name}}" class="edit_button">Empty</a> - 
 					<a title="Permanently delete collection" href="{{@BASE}}/admin/{{@name}}/collection-delete?collection={{@collection->name}}" class="edit_button">Delete</a>
@@ -92,6 +92,17 @@
 
 				}
 			}).disableSelection();
+
+			$(".collection-name-input").blur(function (evt) {
+
+				$.ajax({
+					method: "POST",
+					url: "{{@BASE}}/admin/{{@name}}/collection-rename",
+					data: { "new": $(this).val(), "old": $(this).attr("data-name") }
+				}).success(function (evt) {
+					$(this).attr("data-name", $(this).val()); 
+				});
+			});
 		});
 	</script>
 

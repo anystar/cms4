@@ -98,3 +98,8 @@
 	opacity: 1;
 	cursor: move;
 }
+
+.collection-name-input {
+	display: inline-block;
+	width: 90%;
+}
