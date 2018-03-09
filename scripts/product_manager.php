@@ -2,7 +2,7 @@
 
 class product_manager extends prefab {
 
-	public $settings, $name, $products, $collections;
+	public $settings, $name, $products_mapper, $collections;
 	private $jig;
 
 	function __construct($settings) {
@@ -63,8 +63,8 @@ class product_manager extends prefab {
 
 		$this->collections = new \DB\Jig\Mapper($this->jig, "collections.json");
 
-		$this->products = new \DB\Jig\Mapper($this->jig, "products.json");
-		$this->products->onload(function($self){
+		$this->products_mapper = new \DB\Jig\Mapper($this->jig, "products.json");
+		$this->products_mapper->onload(function($self){
 			
 			// Get any primary images..
 			$image_folder = $this->settings["absfolder"]."product-images/";
@@ -97,16 +97,63 @@ class product_manager extends prefab {
 
 		});
 
-		$this->products->beforeupdate(function ($self) {
+		$this->products_mapper->beforeupdate(function ($self) {
 			$self->clear("primary_image");
 			$self->clear("primary_image_file");
 			$self->clear("primary_image_thumb");
 			$self->clear("primary_image_thumb_file");
 		});
-
-		//$data = $this->jig->find();
-
+		
 		$this->routes(base::instance());
+	}
+
+	public function load ($flatten = false) {
+
+		$collections_results = $this->collections->find([], ["order"=>"order SORT_DESC"]);
+
+		$collections = [];
+		foreach ($collections_results as $collection)
+		{
+			$collections[] = $collection->name;
+		}
+
+		$product_results = $this->products_mapper->find();
+
+		$products_in_collection = [];
+		foreach ($collections as $collection)
+		{
+			$products_in_collection[$collection] = [];
+
+			foreach ($product_results as $product)
+			{
+				if (array_key_exists($collection, $product->collections))
+				{
+					if ($product->collections[$collection] == 0)
+						$products_in_collection[$collection][] = $product->cast();
+					else
+						$products_in_collection[$collection][$product->collections[$collection]] = $product->cast();
+				}
+
+				krsort($products_in_collection[$collection]);
+			}
+		}
+
+		$temp = [];
+		if ($flatten)
+		{
+			foreach ($products_in_collection as $collectionName=>$collection)
+			{
+				foreach ($collection as $product)
+				{
+					$product["collection"] = $collectionName;
+					$temp[] = $product;
+				}
+			}
+		
+			$products_in_collection = $temp;
+		}
+
+		return $products_in_collection;
 	}
 
 	function routes($f3) {
@@ -134,7 +181,7 @@ class product_manager extends prefab {
 					$collection->active = false;
 			}
 
-			$f3->products_in_collection = $this->products->find(['isset(@collections) && isset(@collections["'.$f3->in_collection.'"])']);
+			$f3->products_in_collection = $this->products_mapper->find(['isset(@collections) && isset(@collections["'.$f3->in_collection.'"])']);
 
 			$rearranged = [];
 			$unorderedIndex = 0;
@@ -151,9 +198,9 @@ class product_manager extends prefab {
 			$f3->products_in_collection = $rearranged;
 
 			if ($f3->in_collection)
-				$f3->products = $this->products->find(['isset(@collections) && !isset(@collections["'.$f3->in_collection.'"])']);
+				$f3->products = $this->products_mapper->find(['isset(@collections) && !isset(@collections["'.$f3->in_collection.'"])']);
 			else
-				$f3->products = $this->products->find();
+				$f3->products = $this->products_mapper->find();
 			
 			echo \Template::instance()->render("/product-manager/index.html");
 		});
@@ -178,23 +225,23 @@ class product_manager extends prefab {
 
 			$primary_image["name"] = $this->create_product_name("primary", $f3->POST["product_id"], $f3->POST["product_name"], $primary_image["name"]);
 
-			$this->products->copyfrom($f3->POST);	
-			$this->products["collections"] = [];
+			$this->products_mapper->copyfrom($f3->POST);	
+			$this->products_mapper["collections"] = [];
 
-			$this->products->insert();
+			$this->products_mapper->insert();
 
 			saveimg($primary_image, $this->settings["folder"]."product-images/", $this->settings["image-settings"]);
 
 			// Product successfully added, lets reroute to its manage page
 			$f3->reroute("/admin/".$this->name."/manage-product?product=".$f3->POST["product_id"]);
-
+			
 		});
 
 		base::instance()->route("GET /admin/".$this->name."/manage-product", function ($f3) {
 			$f3->name = $this->name;
 
-			$this->products->load(["@product_id=?", $f3->GET["product"]]);
-			$f3->product = $this->products;
+			$this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
+			$f3->product = $this->products_mapper;
 
 			echo \Template::instance()->render("/product-manager/manage-product.html");
 		});
@@ -202,7 +249,7 @@ class product_manager extends prefab {
 		base::instance()->route("GET /admin/".$this->name."/edit-product", function ($f3) {
 			$f3->name = $this->name;
 
-			$f3->product = $this->products->find(["@product_id=?", $f3->GET["product"]])[0];
+			$f3->product = $this->products_mapper->find(["@product_id=?", $f3->GET["product"]])[0];
 
 			echo \Template::instance()->render("/product-manager/edit-product.html");
 		});
@@ -210,7 +257,7 @@ class product_manager extends prefab {
 		base::instance()->route("POST /admin/".$this->name."/edit-product", function ($f3) {
 			$f3->name = $this->name;
 
-			$product = $this->products->load(["@product_id=?", $f3->POST["product"]]);
+			$product = $this->products_mapper->load(["@product_id=?", $f3->POST["product"]]);
 
 			$primary_image = $f3->FILES["product_primary_image"];
 
@@ -237,16 +284,16 @@ class product_manager extends prefab {
 		base::instance()->route("GET /admin/".$this->name."/manage-images", function ($f3) {
 			$f3->name = $this->name;
 
-			$f3->product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$f3->product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
 
 			echo \Template::instance()->render("/product-manager/manage-images.html");
 		});
 
 		base::instance()->route("GET /admin/".$this->name."/duplicate-product", function ($f3) {
 
-			$this->products->onload(null);
+			$this->products_mapper->onload(null);
 			
-			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
 			$product->copyto("temp_product");
 			$f3->temp_product["product_id"] = $this->generateID();
 			$product->reset();
@@ -263,7 +310,7 @@ class product_manager extends prefab {
 
 		base::instance()->route("GET /admin/".$this->name."/delete-product", function ($f3) {
 
-			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
 
 			if (file_exists($product->primary_image_file))
 				unlink($product->primary_image_file);
@@ -277,7 +324,7 @@ class product_manager extends prefab {
 
 		base::instance()->route("GET /admin/".$this->name."/organise", function ($f3) {
 			$f3->name = $this->name;
-			$f3->products = $this->products->find();
+			$f3->products = $this->products_mapper->find();
 			$f3->collections = $this->collections->find([], ["order"=>"order SORT_DESC"]);
 
 			echo \Template::instance()->render("/product-manager/organise.html");
@@ -295,10 +342,13 @@ class product_manager extends prefab {
 
 		base::instance()->route("GET /admin/".$this->name."/collection-add-product", function ($f3) {
 
-			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
 
-			if (!array_key_exists("collections", $product))
+			if (!$product->exists("collections"))
+			{
+				k($product);
 				$product->collections = [];
+			}
 
 			if (!isset($product->collections[$f3->GET["collection"]]))
 				$product->collections[$f3->GET["collection"]] = 0;
@@ -310,7 +360,7 @@ class product_manager extends prefab {
 
 		base::instance()->route("GET /admin/".$this->name."/collection-remove-product", function ($f3) {
 
-			$product = $this->products->load(["@product_id=?", $f3->GET["product"]]);
+			$product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
 
 			if (!array_key_exists("collections", $product))
 				$product->collections = [];
@@ -325,7 +375,7 @@ class product_manager extends prefab {
 
 		base::instance()->route("GET /admin/".$this->name."/collection-delete", function ($f3) {
 
-			$products = $this->products->find(['isset(@collections) && isset(@collections["'.$f3->GET["collection"].'"])']);
+			$products = $this->products_mapper->find(['isset(@collections) && isset(@collections["'.$f3->GET["collection"].'"])']);
 
 			foreach ($products as $product) {
 				unset($product->collections[$f3->GET["collection"]]);
@@ -341,7 +391,7 @@ class product_manager extends prefab {
 
 		base::instance()->route("GET /admin/".$this->name."/collection-empty", function ($f3) {
 
-			$products = $this->products->find(['isset(@collections) && isset(@collections["'.$f3->GET["collection"].'"])']);
+			$products = $this->products_mapper->find(['isset(@collections) && isset(@collections["'.$f3->GET["collection"].'"])']);
 
 			foreach ($products as $product) {
 				unset($product->collections[$f3->GET["collection"]]);
@@ -358,7 +408,7 @@ class product_manager extends prefab {
 
 			foreach ($order as $key=>$product_id) 
 			{
-				$product = $this->products->load(["@product_id=?", $product_id]);
+				$product = $this->products_mapper->load(["@product_id=?", $product_id]);
 
 				$product->collections[$collection] = count($order)-$key;
 				$product->update();
@@ -458,7 +508,7 @@ class product_manager extends prefab {
 			$id = substr(sha1(uniqid("")), -8);
 
 			// Check if see if there is a collision
-			if (!$this->products->find(["@product_id=?", $id]))
+			if (!$this->products_mapper->find(["@product_id=?", $id]))
 			{	
 				return $id;
 				$id = null;
