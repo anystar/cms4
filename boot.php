@@ -122,28 +122,29 @@ else
 	$f3->PAGE_CACHE = 3600;
 
 
-// k(mime_content_type2("http://webserver/test_image_without_extension"));
+if (base::instance()->CONFIG["SKIPCHECKS"])
+{
+	// Require apache rewriting
+	if (function_exists("apache_get_modules"))
+		check(0, !in_array('mod_rewrite', apache_get_modules()), "Please enable mod_rewrite for apache!");
 
-// Require apache rewriting
-if (function_exists("apache_get_modules"))
-	check(0, !in_array('mod_rewrite', apache_get_modules()), "Please enable mod_rewrite for apache!");
+	// Required php extension gd for image operations
+	check(0, !extension_loaded("gd"), "GD extention not loaded!");
 
-// Required php extension gd for image operations
-check(0, !extension_loaded("gd"), "GD extention not loaded!");
+	// Ensure we can write to client folder
+	check(0, !writable(getcwd()), "Cannot write to client folder");
+	check(0, !checkdir(".cms/"), ".cms/ folder does not exist and cannot be created");
 
-// Ensure we can write to client folder
-check(0, !writable(getcwd()), "Cannot write to client folder");
-check(0, !checkdir(".cms/"), ".cms/ folder does not exist and cannot be created");
+	// Require folders for operation
+	check(0, !checkdir(".cms/tmp/"), "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder.");
 
-// Require folders for operation
-check(0, !checkdir(".cms/tmp/"), "<strong>tmp</strong> folder does not exist. Please create tmp folder in client folder.");
+	// Ensure htaccess is set for rewriting
+	checkhtaccess(".htaccess");
 
-// Ensure htaccess is set for rewriting
-checkhtaccess(".htaccess");
-
-// Turn off web access to .cms folder
-if (!file_exists(".cms/.htaccess"))
-	file_put_contents(".cms/.htaccess", "Deny from all");
+	// Turn off web access to .cms folder
+	if (!file_exists(".cms/.htaccess"))
+		file_put_contents(".cms/.htaccess", "Deny from all");
+}
 
 // Redirect away from
 if (isroute("cms.php"))

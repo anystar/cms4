@@ -95,6 +95,12 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		$options["thumbnail"]["subfolder"] = rtrim($options["thumbnail"]["subfolder"], "/");
 	}
 
+	if (strtolower($options["size"][0]) == "auto")
+		$options["size"][0] = 0;
+
+	if (strtolower($options["size"][1]) == "auto")
+		$options["size"][1] = 0;
+
 	$options["size"][0] = ((int)$options["size"][0] > 0) ? (int)$options["size"][0] : NULL;
 	$options["size"][1] = ((int)$options["size"][1] > 0) ? (int)$options["size"][1] : NULL;
 
@@ -106,24 +112,27 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	##################################################
 	// Handle name='image[]' requests.
 
-	if (array_key_exists("tmp_name", $file))
+	if (is_array($file))
 	{
-		if (is_array($file["tmp_name"]))
-		{	
-			foreach ($file as $x=>$item) {
-				foreach ($item as $y=>$value)
-				{
-					$files[$y][$x] = $value;
+		if (array_key_exists("tmp_name", $file))
+		{
+			if (is_array($file["tmp_name"]))
+			{	
+				foreach ($file as $x=>$item) {
+					foreach ($item as $y=>$value)
+					{
+						$files[$y][$x] = $value;
+					}
 				}
-			}
 
-			foreach ($files as $file)
-			{
-				if ($file["tmp_name"] != "")
-					$fill[] = saveimg($file, $directory, $options);
-			}
+				foreach ($files as $file)
+				{
+					if ($file["tmp_name"] != "")
+						$fill[] = saveimg($file, $directory, $options);
+				}
 
-			return true;
+				return true;
+			}
 		}
 	}
 
@@ -183,8 +192,8 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	}
 	else if (is_string($file))
 	{
-
-		// https://www.google.com.au/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwik-NmukdTWAhWHG5QKHcVnAYMQjRwIBw&url=https%3A%2F%2Fwww.nasa.gov%2Ftopics%2Fearth%2Ffeatures%2F2012-alignment.html&psig=AOvVaw2rxdHWm00fR3Xjno6zCfbs&ust=1507109150797713
+		// Replace spaces without convert slashes
+		$file = str_replace(" " , "%20", $file);
 
 		$stream = $file;
 		$file = array();
@@ -192,7 +201,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		if (filter_var($stream, FILTER_VALIDATE_URL))
 		{
 
-			$data = file_get_contents(str_replace(" ", "%20", $stream));
+			$data = file_get_contents($stream);
 
 			if ($data === false)
 				return false;
