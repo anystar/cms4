@@ -49,12 +49,6 @@
 					</repeat>
 				</ul>
 			</div>
-
-			<div style="padding-top: 0.5rem;display:none">
-				<a href="{{@BASE}}/admin/{{@name}}/collection-shift-up" class="webworkscms_button btn-small">Shift up</a>
-				<a href="{{@BASE}}/admin/{{@name}}/collection-shift-down" class="webworkscms_button btn-small">Shift down</a>
-				<a href="{{@BASE}}/admin/{{@name}}/delete-collection" class="webworkscms_button btn-small">Delete Collection</a>
-			</div>
 		</div>
 	</div>
 
@@ -75,7 +69,7 @@
 						<div class="col-4 index-product-actions">
 							<a title="Remove from Collection" href="{{@BASE}}/admin/{{@name}}/collection-remove-product?collection={{@in_collection}}&amp;product={{@product->product_id}}" class="edit_button">x</a> -
 							<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/delete-product?product={{@product->product_id}}" class="edit_button">D</a> -
-							<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+							<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Edit</a>
 						</div>
 					</div>
 					</repeat>
@@ -93,7 +87,7 @@
 							<div class="col-4 index-product-actions">
 								<a title="Add to collection" href="{{@BASE}}/admin/{{@name}}/collection-add-product?collection={{@in_collection}}&amp;product={{@product->product_id}}" class="edit_button">+</a> -
 								<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/delete-product?product={{@product->product_id}}" class="edit_button">D</a> -
-								<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+								<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Edit</a>
 							</div>
 						</div>
 						</repeat>
@@ -108,7 +102,7 @@
 									<div title="{{@product->product_name}}" class="col-8 product-name">{{@product->product_name}}</div>
 									<div class="col-4 index-product-actions">
 										<a title="Delete Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">D</a> -
-										<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Manage</a>
+										<a title="Edit Product" href="{{@BASE}}/admin/{{@name}}/manage-product?product={{@product->product_id}}" class="edit_button">Edit</a>
 									</div>
 								</div>
 						</repeat>
