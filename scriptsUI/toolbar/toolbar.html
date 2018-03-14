@@ -133,11 +133,12 @@ cmsjQuery(function() {
       editor.show();
   });
 
-  var $flyout = cmsjQuery('#webworks-flyout'),
-  $overlay = cmsjQuery('.overlay'),
+  var $flyout = cmsjQuery('#webworks-flyout');
+  $overlay = cmsjQuery('.overlay');
   flyoutToggle = cmsjQuery('#webworkscms_admintoolbar #left_div #settingsbtn');
   flyoutOverlay = cmsjQuery('#webworks-flyout-overlay');
-
+  
+  document.$flyout = $flyout;
   document.flyoutToggle = flyoutToggle;
 
   flyoutToggle.bind("click", function(e) {
