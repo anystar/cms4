@@ -1,5 +1,4 @@
 <?php
-
 ignore_user_abort(true);
 set_time_limit(300); // 5 minutes
 
@@ -122,8 +121,8 @@ else
 	$f3->PAGE_CACHE = 3600;
 
 
-if (base::instance()->CONFIG["SKIPCHECKS"])
-{
+//if (base::instance()->CONFIG["SKIPCHECKS"])
+//{
 	// Require apache rewriting
 	if (function_exists("apache_get_modules"))
 		check(0, !in_array('mod_rewrite', apache_get_modules()), "Please enable mod_rewrite for apache!");
@@ -144,7 +143,7 @@ if (base::instance()->CONFIG["SKIPCHECKS"])
 	// Turn off web access to .cms folder
 	if (!file_exists(".cms/.htaccess"))
 		file_put_contents(".cms/.htaccess", "Deny from all");
-}
+//}
 
 // Redirect away from
 if (isroute("cms.php"))
