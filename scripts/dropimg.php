@@ -24,7 +24,8 @@ class dropimg extends prefab {
 					touch($file);
 
 				if (is_writeable($file)) {
-					echo copy($f3->FILES["file"]["tmp_name"], getcwd()."/".$file);
+					echo $f3->POST["file"];
+					//echo copy($f3->FILES["file"]["tmp_name"], getcwd()."/".$file);
 				}
 			});
 
