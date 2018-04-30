@@ -89,6 +89,9 @@ class checkout extends prefab {
 				return;
 			}
 
+
+			check (0, !array_key_exists("amount_due", $f3->POST), "No ``amount_due`` hidden input field was supplied");
+
 			// A simple check to ensure an amount due was generated
 			if ($f3->POST["amount_due"] <= 0)
 				return;
@@ -96,7 +99,7 @@ class checkout extends prefab {
 			// Send through payment gateway
 			check (0, !array_key_exists("gateway", $f3->POST), "No gateway provided for checkout script");
 			check (0, !class_exists(strtolower($f3->POST["gateway"])."gateway"), "No gateway found for checkout script");
-			check (0, !array_key_exists($f3->POST["gateway"], $this->gateways), "No settings for this gateway");
+			check (0, !array_key_exists($f3->POST["gateway"], $this->gateways), "No settings for this gateway".$f3->POST['gateway']);
 
 			$gateway = $this->gateways[$f3->POST["gateway"]];
 
@@ -133,12 +136,13 @@ class checkout extends prefab {
 	}
 
 	function sendmail ($renderedTemplate, $options) {
+
 		$mailer = new \Mailer();
 		$mailer->addTo($options["sendto"], $options["sendName"]);
 		$mailer->setReply($options["fromAddress"], $options["fromName"]);
 		$mailer->setHTML($renderedTemplate);
 
-		$mailer->queue($options["subject"]);
+		$mailer->queue($options["subject_line"]);
 	}
 
 	function generateReferenceNumber () {
@@ -228,6 +232,54 @@ class EmailGateway {
 	}
 }
 
+class PaypalExpress_CreditCardGateway {
+
+	private $settings;
+
+	function __construct ($checkout, $settings) {
+
+		$this->settings = $settings;
+		$this->complete_payment();
+	}
+
+	function submit ($data) {
+		
+		k("UNFINISHED");
+
+		$f3 = base::instance();
+
+		$action = "Sale";
+		$currency = "AUD";
+		$amount = "12.00";
+		$cardtype = "VISA";
+		$number = $f3->POST["credit_number"];
+		$expiry = $f3->POST["credit_expiry_month"].$f3->POST["credit_expiry_year"];
+		$cvc = $f3->POST["credit_cvc"];
+		$amount_due = $f3->POST["amount_due"];
+
+		$ipaddress = '127.0.0.1';
+
+
+		$paypal = new PayPal($this->settings);
+
+		$result=$paypal->dcc($action, $currency, $amount_due, $cardtype, $number, $expiry, $cvc, $ipaddress);
+
+
+		k($result);
+		
+
+		redirect($result['redirect']);
+	}
+
+	function complete_payment () {
+
+		base::instance()->route("GET /".$this->settings["return"], function ($f3) {
+			redirect($this->settings["success"]);
+		});
+
+	}
+
+}
 
 class PaypalExpressGateway {
 
@@ -235,7 +287,6 @@ class PaypalExpressGateway {
 
 	function __construct ($checkout, $settings) {
 
-		$f3 = base::instance();
 		$this->settings = $settings;
 		$this->checkout = $checkout;
 
@@ -246,18 +297,19 @@ class PaypalExpressGateway {
 		$f3 = base::instance();
 
 		// Need to setup a DNS record somewhere to loopback to my dev machine
-		if ($this->settings["api"]["endpoint"] == "sandbox")
+		if ($this->settings["endpoint"] == "sandbox")
 		{
-			$this->settings["api"]["return"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["api"]["return"];
-			$this->settings["api"]["cancel"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["api"]["cancel"];
+			$this->settings["return"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["return"];
+			$this->settings["cancel"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["cancel"];
 		}
 		else
 		{
-			$this->settings["api"]["return"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$this->settings["api"]["return"];
-			$this->settings["api"]["cancel"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$this->settings["api"]["cancel"];
+			$this->settings["return"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$this->settings["return"];
+			$this->settings["cancel"] = $f3->SCHEME."://".$f3->HOST.$f3->BASE."/".$this->settings["cancel"];
 		}
-		
-		$paypal = new PayPal($this->settings["api"]);
+
+		$paypal = new PayPal($this->settings);
+
 		$result=$paypal->create("Sale", "AUD", $data["amount_due"]);
 
 		$f3->set("SESSION.paypalexpress_data", $data);
@@ -266,14 +318,14 @@ class PaypalExpressGateway {
 	}
 
 	function complete_payment () {
-	base::instance()->route("GET /".$this->settings["api"]["return"], function ($f3) {
-			
+	base::instance()->route("GET /".$this->settings["return"], function ($f3) {
+
 			$data = $f3->get("SESSION.paypalexpress_data");
 
 			$token = $f3->get('GET.token');
 			$payerid = $f3->get('GET.PayerID');
 
-			$paypal = new PayPal($this->settings["api"]);
+			$paypal = new PayPal($this->settings);
 			$result = $paypal->complete($token, $payerid);
 
 			// Check the API call was successful
@@ -284,24 +336,26 @@ class PaypalExpressGateway {
 			}
 
 			$data["paypal_data"] = $result;
+
 			$f3->set("data", $data);
 			$body = \Template::instance()->render($this->settings["receipt_template"], null);
 
 			// Send copy to buyer
 			$options = [];
 			$options["sendName"] = $data["name"];
-			$options["fromName"] = "fromName";
-			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+			$options["fromName"] = $this->settings["send_name"];;
+
+			$options["subject_line"] = Template::instance()->resolve($this->settings["subject_line"], $data);
 			$options["sendto"] = $data["email"];
 
 			$this->checkout->sendmail($body, $options);
 
 			// Send copy too seller
 			$options = [];
-			$options["sendName"] = $this->settings["sender-name"];
+			$options["sendName"] = $this->settings["send_name"];
 			$options["fromName"] = $data["name"];
-			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
-			$options["sendto"] = $settings["send_receipt_copy"];
+			$options["subject_line"] = Template::instance()->resolve($this->settings["subject_line"], $data);
+			$options["sendto"] = $this->settings["send_receipt_copy"];
 
 			$this->checkout->sendmail($body, $options);
 
@@ -309,7 +363,7 @@ class PaypalExpressGateway {
 
 			$f3->clear("SESSION.paypalexpress_data");
 
-			redirect($this->settings["success_page"]);
+			redirect($this->settings["success"]);
 	});}
 }
 
@@ -381,9 +435,16 @@ class paypalButtonTagHandler extends \Template\TagHandler {
 class paypalExpressTagHandler extends \Template\TagHandler {
 
 	function build ($attr, $content) {
-		
+
 		$attr["name"] = "gateway";
-		$attr["value"] = "paypalexpress";
+
+		if ($attr["gateway"] == "creditcard")
+			$attr["value"] = "paypalexpress_creditcard";
+		else
+			$attr["value"] = "paypalexpress";
+
+		unset($attr["gateway"]);
+
 		$attr["type"] = "submit";
 
 		if ($attr!=null)

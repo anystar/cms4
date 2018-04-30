@@ -8,6 +8,17 @@
 function saveimg ($file, $directory, $options, &$fill=null) {
 
 	#######################################################
+	################### HANDLE ARGUMENTS ##################
+	#######################################################
+	if ($directory == "" || $directory == null)
+	{
+		if (array_key_exists("directory", $options)) 
+		{
+			$directory = $options["directory"];
+		}
+	}
+
+	#######################################################
 	################ HANDLE DEFAULT OPTIONS ###############
 	#######################################################
 	$defaults["size"] = "1500x1500";
@@ -26,7 +37,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	$defaults["placeholder"] = "Placeholder Text or False for no placeholder";
 	$defaults["overwrite"] = true;
 	//$defaults["mkdir"] = true;
-	//$defaults["keep-original"] = true;
+	//$defaults["keep-original"] = true;	
 
 	check(0, (count($options) == 0), "**Default example:**", $defaults);
 
@@ -56,10 +67,10 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	$options["mkdir"] = (bool)$options["mkdir"];
 
 	if (!isset($options["type"]))
-		$options["type"] = "jpg";
+		$options["type"] = "auto";
 
 	if (!in_array($options["type"], ["jpg", "jpeg", "png", "gif"]))
-		$options["type"] = "jpg";
+		$options["type"] = "auto";
 
 	if (is_string($options["size"]))
 		$options["size"] = explode("x", $options["size"]);
@@ -95,17 +106,18 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		$options["thumbnail"]["subfolder"] = rtrim($options["thumbnail"]["subfolder"], "/");
 	}
 
-	if (strtolower($options["size"][0]) == "auto")
-		$options["size"][0] = 0;
 
-	if (strtolower($options["size"][1]) == "auto")
-		$options["size"][1] = 0;
+	if (isset($options["size"]))
+	{
+		if (strtolower($options["size"][0]) == "auto")
+			$options["size"][0] = 0;
 
-	$options["size"][0] = ((int)$options["size"][0] > 0) ? (int)$options["size"][0] : NULL;
-	$options["size"][1] = ((int)$options["size"][1] > 0) ? (int)$options["size"][1] : NULL;
+		if (strtolower($options["size"][1]) == "auto")
+			$options["size"][1] = 0;
 
-	if (in_array(NULL, $options["size"]))
-		base::instance()->error(500, "Incorrect size set for image!");
+		$options["size"][0] = ((int)$options["size"][0] > 0) ? (int)$options["size"][0] : NULL;
+		$options["size"][1] = ((int)$options["size"][1] > 0) ? (int)$options["size"][1] : NULL;
+	}
 
 	##################################################
 	################ MULTI FILE UPLOAD ###############
@@ -304,6 +316,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	if (is_array($file)) {
 
 		$pi = pathinfo($file["name"]);
+
 		$options["tmp_name"] = $file["tmp_name"];
 
 		if (!array_key_exists("filename", $options))
@@ -311,7 +324,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		else
 			$options["filename"] = pathinfo($options["filename"])["filename"];
 
-		if ($options["type"] == "auto")
+		if ($options["type"] == "auto" || $options["type"] == "" || !array_key_exists("type", $options))
 			$options["type"] = $pi["extension"];
 
 		if ($options["overwrite"] === false) {
@@ -333,87 +346,98 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	#########################################################
 
 	// Load up GD
-	$GDimg = new \Image($options["tmp_name"], false, "");
 
-	// Ensure GD loaded correctly
-	if ($GDimg->data == false)
-		base::instance()->error(500, "This image type ".$file_type." is not supported");
+	$GDimg = @new Image($options["tmp_name"], false, "");		
 
-	// Resize Image
-	if (array_key_exists("size", $options))
+	if ($GDimg->data == false) 
 	{
-		// Ensure size is something.
-		if (($options["size"][0] + $options["size"][1]) > 0)
-			$GDimg->resize($options["size"][0], $options["size"][1], $options["crop"], $options["enlarge"]);
+
+		// It's likely not an image. Lets just upload it as a file.
+		copy($options["tmp_name"], $options["absolute-directory"]."/".$options["filename"].".".$options["type"]);
 	}
-
-	$options["final-file"] = $options["absolute-directory"]."/".$options["filename"].".".$options["type"];
-
-	// Save image depending on user selected file type
-	switch ($options["type"])
-	{	
-		case "jpg":
-		case "jpeg":
-			$result = imagejpeg($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
-		break;
-		case "png":
-			$result = imagepng($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
-		break;
-		case "gif":
-			$result = imagegif($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
-		break;
-	}
-
-	if ($result == FALSE)
-		base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
-
-	unset($result);
-
-	$GDimg->__destruct();
-	unset($GDimg);
-
-	// Generate Thumbnail
-	if (array_key_exists("thumbnail", $options))
+	else
 	{
-		// Load up GD again for thumbnail
-		$GDimg = new \Image($options["tmp_name"], false, "");
 
-		// Ensure size is something.
-		if (($options["thumbnail"]["size"][0] + $options["thumbnail"]["size"][1]) > 0)
-			$GDimg->resize($options["thumbnail"]["size"][0], $options["thumbnail"]["size"][1], $options["thumbnail"]["crop"], $options["thumbnail"]["enlarge"]);
+		// Ensure GD loaded correctly
+		if ($GDimg->data == false)
+			base::instance()->error(500, "This image type ".$file_type." is not supported");
 
-		$options["thumbnail"]["final-file"] = $options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
+		// Resize Image
+		if (array_key_exists("size", $options))
+		{
+			// Ensure size is something.
+			if (($options["size"][0] + $options["size"][1]) > 0)
+				$GDimg->resize($options["size"][0], $options["size"][1], $options["crop"], $options["enlarge"]);
+		}
+
+		$options["final-file"] = $options["absolute-directory"]."/".$options["filename"].".".$options["type"];
 
 		// Save image depending on user selected file type
 		switch ($options["type"])
 		{	
 			case "jpg":
 			case "jpeg":
-				$result = imagejpeg($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+				$result = imagejpeg($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
 			break;
 			case "png":
-				$result = imagepng($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+				$result = imagepng($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
 			break;
 			case "gif":
-				$result = imagegif($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+				$result = imagegif($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
 			break;
 		}
 
 		if ($result == FALSE)
 			base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
-		else {
-			$options["thumbnail"]["path"] = $directory."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
-			$options["thumbnail"]["filename"] = $options["filename"].".".$options["type"];
-		}
+
+		unset($result);
 
 		$GDimg->__destruct();
 		unset($GDimg);
+
+		// Generate Thumbnail
+		if (array_key_exists("thumbnail", $options))
+		{
+			// Load up GD again for thumbnail
+			$GDimg = new \Image($options["tmp_name"], false, "");
+
+			// Ensure size is something.
+			if (($options["thumbnail"]["size"][0] + $options["thumbnail"]["size"][1]) > 0)
+				$GDimg->resize($options["thumbnail"]["size"][0], $options["thumbnail"]["size"][1], $options["thumbnail"]["crop"], $options["thumbnail"]["enlarge"]);
+
+			$options["thumbnail"]["final-file"] = $options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
+
+			// Save image depending on user selected file type
+			switch ($options["type"])
+			{	
+				case "jpg":
+				case "jpeg":
+					$result = imagejpeg($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+				break;
+				case "png":
+					$result = imagepng($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+				break;
+				case "gif":
+					$result = imagegif($GDimg->data($options["type"], $options["thumbnail"]["quality"]), $options["thumbnail"]["final-file"]);
+				break;
+			}
+
+			if ($result == FALSE)
+				base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
+			else {
+				$options["thumbnail"]["path"] = $directory."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
+				$options["thumbnail"]["filename"] = $options["filename"].".".$options["type"];
+			}
+
+			$GDimg->__destruct();
+			unset($GDimg);
+		}
+
+		unset($result);
+
+		// Set back to previous memory limit
+		ini_set('memory_limit', $old_memory_limit.'M');
 	}
-
-	unset($result);
-
-	// Set back to previous memory limit
-	ini_set('memory_limit', $old_memory_limit.'M');
 
 	if (isset($tmp))
 		fclose($tmp);

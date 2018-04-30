@@ -9,6 +9,7 @@ class repeater {
 
 	function __construct($settings) {
 
+
 		$defaults["class"] = "repeater";
 		$defaults["name"] = "example";
 		$defaults["label"] = "example";
@@ -113,39 +114,51 @@ class repeater {
 		$f3->route('POST /admin/'.$this->name.'/addupdate', function ($f3) {
 
 			// Upload any files
-			if (array_key_exists("image-directory", $this->settings)) {
+			$image_directory = "";
+			if (array_key_exists("image-directory", $this->settings))
 				$image_directory = $this->settings["image-directory"];
 
-				$images = array();
-				
-				foreach ($f3->FILES as $key=>$file)
+			$images = array();
+			
+			foreach ($f3->FILES as $key=>$file)
+			{
+				if ($file["tmp_name"] == "") continue;
+
+
+				if (array_key_exists($key, $this->settings["image-settings"])) 
 				{
-					if ($file["tmp_name"] == "") continue;
-
-					$fill = [];
-					saveimg($file, $image_directory, $this->settings["image-settings"], $fill);
-
-					foreach ($fill as $image)
-					{
-						$tmp["image"] = $image["path"];
-
-						if (array_key_exists("thumbnail", $image))
-							$tmp["thumbnail"] = $image["thumbnail"]["path"];
-
-						$images[$key][] = $tmp;
-					}
+					$image_upload_settings = $this->settings["image-settings"][$key];					
+				} 
+				else if (array_key_exists("size", $this->settings["image-settings"])) 
+				{
+					$image_upload_settings = $this->settings["image-settings"];
 				}
 
-				foreach ($images as $key=>$image)
+
+				$fill = [];
+				saveimg($file, $image_directory, $image_upload_settings, $fill);
+
+				foreach ($fill as $image)
 				{
-					if (count($image) == 1)
-					{
-						$f3->POST[$key]["image"] = $image[0]["image"];
-						$f3->POST[$key]["thumbnail"] = $image[0]["thumbnail"];
-					}
-					else if (count($images) > 1)
-						$f3->POST[$key] = $image;
+					$tmp["image"] = $image["path"];
+
+					if (array_key_exists("thumbnail", $image))
+						$tmp["thumbnail"] = $image["thumbnail"]["path"];
+
+					$images[$key][] = $tmp;
 				}
+
+			}
+
+			foreach ($images as $key=>$image)
+			{
+				if (count($image) == 1)
+				{
+					$f3->POST[$key]["image"] = $image[0]["image"];
+					$f3->POST[$key]["thumbnail"] = $image[0]["thumbnail"];
+				}
+				else if (count($images) > 1)
+					$f3->POST[$key] = $image;
 			}
 
 			if ($f3->POST["data_id"])
@@ -192,6 +205,14 @@ class repeater {
 
 		});
 	}
+
+
+	function save_image ($settings) {
+
+
+			k($settings);
+	}
+
 
 	function toolbar () {
 		return "<a href='".base::instance()->BASE."/admin/".$this->settings["name"]."' class='button'>Add/Edit ".$this->settings["label"]."</a>";
