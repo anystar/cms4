@@ -351,7 +351,6 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 
 	if ($GDimg->data == false) 
 	{
-
 		// It's likely not an image. Lets just upload it as a file.
 		copy($options["tmp_name"], $options["absolute-directory"]."/".$options["filename"].".".$options["type"]);
 	}
@@ -361,6 +360,9 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		// Ensure GD loaded correctly
 		if ($GDimg->data == false)
 			base::instance()->error(500, "This image type ".$file_type." is not supported");
+
+		// Fix EXIF orientation
+		image_fix_orientation($GDimg->data, $options["tmp_name"]);
 
 		// Resize Image
 		if (array_key_exists("size", $options))
@@ -400,6 +402,9 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		{
 			// Load up GD again for thumbnail
 			$GDimg = new \Image($options["tmp_name"], false, "");
+
+			// Fix EXIF orientation
+			image_fix_orientation($GDimg->data, $options["tmp_name"]);
 
 			// Ensure size is something.
 			if (($options["thumbnail"]["size"][0] + $options["thumbnail"]["size"][1]) > 0)
@@ -472,4 +477,25 @@ function saveplaceholder ($filename, $directory, $options) {
 		if (($options["thumbnail"]["size"][0] + $options["thumbnail"]["size"][1]) > 0)
 			copy($thumb_placeholder_path, $directory."/".$options["thumbnail"]["subfolder"]."/thumb_".$filename);
 	}
+}
+
+
+function image_fix_orientation(&$image, $filename) {
+    $exif = exif_read_data($filename);
+
+    if (!empty($exif['Orientation'])) {
+        switch ($exif['Orientation']) {
+            case 3:
+                $image = imagerotate($image, 180, 0);
+                break;
+
+            case 6:
+                $image = imagerotate($image, -90, 0);
+                break;
+
+            case 8:
+                $image = imagerotate($image, 90, 0);
+                break;
+        }
+    }
 }
