@@ -375,7 +375,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		$options["final-file"] = $options["absolute-directory"]."/".$options["filename"].".".$options["type"];
 
 		// Save image depending on user selected file type
-		switch ($options["type"])
+		switch (strtolower($options["type"]))
 		{	
 			case "jpg":
 			case "jpeg":
@@ -413,7 +413,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 			$options["thumbnail"]["final-file"] = $options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
 
 			// Save image depending on user selected file type
-			switch ($options["type"])
+			switch (strtolower($options["type"]))
 			{	
 				case "jpg":
 				case "jpeg":
