@@ -390,7 +390,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		}
 
 		if ($result == FALSE)
-			base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
+			base::instance()->error(500, "Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
 
 		unset($result);
 
@@ -481,6 +481,7 @@ function saveplaceholder ($filename, $directory, $options) {
 
 
 function image_fix_orientation(&$image, $filename) {
+    return;
     
     // Ensure function exists
     if (!function_exists("exif_read_data")) return;
