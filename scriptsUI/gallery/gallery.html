@@ -219,15 +219,24 @@
 
 
 
-	  var width = {{@width}};
-	  var height = {{@height}};
+	  var width = '{{@width}}';
+	  var height = '{{@height}}';
+
+	  if (width == 'auto') 
+	  	width = null;
+	  else
+	  	width = width * 2;
+
+	  if (height == 'auto') 
+	  	height = null;
+	  else
+	  	height = height * 2
 
   		  Dropzone.autoDiscover = false;
 
-			
             new Dropzone("#gallerydropzone", {
-                resizeWidth: width*2,
-                resizeHeight: height*2,
+                resizeWidth: width,
+                resizeHeight: height,
                 resizeQuality: 1,
                 createImageThumbnails: false,
                 uploadMultiple: false,

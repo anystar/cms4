@@ -262,6 +262,7 @@ class gallery {
 			if (is_dir($filepath."/".$file))
 				continue;
 
+			// Skip non-existent files
 			if (!is_file($filepath."/".$file))
 				continue;
 
@@ -270,6 +271,10 @@ class gallery {
 			$temp["thumb"] = base::instance()->BASE."/".$urlpath."/"."thumbs/thumb_".$temp["filename"];
 
 			$img = new Image($filepath."/".$file, null, "");
+
+			// Ensure it loaded
+			if ($img->data == false)
+				continue;
 
 			$temp["width"] = $img->width();
 			$temp["height"] = $img->height();

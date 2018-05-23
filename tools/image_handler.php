@@ -36,8 +36,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	$defaults["type"] = "jpg/png/gif/auto";
 	$defaults["placeholder"] = "Placeholder Text or False for no placeholder";
 	$defaults["overwrite"] = true;
-	//$defaults["mkdir"] = true;
-	//$defaults["keep-original"] = true;	
+	//$defaults["keep-original"] = true;
 
 	check(0, (count($options) == 0), "**Default example:**", $defaults);
 
@@ -119,32 +118,43 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		$options["size"][1] = ((int)$options["size"][1] > 0) ? (int)$options["size"][1] : NULL;
 	}
 
+
 	##################################################
 	################ MULTI FILE UPLOAD ###############
 	##################################################
 	// Handle name='image[]' requests.
 
+	if (array_key_exists("tmp_name", $file))
+	{
+		if (is_array($file["tmp_name"]))
+		{	
+			foreach ($file as $x=>$item) {
+				foreach ($item as $y=>$value)
+				{
+					$files[$y][$x] = $value;
+				}
+			}
+
+			foreach ($files as $file)
+			{
+				if ($file["tmp_name"] != "")
+					$fill[] = saveimg($file, $directory, $options);
+			}
+
+			return true;
+		}
+	}
+
 	if (is_array($file))
 	{
-		if (array_key_exists("tmp_name", $file))
-		{
-			if (is_array($file["tmp_name"]))
-			{	
-				foreach ($file as $x=>$item) {
-					foreach ($item as $y=>$value)
-					{
-						$files[$y][$x] = $value;
-					}
-				}
-
-				foreach ($files as $file)
-				{
-					if ($file["tmp_name"] != "")
-						$fill[] = saveimg($file, $directory, $options);
-				}
-
-				return true;
+		if (!array_key_exists("error", $file))
+		{	
+			foreach ($file as $f)
+			{
+				$fille[] = saveimg($f, $directory, $options);
 			}
+
+			return true;
 		}
 	}
 
@@ -162,6 +172,32 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 
 	if (is_array($file)) {
 
+		// Check if we have a filename
+		if (!array_key_exists("name", $file) || $file["name"] == "")
+		{
+			$file["name"] = "noname.png";
+			$options["overwrite"] = false;
+		}
+
+		// Ensure file actually exists
+		if (!array_key_exists("tmp_name", $file))
+		{
+			if ($options["placeholder"])
+				saveplaceholder($file["name"], $directory, $options);
+
+			return;
+		}
+
+		// Ensure file actually exists
+		if (!file_exists($file["tmp_name"]))
+		{
+			if ($options["placeholder"])
+				saveplaceholder($file["name"], $directory, $options);
+
+			return;
+		}
+
+		// If we have an error
 		if (!array_key_exists("error", $file))
 		{
 			if ($options["placeholder"])
@@ -389,8 +425,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 			break;
 		}
 
-		if ($result == FALSE)
-			base::instance()->error(500, "Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
+		check(500, $result===false, "Failed to save image!", "**Settings passed**", $options);
 
 		unset($result);
 
@@ -444,10 +479,16 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		ini_set('memory_limit', $old_memory_limit.'M');
 	}
 
-	if (isset($tmp))
-		fclose($tmp);
-	else
-		unlink($options["tmp_name"]);
+	
+
+		if (isset($tmp))
+			fclose($tmp);
+		else
+		{
+			if (!array_key_exists("testing", $options))
+				if ($options["testing"] != "true")
+					unlink($options["tmp_name"]);
+		}
 
 	$options["path"] = $directory."/".$options["filename"].".".$options["type"];
 	$options["filename"] = $options["filename"].".".$options["type"];
