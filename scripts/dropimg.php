@@ -6,7 +6,6 @@ class dropimg extends prefab {
 
 		$f3 = base::instance();
 
-
 		if (admin::$signed) {
 
 			$f3->route("POST /admin/dropfile/upload", function ($f3) {
@@ -84,10 +83,17 @@ class dropimg extends prefab {
 
 			$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$asize[0]."x".$asize[1]."&w=".$asize[0]."&h=".$asize[1];
 
-			// Does the file exsist?
+			// Does the file exist?
 			if (!file_exists($path = getcwd()."/".$src)) {
 
-				copy($placeholder_path, $path);
+				$pi = pathinfo($path);
+
+				saveimg($placeholder_path, $pi["dirname"]."/", [
+					"filename" => $pi["basename"],
+					"type" => $pi["extension"]
+				]);
+
+
 			}
 
 			// Have we changed the image size
@@ -95,7 +101,13 @@ class dropimg extends prefab {
 			{
 				if ($size != $value)
 				{
-					copy($placeholder_path, $path);
+					$pi = pathinfo($path);
+
+					saveimg($placeholder_path, $pi["dirname"]."/", [
+						"filename" => $pi["basename"],
+						"type" => $pi["extension"]
+					]);
+
 					Cache::instance()->set("dropimg_".sha1($path), $size);
 				}
 			}
@@ -107,7 +119,9 @@ class dropimg extends prefab {
 			$string .= " data-width='".$asize[0]."'";
 			$string .= " data-height='".$asize[1]."'";
 			$string .= " data-mime='".mime_content_type2($path)."' ";
-			$string .= " src='".$src."?<?php if (is_file('".$src."')) {substr(sha1_file('".$src."'), -8);} else { copy('".$placeholder_path."', '".$path."'); } ?>' ";
+			$string .= " src='".$src."?<?php if (is_file('".$src."')) {substr(sha1_file('".$src."'), -8);} else {";
+			$string .= '$pi = pathinfo("'.$path.'"); saveimg("'.$placeholder_path.'", $pi["dirname"]."/", [ "filename" => $pi["basename"], "type" => $pi["extension"]] );';
+			$string .= "} ?>' ";
 
 			$classFilled = false;
 			foreach ($args["@attrib"] as $key=>$value) {
