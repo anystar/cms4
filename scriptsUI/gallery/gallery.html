@@ -76,7 +76,7 @@
 							<table class="table table-condensed">
 								<tr>
 									<td width="10%">Order</td>
-									<td style="width:{{@image.thumb-size[0]}}px;">Thumb</td>
+									<td style="width:{{@size[0]}}px;">Thumb</td>
 									<td>File name</td>
 									<td style="text-align:center;width:150px;">Tools</td>
 								</tr>
@@ -88,7 +88,7 @@
 										<button class="up"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
 										<button class="down"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
 									</td>
-									<td style="width:{{@image.thumb-size[0]}}px;">
+									<td style="width:{{@size[0]}}px;">
 										<img data-lity data-lity-target="{{@image.url}}" width="300px" src="{{@image.thumb}}" />
 									</td>
 									<td class="filename">
@@ -219,15 +219,24 @@
 
 
 
-	  var width = {{@width}};
-	  var height = {{@height}};
+	  var width = '{{@width}}';
+	  var height = '{{@height}}';
+
+	  if (width == 'auto') 
+	  	width = null;
+	  else
+	  	width = width * 2;
+
+	  if (height == 'auto') 
+	  	height = null;
+	  else
+	  	height = height * 2
 
   		  Dropzone.autoDiscover = false;
 
-			
             new Dropzone("#gallerydropzone", {
-                resizeWidth: width*2,
-                resizeHeight: height*2,
+                resizeWidth: width,
+                resizeHeight: height,
                 resizeQuality: 1,
                 createImageThumbnails: false,
                 uploadMultiple: false,

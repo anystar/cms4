@@ -182,6 +182,7 @@ class version_control extends prefab {
 
 	function canRedo () {
 
+
 		// Are we on a detached head?
 		if ($this->isDetached())
 			return true;
@@ -216,6 +217,7 @@ class version_control extends prefab {
 
 	function save () 
 	{
+
 		// No point continuing if repo is locked
 		if ($this->isLocked())
 			return;
@@ -224,11 +226,6 @@ class version_control extends prefab {
 		if (substr($this->repo->run("status"), 0, 16) == "HEAD detached at")
 		{
 			$this->repo->run("checkout -b temp");
-			if ($this->repo->run("status -s") != "")
-			{
-				$this->repo->add(".");
-				$this->repo->commit("time: ".date("h:i:s"));
-			}
 
 			$this->repo->checkout($this->branch);
 			$this->repo->run("merge temp --strategy-option=theirs");

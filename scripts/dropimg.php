@@ -107,7 +107,7 @@ class dropimg extends prefab {
 			$string .= " data-width='".$asize[0]."'";
 			$string .= " data-height='".$asize[1]."'";
 			$string .= " data-mime='".mime_content_type2($path)."' ";
-			$string .= " src='".$src."?<?=substr(sha1_file('".$src."'), -8);?>' ";
+			$string .= " src='".$src."?<?php if (is_file('".$src."')) {substr(sha1_file('".$src."'), -8);} else { copy('".$placeholder_path."', '".$path."'); } ?>' ";
 
 			$classFilled = false;
 			foreach ($args["@attrib"] as $key=>$value) {
