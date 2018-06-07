@@ -115,10 +115,10 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	if (isset($options["size"]))
 	{
 		if (strtolower($options["size"][0]) == "auto")
-			$options["size"][0] = 0;
+			$options["size"][0] = NULL;
 
 		if (strtolower($options["size"][1]) == "auto")
-			$options["size"][1] = 0;
+			$options["size"][1] = NULL;
 
 		$options["size"][0] = ((int)$options["size"][0] > 0) ? (int)$options["size"][0] : NULL;
 		$options["size"][1] = ((int)$options["size"][1] > 0) ? (int)$options["size"][1] : NULL;
