@@ -220,8 +220,8 @@ if (array_key_exists("canonical-url", $f3->SETTINGS))
 		if (filter_var($f3->SETTINGS["canonical-url"], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED))
 		{
 			if (($f3->SCHEME."://".$f3->HOST) != $f3->SETTINGS["canonical-url"]) {
-				header("Location: ".$f3->SETTINGS["canonical-url"].$f3->URI, true, 301);
-				exit();
+				//header("Location: ".$f3->SETTINGS["canonical-url"].$f3->URI, true, 301);
+				//exit();
 			}
 		}
 	}
