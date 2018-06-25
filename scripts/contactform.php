@@ -15,7 +15,7 @@
  *
  **/
 
-class contactform extends \Prefab {
+class contactform {
 
 	private $name;
 	private $settings;
@@ -49,8 +49,9 @@ class contactform extends \Prefab {
 
 				$f3->clear("contactform_toolbar");
 			} else {
-				$this->admin_routes($f3);
 
+
+				$this->admin_routes($f3);
 			}
 		}
 

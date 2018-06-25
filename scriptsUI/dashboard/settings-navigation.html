@@ -30,17 +30,18 @@
 			<repeat group="{{@script_buttons}}" value="{{@button}}">
 				{{@button}}
 			</repeat>
+			
+			<a id="seosettings" href="{{@BASE}}/admin/seo-settings?page={{@FILE}}" class="webworkscms_button btn-fullwidth">Search Engine Settings</a>
 
 			<hr>
 
-			<a href="{{@BASE}}/admin/stats" class="webworkscms_button btn-fullwidth" target="_blank">Statistics</a>
-			<a id="seosettings" href="{{@BASE}}/admin/seo-settings?page={{@FILE}}" class="webworkscms_button btn-fullwidth">Search Engine Settings</a>
+			<a href="{{@BASE}}/admin/stats" class="webworkscms_button btn-fullwidth" target="_blank">Website Statistics</a>
 			<a href="{{@BASE}}/admin/login-settings" class="webworkscms_button btn-fullwidth">CMS Login Settings</a>
 		</div>
 	</div>
 
 	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
-    <toolbar hidden />
 
+    <toolbar hidden />
   </body>
 </html>
