@@ -401,4 +401,4 @@ new stats ($f3->SETTINGS);
 
 // Delete Error Log
 if (file_exists("error_log"))
-	unlink("error_log");
+	unlink(realpath("error_log"));

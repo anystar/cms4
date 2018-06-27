@@ -81,10 +81,13 @@ class dropimg extends prefab {
 			unset($args["@attrib"]["size"], $args["@attrib"]["resize"]);
 			$asize = explode("x", $size);
 
-			$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$asize[0]."x".$asize[1]."&w=".$asize[0]."&h=".$asize[1];
-
 			// Does the file exist?
 			if (!file_exists($path = getcwd()."/".$src)) {
+
+				if ($asize[0] == 'auto') $asize[0] = $asize[1];
+				if ($asize[1] == 'auto') $asize[1] = $asize[0];
+
+				$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$asize[0]."x".$asize[1]."&w=".$asize[0]."&h=".$asize[1];
 
 				$pi = pathinfo($path);
 
