@@ -31,15 +31,13 @@ class dropimg extends prefab {
 
 				$saveto = $f3->POST["file"];
 				$saveto = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $saveto);
-				$ext = pathinfo(getcwd()."/".$saveto)["extension"];
-				
+
 				$return = saveimg ($f3->FILES["file"], $saveto, [
 					"size"=>[$f3->POST["width"], $f3->POST["height"]],
 					"crop"=>true,
 					"enlarge"=>true,
 					"overwrite"=>true,
-					"quality"=>100,
-					"type"=>$ext
+					"quality"=>90
 				]);
 			});
 
@@ -49,7 +47,7 @@ class dropimg extends prefab {
 					"size" => [$f3->POST["width"], $f3->POST["height"]],
 					"crop" => true,
 					"enlarge" => true,
-					"quality" => 100,
+					"quality" => 90,
 					"type" => "auto",
 					"overwrite" => true
 				));
@@ -75,6 +73,10 @@ class dropimg extends prefab {
 			$src = $args["@attrib"]["src"];
 			unset($args["@attrib"]["src"]);
 
+			// Strip potential url parameters from src field
+			$file = parse_url($src)["path"];
+
+
 			check (1, (!$args["@attrib"]["resize"] && !$args["@attrib"]["size"]), "No size attribute found for dropimg tag");
 
 			$size = $args["@attrib"]["size"] ? $args["@attrib"]["size"] : $args["@attrib"]["resize"];
@@ -82,7 +84,7 @@ class dropimg extends prefab {
 			$asize = explode("x", $size);
 
 			// Does the file exist?
-			if (!file_exists($path = getcwd()."/".$src)) {
+			if (!file_exists($path = getcwd()."/".$file)) {
 
 				if ($asize[0] == 'auto') $asize[0] = $asize[1];
 				if ($asize[1] == 'auto') $asize[1] = $asize[0];
@@ -95,8 +97,6 @@ class dropimg extends prefab {
 					"filename" => $pi["basename"],
 					"type" => $pi["extension"]
 				]);
-
-
 			}
 
 			// Have we changed the image size
@@ -118,11 +118,11 @@ class dropimg extends prefab {
 			$string .= '<?php if (admin::$signed) {?>';
 			$string .= "<img";
 			$string .= " title='".$size."'";	
-			$string .= " data-file='".$src."'";
+			$string .= " data-file='".$file."'";
 			$string .= " data-width='".$asize[0]."'";
 			$string .= " data-height='".$asize[1]."'";
 			$string .= " data-mime='".mime_content_type2($path)."' ";
-			$string .= " src='".$src."?<?php if (is_file('".$src."')) {substr(sha1_file('".$src."'), -8);} else {";
+			$string .= " src='".$src."?<?php if (is_file('".$file."')) {substr(sha1_file('".$file."'), -8);} else {";
 			$string .= '$pi = pathinfo("'.$path.'"); saveimg("'.$placeholder_path.'", $pi["dirname"]."/", [ "filename" => $pi["basename"], "type" => $pi["extension"]] );';
 			$string .= "} ?>' ";
 
@@ -146,7 +146,9 @@ class dropimg extends prefab {
 			
 			$string .= '<?php if (!admin::$signed) {?>';
 			$string .= "<img";
-			$string .= ' src="'.$src.'" ';
+			$string .= ' src="'.$src.'?';
+			$string .= '<?php if (is_file("'.$file.'")) { echo filemtime("'.$file.'"); } ?>';
+			$string .= '" ';
 
 			foreach ($args["@attrib"] as $key=>$value) {
 				$string .= $key.'="'.$value.'" ';

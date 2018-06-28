@@ -273,11 +273,6 @@ function mime_content_type2($filename) {
 		// First method: See what the server said about the file
 		$headers = get_headers($filename, 1);
 
-		// if (array_key_exists("Content-Type", $headers)) {
-		// 	if (in_array($headers["Content-Type"], $mime_types))
-		// 		return $headers["Content-Type"];
-		// }
-
 		// Secound Method: See what URL says about the file
 		$pi = pathinfo($filename);
 		if (array_key_exists("extension", $pi))
@@ -313,7 +308,7 @@ function mime_content_type2($filename) {
     }
     elseif (function_exists('finfo_open')) {
         $finfo = finfo_open(FILEINFO_MIME);
-
+		
         $mimetype = finfo_file($finfo, $filename);
         finfo_close($finfo);
 

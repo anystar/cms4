@@ -425,13 +425,13 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		{	
 			case "jpg":
 			case "jpeg":
-				$result = imagejpeg($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
+				$result = imagejpeg($GDimg->data(), $options["final-file"], $options["quality"]);
 			break;
 			case "png":
-				$result = imagepng($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
+				$result = imagepng($GDimg->data(), $options["final-file"], $options["quality"]);
 			break;
 			case "gif":
-				$result = imagegif($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
+				$result = imagegif($GDimg->data(), $options["final-file"]);
 			break;
 		}
 

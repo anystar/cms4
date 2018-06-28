@@ -65,14 +65,14 @@
             var height = imgs_for_dropzone[i].getAttribute("data-height");
 
             if (width=='auto') 
-                width = null;
+                resizeWidth = null;
             else
-                width = width*2;
+                resizeWidth = width*2;
 
             if (height=='auto') 
-                height = null;
+                resizeHeight = null;
             else
-                height = height*2;
+                resizeHeight = height*2;
 
             var file = imgs_for_dropzone[i].getAttribute("data-file");
             var brightness = imgs_for_dropzone[i].getAttribute("data-brightness");
@@ -87,8 +87,8 @@
                     brightness: brightness,
                     contrast: contrast
                 },
-                resizeWidth: width,
-                resizeHeight: height,
+                resizeWidth: resizeWidth,
+                resizeHeight: resizeHeight,
                 resizeMimeType: mime,
                 resizeMethod: "crop",
                 resizeQuality: 1,
