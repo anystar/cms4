@@ -70,8 +70,9 @@ class dropimg extends prefab {
 			if (!array_key_exists("src", $args["@attrib"]))
 				$f3->error(1, "DropIMG: no src value found");
 
-			$src = $args["@attrib"]["src"];
+			$src = html_entity_decode($args["@attrib"]["src"]);
 			unset($args["@attrib"]["src"]);
+
 
 			// Strip potential url parameters from src field
 			$file = parse_url($src)["path"];

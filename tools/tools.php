@@ -308,7 +308,7 @@ function mime_content_type2($filename) {
     }
     elseif (function_exists('finfo_open')) {
         $finfo = finfo_open(FILEINFO_MIME);
-		
+
         $mimetype = finfo_file($finfo, $filename);
         finfo_close($finfo);
 
