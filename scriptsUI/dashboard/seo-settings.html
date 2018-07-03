@@ -85,20 +85,7 @@
 		</div>
 	</div>
 
-	<script src="{{ @CDN.jquery }}"></script>
 	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
-	<script>
-		var cmsjQuery = jQuery.noConflict(true);
-
-		cmsjQuery( document ).ready(function() {
-			
-			cmsjQuery("#page-title").keyup(function (e) {
-
-				window.parent.document.title = cmsjQuery(this).val();
-			});
-
-		});
-	</script>
 
     <toolbar hidden />
 

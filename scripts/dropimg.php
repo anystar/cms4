@@ -78,7 +78,7 @@ class dropimg extends prefab {
 			$file = parse_url($src)["path"];
 
 
-			check (1, (!$args["@attrib"]["resize"] && !$args["@attrib"]["size"]), "No size attribute found for dropimg tag");
+			check (1, (!$args["@attrib"]["resize"] && !$args["@attrib"]["size"]), "No `resize` attribute found for dropimg tag.");
 
 			$size = $args["@attrib"]["size"] ? $args["@attrib"]["size"] : $args["@attrib"]["resize"];
 			unset($args["@attrib"]["size"], $args["@attrib"]["resize"]);

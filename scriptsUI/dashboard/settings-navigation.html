@@ -31,7 +31,7 @@
 				{{@button}}
 			</repeat>
 			
-			<a id="seosettings" href="{{@BASE}}/admin/seo-settings?page={{@FILE}}" class="webworkscms_button btn-fullwidth">Search Engine Settings</a>
+			<a id="seosettings" href="{{@BASE}}/admin/seo-settings" class="webworkscms_button btn-fullwidth">Search Engine Settings</a>
 
 			<hr>
 
@@ -40,7 +40,21 @@
 		</div>
 	</div>
 
+	<script src="{{ @CDN.jquery }}"></script>
 	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
+
+	<script>
+		var cmsjQuery = jQuery.noConflict(true);
+
+		cmsjQuery( document ).ready(function() {
+			
+			cmsjQuery("#seosettings").click(function (e) {
+				window.location = "{{@BASE}}/admin/seo-settings?page="+window.parent.document.currentPage;
+				return false;
+			});
+
+		});
+	</script>
 
     <toolbar hidden />
   </body>
