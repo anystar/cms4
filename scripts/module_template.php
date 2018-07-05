@@ -1,6 +1,6 @@
 <?php
 
-class module_name extends prefab {
+class module_name {
 
 	function __construct($settings) {
 
