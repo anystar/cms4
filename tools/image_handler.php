@@ -532,7 +532,7 @@ function saveplaceholder ($filename, $directory, $options) {
 
 
 function image_fix_orientation(&$image, $filename) {
-	return;
+
     // Ensure function exists
     if (!function_exists("exif_read_data")) return;
 

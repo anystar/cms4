@@ -12,19 +12,24 @@ class dropimg extends prefab {
 
 				$file = $f3->POST["file"];
 				$file = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $file);
-				$ext = pathinfo(getcwd()."/".$file)["extension"];
 
-				$dir = getcwd()."/".pathinfo($file)["dirname"];
+				j("hit");
 
-				if (!is_dir($dir))
-					mkdir($dir);
+				// Handle regular files
 
-				if (!is_file($file))
-					touch($file);
+					$ext = pathinfo(getcwd()."/".$file)["extension"];
 
-				if (is_writeable($file)) {
-					copy($f3->FILES["file"]["tmp_name"], getcwd()."/".$file);
-				}
+					$dir = getcwd()."/".pathinfo($file)["dirname"];
+
+					if (!is_dir($dir))
+						mkdir($dir);
+
+					if (!is_file($file))
+						touch($file);
+
+					if (is_writeable($file)) {
+						copy($f3->FILES["file"]["tmp_name"], getcwd()."/".$file);
+					}
 			});
 
 			$f3->route("POST /admin/dropimg/upload", function ($f3) {
@@ -165,20 +170,32 @@ class dropimg extends prefab {
 		Template::instance()->extend("dropfile", function ($args) {
 			$f3 = base::instance();
 
-			$string .= '<?php if (admin::$signed) {?>';
+			$hive = array();
 
-			$string .= '<a ';
-
-			$classFilled = false;
 			foreach ($args["@attrib"] as $key=>$value) {
-
 				if ($key=="class") {
-					$string .= 'class="'.$value.' filedropzone" ';
-					$classFilled = true;
+					$hive["extra_attribs"] .= 'class="'.$value.' filedropzone" ';
 				} else {
-					$string .= $key.'="'.$value.'" ';
+					$hive["extra_attribs"] .= $key.'="'.$value.'" ';
 				}
 			}
+
+			if (array_key_exists(0, $args))
+				$hive["button_text"] = $args[0];
+
+			// Get file via Href or Src
+
+			$html = '<button {{@if_image}} data-filetype="{{@filetype}}" data-file="{{@file}}" {{@class}} {{@extra_attribs}}">{{@button_text}}</button>';
+
+			$built = Preview::instance()->resolve($html, $hive);
+
+			echo $built;die;
+
+			$string = '<?php if (admin::$signed) {?>';
+			$string .= $built;
+			$string .= "<?php } ?>";
+
+
 
 			if (!$classFilled)
 				$string .= 'class="filedropzone" ';

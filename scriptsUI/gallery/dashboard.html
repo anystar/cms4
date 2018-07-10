@@ -44,37 +44,7 @@
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
-			<check if="{{@GET.alert}}">
-			<div class="alert">
-				Contact settings updated
-			</div>
-			</check>
-
-			<form style="margin-top: 40px;" method="post" action="{{@BASE}}/admin/{{@settings.name}}/save-settings">
-
-				<div class="form-group">
-					<label for="sendto">Send messages to</label>
-					<input value="{{@settings.sendto}}" type="text" class="form-control" id="sendto" name="sendto" placeholder="info@yourbusiness.com.au">
-					<small class="form-text text-muted">When user submits form send it to this email (Used internally)</small>
-				</div>
-				
-				<div class="form-group">
-					<label for="subject">Subject title</label>
-					<input value="{{@settings.subject}}" type="text" class="form-control" id="subject" name="subject" placeholder="Website Enquiry">
-					<small class="form-text text-muted">What appears when you receive email (Only you see)</small>
-				</div>
-
-				<div style="text-align:center;">
-					<h4 class="screenshotheader">Screenshot examples</h4>
-					<a target="_blank" class="example" href="{{@BASE}}/admin/contactform/screenshots/gmail.jpg">Gmail Example Inbox</a> - 
-					<a target="_blank" class="example" href="{{@BASE}}/admin/contactform/screenshots/thunderbird.jpg">Thurderbird Example Inbox</a>
-				</div>
-
-				<div class="form-group">
-					<input id="page" type="hidden" name="page" value="{{@GET.page}}">
-					<button class="webworkscms_button btn-fullwidth">Save Details</button>
-				</div>
-			</form>
+			
 
 		</div>
 	</div>
