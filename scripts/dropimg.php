@@ -13,8 +13,6 @@ class dropimg extends prefab {
 				$file = $f3->POST["file"];
 				$file = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $file);
 
-				j("hit");
-
 				// Handle regular files
 
 					$ext = pathinfo(getcwd()."/".$file)["extension"];
@@ -172,9 +170,12 @@ class dropimg extends prefab {
 
 			$hive = array();
 
+			if (!array_key_exists("class", $args["@attrib"]))
+				$args["@attrib"]["class"] = "webworks-admin-button";
+
 			foreach ($args["@attrib"] as $key=>$value) {
 				if ($key=="class") {
-					$hive["extra_attribs"] .= 'class="'.$value.' filedropzone" ';
+					$hive["extra_attribs"] .= 'class="'.$value.' filedropzone webworkscms_button btn-fullwidth" ';
 				} else {
 					$hive["extra_attribs"] .= $key.'="'.$value.'" ';
 				}
@@ -184,45 +185,14 @@ class dropimg extends prefab {
 				$hive["button_text"] = $args[0];
 
 			// Get file via Href or Src
+			$hive["file"] = $args["@attrib"]["href"];
+			$hive["filetype"] = mime_content_type2($args["@attrib"]["href"]);
+			$hive["uniqid"] = uniqid("dropfile_");
 
-			$html = '<button {{@if_image}} data-filetype="{{@filetype}}" data-file="{{@file}}" {{@class}} {{@extra_attribs}}">{{@button_text}}</button>';
-
-			$built = Preview::instance()->resolve($html, $hive);
-
-			echo $built;die;
+			$html = '<button {{@if_image}} data-filetype="{{@filetype}}" data-file="{{@file}}" id="{{@uniqid}}" {{@class}} {{@extra_attribs}}>{{@button_text}}</button>';
 
 			$string = '<?php if (admin::$signed) {?>';
-			$string .= $built;
-			$string .= "<?php } ?>";
-
-
-
-			if (!$classFilled)
-				$string .= 'class="filedropzone" ';
-
-			$string .= 'id="'.uniqid("dropfile_").'" ';
-			$string .= 'onclick="return false;" ';
-
-			foreach ($args["@attrib"] as $key=>$value) {
-				$string .= $key.'="'.$value.'" ';
-			}
-
-			$string .= '>';
-			$string .= $args[0];
-			$string .= "</a>";
-			$string .= "<?php } ?>";
-
-			$string .= '<?php if (!admin::$signed) {?>';
-
-			$string .= '<a ';
-
-			foreach ($args["@attrib"] as $key=>$value) {
-				$string .= $key.'="'.$value.'" ';
-			}
-
-			$string .= '>';
-			$string .= $args[0];
-			$string .= "</a>";
+			$string .= Preview::instance()->resolve($html, $hive);
 			$string .= "<?php } ?>";
 
 			return $string;
