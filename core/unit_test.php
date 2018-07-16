@@ -10,13 +10,6 @@ class unit_test {
 
 	function routes($f3) {
 
-		$f3->route("GET /admin/unit-test/create-image", function ($f3) {
-
-			saveplaceholder("image-test.jpg", ".", [ "size"=>[800,600], "placeholder"=>"Test Image" ]);
-
-			$f3->reroute("/image-test");
-		});
-
 		$f3->route("GET /admin/unit-test/delete-image", function ($f3) {
 
 			unlink("image-test.jpg");
@@ -24,6 +17,11 @@ class unit_test {
 		});
 
 		$f3->route("GET /image-test", function ($f3) {
+
+			if (array_key_exists("create-image", $f3->GET))
+			{
+				$f3->show_image = true;
+			}
 
 			if (file_exists("image-test.jpg"))
 			{

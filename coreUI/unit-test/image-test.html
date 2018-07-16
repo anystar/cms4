@@ -38,7 +38,7 @@
 
 		<div class="row">
 			<check if="{{@show_image}}">
-				<dropimg resize="800x650" src="image-test.jpg">
+				<dropimg resize="800xauto" src="image-test.jpg">
 			</check>
 		</div>
 
@@ -52,10 +52,10 @@
 
 		<div class="row">
 			<div class="col-12">
-				<a href="{{@BASE}}/admin/unit-test/create-image" class="webworkscms_button">Create test image</a>
+				<a href="{{@BASE}}/image-test?create-image" class="webworkscms_button">Create test image</a>
 				<a href="{{@BASE}}/admin/unit-test/delete-image" class="webworkscms_button">Delete test image</a>
 
-				<exclude><dropfile resize="800x650" href="image-test.jpg" class="webworkscms_button">Upload image</dropfile></exclude>
+				<dropfile resize="800xauto" href="image-test.jpg">Upload via button</dropfile>
 				
 				<a href="{{@BASE}}/image-test" class="webworkscms_button">Refresh Stats</a>
 			</div>

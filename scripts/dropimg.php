@@ -86,14 +86,16 @@ class dropimg extends prefab {
 			$size = $args["@attrib"]["size"] ? $args["@attrib"]["size"] : $args["@attrib"]["resize"];
 			unset($args["@attrib"]["size"], $args["@attrib"]["resize"]);
 			$asize = explode("x", $size);
+			$psize = $asize;
+
+
+			if ($psize[0] == 'auto') $psize[0] = $psize[1];
+			if ($psize[1] == 'auto') $psize[1] = $psize[0];
+
+			$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$psize[0]."x".$psize[1]."&w=".$psize[0]."&h=".$psize[1];
 
 			// Does the file exist?
 			if (!file_exists($path = getcwd()."/".$file)) {
-
-				if ($asize[0] == 'auto') $asize[0] = $asize[1];
-				if ($asize[1] == 'auto') $asize[1] = $asize[0];
-
-				$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$asize[0]."x".$asize[1]."&w=".$asize[0]."&h=".$asize[1];
 
 				$pi = pathinfo($path);
 
@@ -175,7 +177,7 @@ class dropimg extends prefab {
 
 			foreach ($args["@attrib"] as $key=>$value) {
 				if ($key=="class") {
-					$hive["extra_attribs"] .= 'class="'.$value.' filedropzone webworkscms_button btn-fullwidth" ';
+					$hive["extra_attribs"] .= 'class="'.$value.' filedropzone webworkscms_button" ';
 				} else {
 					$hive["extra_attribs"] .= $key.'="'.$value.'" ';
 				}

@@ -428,7 +428,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 				$result = imagejpeg($GDimg->data(), $options["final-file"], $options["quality"]);
 			break;
 			case "png":
-				$result = imagepng($GDimg->data(), $options["final-file"], $options["quality"]);
+				$result = imagepng($GDimg->data(), $options["final-file"]);
 			break;
 			case "gif":
 				$result = imagegif($GDimg->data(), $options["final-file"]);
@@ -536,7 +536,7 @@ function image_fix_orientation(&$image, $filename) {
     // Ensure function exists
     if (!function_exists("exif_read_data")) return;
 
-    $exif = exif_read_data($filename);
+    $exif = @exif_read_data($filename);
 
     if (!empty($exif['Orientation'])) {
         switch ($exif['Orientation']) {
