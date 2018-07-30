@@ -1,19 +1,4 @@
 <?php
-/**
- *  FooForms - a collection of Form related HTML-Tag handlers
- *
- *	The contents of this file are subject to the terms of the GNU General
- *	Public License Version 3.0. You may not use this file except in
- *	compliance with the license. Any of the license terms and conditions
- *	can be waived if you get permission from the copyright holder.
- *
- *	Copyright (c) 2015 ~ ikkez
- *	Christian Knuth <ikkez0n3@gmail.com>
- *
- *		@version: 0.2.0
- *		@date: 14.07.2015
- *
- **/
 
 class contactform {
 
@@ -81,7 +66,7 @@ class contactform {
 
 	function check_form ($settings) {
 		$f3 = base::instance();
-
+	
 		// Get the form ID
 		$id = $f3->get("POST.contactform_submit");
 
@@ -145,6 +130,7 @@ class contactform {
 			"sendName"=>isset($settings["sendname"]) ? $settings["sendname"] : "Business owner",
 			"subject" => isset($settings["subject"]) ? $settings["subject"] : "Website Enquiry"
 		]);
+
 
 		redirect($settings["success"]);
 	}
@@ -252,33 +238,18 @@ class contactformHandler extends \Template\TagHandler {
 	{
 		$f3 = base::instance();
 
-		$documentation = '<h5 style="padding-top:20px">Example:</h5>
-					<p>'.$f3->highlight('<contactform sendto="joe@example.com" sendname="Joe Smith" template="email_template" src="/contact.html" success="success_page.html">').'</p>
-					<ul style="font-size:15px">
-						<li>sendto:<p>Email address to submit the form to.</p></li>
-						<li>template:<p>html file which is used to send. Located in client directory.</p></li>
-						<li>src:<p>Address to submit too. Use src="*" to post to any page. This provides the ability for contact form to be placed on many pages.</p></li>
-						<li>success: <p>Page to redirect to on success.</p></li>
-						<li>subject: <p>Subject line of email. Default: Website Enquiry</p></li>
-						<li>sendname: <p>Website owners name. Default: Business owner</p></li>
-					</ul>
-				';
-
-
 		// Always post to the same page the form is located on.
 		$attr["src"] = '<?= $SCHEME."://".$HOST.$URI ?>';
-
+		
 		$content = $this->tmpl->build($content);
 
 		$attr["method"] = "POST";
 
+		$hiddenInput = '<input type="hidden" name="contactform_submit" value="">';
+
 		// resolve all other / unhandled tag attributes
 		if ($attr!=null)
 			$attr = $this->resolveParams($attr);
-
-		$hiddenInput = '<input type="hidden" name="contactform_submit" value="'.$id.'">';
-
-		cache::instance()->set("contactforms[".$id."]", $settings, 0);
 
 		return '<form ' . $attr . '>' . $content . $hiddenInput . '</form>';
 	}

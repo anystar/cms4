@@ -372,7 +372,6 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 if (!$f3->REDIRECTING)
 	$f3->run();
 
-
 // Process mail queue
 if (isset(Mailer::$queue))
 {

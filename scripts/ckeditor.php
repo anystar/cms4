@@ -209,6 +209,7 @@ class ckeditor extends prefab {
 				ini_set('pcre.backtrack_limit', 200000);
 				ini_set('pcre.recursion_limit', 200000);
 
+				// Automagically create IDs for ckeditor tag 
 				$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
 
 					$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
@@ -239,6 +240,13 @@ class ckeditor extends prefab {
 						}
 					}
 				}
+
+				// $contents = preg_replace_callback('%(<p[^>]*>.*?</p>)%i', function ($match) {
+
+				// 	j($match);
+
+				// }, $contents);
+
 
 				// Prevent writing blank files
 				if ($contents == "")
