@@ -143,7 +143,7 @@ class checkout extends prefab {
 		$mailer->setReply($options["fromAddress"], $options["fromName"]);
 		$mailer->setHTML($renderedTemplate);
 
-		$mailer->queue($options["subject"]);
+		$mailer->queue($options["subject_line"]);
 	}
 
 	function generateReferenceNumber () {
@@ -499,8 +499,6 @@ class paypalButtonTagHandler extends \Template\TagHandler {
 			$attr = $this->resolveParams($attr);
 
 		$content = $this->tmpl->build($content);
-
-
 
 		return $redirect_element . '<button ' . $attr . '>'. $content . '</button>';
 	}
