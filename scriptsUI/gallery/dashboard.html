@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Website Dashboard</title>
+	<title>Settings Manager</title>
 
 	<!-- Bootstrap -->
 	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
@@ -17,29 +17,53 @@
 	  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
+	<style>
+		.sitemap {
+		  white-space: pre;
+		  overflow-wrap: normal;
+		  overflow-x: scroll;
+		}
 
+		.example {
+			font-size: 12px;
+		}
+
+		.screenshotheader {
+			font-size: 16px;
+			margin: 30px 0 10px 0;
+		}
+	</style>
   </head>
   <body>
 	
 	<h1><img height="100%" id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_sm.png"><button id="closeflyout">X</button></h1>
+	
+	<a href="{{@BASE}}/admin/?settings" class="webworkscms_button">Go Back</a>
 
-	<div class="container" style="margin-bottom: 100px;">
+	<div class="container" style="margin-bottom: 80px;">
 		
 		<div class="col-xs-12" style="margin-top:30px;">
 
-			<repeat group="{{@script_buttons}}" value="{{@button}}">
-				{{@button}}
-			</repeat>
+			
 
-			<hr>
-
-			<a href="{{@BASE}}/admin/stats" class="webworkscms_button btn-fullwidth" target="_blank">Statistics</a>
-			<a id="seosettings" href="{{@BASE}}/admin/seo-settings?page={{@FILE}}" class="webworkscms_button btn-fullwidth">Search Engine Settings</a>
-			<a href="{{@BASE}}/admin/login-settings" class="webworkscms_button btn-fullwidth">CMS Login Settings</a>
 		</div>
 	</div>
 
+	<script src="{{ @CDN.jquery }}"></script>
 	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
+	<script>
+		var cmsjQuery = jQuery.noConflict(true);
+
+		cmsjQuery( document ).ready(function() {
+			console.log("hit");
+			cmsjQuery("#page-title").keyup(function (e) {
+
+				window.parent.document.title = cmsjQuery(this).val();
+			});
+
+		});
+	</script>
+
     <toolbar hidden />
 
   </body>

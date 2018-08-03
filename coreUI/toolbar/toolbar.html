@@ -59,7 +59,7 @@ document.currentPage = '{{@FILE}}';
 
 var cmsjQuery = jQuery.noConflict(true);
 
-function status (message) {
+function status (message, timeout=null) {
   if (popup) return false;
 
   if (typeof message === "undefined")
@@ -75,6 +75,15 @@ function status (message) {
     cmsjQuery("#webworkscms_admintoolbar #statusbar").show();
 
     cmsjQuery("#webworkscms_admintoolbar #statusbar").html(message);
+  }
+
+  if (timeout!==null) {
+    setTimeout(function () {
+      cmsjQuery("#webworkscms_admintoolbar #center_div").show();
+      cmsjQuery("#webworkscms_admintoolbar #statusbar").hide();
+
+      cmsjQuery("#webworkscms_admintoolbar #statusbar").html("");
+    }, timeout*1000);
   }
 }
 

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Website Dashboard</title>
+
+	<!-- Bootstrap -->
+	<link href="{{ @CDN.bootstrap_css }}" rel="stylesheet">
+	<link href="{{ @BASE }}/admin/styles.css" rel="stylesheet">
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+  </head>
+  <body>
+	
+	<h1><img height="100%" id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_sm.png"><button id="closeflyout">X</button></h1>
+
+	<div class="container" style="margin-bottom: 100px;">
+		
+		<div class="col-xs-12" style="margin-top:30px;">
+
+			<repeat group="{{@script_buttons}}" value="{{@button}}">
+				{{@button}}
+			</repeat>
+			
+			<a id="seosettings" href="{{@BASE}}/admin/seo-settings" class="webworkscms_button btn-fullwidth">Search Engine Settings</a>
+
+			<hr>
+
+			<a href="{{@BASE}}/admin/stats" class="webworkscms_button btn-fullwidth" target="_blank">Website Statistics</a>
+			<a href="{{@BASE}}/admin/login-settings" class="webworkscms_button btn-fullwidth">CMS Login Settings</a>
+		</div>
+	</div>
+
+	<script src="{{ @CDN.jquery }}"></script>
+	<script src="{{@BASE}}/admin/dashboard/script.js"></script>
+
+	<script>
+		var cmsjQuery = jQuery.noConflict(true);
+
+		cmsjQuery( document ).ready(function() {
+			
+			cmsjQuery("#seosettings").click(function (e) {
+				window.location = "{{@BASE}}/admin/seo-settings?page="+window.parent.document.currentPage;
+				return false;
+			});
+
+		});
+	</script>
+
+    <toolbar hidden />
+  </body>
+</html>

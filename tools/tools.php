@@ -272,16 +272,32 @@ function mime_content_type2($filename) {
 
 	if (filter_var($filename, FILTER_VALIDATE_URL))
 	{
-		$pi = pathinfo($filename);
 
+		// First method: See what the server said about the file
+		$headers = get_headers($filename, 1);
+
+		// Secound Method: See what URL says about the file
+		$pi = pathinfo($filename);
 		if (array_key_exists("extension", $pi))
 			if (array_key_exists($pi["extension"], $mime_types))
 			    return $mime_types[$pi["extension"]];
 
-		$exif = exif_read_data($filename);
 
-		if (in_array($exif["MimeType"], $mime_types))
-			return $exif["MimeType"];
+		// Last attempt: See what the file says about the file
+		$data = file_get_contents($filename);
+
+		if ($data === false)
+			return false;
+
+		$tmp = tmpfile();
+		fwrite($tmp, $data);
+		$filepath = stream_get_meta_data($tmp)["uri"];
+
+		$type = exif_imagetype($filepath);
+		$mimetype = image_type_to_mime_type($type);
+
+		if (in_array($mimetype, $mime_types))
+			return $mimetype;
 
 		return "application/octet-stream";
 	}

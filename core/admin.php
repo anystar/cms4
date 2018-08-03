@@ -122,7 +122,7 @@ class admin {
 
 		base::instance()->route("GET /admin/logo_xs.png", function ($f3) {
 
-			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_xs.png";
+			$file = $GLOBALS["ROOTDIR"]."/cms/coreUI/admin/logo_xs.png";
 			header('Content-Type: image/png');
 			header("Content-length: ".filesize($file));
 			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
@@ -133,7 +133,7 @@ class admin {
 
 		base::instance()->route("GET /admin/logo_sm.png", function ($f3) {
 
-			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_sm.png";
+			$file = $GLOBALS["ROOTDIR"]."/cms/coreUI/admin/logo_sm.png";
 			header('Content-Type: image/png');
 			header("Content-length: ".filesize($file));
 			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (160 * 60 * 24 * 30))); // 1 hour
@@ -144,7 +144,7 @@ class admin {
 
 		base::instance()->route("GET /admin/logo_md.png", function ($f3) {
 
-			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_md.png";
+			$file = $GLOBALS["ROOTDIR"]."/cms/coreUI/admin/logo_md.png";
 			header('Content-Type: image/png');
 			header("Content-length: ".filesize($file));
 			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (160 * 60 * 24 * 30))); // 1 hour
@@ -155,7 +155,7 @@ class admin {
 
 		base::instance()->route("GET /admin/logo_lg.png", function ($f3) {
 
-			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_lg.png";
+			$file = $GLOBALS["ROOTDIR"]."/cms/coreUI/admin/logo_lg.png";
 			header('Content-Type: image/png');
 			header("Content-length: ".filesize($file));
 			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
@@ -166,7 +166,7 @@ class admin {
 
 		base::instance()->route("GET /admin/logo_icon.png", function ($f3) {
 
-			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/admin/logo_icon.png";
+			$file = $GLOBALS["ROOTDIR"]."/cms/coreUI/admin/logo_icon.png";
 			header('Content-Type: image/png');
 			header("Content-length: ".filesize($file));
 			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour

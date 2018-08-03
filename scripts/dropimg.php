@@ -6,41 +6,41 @@ class dropimg extends prefab {
 
 		$f3 = base::instance();
 
-
 		if (admin::$signed) {
 
 			$f3->route("POST /admin/dropfile/upload", function ($f3) {
 
 				$file = $f3->POST["file"];
 				$file = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $file);
-				$ext = pathinfo(getcwd()."/".$file)["extension"];
 
-				$dir = getcwd()."/".pathinfo($file)["dirname"];
+				// Handle regular files
 
-				if (!is_dir($dir))
-					mkdir($dir);
+					$ext = pathinfo(getcwd()."/".$file)["extension"];
 
-				if (!is_file($file))
-					touch($file);
+					$dir = getcwd()."/".pathinfo($file)["dirname"];
 
-				if (is_writeable($file)) {
-					copy($f3->FILES["file"]["tmp_name"], getcwd()."/".$file);
-				}
+					if (!is_dir($dir))
+						mkdir($dir);
+
+					if (!is_file($file))
+						touch($file);
+
+					if (is_writeable($file)) {
+						copy($f3->FILES["file"]["tmp_name"], getcwd()."/".$file);
+					}
 			});
 
 			$f3->route("POST /admin/dropimg/upload", function ($f3) {
 
 				$saveto = $f3->POST["file"];
 				$saveto = str_replace($f3->SCHEME."://".$f3->HOST.$f3->BASE."/", "", $saveto);
-				$ext = pathinfo(getcwd()."/".$saveto)["extension"];
-				
+
 				$return = saveimg ($f3->FILES["file"], $saveto, [
 					"size"=>[$f3->POST["width"], $f3->POST["height"]],
 					"crop"=>true,
 					"enlarge"=>true,
 					"overwrite"=>true,
-					"quality"=>100,
-					"type"=>$ext
+					"quality"=>90
 				]);
 			});
 
@@ -50,7 +50,7 @@ class dropimg extends prefab {
 					"size" => [$f3->POST["width"], $f3->POST["height"]],
 					"crop" => true,
 					"enlarge" => true,
-					"quality" => 100,
+					"quality" => 90,
 					"type" => "auto",
 					"overwrite" => true
 				));
@@ -73,21 +73,36 @@ class dropimg extends prefab {
 			if (!array_key_exists("src", $args["@attrib"]))
 				$f3->error(1, "DropIMG: no src value found");
 
-			$src = $args["@attrib"]["src"];
+			$src = html_entity_decode($args["@attrib"]["src"]);
 			unset($args["@attrib"]["src"]);
 
-			check (1, (!$args["@attrib"]["resize"] && !$args["@attrib"]["size"]), "No size attribute found for dropimg tag");
+
+			// Strip potential url parameters from src field
+			$file = parse_url($src)["path"];
+
+
+			check (1, (!$args["@attrib"]["resize"] && !$args["@attrib"]["size"]), "No `resize` attribute found for dropimg tag.");
 
 			$size = $args["@attrib"]["size"] ? $args["@attrib"]["size"] : $args["@attrib"]["resize"];
 			unset($args["@attrib"]["size"], $args["@attrib"]["resize"]);
 			$asize = explode("x", $size);
+			$psize = $asize;
 
-			$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$asize[0]."x".$asize[1]."&w=".$asize[0]."&h=".$asize[1];
 
-			// Does the file exsist?
-			if (!file_exists($path = getcwd()."/".$src)) {
+			if ($psize[0] == 'auto') $psize[0] = $psize[1];
+			if ($psize[1] == 'auto') $psize[1] = $psize[0];
 
-				copy($placeholder_path, $path);
+			$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$psize[0]."x".$psize[1]."&w=".$psize[0]."&h=".$psize[1];
+
+			// Does the file exist?
+			if (!file_exists($path = getcwd()."/".$file)) {
+
+				$pi = pathinfo($path);
+
+				saveimg($placeholder_path, $pi["dirname"]."/", [
+					"filename" => $pi["basename"],
+					"type" => $pi["extension"]
+				]);
 			}
 
 			// Have we changed the image size
@@ -95,7 +110,13 @@ class dropimg extends prefab {
 			{
 				if ($size != $value)
 				{
-					copy($placeholder_path, $path);
+					$pi = pathinfo($path);
+
+					saveimg($placeholder_path, $pi["dirname"]."/", [
+						"filename" => $pi["basename"],
+						"type" => $pi["extension"]
+					]);
+
 					Cache::instance()->set("dropimg_".sha1($path), $size);
 				}
 			}
@@ -103,11 +124,13 @@ class dropimg extends prefab {
 			$string .= '<?php if (admin::$signed) {?>';
 			$string .= "<img";
 			$string .= " title='".$size."'";	
-			$string .= " data-file='".$src."'";
+			$string .= " data-file='".$file."'";
 			$string .= " data-width='".$asize[0]."'";
 			$string .= " data-height='".$asize[1]."'";
 			$string .= " data-mime='".mime_content_type2($path)."' ";
-			$string .= " src='".$src."?<?php if (is_file('".$src."')) {substr(sha1_file('".$src."'), -8);} else { copy('".$placeholder_path."', '".$path."'); } ?>' ";
+			$string .= " src='".$src."?<?php if (is_file('".$file."')) {substr(sha1_file('".$file."'), -8);} else {";
+			$string .= '$pi = pathinfo("'.$path.'"); saveimg("'.$placeholder_path.'", $pi["dirname"]."/", [ "filename" => $pi["basename"], "type" => $pi["extension"]] );';
+			$string .= "} ?>' ";
 
 			$classFilled = false;
 			foreach ($args["@attrib"] as $key=>$value) {
@@ -129,7 +152,9 @@ class dropimg extends prefab {
 			
 			$string .= '<?php if (!admin::$signed) {?>';
 			$string .= "<img";
-			$string .= ' src="'.$src.'" ';
+			$string .= ' src="'.$src.'?';
+			$string .= '<?php if (is_file("'.$file.'")) { echo filemtime("'.$file.'"); } ?>';
+			$string .= '" ';
 
 			foreach ($args["@attrib"] as $key=>$value) {
 				$string .= $key.'="'.$value.'" ';
@@ -145,47 +170,31 @@ class dropimg extends prefab {
 		Template::instance()->extend("dropfile", function ($args) {
 			$f3 = base::instance();
 
-			$string .= '<?php if (admin::$signed) {?>';
+			$hive = array();
 
-			$string .= '<a ';
+			if (!array_key_exists("class", $args["@attrib"]))
+				$args["@attrib"]["class"] = "webworks-admin-button";
 
-			$classFilled = false;
 			foreach ($args["@attrib"] as $key=>$value) {
-
 				if ($key=="class") {
-					$string .= 'class="'.$value.' filedropzone" ';
-					$classFilled = true;
+					$hive["extra_attribs"] .= 'class="'.$value.' filedropzone webworkscms_button" ';
 				} else {
-					$string .= $key.'="'.$value.'" ';
+					$hive["extra_attribs"] .= $key.'="'.$value.'" ';
 				}
 			}
 
-			if (!$classFilled)
-				$string .= 'class="filedropzone" ';
+			if (array_key_exists(0, $args))
+				$hive["button_text"] = $args[0];
 
-			$string .= 'id="'.uniqid("dropfile_").'" ';
-			$string .= 'onclick="return false;" ';
+			// Get file via Href or Src
+			$hive["file"] = $args["@attrib"]["href"];
+			$hive["filetype"] = mime_content_type2($args["@attrib"]["href"]);
+			$hive["uniqid"] = uniqid("dropfile_");
 
-			foreach ($args["@attrib"] as $key=>$value) {
-				$string .= $key.'="'.$value.'" ';
-			}
+			$html = '<button {{@if_image}} data-filetype="{{@filetype}}" data-file="{{@file}}" id="{{@uniqid}}" {{@class}} {{@extra_attribs}}>{{@button_text}}</button>';
 
-			$string .= '>';
-			$string .= $args[0];
-			$string .= "</a>";
-			$string .= "<?php } ?>";
-
-			$string .= '<?php if (!admin::$signed) {?>';
-
-			$string .= '<a ';
-
-			foreach ($args["@attrib"] as $key=>$value) {
-				$string .= $key.'="'.$value.'" ';
-			}
-
-			$string .= '>';
-			$string .= $args[0];
-			$string .= "</a>";
+			$string = '<?php if (admin::$signed) {?>';
+			$string .= Preview::instance()->resolve($html, $hive);
 			$string .= "<?php } ?>";
 
 			return $string;

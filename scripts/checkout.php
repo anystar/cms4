@@ -138,11 +138,12 @@ class checkout extends prefab {
 	function sendmail ($renderedTemplate, $options) {
 
 		$mailer = new \Mailer();
+
 		$mailer->addTo($options["sendto"], $options["sendName"]);
 		$mailer->setReply($options["fromAddress"], $options["fromName"]);
 		$mailer->setHTML($renderedTemplate);
 
-		$mailer->queue($options["subject_line"]);
+		$mailer->queue($options["subject"]);
 	}
 
 	function generateReferenceNumber () {
@@ -182,6 +183,73 @@ class PaypalButtonGateway {
 		$f3 = base::instance();
 		$this->settings = $settings;
 		$this->checkout = $checkout;
+		$this->return();
+	}
+
+	function submit($data) {
+
+		$f3 = base::instance();
+
+		$f3->data = $data;
+
+		$data["pending_id"] = uniqid();
+
+		$this->checkout->log($data);
+
+		setcookie("pending", $data["pending_id"]);
+
+		redirect($data['redirect']);
+	}
+
+	function return() {
+		
+		base::instance()->route("GET /".$this->settings["return"], function ($f3) {
+
+			if (!array_key_exists("pending", $f3->COOKIE))
+				$f3->error(500, "Transaction ID not found!");
+
+			$jig = $this->checkout->log->find(array("@pending_id=?", $f3->COOKIE["pending"]));
+
+			if (count($jig) == 0) 
+				$f3->error(500, "Transaction ID not found!");
+			
+			$record = $jig[0];	
+			$f3->data = $record->cast();
+
+			$body = \Template::instance()->render($this->settings["invoice_template"], null);
+
+
+
+			// Send copy to buyer
+			$options = [];
+			$options["sendName"] = $f3->data["name"];
+			$options["fromName"] = $this->settings["sender-name"];
+			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $f3->data);
+			$options["sendto"] = $f3->data["email"];
+
+			echo $body;
+			die;
+			$this->checkout->sendmail($body, $options);
+
+			if (array_key_exists("send_receipt_copy", $this->settings)) {
+				foreach ($this->settings["send_receipt_copy"] as $email)
+				{
+					// Send copy too seller
+					$options = [];
+					$options["sendName"] = $this->settings["sender-name"];
+					$options["fromName"] = $f3->data["name"];
+					$options["subject"] = Template::instance()->resolve($this->settings["subject"], $f3->data);
+					$options["sendto"] = $email;
+
+					$this->checkout->sendmail($body, $options);
+				}
+			}
+
+			$record->clear("pending_id");
+			$record->save();
+
+			redirect($this->settings["success_page"]);
+		});
 	}
 }
 
@@ -214,16 +282,18 @@ class EmailGateway {
 
 		$this->checkout->sendmail($body, $options);
 
-		foreach ($this->settings["send_receipt_copy"] as $email)
-		{
-			// Send copy too seller
-			$options = [];
-			$options["sendName"] = $this->settings["sender-name"];
-			$options["fromName"] = $data["name"];
-			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
-			$options["sendto"] = $email;
+		if (array_key_exists("send_receipt_copy", $this->settings)) {
+			foreach ($this->settings["send_receipt_copy"] as $email)
+			{
+				// Send copy too seller
+				$options = [];
+				$options["sendName"] = $this->settings["sender-name"];
+				$options["fromName"] = $data["name"];
+				$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+				$options["sendto"] = $email;
 
-			$this->checkout->sendmail($body, $options);
+				$this->checkout->sendmail($body, $options);
+			}
 		}
 
 		$this->checkout->log($data);
@@ -418,17 +488,21 @@ class emailTagHandler extends \Template\TagHandler {
 class paypalButtonTagHandler extends \Template\TagHandler {
 
 	function build ($attr, $content) {
-		
+
 		$attr["name"] = "gateway";
 		$attr["value"] = "paypalbutton";
 		$attr["type"] = "submit";
+
+		$redirect_element = '<input type="hidden" name="redirect" value="'.$attr["redirect"].'" />';
 
 		if ($attr!=null)
 			$attr = $this->resolveParams($attr);
 
 		$content = $this->tmpl->build($content);
 
-		return '<button ' . $attr . '>'. $content . '</button>';
+
+
+		return $redirect_element . '<button ' . $attr . '>'. $content . '</button>';
 	}
 }
 

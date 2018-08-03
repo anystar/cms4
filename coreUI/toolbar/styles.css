@@ -82,7 +82,7 @@ body {
     clear: both;
 }
 
-#webworkscms_admintoolbar .button, #webworkscms_admintoolbar #views, .editable .toolbar .button, .logoutwarning .button {
+#webworkscms_admintoolbar .button, #webworkscms_admintoolbar #views, .editable .toolbar .button, .logoutwarning .button, .webworks-admin-button {
   box-sizing: border-box;
   font-family: Roboto, sans-serif !important;
   font-size: 16px !important;
@@ -120,7 +120,7 @@ body {
   transition: all 0.1s !important;
   line-height: 24px !important;
 }
-#webworkscms_admintoolbar .button:active, #webworkscms_admintoolbar .button-active, #webworkscms_admintoolbar #views:active, .editable .toolbar .button:active, .logoutwarning .button:active {
+#webworkscms_admintoolbar .button:active, #webworkscms_admintoolbar .button-active, #webworkscms_admintoolbar #views:active, .editable .toolbar .button:active, .logoutwarning .button:active, .webworks-admin-button:active {
   border-color: #a2a2a2 #bbbbbb #eee !important;
   background-size: 100% !important;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e1e1e1), color-stop(100%, #eeeeee)) !important;

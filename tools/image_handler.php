@@ -18,9 +18,11 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		}
 	}
 
+
 	#######################################################
 	################ HANDLE DEFAULT OPTIONS ###############
 	#######################################################
+	$defaults["filename"] = "";
 	$defaults["size"] = "1500x1500";
 	$defaults["thumbnail"] = [
 		"size"=>"500x500",
@@ -33,12 +35,16 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	$defaults["crop"] = false;
 	$defaults["enlarge"] = false;
 	$defaults["quality"] = 100;
-	$defaults["type"] = "jpg/png/gif/auto";
+	$defaults["type"] = "auto";
 	$defaults["placeholder"] = "Placeholder Text or False for no placeholder";
 	$defaults["overwrite"] = true;
 	//$defaults["keep-original"] = true;
 
 	check(0, (count($options) == 0), "**Default example:**", $defaults);
+
+	if (isset($options["filename"]))
+		if (empty($options["filename"]))
+			unset($options["filename"]);
 
 	if (!isset($options["crop"]))
 		$options["crop"] = $defaults["crop"];
@@ -109,10 +115,10 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	if (isset($options["size"]))
 	{
 		if (strtolower($options["size"][0]) == "auto")
-			$options["size"][0] = 0;
+			$options["size"][0] = NULL;
 
 		if (strtolower($options["size"][1]) == "auto")
-			$options["size"][1] = 0;
+			$options["size"][1] = NULL;
 
 		$options["size"][0] = ((int)$options["size"][0] > 0) ? (int)$options["size"][0] : NULL;
 		$options["size"][1] = ((int)$options["size"][1] > 0) ? (int)$options["size"][1] : NULL;
@@ -124,29 +130,29 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	##################################################
 	// Handle name='image[]' requests.
 
-	if (array_key_exists("tmp_name", $file))
-	{
-		if (is_array($file["tmp_name"]))
-		{	
-			foreach ($file as $x=>$item) {
-				foreach ($item as $y=>$value)
-				{
-					$files[$y][$x] = $value;
-				}
-			}
-
-			foreach ($files as $file)
-			{
-				if ($file["tmp_name"] != "")
-					$fill[] = saveimg($file, $directory, $options);
-			}
-
-			return true;
-		}
-	}
-
 	if (is_array($file))
 	{
+		if (array_key_exists("tmp_name", $file))
+		{
+			if (is_array($file["tmp_name"]))
+			{	
+				foreach ($file as $x=>$item) {
+					foreach ($item as $y=>$value)
+					{
+						$files[$y][$x] = $value;
+					}
+				}
+
+				foreach ($files as $file)
+				{
+					if ($file["tmp_name"] != "")
+						$fill[] = saveimg($file, $directory, $options);
+				}
+
+				return true;
+			}
+		}
+
 		if (!array_key_exists("error", $file))
 		{	
 			foreach ($file as $f)
@@ -175,8 +181,13 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		// Check if we have a filename
 		if (!array_key_exists("name", $file) || $file["name"] == "")
 		{
-			$file["name"] = "noname.png";
-			$options["overwrite"] = false;
+			if (isset($options["filename"]))
+				$file["name"] = $options["filename"];
+			else
+			{
+				$file["name"] = "noname.png";
+				$options["overwrite"] = false;
+			}
 		}
 
 		// Ensure file actually exists
@@ -248,7 +259,6 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 
 		if (filter_var($stream, FILTER_VALIDATE_URL))
 		{
-
 			$data = file_get_contents($stream);
 
 			if ($data === false)
@@ -259,7 +269,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 			fwrite($tmp, $data);
 
 			// Put it down as a temp file and generate proper array structure
-			$file["name"] = pathinfo($stream)["basename"];
+			$file["name"] = $options["filename"];
 			$file["size"] = filesize($array["tmp_name"]);
 			$file["type"] = mime_content_type2($stream);
 		}
@@ -415,13 +425,13 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		{	
 			case "jpg":
 			case "jpeg":
-				$result = imagejpeg($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
+				$result = imagejpeg($GDimg->data(), $options["final-file"], $options["quality"]);
 			break;
 			case "png":
-				$result = imagepng($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
+				$result = imagepng($GDimg->data(), $options["final-file"]);
 			break;
 			case "gif":
-				$result = imagegif($GDimg->data($options["type"], $options["quality"]), $options["final-file"]);
+				$result = imagegif($GDimg->data(), $options["final-file"]);
 			break;
 		}
 
@@ -522,11 +532,11 @@ function saveplaceholder ($filename, $directory, $options) {
 
 
 function image_fix_orientation(&$image, $filename) {
-	return;
+
     // Ensure function exists
     if (!function_exists("exif_read_data")) return;
 
-    $exif = exif_read_data($filename);
+    $exif = @exif_read_data($filename);
 
     if (!empty($exif['Orientation'])) {
         switch ($exif['Orientation']) {
