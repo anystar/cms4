@@ -231,6 +231,10 @@ new dashboard($f3->SETTINGS);
 new version_control($f3->SETTINGS);
 new review($f3->SETTINGS);
 
+if ($f3->SESSION["root"])
+	new script_editor($f3->SETTINGS);
+
+
 check (0, !array_key_exists("scripts", $f3->SETTINGS), "No scripts element in settings.json");
 
 foreach ($f3->SETTINGS["scripts"] as $script) {

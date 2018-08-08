@@ -5,14 +5,15 @@ class dashboard extends prefab {
 	private $settings;
 
 	function __construct($settings) {
+		$f3 = base::instance();
 
 		$this->settings = $settings;
 
-		if (isset(base::instance()->GET["settings"]))
+		if (isset($f3->GET["settings"]))
 		{
 
 			// Load buttons from scripts
-			foreach (base::instance()->SETTINGS["scripts"] as $script) 
+			foreach ($f3->SETTINGS["scripts"] as $script) 
 			{
 				if (method_exists($script["class"], "dashboard"))
 				{
@@ -20,16 +21,20 @@ class dashboard extends prefab {
 
 					check (0, !$methodChecker->isStatic(), "Dashboard class is not static for **".$script["class"]."**");
 
-					base::instance()->script_buttons[] = $script["class"]::dashboard($script);
+					$f3->script_buttons[] = $script["class"]::dashboard($script);
 				}
 			}
+
+			$f3->ROOT = false;
+			if ($f3->SESSION["root"])
+				$f3->ROOT = true;
 
 			echo Template::instance()->render("/dashboard/settings-navigation.html", "text/html");
 			exit;
 		}
 
 		if (admin::$signed)
-			$this->routes(base::instance());
+			$this->routes($f3);
 	}
 
 	function routes($f3) {

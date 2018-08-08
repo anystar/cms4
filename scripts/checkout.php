@@ -248,7 +248,7 @@ class PaypalButtonGateway {
 			$record->clear("pending_id");
 			$record->save();
 
-			redirect($this->settings["success_page"]);
+			redirect($this->settings["success"]);
 		});
 	}
 }
@@ -298,7 +298,7 @@ class EmailGateway {
 
 		$this->checkout->log($data);
 
-		redirect($this->settings["success_page"]);
+		redirect($this->settings["success"]);
 	}
 }
 
@@ -366,7 +366,6 @@ class PaypalExpressGateway {
 	function submit ($data) {
 		$f3 = base::instance();
 
-		// Need to setup a DNS record somewhere to loopback to my dev machine
 		if ($this->settings["endpoint"] == "sandbox")
 		{
 			$this->settings["return"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["return"];
@@ -380,7 +379,7 @@ class PaypalExpressGateway {
 
 		$paypal = new PayPal($this->settings);
 
-		$result=$paypal->create("Sale", "AUD", $data["amount_due"]);
+		$result = $paypal->create("Sale", "AUD", $data["amount_due"]);
 
 		$f3->set("SESSION.paypalexpress_data", $data);
 
@@ -415,7 +414,7 @@ class PaypalExpressGateway {
 			$options["sendName"] = $data["name"];
 			$options["fromName"] = $this->settings["send_name"];;
 
-			$options["subject_line"] = Template::instance()->resolve($this->settings["subject_line"], $data);
+			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
 			$options["sendto"] = $data["email"];
 
 			$this->checkout->sendmail($body, $options);
@@ -424,7 +423,7 @@ class PaypalExpressGateway {
 			$options = [];
 			$options["sendName"] = $this->settings["send_name"];
 			$options["fromName"] = $data["name"];
-			$options["subject_line"] = Template::instance()->resolve($this->settings["subject_line"], $data);
+			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
 			$options["sendto"] = $this->settings["send_receipt_copy"];
 
 			$this->checkout->sendmail($body, $options);
