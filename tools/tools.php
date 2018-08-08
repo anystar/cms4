@@ -153,7 +153,7 @@ function k ($x, $return = false)
 
 
 function writable($path) {
-
+	
 	// Step 0: is even something
 	if (strlen($path)  == 0) base::instance()->error(0, "no path given");
 
@@ -167,8 +167,11 @@ function writable($path) {
 	else
 	{
 		// For windows
-		$serverUser = explode("\\", exec("whoami"))[1];
-		$directoryUser = get_current_user();
+		//$serverUser = explode("\\", exec("whoami"))[1];
+		//$directoryUser = get_current_user();
+		
+		$serverUser = 1;
+		$directoryUser = 1;
 	}
 
 	if ($serverUser != $directoryUser)

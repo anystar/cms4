@@ -1,4 +1,6 @@
 <?php
+$GLOBALS['time_start'] = microtime(true); 
+
 ignore_user_abort(true);
 set_time_limit(300); // 5 minutes
 
@@ -9,10 +11,10 @@ $ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);
 $krumo = $ROOTDIR."/resources/krumo/class.krumo.php";
 
 // Load tools.php Contains super useful utils.
-require_once(__DIR__."/tools/tools.php");
+require (__DIR__."/tools/tools.php");
 
 // Robust Utils for handling images.
-require_once(__DIR__."/tools/image_handler.php");
+require (__DIR__."/tools/image_handler.php");
 
 // Path to F3, download at http://fatfreeframework.com/
 // Load F3 and Setup
@@ -317,13 +319,12 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		ob_start('ob_gzhandler') OR ob_start();
 
 		echo Template::instance()->render($f3->FILE, $f3->MIME);
-		
+
 		if (!headers_sent() && session_status()!=PHP_SESSION_ACTIVE)
 			session_start();
 		$out='';
 		while (ob_get_level())
 			$out=ob_get_clean().$out;
-
 
 		if ($f3->MIME != "text/html")
 			$f3->expire(604800);
