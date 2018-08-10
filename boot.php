@@ -185,6 +185,14 @@ $f3->SETTINGS = json_decode($f3->read(".cms/settings.json"), 1);
 
 check (0, $f3->SETTINGS == "" || $f3->SETTINGS == null, "Syntax error in **.cms/settings.json**");
 
+// If force-https is true redirect to secured website.
+if ($f3->CONFIG["developer"] != true) {
+	if (array_key_exists("force-https", $f3->SETTINGS))
+		if ($f3->SETTINGS["force-https"] == true)
+			if ($f3->SCHEME=="http")
+				$f3->reroute("https://".$f3->HOST.$f3->BASE.$f3->PATH . (($f3->QUERY!="") ? "?".$f3->QUERY : ""));
+}
+
 // If a mailer is set in settings then use that instead
 if (array_key_exists("mailer", $f3->SETTINGS))
 	$f3->mailer = $f3->SETTINGS["mailer"];

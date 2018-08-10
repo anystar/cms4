@@ -44,8 +44,7 @@ function redirect ($url) {
 
 	$f3->REDIRECTING = true;
 
-	$url=$f3->build($url,isset($parts[2])?$f3->parse($parts[2]):[]).
-		(isset($parts[3])?$parts[3]:'');
+	$url=$f3->build($url,isset($parts[2]) ? $f3->parse($parts[2]):[]).(isset($parts[3])?$parts[3]:'');
 
 	header('Location: '.$url);
 	$f3->abort();

@@ -5,10 +5,18 @@ class unit_test {
 	function __construct($settings) {
 
 		if (base::instance()->ADMIN)
-			$this->routes(base::instance());
+		{
+			$this->image_test_routes(base::instance());
+			$this->SMTP_test_routes(base::instance());
+		
+			base::instance()->route("GET /php-info", function () {
+				phpinfo();
+				die;
+			});
+		}
 	}
 
-	function routes($f3) {
+	function image_test_routes($f3) {
 
 		$f3->route("GET /admin/unit-test/delete-image", function ($f3) {
 
@@ -41,12 +49,45 @@ class unit_test {
 
 			echo Template::instance()->render("/unit-test/image-test.html", "text/html");
 			die;
+		});
+	}
 
+	function SMTP_test_routes($f3) {
+
+		$f3->route("GET /smtp-test", function ($f3) {
+			
+			$mailer_config = $f3->CONFIG["mailer"];
+			$f3->set("mailer", $mailer_config);
+
+			// Check IP addresss resolution
+			$result = gethostbyname($f3->get("mailer.smtp.host"));
+			$f3->set("server_ip", $result == $f3->get("mailer.smtp.host") ? "No server found" : $result);
+
+			$f3->test_subject = "Test Subject";
+			$f3->test_email = "darklocker@gmail.com";
+			
+			echo Template::instance()->render("/unit-test/smtp-test.html", "text/html");
 		});
 
-		$f3->route("GET /php-info", function () {
-			phpinfo();
-			die;
+		$f3->route("POST /smtp-test", function ($f3) {
+			
+			$mailer = new \Mailer();
+
+			$mailer->addTo($f3->POST["send-to"], "Summer");
+			$mailer->setReply("summer@webworksau.com", "Summer");
+			$mailer->setText("Test Message");
+
+			$mailer->queue("Test Mail Subject");
+
+			
+			redirect("smtp-test");
+		});
+
+		$f3->route("GET /admin/smtp-test", function ($f3) {
+
+
+
+			k("login test");
 		});
 
 	}
