@@ -34,8 +34,6 @@ class contactform {
 
 				$f3->clear("contactform_toolbar");
 			} else {
-
-
 				$this->admin_routes($f3);
 			}
 		}
@@ -60,7 +58,9 @@ class contactform {
 
 		// We have submitted the form
 		if ($f3->exists("POST.contactform_submit"))
-			$this->check_form($settings);
+			// Ensure we submitting for correct form
+			if ($f3->POST["contactform_submit"] == $settings["name"])
+				$this->check_form($settings);
 	}
 
 
@@ -240,12 +240,17 @@ class contactformHandler extends \Template\TagHandler {
 
 		// Always post to the same page the form is located on.
 		$attr["src"] = '<?= $SCHEME."://".$HOST.$URI ?>';
-		
+	
 		$content = $this->tmpl->build($content);
 
 		$attr["method"] = "POST";
 
-		$hiddenInput = '<input type="hidden" name="contactform_submit" value="">';
+		if (array_key_exists("script", $attr))
+			$script = $attr["script"];
+		else
+			$script = "contactform";
+
+		$hiddenInput = '<input type="hidden" name="contactform_submit" value="'.$script.'">';
 
 		// resolve all other / unhandled tag attributes
 		if ($attr!=null)
@@ -253,9 +258,7 @@ class contactformHandler extends \Template\TagHandler {
 
 		return '<form ' . $attr . '>' . $content . $hiddenInput . '</form>';
 	}
-
 }
-
 
 class captcha extends \Template\TagHandler {
 	function build ($attr, $content)
