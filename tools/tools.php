@@ -660,6 +660,24 @@ function array_not_unique($raw_array) {
     } return $dupes;
 }
 
+function array_check_value ($array, $key, $against = "") {
+
+	// Check if key exists in array
+	if (!array_key_exists($key, $array))
+		return false;
+
+	// Ensure value is not null
+	if (!isset($array[$key]))
+		return false;
+
+	if ($against == "")
+		return true;
+
+	if ($array[$key] != $against)
+		return false;
+
+	return true;
+}
 
 // https://gist.github.com/jeremiahlee/785766
 function parseDescription($html, $replace=null) {

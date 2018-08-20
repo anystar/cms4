@@ -34,7 +34,7 @@ class checkout extends prefab {
 		$defaults["class"] = "checkout";
 		$defaults["name"] = "checkout";
 		$defaults["send_receipt_copy"] = "orders@yourwebsite.com";
-		$defaults["subject_line"] = "Example subject";
+		$defaults["subject"] = "Example subject";
 
 		$defaults["payment_gateways"][] = $email_defaults;
 		$defaults["payment_gateways"][] = $paypal_button_defaults;
@@ -48,7 +48,6 @@ class checkout extends prefab {
 		// Sort out payment gateways
 		foreach ($settings["payment_gateways"] as $gateway)
 		{
-			check (0, !array_key_exists("provider", $gateway), "No provider field on gatway");
 			check (0, !class_exists(strtolower($gateway["provider"])."gateway"), "No gateway found for checkout script **".strtolower($gateway["provider"])."**");
 
 			$className = strtolower($gateway["provider"])."gateway";
@@ -143,7 +142,7 @@ class checkout extends prefab {
 		$mailer->setReply($options["fromAddress"], $options["fromName"]);
 		$mailer->setHTML($renderedTemplate);
 
-		$mailer->queue($options["subject_line"]);
+		$mailer->queue($options["subject"]);
 	}
 
 	function generateReferenceNumber () {
@@ -360,6 +359,21 @@ class PaypalExpressGateway {
 		$this->settings = $settings;
 		$this->checkout = $checkout;
 
+		check(0, !array_check_value($settings, "provider"), "No `provider` field set on gateway", "Default: PaypalExpress", $settings);
+		check(0, !array_check_value($settings, "user"), "No `user` field set on gateway", "Default: paypal api user", $settings);
+		check(0, !array_check_value($settings, "pass"), "No `pass` field set on gateway", "Default: paypal api pass", $settings);
+		check(0, !array_check_value($settings, "signature"), "No `signature` field set on gateway", "Default: paypal api signature", $settings);
+		check(0, !array_check_value($settings, "endpoint"), "No `endpoint` field set on gateway", "Default: sandbox/production", $settings);
+		check(0, !array_check_value($settings, "apiver"), "No `apiver` field set on gateway", "Default: 204.0", $settings);
+		check(0, !array_check_value($settings, "return"), "No `return` field set on gateway", "Default: return.html", $settings);
+		check(0, !array_check_value($settings, "cancel"), "No `cancel` field set on gateway", "Default: cancel.html", $settings);
+		check(0, !array_check_value($settings, "success"), "No `success` field set on gateway", "Default: success.html", $settings);
+
+		check(0, !array_check_value($settings, "send_name"), "No `send_name` field set on gateway", "Default: Business Name", $settings);
+		check(0, !array_check_value($settings, "send_receipt_copy"), "No `send_receipt_copy` field set on gateway", "Default: Email or list of emails", $settings);
+		check(0, !array_check_value($settings, "subject"), "No `subject` field set on gateway", "Default: Email subject title", $settings);
+		check(0, !array_check_value($settings, "receipt_template"), "No `receipt_template` field set on gateway", "Default: receipt_template.html", $settings);
+
 		$this->complete_payment();
 	}
 
@@ -370,6 +384,17 @@ class PaypalExpressGateway {
 		{
 			$this->settings["return"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["return"];
 			$this->settings["cancel"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["cancel"];
+
+			$default_sandbox = array();
+			$default_sandbox["user"] = "paypal user";
+			$default_sandbox["pass"] = "paypal pass";
+			$default_sandbox["signature"] = "paypal signature";
+
+			check (500, !array_check_value($f3->CONFIG, "paypal_express_sandbox"), "Please set paypal_express_sandbox array in config.ini file", $default_sandbox);
+			
+			$this->settings["user"] = $f3->CONFIG["paypal_express_sandbox"]["user"];
+			$this->settings["pass"] = $f3->CONFIG["paypal_express_sandbox"]["pass"];
+			$this->settings["signature"] = $f3->CONFIG["paypal_express_sandbox"]["signature"];
 		}
 		else
 		{
@@ -393,6 +418,13 @@ class PaypalExpressGateway {
 
 			$token = $f3->get('GET.token');
 			$payerid = $f3->get('GET.PayerID');
+
+			if ($this->settings["endpoint"] == "sandbox")
+			{				
+				$this->settings["user"] = $f3->CONFIG["paypal_express_sandbox"]["user"];
+				$this->settings["pass"] = $f3->CONFIG["paypal_express_sandbox"]["pass"];
+				$this->settings["signature"] = $f3->CONFIG["paypal_express_sandbox"]["signature"];
+			}
 
 			$paypal = new PayPal($this->settings);
 			$result = $paypal->complete($token, $payerid);
