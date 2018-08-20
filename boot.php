@@ -30,7 +30,7 @@ $f3->REDIRECTING = false;
 // Setup framework configuration
 $f3->config($ROOTDIR."/cms/constants.ini", true);
 
-// Load specific configuratoin for this server instance
+// Load specific configuration for this server instance
 $f3->CONFIG = $GLOBALS["config"] = parse_ini_file($ROOTDIR."/config.ini", true);
 
 // Setup Krumo for use in Templates
@@ -40,6 +40,7 @@ Template::instance()->filter("krumo", function ($array) {
 	require_once $GLOBALS["krumo"];
 	krumo($array);
 });
+
 
 // Setup Mailer
 $f3->mailer = $f3->CONFIG["mailer"];
@@ -181,7 +182,7 @@ $f3->JIG = new \DB\Jig(".cms/json/", \DB\Jig::FORMAT_JSON);
 // Loads settings from .cms/settings.json
 // 	- This is the only place settings are configured
 // 	- This contains all the script settings
-$f3->SETTINGS = json_decode($f3->read(".cms/settings.json"), 1);
+load_settings();
 
 check (0, $f3->SETTINGS == "" || $f3->SETTINGS == null, "Syntax error in **.cms/settings.json**");
 
@@ -244,19 +245,10 @@ new review($f3->SETTINGS);
 if ($f3->SESSION["root"])
 	new script_editor($f3->SETTINGS);
 
-
 check (0, !array_key_exists("scripts", $f3->SETTINGS), "No scripts element in settings.json");
 
-foreach ($f3->SETTINGS["scripts"] as $script) {
-
-	check(0, !array_key_exists("class", $script) || $script["class"]=="", "Misconfigured script in .cms/settings.ini<br>The class property is missing.", $script);
-
-	check(0, !class_exists($script["class"]), "script ".$f3->highlight($script["class"])." does not exist in .cms/settings.ini", $f3->highlight(json_encode($script, JSON_PRETTY_PRINT)));
-
-	$script["name"] = (array_key_exists("name", $script)) ? $script["name"] : $script["class"];
-
-	$f3->set("SETTINGS.".$script["name"], $script);
-
+foreach ($f3->SETTINGS["scripts"] as $key=>$script) {
+	// Load script when on set route
 	if (isroute($script["routes"]) || !isset($script["routes"]) || isroute("/admin/".$script["name"]) || isroute("/admin/".$script["name"]."/*"))
 	{
 		if (is_subclass_of($script["class"], "prefab"))

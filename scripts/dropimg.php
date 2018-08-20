@@ -2,6 +2,8 @@
 
 class dropimg extends prefab {
 
+	public static $default_label = "Drop Image";
+
 	function __construct() {
 
 		$f3 = base::instance();

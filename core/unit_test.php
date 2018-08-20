@@ -55,8 +55,8 @@ class unit_test {
 	function SMTP_test_routes($f3) {
 
 		$f3->route("GET /smtp-test", function ($f3) {
-			
-			$mailer_config = $f3->CONFIG["mailer"];
+
+			$mailer_config = $f3->mailer;
 			$f3->set("mailer", $mailer_config);
 
 			// Check IP addresss resolution

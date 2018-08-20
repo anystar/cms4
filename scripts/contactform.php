@@ -123,13 +123,19 @@ class contactform {
 		else
 			$fromAddress = "noreply@webworksau.com";
 
-		// Send the email !!
-		$this->send_email($settings["sendto"], $f3->POST, $settings["template"], [
-			"fromName" => $fromName,
-			"fromAddress" => $fromAddress,
-			"sendName"=>isset($settings["sendname"]) ? $settings["sendname"] : "Business owner",
-			"subject" => isset($settings["subject"]) ? $settings["subject"] : "Website Enquiry"
-		]);
+		// Convert single emails to arrays
+		if (!is_array($settings["sendto"]))
+			$settings["sendto"] = array($settings["sendto"]);
+
+		// Send the email
+		foreach ($settings["sendto"] as $email) {
+			$this->send_email($email, $f3->POST, $settings["template"], [
+				"fromName" => $fromName,
+				"fromAddress" => $fromAddress,
+				"sendName"=>isset($settings["sendname"]) ? $settings["sendname"] : "Business owner",
+				"subject" => isset($settings["subject"]) ? $settings["subject"] : "Website Enquiry"
+			]);
+		}
 
 
 		redirect($settings["success"]);

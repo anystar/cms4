@@ -2,6 +2,8 @@
 
 class ckeditor extends prefab {
 
+	public static $default_label = "CKEditor";
+
 	function __construct($settings) {
 		$f3 = base::instance();
 

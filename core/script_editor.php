@@ -11,15 +11,28 @@ class script_editor {
 
 		$f3->route("GET /admin/script-editor", function ($f3) {
             
-            // Load Settings JSON
-            $settings = json_decode(file_get_contents(".cms/settings.json"), true);
-
-
-            $f3->scripts = $settings["scripts"];
+            $f3->scripts = $f3->SETTINGS["scripts"];
 
 			echo Template::instance()->render("/script-editor/index.html", "text/html");
 		});
 
+		$f3->route("GET /admin/script-editor/settings/@name", function ($f3, $params) {
+			
+			$f3->script = $f3->SETTINGS["scripts"][$params["name"]];
+			$f3->name = $params["name"];
+
+			echo Template::instance()->render("/script-editor/settings.html", "text/html");
+		});
+
+		$f3->route("POST /admin/script-editor/settings/@name", function ($f3, $params) {
+			
+			setting("scripts.".$params["name"], $f3->POST);
+			
+			$f3->script = $f3->SETTINGS["scripts"][$params["name"]];
+			$f3->name = $params["name"];
+
+			echo Template::instance()->render("/script-editor/settings.html", "text/html");
+		});
 
 	}
 

@@ -1,40 +1,68 @@
 <?php
 
+function load_settings() {
+	$f3 = base::instance();
+	
+	$f3->SETTINGS = json_decode($f3->read(".cms/settings.json"), 1);
+
+	foreach ($f3->SETTINGS["scripts"] as $key=>$script) {
+
+		// Ensure class property exists
+		check(0, !array_key_exists("class", $script) || $script["class"]=="", "Misconfigured script in .cms/settings.ini<br>The class property is missing.", $script);
+	
+		// Ensure actual class exists
+		check(0, !class_exists($script["class"]), "script ".$f3->highlight($script["class"])." does not exist in .cms/settings.ini", $f3->highlight(json_encode($script, JSON_PRETTY_PRINT)));
+	
+		// Give it a name
+		$f3->SETTINGS["scripts"][$key]["name"] =  $script["name"] = (array_key_exists("name", $script)) ? $script["name"] : $script["class"];
+	
+		// Give it a default label
+		if (!array_key_exists("label", $script))
+			if (isset($script["class"]::$default_label))
+				$f3->SETTINGS["scripts"][$key]["label"] =  $script["label"] = $script["class"]::$default_label;
+	
+		// Rekey with proper string names
+		$f3->SETTINGS["scripts"][$script["name"]] = $script;
+		unset($f3->SETTINGS["scripts"][$key]);
+	}
+}
+
 function setting($key, $value=null, $overwrite=true) {
 
 	$f3 = base::instance();
 
-	$f3->settings = json_decode(file_get_contents(getcwd() . "/.cms/settings.json"), true);
-
+	$f3->temp_settings = json_decode(file_get_contents(getcwd() . "/.cms/settings.json"), true);
 
 	// Fix up $settings[scripts] array with named indexes
 	$temp = [];
-	foreach ($f3->settings["scripts"] as $script) {
+	foreach ($f3->temp_settings["scripts"] as $script) {
 
 		$indexName = array_key_exists("name", $script) ? $script["name"] : $script["class"];
 		$temp[$indexName] = $script;
 	}
 
-	$f3->set("settings.scripts", $temp);
+	$f3->set("temp_settings.scripts", $temp);
 
 	// We only want the setting
 	if ($value !== null)
 	{
-		if ($f3->exists("settings.".$key) && !$overwrite)
-			return $f3->get("settings.".$key);
+		if ($f3->exists("temp_settings.".$key) && !$overwrite)
+			return $f3->get("temp_settings.".$key);
 	}
 
 	// Set the value
-	$f3->set("settings.".$key, $value);
+	$f3->set("temp_settings.".$key, $value);
 
 	$temp = [];
-	foreach ($f3->get("settings.scripts") as $script) {
+	foreach ($f3->get("temp_settings.scripts") as $script) {
 		$temp[] = $script;
 	}
 
-	$f3->set("settings.scripts", $temp);
+	$f3->set("temp_settings.scripts", $temp);
 
-	file_put_contents(getcwd() . "/.cms/settings.json", json_encode($f3->settings, JSON_PRETTY_PRINT));
+	file_put_contents(getcwd() . "/.cms/settings.json", json_encode($f3->temp_settings, JSON_PRETTY_PRINT));
+
+	load_settings();
 
 	return $value;
 }
