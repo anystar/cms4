@@ -59,7 +59,7 @@ class contactform {
 		// We have submitted the form
 		if ($f3->exists("POST.contactform_submit"))
 			// Ensure we submitting for correct form
-			if ($f3->POST["contactform_submit"] == $settings["name"])
+			if ($f3->POST["contactform_submit"] == $settings["name"] || $f3->POST["contactform_submit"] == "")
 				$this->check_form($settings);
 	}
 
