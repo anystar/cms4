@@ -272,3 +272,7 @@ body {
   opacity: 0.5 !important;
   transition: opacity .25s ease-in-out;
 }
+
+.tingle-modal {
+    z-index: 9999999 !important;
+}
