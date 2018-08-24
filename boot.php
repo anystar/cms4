@@ -192,6 +192,11 @@ if ($f3->CONFIG["developer"] != true) {
 		if ($f3->SETTINGS["force-https"] == true)
 			if ($f3->SCHEME=="http")
 				$f3->reroute("https://".$f3->HOST.$f3->BASE.$f3->PATH . (($f3->QUERY!="") ? "?".$f3->QUERY : ""));
+
+	if (array_key_exists("force-http", $f3->SETTINGS))
+		if ($f3->SETTINGS["force-http"] == true)
+			if ($f3->SCHEME=="http")
+				$f3->reroute("http://".$f3->HOST.$f3->BASE.$f3->PATH . (($f3->QUERY!="") ? "?".$f3->QUERY : ""));
 }
 
 // If a mailer is set in settings then use that instead
