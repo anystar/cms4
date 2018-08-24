@@ -195,7 +195,7 @@ if ($f3->CONFIG["developer"] != true) {
 
 	if (array_key_exists("force-http", $f3->SETTINGS))
 		if ($f3->SETTINGS["force-http"] == true)
-			if ($f3->SCHEME=="http")
+			if ($f3->SCHEME=="https")
 				$f3->reroute("http://".$f3->HOST.$f3->BASE.$f3->PATH . (($f3->QUERY!="") ? "?".$f3->QUERY : ""));
 }
 
