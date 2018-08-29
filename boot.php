@@ -358,15 +358,12 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		else
 			$f3->expire(604800);
 	
-		// Render as raw data
-		$out = gzencode(file_get_contents(getcwd()."/".$f3->FILE));
-
 		header('Content-Type: '.$f3->MIME);
 		header('Content-Encoding: gzip');
 		header('Content-Length: '.strlen($out));
 		header('Connection: close');
 		session_commit();
-		echo $out;
+		echo gzencode(file_get_contents(getcwd()."/".$f3->FILE));;
 		flush();
 		if (function_exists('fastcgi_finish_request'))
 			fastcgi_finish_request();
