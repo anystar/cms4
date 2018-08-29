@@ -346,6 +346,9 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	}
 	else
 	{
+		// Render as a template file
+		ob_start('ob_gzhandler') OR ob_start();
+
 		if (admin::$signed && in_array($f3->MIME, $nocache_mimetypes))
 		{
 			header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
@@ -355,13 +358,18 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		else
 			$f3->expire(604800);
 	
-		header('Content-Type: '.$f3->MIME.';');
-		header("Content-length: ".getcwd()."/".filesize($f3->FILE).';');
-
 		// Render as raw data
-		readfile(getcwd()."/".$f3->FILE);
+		$out = gzencode(file_get_contents(getcwd()."/".$f3->FILE));
 
-		$f3->abort();
+		header('Content-Type: '.$f3->MIME);
+		header('Content-Encoding: gzip');
+		header('Content-Length: '.strlen($out));
+		header('Connection: close');
+		session_commit();
+		echo $out;
+		flush();
+		if (function_exists('fastcgi_finish_request'))
+			fastcgi_finish_request();
 	}
 }, $f3->PAGE_CACHE);
 

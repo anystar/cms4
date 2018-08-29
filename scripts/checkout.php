@@ -136,6 +136,9 @@ class checkout extends prefab {
 
 	function sendmail ($renderedTemplate, $options) {
 
+		echo $renderedTemplate;
+		die;
+
 		$mailer = new \Mailer();
 
 		$mailer->addTo($options["sendto"], $options["sendName"]);
