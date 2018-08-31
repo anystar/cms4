@@ -24,6 +24,17 @@ class checkout extends prefab {
 		$paypal_defaults["success"] = "payment-success.html";
 		$paypal_defaults["receipt_template"] = "receipt_template.html";
 
+		$paypal_creditcard_defaults["provider"] = "PaypalExpress";
+		$paypal_creditcard_defaults["user"] = "apiusername";
+		$paypal_creditcard_defaults["pass"] = "apipassword";
+		$paypal_creditcard_defaults["signature"] = "apisigniture";
+		$paypal_creditcard_defaults["endpoint"] = "sandbox or production";
+		$paypal_creditcard_defaults["apiver"] = "204.0";
+		$paypal_creditcard_defaults["return"] = "confirm-payment.html";
+		$paypal_creditcard_defaults["cancel"] = "cancel-payment.html";
+		$paypal_creditcard_defaults["success"] = "payment-success.html";
+		$paypal_creditcard_defaults["receipt_template"] = "receipt_template.html";
+
 		$paypal_button_defaults["provider"] = "PaypalButton";
 		$paypal_button_defaults["email"] = "your paypal email address";
 
@@ -39,6 +50,7 @@ class checkout extends prefab {
 		$defaults["payment_gateways"][] = $email_defaults;
 		$defaults["payment_gateways"][] = $paypal_button_defaults;
 		$defaults["payment_gateways"][] = $paypal_defaults;
+		$defaults["payment_gateways"][] = $paypal_creditcard_defaults;
 
 		check(0, (count($settings) < 3), "**Default example:**",$defaults);
 
@@ -135,9 +147,6 @@ class checkout extends prefab {
 	}
 
 	function sendmail ($renderedTemplate, $options) {
-
-		echo $renderedTemplate;
-		die;
 
 		$mailer = new \Mailer();
 
