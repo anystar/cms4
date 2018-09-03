@@ -96,10 +96,17 @@ class checkout extends prefab {
 
 			if (!$captcha_passed)
 			{
+				$f3->POST["error"] = "Please check \"I'm not a rebot\"Code-free Customization
+Browse hundreds of professionally-designed WordPress themes to find the right one for your site.
+
+Customize your homepage, blog posts, sidebars, and widgets — all without touching any code.
+
+Seamlessly embed rich content and videos, deliver them all at high speed, and replace default search with an Elasticsearch-powered service.
+
+";
 				$f3->VERB = "GET";
 				return;
 			}
-
 
 			check (0, !array_key_exists("amount_due", $f3->POST), "No ``amount_due`` hidden input field was supplied");
 
@@ -123,6 +130,8 @@ class checkout extends prefab {
 			$data["reference"] = $this->generateReferenceNumber();
 
 			$gateway->submit($data);
+
+			$f3->VERB = "GET";
 		}
 
 		$tmpl = \Template::instance();
@@ -324,37 +333,55 @@ class PaypalExpress_CreditCardGateway {
 	}
 
 	function submit ($data) {
-		
-		k("UNFINISHED");
 
 		$f3 = base::instance();
 
+		if ($this->settings["endpoint"] == "sandbox")
+		{				
+			$this->settings["user"] = $f3->CONFIG["paypal_express_sandbox"]["user"];
+			$this->settings["pass"] = $f3->CONFIG["paypal_express_sandbox"]["pass"];
+			$this->settings["signature"] = $f3->CONFIG["paypal_express_sandbox"]["signature"];
+		}
+
 		$action = "Sale";
 		$currency = "AUD";
-		$amount = "12.00";
 		$cardtype = "VISA";
-		$number = $f3->POST["credit_number"];
-		$expiry = $f3->POST["credit_expiry_month"].$f3->POST["credit_expiry_year"];
-		$cvc = $f3->POST["credit_cvc"];
+		$number = $f3->POST["cc_number"];
+
+			// Parse the expiry date
+			$exp = explode("/", $f3->POST["cc_expiry"]);
+			$month = DateTime::createFromFormat('!m', $exp[0]);
+			$month = $month->format('m');
+
+			$year = DateTime::createFromFormat('!y', $exp[1]);
+			$year = $year->format('Y');
+
+			$day = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+			$expiry = DateTime::createFromFormat("dmY", $day.$month.$year);
+
+		$expiry = $month.$year;
+		$cvc = $f3->POST["cc_cvc"];
 		$amount_due = $f3->POST["amount_due"];
-
-		$ipaddress = '127.0.0.1';
-
+		$ipaddress = $f3->IP;
 
 		$paypal = new PayPal($this->settings);
 
-		$result=$paypal->dcc($action, $currency, $amount_due, $cardtype, $number, $expiry, $cvc, $ipaddress);
+		$result = $paypal->dcc($action, $currency, $amount_due, $cardtype, $number, $expiry, $cvc, $ipaddress);
 
 
-		k($result);
-		
-
-		redirect($result['redirect']);
+		if ($result['ACK'] != 'Success' && $result['ACK'] != 'SuccessWithWarning') {
+			$f3->POST["error"] = $result["L_LONGMESSAGE0"];
+		}
+		else
+		{
+			redirect($this->settings["success"]);
+		}
 	}
 
 	function complete_payment () {
 
 		base::instance()->route("GET /".$this->settings["return"], function ($f3) {
+			
 			redirect($this->settings["success"]);
 		});
 

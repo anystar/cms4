@@ -435,5 +435,9 @@ if (isset(Mailer::$queue))
 new stats ($f3->SETTINGS);
 
 // Delete Error Log
-if (file_exists("error_log"))
-	unlink(realpath("error_log"));
+if (file_exists(realpath("error_log")))
+{
+	try  {
+		unlink(realpath("error_log"));
+	} catch(Exception $e) { }
+}
