@@ -422,6 +422,9 @@ if (isset(Mailer::$queue))
 	{	
 		foreach (Mailer::$queue as $mailer)
 		{
+			if ($mailer->subject == "")
+				$mailer->subject = "Email from your website";
+
 			$mailer->send($mailer->subject);
 			
 			//file_put_contents(".cms/mail/test.txt", $mailer->log);
