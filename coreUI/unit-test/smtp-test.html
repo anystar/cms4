@@ -26,7 +26,17 @@
   </head>
   <body>
 
-	<div class="container" style="margin:200px auto;">
+	<h1><img height="100%" id="webworks_logo" alt="Web Works CMS" src="{{ @BASE }}/admin/logo_sm.png"><button id="closeflyout">X</button></h1>
+
+	<a href="{{@BASE}}/admin/unit-tests" class="webworkscms_button">Go Back</a>
+
+	<check if="{{@GET.alert}}">
+		<div class="alert">
+			Test email sent
+		</div>
+	</check>
+
+	<div class="container" style="margin:150px auto;">
 
 		<div class="row">
 			<div class="col-12" style="padding-bottom: 20px;">
@@ -43,7 +53,7 @@
 		</div>
         <hr>
 		<div class="row">
-			<div class="col-6">
+			<div class="col-12 col-md-6">
 
                 <form method="POST" action="{{@BASE}}/smtp-test">
                     

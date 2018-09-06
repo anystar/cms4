@@ -3,13 +3,20 @@
 class unit_test {
 
 	function __construct($settings) {
+		$f3 = base::instance();
 
-		if (base::instance()->ADMIN)
+		if ($f3->ADMIN)
 		{
-			$this->image_test_routes(base::instance());
-			$this->SMTP_test_routes(base::instance());
-		
-			base::instance()->route("GET /php-info", function () {
+			$this->image_test_routes($f3);
+			$this->SMTP_test_routes($f3);
+			
+			$f3->route("GET /admin/unit-tests", function () {
+				
+				echo Template::instance()->render("unit-test/index.html", "text/html");
+
+			});
+			
+			$f3->route("GET /php-info", function () {
 				phpinfo();
 				die;
 			});
@@ -21,7 +28,7 @@ class unit_test {
 		$f3->route("GET /admin/unit-test/delete-image", function ($f3) {
 
 			unlink("image-test.jpg");
-			$f3->reroute("/image-test");
+			$f3->reroute("/image-test?alert=deleted");
 		});
 
 		$f3->route("GET /image-test", function ($f3) {
@@ -29,6 +36,7 @@ class unit_test {
 			if (array_key_exists("create-image", $f3->GET))
 			{
 				$f3->show_image = true;
+				$f3->GET['alert'] = "created";
 			}
 
 			if (file_exists("image-test.jpg"))
@@ -79,15 +87,7 @@ class unit_test {
 
 			$mailer->queue("Test Mail Subject");
 
-			
-			redirect("smtp-test");
-		});
-
-		$f3->route("GET /admin/smtp-test", function ($f3) {
-
-
-
-			k("login test");
+			redirect("smtp-test?alert=sent");
 		});
 
 	}

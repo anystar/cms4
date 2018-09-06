@@ -96,14 +96,7 @@ class checkout extends prefab {
 
 			if (!$captcha_passed)
 			{
-				$f3->POST["error"] = "Please check \"I'm not a rebot\"Code-free Customization
-Browse hundreds of professionally-designed WordPress themes to find the right one for your site.
-
-Customize your homepage, blog posts, sidebars, and widgets — all without touching any code.
-
-Seamlessly embed rich content and videos, deliver them all at high speed, and replace default search with an Elasticsearch-powered service.
-
-";
+				$f3->POST["error"] = "Please check I'm not a robot";
 				$f3->VERB = "GET";
 				return;
 			}

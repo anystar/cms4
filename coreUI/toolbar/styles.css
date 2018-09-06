@@ -83,11 +83,11 @@ body {
 }
 
 #webworkscms_admintoolbar .button, #webworkscms_admintoolbar #views, .editable .toolbar .button, .logoutwarning .button, .webworks-admin-button {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
   font-family: Roboto, sans-serif !important;
   font-size: 16px !important;
   font-weight: 500 !important;
-  color: rgba(0, 0, 0, 0.8);
+  color: rgba(0, 0, 0, 0.8) !important;
   text-shadow: 0 0.1em 0 rgba(255, 255, 255, 0.5) !important;
   text-transform: uppercase !important;
   text-decoration: none !important;
