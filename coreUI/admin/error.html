@@ -59,6 +59,7 @@ we can at least give the user a proper error page.
         <div class="col-3">
           <check if="{{@ERROR.code == 500}}"><i style="color: red;" class="fa fa-exclamation-triangle" aria-hidden="true"></i></check>
           <check if="{{@ERROR.code == 404}}"><i style="color: #FF9550;" class="fa fa-exclamation-triangle" aria-hidden="true"></i></check>
+          <check if="{{@ERROR.code == 100}}"><i style="color: #FF9550;font-size:10rem;" class="fa fa-exclamation-triangle" aria-hidden="true"></i></check>
           <check if="{{@ERROR.code == 0}}"><i style="color: red;" class="fa fa-exclamation-triangle" aria-hidden="true"></i></check>
           <check if="{{@ERROR.code == 1}}"><i style="color: red;" class="fa fa-exclamation-triangle" aria-hidden="true"></i></check>
           <check if="{{@ERROR.code == 2}}"><i style="color: #FF9550;" class="fa fa-exclamation-triangle" aria-hidden="true"></i></check>
@@ -119,6 +120,13 @@ we can at least give the user a proper error page.
                 <a href="{{@BASE}}{{@PATH}}?save-changes" class="btn btn-primary">Save Changes</a>
                 <a href="{{@BASE}}{{@PATH}}?{{@QUERY}}&amp;discard-changes" class="btn btn-primary">Discard Changes and Continue</a>
               </div>
+          </check>
+
+          <check if="{{@ERROR.code==100}}">
+            <h1>Checkout error</h1>
+            {{@ERROR.text}}
+
+            <a href="{{@BASE}}/">Return to website</a>
           </check>
 
         </div>

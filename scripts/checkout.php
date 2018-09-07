@@ -412,10 +412,10 @@ class PaypalExpressGateway {
 	function submit ($data) {
 		$f3 = base::instance();
 
-		if ($this->settings["endpoint"] == "sandbox")
+		if ($f3->CONFIG["developer"] == '1')
 		{
-			$this->settings["return"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["return"];
-			$this->settings["cancel"] = "http://paypal.darklocker.com".$f3->BASE."/".$this->settings["cancel"];
+			$this->settings["return"] = "http://paypal2.darklocker.com".$f3->BASE."/".$this->settings["return"];
+			$this->settings["cancel"] = "http://paypal2.darklocker.com".$f3->BASE."/".$this->settings["cancel"];
 
 			$default_sandbox = array();
 			$default_sandbox["user"] = "paypal user";
@@ -448,15 +448,21 @@ class PaypalExpressGateway {
 
 			$data = $f3->get("SESSION.paypalexpress_data");
 
-			$token = $f3->get('GET.token');
-			$payerid = $f3->get('GET.PayerID');
+			if (!$f3->exists("SESSION.paypalexpress_data")) {
+				$f3->error(404);
 
-			if ($this->settings["endpoint"] == "sandbox")
+				return;
+			}
+
+			if ($f3->CONFIG["developer"] == '1')
 			{				
 				$this->settings["user"] = $f3->CONFIG["paypal_express_sandbox"]["user"];
 				$this->settings["pass"] = $f3->CONFIG["paypal_express_sandbox"]["pass"];
 				$this->settings["signature"] = $f3->CONFIG["paypal_express_sandbox"]["signature"];
 			}
+
+			$token = $f3->get('GET.token');
+			$payerid = $f3->get('GET.PayerID');
 
 			$paypal = new PayPal($this->settings);
 			$result = $paypal->complete($token, $payerid);
@@ -464,7 +470,25 @@ class PaypalExpressGateway {
 			// Check the API call was successful
 			if ($result['ACK'] != 'Success' && $result['ACK'] != 'SuccessWithWarning')
 			{
-				base::instance()->error('Paypal Express Error with API call -'.$result["L_ERRORCODE0"]);
+				if (array_check_value($this->settings, "error"))
+				{
+					$f3->set("paypal", $result);
+					$body = \Template::instance()->render($this->settings["error"], null);
+				}
+				else
+				{
+					switch ($result["L_ERRORCODE0"])
+					{
+						case "10486":
+							check(100, true, "We're sorry, but your transaction couldn't be completed using the selected card because it has been denied by the card issuer.");
+						break;
+						
+						default:
+							$f3->error("We're sorry but there was a problem with the checkout process.");
+						break;
+					}
+				}
+
 				return;
 			}
 
