@@ -218,6 +218,8 @@ class PaypalButtonGateway {
 		
 		base::instance()->route("GET /".$this->settings["return"], function ($f3) {
 
+			k("Not working");
+
 			if (!array_key_exists("pending", $f3->COOKIE))
 				$f3->error(500, "Transaction ID not found!");
 
@@ -231,8 +233,6 @@ class PaypalButtonGateway {
 
 			$body = \Template::instance()->render($this->settings["invoice_template"], null);
 
-
-
 			// Send copy to buyer
 			$options = [];
 			$options["sendName"] = $f3->data["name"];
@@ -240,8 +240,6 @@ class PaypalButtonGateway {
 			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $f3->data);
 			$options["sendto"] = $f3->data["email"];
 
-			echo $body;
-			die;
 			$this->checkout->sendmail($body, $options);
 
 			if (array_key_exists("send_receipt_copy", $this->settings)) {
@@ -451,7 +449,6 @@ class PaypalExpressGateway {
 
 			if (!$f3->exists("SESSION.paypalexpress_data")) {
 				$f3->error(404);
-
 				return;
 			}
 
