@@ -457,6 +457,7 @@ class PaypalExpressGateway {
 				$this->settings["user"] = $f3->CONFIG["paypal_express_sandbox"]["user"];
 				$this->settings["pass"] = $f3->CONFIG["paypal_express_sandbox"]["pass"];
 				$this->settings["signature"] = $f3->CONFIG["paypal_express_sandbox"]["signature"];
+				$this->settings["endpoint"] = "sandbox";
 			}
 
 			$token = $f3->get('GET.token');
@@ -482,6 +483,26 @@ class PaypalExpressGateway {
 						break;
 						
 						default:
+							if ($f3->CONFIG["email_errors"])
+							{
+								$email  = "<h1>Paypal Express Error</h1>";
+								$email .= "<p>";
+								$email .=   markdown::instance()->convert($ERROR["text"]);
+								$email .=   "<br>";
+								$email .=   "<pre><code>".json_encode($result, JSON_PRETTY_PRINT)."</code></pre>";
+								$email .=   "<br>";
+								$email .=   "<pre><code>".json_encode($this->settings, JSON_PRETTY_PRINT)."</code></pre>";
+								$email .=   "<br>";
+								$email .=   "<pre><code>".$ERROR["trace"]."</code></pre>";
+								$email .= "</p>";
+							
+								$mailer = new Mailer();
+								$mailer->addTo("darklocker@gmail.com");
+								$mailer->setHTML($email);
+								$mailer->send("Paypal Express Checkout Error message");
+								unset($mailer);
+							}
+
 							$f3->error("We're sorry but there was a problem with the checkout process.");
 						break;
 					}
