@@ -427,6 +427,7 @@ class PaypalExpressGateway {
 			$this->settings["user"] = $f3->CONFIG["paypal_express_sandbox"]["user"];
 			$this->settings["pass"] = $f3->CONFIG["paypal_express_sandbox"]["pass"];
 			$this->settings["signature"] = $f3->CONFIG["paypal_express_sandbox"]["signature"];
+			$this->settings["endpoint"] = "sandbox";
 		}
 		else
 		{
@@ -435,7 +436,7 @@ class PaypalExpressGateway {
 		}
 
 		$paypal = new PayPal($this->settings);
-
+		
 		$result = $paypal->create("Sale", "AUD", $data["amount_due"]);
 
 		$f3->set("SESSION.paypalexpress_data", $data);
