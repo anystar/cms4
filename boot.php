@@ -343,13 +343,38 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		if (function_exists('fastcgi_finish_request'))
 			fastcgi_finish_request();
 
-		$out = null; // Clear Memory
+		$out = null; // clear memory
 		unset($out); // Kill the variable
 	}
 	else
 	{
-		//working($f3, $nocache_mimetypes);
-		notworking($f3, $nocache_mimetypes);
+		// Render as a template file
+		ob_start('ob_gzhandler') OR ob_start();
+
+		if (admin::$signed && in_array($f3->MIME, $nocache_mimetypes))
+		{
+			header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+			header("Cache-Control: post-check=0, pre-check=0", false);
+			header("Pragma: no-cache");
+			$f3->expire(0);
+		}
+		else
+			$f3->expire(604800);
+	
+		$out = gzencode(file_get_contents(getcwd()."/".$f3->FILE));
+
+		header('Content-Type: '.$f3->MIME);
+		header('Content-Encoding: gzip');
+		header('Content-Length: '.strlen($out));
+		header('Connection: close');
+		session_commit();
+		echo $out;
+		flush();
+		if (function_exists('fastcgi_finish_request'))
+			fastcgi_finish_request();
+
+		$out = null; // clear memory
+		unset($out); // Kill the variable
 	}
 }, $f3->PAGE_CACHE);
 
