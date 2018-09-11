@@ -343,6 +343,8 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		if (function_exists('fastcgi_finish_request'))
 			fastcgi_finish_request();
 
+		$out = null; // Clear Memory
+		unset($out); // Kill the variable
 	}
 	else
 	{
@@ -350,53 +352,6 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		notworking($f3, $nocache_mimetypes);
 	}
 }, $f3->PAGE_CACHE);
-
-function working ($f3, $nocache_mimetypes)
-{
-	if (admin::$signed && in_array($f3->MIME, $nocache_mimetypes))
-	{
-		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-		header("Cache-Control: post-check=0, pre-check=0", false);
-		header("Pragma: no-cache");
-	}
-	else
-		$f3->expire(604800);
-
-	header('Content-Type: '.$f3->MIME.';');
-	header("Content-length: ".getcwd()."/".filesize($f3->FILE).';');
-
-	// Render as raw data
-	readfile(getcwd()."/".$f3->FILE);
-
-	$f3->abort();
-}
-
-function notworking ($f3, $nocache_mimetypes) {
-		// Render as a template file
-		ob_start('ob_gzhandler') OR ob_start();
-
-		if (admin::$signed && in_array($f3->MIME, $nocache_mimetypes))
-		{
-			header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-			header("Cache-Control: post-check=0, pre-check=0", false);
-			header("Pragma: no-cache");
-			$f3->expire(0);
-		}
-		else
-			$f3->expire(604800);
-	
-		$out = gzencode(file_get_contents(getcwd()."/".$f3->FILE));
-
-		header('Content-Type: '.$f3->MIME);
-		header('Content-Encoding: gzip');
-		header('Content-Length: '.strlen($out));
-		header('Connection: close');
-		session_commit();
-		echo $out;
-		flush();
-		if (function_exists('fastcgi_finish_request'))
-			fastcgi_finish_request();
-}
 
 $f3->route('GET /cms-cdn/*', function ($f3) {
 	$ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);

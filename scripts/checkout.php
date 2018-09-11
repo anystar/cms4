@@ -445,101 +445,101 @@ class PaypalExpressGateway {
 	function complete_payment () {
 	base::instance()->route("GET /".$this->settings["return"], function ($f3) {
 
-			$data = $f3->get("SESSION.paypalexpress_data");
+		if (!$f3->exists("SESSION.paypalexpress_data")) {
+			$f3->error(404);
+			return;
+		}
 
-			if (!$f3->exists("SESSION.paypalexpress_data")) {
-				$f3->error(404);
-				return;
-			}
+		$data = $f3->get("SESSION.paypalexpress_data");
 
-			if ($f3->CONFIG["developer"] == '1')
-			{				
-				$this->settings["user"] = $f3->CONFIG["paypal_express_sandbox"]["user"];
-				$this->settings["pass"] = $f3->CONFIG["paypal_express_sandbox"]["pass"];
-				$this->settings["signature"] = $f3->CONFIG["paypal_express_sandbox"]["signature"];
-				$this->settings["endpoint"] = "sandbox";
-			}
+		if ($f3->CONFIG["developer"] == '1')
+		{				
+			$this->settings["user"] = $f3->CONFIG["paypal_express_sandbox"]["user"];
+			$this->settings["pass"] = $f3->CONFIG["paypal_express_sandbox"]["pass"];
+			$this->settings["signature"] = $f3->CONFIG["paypal_express_sandbox"]["signature"];
+			$this->settings["endpoint"] = "sandbox";
+		}
 
-			$token = $f3->get('GET.token');
-			$payerid = $f3->get('GET.PayerID');
+		$token = $f3->get('GET.token');
+		$payerid = $f3->get('GET.PayerID');
 
-			$paypal = new PayPal($this->settings);
-			$result = $paypal->complete($token, $payerid);
+		$paypal = new PayPal($this->settings);
+		$result = $paypal->complete($token, $payerid);
 
-			// Check the API call was successful
-			if ($result['ACK'] != 'Success' && $result['ACK'] != 'SuccessWithWarning')
+		// Check the API call was successful
+		if ($result['ACK'] != 'Success' && $result['ACK'] != 'SuccessWithWarning')
+		{
+			if (array_check_value($this->settings, "error"))
 			{
-				if (array_check_value($this->settings, "error"))
+				$f3->set("paypal", $result);
+				$body = \Template::instance()->render($this->settings["error"], null);
+			}
+			else
+			{
+				switch ($result["L_ERRORCODE0"])
 				{
-					$f3->set("paypal", $result);
-					$body = \Template::instance()->render($this->settings["error"], null);
-				}
-				else
-				{
-					switch ($result["L_ERRORCODE0"])
-					{
-						case "10486":
-							check(100, true, "We're sorry, but your transaction couldn't be completed using the selected card because it has been denied by the card issuer.");
-						break;
+					case "10486":
+						check(100, true, "We're sorry, but your transaction couldn't be completed using the selected card because it has been denied by the card issuer.");
+					break;
+					
+					default:
+						if ($f3->CONFIG["email_errors"])
+						{
+							$email  = "<h1>Paypal Express Error</h1>";
+							$email .= "<p>";
+							$email .=   markdown::instance()->convert($ERROR["text"]);
+							$email .=   "<br>";
+							$email .=   "<pre><code>".json_encode($result, JSON_PRETTY_PRINT)."</code></pre>";
+							$email .=   "<br>";
+							$email .=   "<pre><code>".json_encode($this->settings, JSON_PRETTY_PRINT)."</code></pre>";
+							$email .=   "<br>";
+							$email .=   "<pre><code>".$ERROR["trace"]."</code></pre>";
+							$email .= "</p>";
 						
-						default:
-							if ($f3->CONFIG["email_errors"])
-							{
-								$email  = "<h1>Paypal Express Error</h1>";
-								$email .= "<p>";
-								$email .=   markdown::instance()->convert($ERROR["text"]);
-								$email .=   "<br>";
-								$email .=   "<pre><code>".json_encode($result, JSON_PRETTY_PRINT)."</code></pre>";
-								$email .=   "<br>";
-								$email .=   "<pre><code>".json_encode($this->settings, JSON_PRETTY_PRINT)."</code></pre>";
-								$email .=   "<br>";
-								$email .=   "<pre><code>".$ERROR["trace"]."</code></pre>";
-								$email .= "</p>";
-							
-								$mailer = new Mailer();
-								$mailer->addTo("darklocker@gmail.com");
-								$mailer->setHTML($email);
-								$mailer->send("Paypal Express Checkout Error message");
-								unset($mailer);
-							}
+							$mailer = new Mailer();
+							$mailer->addTo("darklocker@gmail.com");
+							$mailer->setHTML($email);
+							$mailer->send("Paypal Express Checkout Error message");
+							unset($mailer);
+						}
 
-							$f3->error("We're sorry but there was a problem with the checkout process.");
-						break;
-					}
+						$f3->error("We're sorry but there was a problem with the checkout process.");
+					break;
 				}
-
-				return;
 			}
 
-			$data["paypal_data"] = $result;
+			return;
+		}
 
-			$f3->set("data", $data);
-			$body = \Template::instance()->render($this->settings["receipt_template"], null);
+		$data["paypal_data"] = $result;
 
-			// Send copy to buyer
-			$options = [];
-			$options["sendName"] = $data["name"];
-			$options["fromName"] = $this->settings["send_name"];;
+		$f3->set("data", $data);
+		$body = \Template::instance()->render($this->settings["receipt_template"], null);
 
-			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
-			$options["sendto"] = $data["email"];
+		// Send copy to buyer
+		$options = [];
+		$options["sendName"] = $data["name"];
+		$options["fromName"] = $this->settings["send_name"];;
 
-			$this->checkout->sendmail($body, $options);
+		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+		$options["sendto"] = $data["email"];
 
-			// Send copy too seller
-			$options = [];
-			$options["sendName"] = $this->settings["send_name"];
-			$options["fromName"] = $data["name"];
-			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
-			$options["sendto"] = $this->settings["send_receipt_copy"];
+		$this->checkout->sendmail($body, $options);
 
-			$this->checkout->sendmail($body, $options);
+		// Send copy too seller
+		$options = [];
+		$options["sendName"] = $this->settings["send_name"];
+		$options["fromName"] = $data["name"];
+		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+		$options["sendto"] = $this->settings["send_receipt_copy"];
 
-			$this->checkout->log($data);
+		$this->checkout->sendmail($body, $options);
 
-			$f3->clear("SESSION.paypalexpress_data");
+		$this->checkout->log($data);
 
-			redirect($this->settings["success"]);
+		$f3->clear("SESSION.paypalexpress_data");
+
+		redirect($this->settings["success"]);
 	});}
 }
 
