@@ -188,8 +188,8 @@ function writable($path) {
 	if (function_exists('posix_getpwuid'))
 	{
 		// For linux
-		$serverUser = exec("whoami");
-		$directoryUser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
+		//$serverUser = exec("whoami");
+		//$directoryUser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
 	}
 	else
 	{
