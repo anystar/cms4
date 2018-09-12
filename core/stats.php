@@ -29,6 +29,9 @@ class stats extends prefab {
 
 				// Only track views counted within a certain country
 				$config = $GLOBALS["config"];
+
+				// TODO: Allow configuration in users files.
+
 				$geo = \Web\Geo::instance()->location();
 				if (array_key_exists("stats", $config))
 				if (array_key_exists("country", $config["stats"]))
