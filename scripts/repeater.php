@@ -136,6 +136,7 @@ class repeater {
 
 
 				$fill = [];
+
 				saveimg($file, $image_directory, $image_upload_settings, $fill);
 
 				foreach ($fill as $image)

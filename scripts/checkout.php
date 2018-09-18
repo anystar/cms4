@@ -77,6 +77,7 @@ class checkout extends prefab {
 			else
 				$captcha_passed = false;
 
+
 			// Check Captcha?
 			if (array_key_exists("g-recaptcha-response", $f3->POST))
 			{
@@ -92,6 +93,10 @@ class checkout extends prefab {
 					$captcha_passed = true;
 
 				unset($f3->POST["g-recaptcha-response"]);
+			}
+
+			if ($settings["testing"]) {
+				$captcha_passed = true;
 			}
 
 			if (!$captcha_passed)
@@ -259,7 +264,7 @@ class PaypalButtonGateway {
 			$record->clear("pending_id");
 			$record->save();
 
-			redirect($this->settings["success"]);
+			redirect(Template::instance()->resolve($this->settings["success"], $data));
 		});
 	}
 }
@@ -308,8 +313,8 @@ class EmailGateway {
 		}
 
 		$this->checkout->log($data);
-
-		redirect($this->settings["success"]);
+		
+		redirect(Template::instance()->resolve($this->settings["success"], $data));
 	}
 }
 
@@ -358,14 +363,13 @@ class PaypalExpress_CreditCardGateway {
 		$paypal = new PayPal($this->settings);
 
 		$result = $paypal->dcc($action, $currency, $amount_due, $cardtype, $number, $expiry, $cvc, $ipaddress);
-
-
+	
 		if ($result['ACK'] != 'Success' && $result['ACK'] != 'SuccessWithWarning') {
 			$f3->POST["error"] = $result["L_LONGMESSAGE0"];
 		}
 		else
 		{
-			redirect($this->settings["success"]);
+			redirect(Template::instance()->resolve($this->settings["success"], $data));
 		}
 	}
 
@@ -373,7 +377,7 @@ class PaypalExpress_CreditCardGateway {
 
 		base::instance()->route("GET /".$this->settings["return"], function ($f3) {
 			
-			redirect($this->settings["success"]);
+			redirect(Template::instance()->resolve($this->settings["success"], $data));
 		});
 
 	}
@@ -539,7 +543,7 @@ class PaypalExpressGateway {
 
 		$f3->clear("SESSION.paypalexpress_data");
 
-		redirect($this->settings["success"]);
+		redirect(Template::instance()->resolve($this->settings["success"], $data));
 	});}
 }
 
@@ -558,14 +562,14 @@ class CheckoutFormHandler extends \Template\TagHandler {
 
 		$attr["method"] = "POST";
 
-		// resolve all other / unhandled tag attributes
-		if ($attr!=null)
-			$attr = $this->resolveParams($attr);
-
 		$id = "checkout";
 		if (is_array($attr))
 			if (array_key_exists("id", $attr))
 				$id = $attr["id"];
+
+		// resolve all other / unhandled tag attributes
+		if ($attr!=null)
+			$attr = $this->resolveParams($attr);
 
 		$hiddenInput = '<input type="hidden" name="checkout_submit" value="'.$id.'">';
 

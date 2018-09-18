@@ -59,7 +59,7 @@ document.currentPage = '{{@FILE}}';
 
 var cmsjQuery = jQuery.noConflict(true);
 
-function status (message, timeout=null) {
+function status (message, timeout) {
   if (popup) return false;
 
   if (typeof message === "undefined")
@@ -77,7 +77,7 @@ function status (message, timeout=null) {
     cmsjQuery("#webworkscms_admintoolbar #statusbar").html(message);
   }
 
-  if (timeout!==null) {
+  if (timeout!==undefined) {
     setTimeout(function () {
       cmsjQuery("#webworkscms_admintoolbar #center_div").show();
       cmsjQuery("#webworkscms_admintoolbar #statusbar").hide();
