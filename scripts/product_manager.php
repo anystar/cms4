@@ -91,8 +91,9 @@ class product_manager extends prefab {
 			}
 			else
 			{
-				$self->primary_image_thumb = "";
-				$self->primary_image_thumb_file = "";
+				// No thumb found, let us just use the primary image
+				$self->primary_image_thumb = $self->primary_image;
+				$self->primary_image_thumb_file = $self->primary_image_file;
 			}
 
 		});
@@ -169,7 +170,7 @@ class product_manager extends prefab {
 
 			$f3->collections = $this->collections->find([], ["order"=>"order SORT_DESC"]);
 
-			// // Generate collection dropdown array
+			// Generate collection dropdown array
 			$f3->in_collection = false;
 			foreach ($f3->collections as $collection)
 			{	
@@ -347,7 +348,6 @@ class product_manager extends prefab {
 
 			if (!$product->exists("collections"))
 			{
-				k($product);
 				$product->collections = [];
 			}
 

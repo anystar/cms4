@@ -124,7 +124,6 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		$options["size"][1] = ((int)$options["size"][1] > 0) ? (int)$options["size"][1] : NULL;
 	}
 
-
 	##################################################
 	################ MULTI FILE UPLOAD ###############
 	##################################################
@@ -135,7 +134,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		if (array_key_exists("tmp_name", $file))
 		{
 			if (is_array($file["tmp_name"]))
-			{	
+			{
 				foreach ($file as $x=>$item) {
 					foreach ($item as $y=>$value)
 					{
@@ -153,15 +152,15 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 			}
 		}
 
-		if (!array_key_exists("error", $file))
-		{	
-			foreach ($file as $f)
-			{
-				$fille[] = saveimg($f, $directory, $options);
-			}
+		// if (!array_key_exists("error", $file))
+		// {
+		// 	foreach ($file as $f)
+		// 	{
+		// 		$fille[] = saveimg($f, $directory, $options);
+		// 	}
 
-			return true;
-		}
+		// 	return true;
+		// }
 	}
 
 	###############################################
@@ -289,8 +288,6 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		$directory = $pi["dirname"];
 	}
 
-
-	//
 	if ($directory[0] === DIRECTORY_SEPARATOR || preg_match('~\A[A-Z]:(?![^/\\\\])~i',$directory) > 0)
 	{
 		$options["absolute-directory"] = $directory;
