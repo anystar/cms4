@@ -140,6 +140,11 @@ checkhtaccess(".htaccess");
 if (!file_exists(".cms/.htaccess"))
 	file_put_contents(".cms/.htaccess", "Deny from all");
 
+// Prevent access to .git folder
+if (!is_file(getcwd()."/.git/.htaccess"))
+	file_put_contents(getcwd()."/.git/.htaccess", "Deny from all");
+
+
 // Redirect away from
 if (isroute("cms.php"))
 {
