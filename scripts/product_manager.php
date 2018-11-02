@@ -110,7 +110,7 @@ class product_manager extends prefab {
 
 	public function load ($flatten = false) {
 
-		$collections_results = $this->collections->find([], ["order"=>"order SORT_DESC"]);
+		$collections_results = $this->collections->find([], ["order"=>"order SORT_ASC"]);
 
 		$collections = [];
 		foreach ($collections_results as $collection)
