@@ -66,7 +66,7 @@ class contactform {
 
 	function check_form ($settings) {
 		$f3 = base::instance();
-	
+
 		// Get the form ID
 		$id = $f3->get("POST.contactform_submit");
 
@@ -90,6 +90,7 @@ class contactform {
 
 			unset($f3->POST["g-recaptcha-response"]);
 		}
+
 
 
 		// Check basic text captcha
@@ -278,7 +279,7 @@ class captcha extends \Template\TagHandler {
 				$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
 				$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
 			}
-	
+
 			$string .= '<style> @media screen and (max-height: 575px){ #rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;} } </style>'.PHP_EOL;
 	
 			if (array_key_exists("centered", $attr))

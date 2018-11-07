@@ -419,7 +419,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 
 		// Save image depending on user selected file type
 		switch (strtolower($options["type"]))
-		{	
+		{
 			case "jpg":
 			case "jpeg":
 				$result = imagejpeg($GDimg->data(), $options["final-file"], $options["quality"]);

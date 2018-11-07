@@ -78,10 +78,9 @@ class dropimg extends prefab {
 			$src = html_entity_decode($args["@attrib"]["src"]);
 			unset($args["@attrib"]["src"]);
 
-
 			// Strip potential url parameters from src field
 			$file = parse_url($src)["path"];
-
+			$file = str_replace("\\", "/", $file);
 
 			check (1, (!$args["@attrib"]["resize"] && !$args["@attrib"]["size"]), "No `resize` attribute found for dropimg tag.");
 
@@ -189,14 +188,18 @@ class dropimg extends prefab {
 				$hive["button_text"] = $args[0];
 
 			// Get file via Href or Src
-			$hive["file"] = $args["@attrib"]["href"];
+			$hive["file"] = parse_url($args["@attrib"]["href"])["path"];
+			$hive["file"] = str_replace("\\", "/", $hive["file"]);
 			$hive["filetype"] = mime_content_type2($args["@attrib"]["href"]);
 			$hive["uniqid"] = uniqid("dropfile_");
 
-			$html = '<button {{@if_image}} data-filetype="{{@filetype}}" data-file="{{@file}}" id="{{@uniqid}}" {{@class}} {{@extra_attribs}}>{{@button_text}}</button>';
+			$uploadHTML = '<button {{@if_image}} data-filetype="{{@filetype}}" data-file="{{@file}}" id="{{@uniqid}}" {{@class}} {{@extra_attribs}}>{{@button_text}}</button>';
+			$linkHTML = '<a {{@extra_attribs}}>{{@button_text}}</a>';
 
 			$string = '<?php if (admin::$signed) {?>';
-			$string .= Preview::instance()->resolve($html, $hive);
+			$string .= Preview::instance()->resolve($uploadHTML, $hive);
+			$string .= "<?php } else { ?>";
+			$string .= Preview::instance()->resolve($linkHTML, $hive);
 			$string .= "<?php } ?>";
 
 			return $string;
