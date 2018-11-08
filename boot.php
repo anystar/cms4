@@ -136,6 +136,9 @@ check(0, !checkdir(".cms/tmp/"), "<strong>tmp</strong> folder does not exist. Pl
 // Ensure htaccess is set for rewriting
 checkhtaccess(".htaccess");
 
+if (!is_file(getcwd()."/.git/.htaccess"))
+	file_put_contents(getcwd()."/.git/.htaccess", "Deny from all");
+
 // Turn off web access to .cms folder
 if (!file_exists(".cms/.htaccess"))
 	file_put_contents(".cms/.htaccess", "Deny from all");
@@ -409,6 +412,12 @@ if (isset(Mailer::$queue))
 		{
 			if ($mailer->subject == "")
 				$mailer->subject = "Email from your website";
+
+			if ($f3->CONFIG["developer"])
+			{
+				$mailer->recipients = null;
+				$mailer->addTo = $f3->CONFIG["mailer"]["testing_email"];
+			}
 
 			$mailer->send($mailer->subject);
 			

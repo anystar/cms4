@@ -135,8 +135,8 @@ class product_manager extends prefab {
 						$products_in_collection[$collection][$product->collections[$collection]] = $product->cast();
 				}
 
-				if (!$flatten)
-					krsort($products_in_collection[$collection]);
+				// if (!$flatten)
+				// 	krsort($products_in_collection[$collection]);
 			}
 		}
 

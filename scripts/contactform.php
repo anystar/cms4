@@ -5,19 +5,36 @@ class contactform {
 	private $name;
 	private $settings;
 
+	private $recaptcha_public_key;
+	private $recaptcha_private_key;
+
+	private $invisible_recaptcha_public_key;
+	private $invisible_recaptcha_private_key;
+
 	function __construct($settings) {
 
 		$f3 = base::instance();
 
+		$this->recaptcha_public_key = $f3->CONFIG["recaptcha"]["public_key"];
+		$this->recaptcha_private_key = $f3->CONFIG["recaptcha"]["private_key"];
+
+		$this->invisible_recaptcha_public_key = $f3->CONFIG["recaptcha"]["invisible_public_key"];
+		$this->invisible_recaptcha_private_key = $f3->CONFIG["recaptcha"]["invisible_private_key"]; 
+
 		$defaults["class"] = "contactform";
+		$defaults["name"] = "contactform";		
 		$defaults["routes"] = "*";
-		$defaults["sendto"] = "darklocker@gmail.com";
+		$defaults["sendto"] = "Who to send email too?";
 		$defaults["subject"] = "Website Enquiry";
 		$defaults["template"] = "email_template.html";
 		$defaults["success"] = "?success=true";
-		$defaults["recaptcha_privatekey"] = "6LfF9yUUAAAAAFFt9sajMnKFGlmYbVKPsDx9n7wm";
 
-		check(0, (count($settings) < 3), "**Default example:**", $defaults, '`<captcha centered recaptcha="6LfF9yUUAAAAAAQRdSwSfJWCccL0qYGsfzfMBKSM">`', '**Email Template**','`https://gist.github.com/sevn/bc53002c6e3c8b33bf79fd6d868ce2a8`');
+		check(100, (count($settings) < 3), 
+			"**Default example:**", $defaults, 
+			'**Captcha Tag**', '`<captcha centered recaptcha="'.$this->recaptcha_public_key.'">`', 
+			'**Fancy Email Template**', '`https://gist.githubusercontent.com/sevn/fbde16459a3c40fa05d2b96368915d10/raw/f5d25f50ed6bafe8f82720a090e8bc6799849b62/email_template.html`',
+			'**Simple Email Template**', '`https://gist.githubusercontent.com/sevn/bc53002c6e3c8b33bf79fd6d868ce2a8/raw/a83d24410b4024c9a804b79f700c52981af57ed0/email_template.html`'
+		);
 
 		check(0, $settings["sendto"], "No `sendto` set in **".$settings["name"]."** settings");
 		check(0, $settings["template"], "No `template` set in **".$settings["name"]."** settings");
@@ -55,6 +72,7 @@ class contactform {
 		$tmpl->extend('select','\Template\Tags\Select::render');
 		$tmpl->extend('option','\Template\Tags\Option::render');
 		$tmpl->extend('captcha', 'captcha::render');
+		$tmpl->extend('recaptcha', 'recaptcha::render');
 
 		// We have submitted the form
 		if ($f3->exists("POST.contactform_submit"))
@@ -78,20 +96,22 @@ class contactform {
 		if (array_key_exists("g-recaptcha-response", $f3->POST))
 		{
 			$recaptcha_response = $f3->POST["g-recaptcha-response"];
-	
-			$options["method"] = "POST";
-			$options["content"] = http_build_query(["secret"=>$settings["recaptcha_privatekey"], "response"=>$f3->POST["g-recaptcha-response"], $f3->IP]);
+			
+			if (array_check_value($f3->POST, "invisible_recaptcha", true))
+				$key = $this->invisible_recaptcha_private_key;
+			else
+				$key = $this->recaptcha_private_key;
 
+			$options["method"] = "POST";
+			$options["content"] = http_build_query(["secret"=> $key, "response"=>$f3->POST["g-recaptcha-response"], $f3->IP]);
 			$response = Web::instance()->request("https://www.google.com/recaptcha/api/siteverify", $options);
 			$response = json_decode($response["body"], 1);
 
 			if ($response["success"] == TRUE)
 				$captcha_passed = true;
-
+			
 			unset($f3->POST["g-recaptcha-response"]);
 		}
-
-
 
 		// Check basic text captcha
 		if ($settings["testing"]) $captcha_passed = true;
@@ -235,7 +255,6 @@ class contactform {
 			return '<a href="'.base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
 		}
 	}
-
 }
 
 
@@ -267,6 +286,86 @@ class contactformHandler extends \Template\TagHandler {
 	}
 }
 
+class recaptcha extends \Template\TagHandler {
+	function build ($attr, $content) {
+
+		if (array_check_value($attr, "type", "invisible"))
+			return $this->invisible($attr);
+		else 
+			return $this->visible($attr);
+	}
+
+	function visible ($attr) {
+		
+		// Prevent including the same script in twice for multiple captchas on same page.
+		if (!base::instance()->RECAPTCHA_LOADED)
+		{
+			$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
+			$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
+			$string .= '<style> @media screen and (max-height: 575px){ #rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;} } </style>'.PHP_EOL;
+			$string .= "<style> .text-xs-right { text-align: right; } .text-xs-center { text-align: center; } .text-xs-center > .g-recaptcha { display: inline-block; } .text-xs-right > .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
+		}
+
+		// Change alignement
+		if (array_check_value($attr, "align", "center"))
+		{
+			$string .= "<style> .text-xs-center { text-align: center; } .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
+			$string .= '<div class="text-xs-center">';
+		}
+		else if (array_check_value($attr, "align", "right"))
+		{
+			$string .= "<style> .text-xs-right { text-align: right; } .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
+			$string .= '<div class="text-xs-right">';
+		}
+
+		// Include site key
+		$string .= '<div class="g-recaptcha" data-sitekey="'.base::instance()->CONFIG["recaptcha"]["public_key"].'"></div>'.PHP_EOL;
+
+		// Finish up alignement div
+		if (array_check_value($attr, "align", "center") OR array_check_value($attr, "align", "right"))
+			$string .= '</div>'.PHP_EOL;
+		
+		// Tag as loaded to prevent scripts being included
+		base::instance()->RECAPTCHA_LOADED = true;
+
+		return $string;
+	}
+
+	function invisible ($attr) {
+
+		// Prevent including the same script in twice for multiple captchas on same page.
+		if (!base::instance()->RECAPTCHA_LOADED)
+		{
+			$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
+			$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
+			$string .= '<style> @media screen and (max-height: 575px){ #rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;} } </style>'.PHP_EOL;
+			$string .= "<style> .text-xs-right { text-align: right; } .text-xs-center { text-align: center; } .text-xs-center > .g-recaptcha { display: inline-block; } .text-xs-right > .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
+		}
+
+		$hive['random'] = uniqid();
+		$hive['form'] = $attr["form"]; unset($attr["form"]);
+		$hive['key'] = base::instance()->CONFIG["recaptcha"]["invisible_public_key"];
+
+		foreach ($attr as $key=>$value) {
+			if ($key=="class") {
+				$hive["extra_attribs"] .= 'class="'.$value.' g-recaptcha" ';
+			} else {
+				$hive["extra_attribs"] .= $key.'="'.$value.'" ';
+			}
+		}
+		
+		$string .= '<script> function recaptchasubmit{{@random}}(token) { document.getElementById("{{@form}}").submit(); } </script>';
+		$string .= '<input type="hidden" name="invisible_recaptcha" value="true">';
+		$string .= '<button {{@extra_attribs}} type="submit" data-callback="recaptchasubmit{{@random}}" data-sitekey="{{@key}}">Submit</button>';
+		$string = Preview::instance()->resolve($string, $hive);
+
+		// Tag as loaded to prevent scripts being included
+		base::instance()->RECAPTCHA_LOADED = true;
+
+		return $string;
+	}
+}
+
 class captcha extends \Template\TagHandler {
 	function build ($attr, $content)
 	{
@@ -278,19 +377,17 @@ class captcha extends \Template\TagHandler {
 			{
 				$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
 				$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
+				$string .= '<style> @media screen and (max-height: 575px){ #rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;} } </style>'.PHP_EOL;
+				$string .= "<style> .text-xs-right { text-align: right; } .text-xs-center { text-align: center; } .text-xs-center > .g-recaptcha { display: inline-block; } .text-xs-right > .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
 			}
-
-			$string .= '<style> @media screen and (max-height: 575px){ #rc-imageselect, .g-recaptcha {transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;} } </style>'.PHP_EOL;
-	
+			
 			if (array_key_exists("centered", $attr))
 			{
-				$string .= "<style> .text-xs-center { text-align: center; } .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
 				$string .= '<div class="text-xs-center">';
 			}
 
 			if (array_key_exists("right", $attr))
 			{
-				$string .= "<style> .text-xs-right { text-align: right; } .g-recaptcha { display: inline-block; }</style>".PHP_EOL;
 				$string .= '<div class="text-xs-right">';
 			}
 
