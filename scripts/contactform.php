@@ -124,12 +124,16 @@ class contactform {
 		// Captcha Failed!
 		if (!$captcha_passed) {
 
-			// Because we are posting to the same page, change VERB
-			// so F3 route will be call correctly.
-			$f3->VERB = "GET";
-			$f3->POST["captcha"] = "";
+			// Permit failed captchas if in developer mode
+			if (!base::instance()->CONFIG["developer"])
+			{
+				// Because we are posting to the same page, change VERB
+				// so F3 route will be call correctly.
+				$f3->VERB = "GET";
+				$f3->POST["captcha"] = "";
 
-			return;
+				return;
+			}
 		}
 
 		// Get name
@@ -186,6 +190,8 @@ class contactform {
 			echo $body;
 			die;
 		}
+
+		$mailer->antispam = $form;
 
 		$mailer->queue($options["subject"]);
 
@@ -287,15 +293,15 @@ class contactformHandler extends \Template\TagHandler {
 }
 
 class recaptcha extends \Template\TagHandler {
-	function build ($attr, $content) {
+	function build ($attr, $innerhtml) {
 
 		if (array_check_value($attr, "type", "invisible"))
-			return $this->invisible($attr);
+			return $this->invisible($attr, $innerhtml);
 		else 
-			return $this->visible($attr);
+			return $this->visible($attr, $innerhtml);
 	}
 
-	function visible ($attr) {
+	function visible ($attr, $innerhtml) {
 		
 		// Prevent including the same script in twice for multiple captchas on same page.
 		if (!base::instance()->RECAPTCHA_LOADED)
@@ -324,14 +330,16 @@ class recaptcha extends \Template\TagHandler {
 		// Finish up alignement div
 		if (array_check_value($attr, "align", "center") OR array_check_value($attr, "align", "right"))
 			$string .= '</div>'.PHP_EOL;
-		
+
 		// Tag as loaded to prevent scripts being included
 		base::instance()->RECAPTCHA_LOADED = true;
 
 		return $string;
 	}
 
-	function invisible ($attr) {
+	function invisible ($attr, $innerhtml) {
+
+		unset($attr["type"]);
 
 		// Prevent including the same script in twice for multiple captchas on same page.
 		if (!base::instance()->RECAPTCHA_LOADED)
@@ -345,6 +353,7 @@ class recaptcha extends \Template\TagHandler {
 		$hive['random'] = uniqid();
 		$hive['form'] = $attr["form"]; unset($attr["form"]);
 		$hive['key'] = base::instance()->CONFIG["recaptcha"]["invisible_public_key"];
+		$hive['innerhtml'] = $innerhtml;
 
 		foreach ($attr as $key=>$value) {
 			if ($key=="class") {
@@ -356,7 +365,7 @@ class recaptcha extends \Template\TagHandler {
 		
 		$string .= '<script> function recaptchasubmit{{@random}}(token) { document.getElementById("{{@form}}").submit(); } </script>';
 		$string .= '<input type="hidden" name="invisible_recaptcha" value="true">';
-		$string .= '<button {{@extra_attribs}} type="submit" data-callback="recaptchasubmit{{@random}}" data-sitekey="{{@key}}">Submit</button>';
+		$string .= '<button {{@extra_attribs}} type="submit" data-callback="recaptchasubmit{{@random}}" data-sitekey="{{@key}}">{{@innerhtml}}</button>';
 		$string = Preview::instance()->resolve($string, $hive);
 
 		// Tag as loaded to prevent scripts being included
@@ -367,7 +376,7 @@ class recaptcha extends \Template\TagHandler {
 }
 
 class captcha extends \Template\TagHandler {
-	function build ($attr, $content)
+	function build ($attr, $innerhtml)
 	{
 		$attr["src"] = base::instance()->BASE.base::instance()->PATH."?captcha";
 

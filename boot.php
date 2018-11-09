@@ -147,6 +147,8 @@ if (!file_exists(".cms/.htaccess"))
 if (!is_file(getcwd()."/.git/.htaccess"))
 	file_put_contents(getcwd()."/.git/.htaccess", "Deny from all");
 
+// Ensure mail directory is created
+check(0, !checkdir(".cms/mail/"), "<strong>.cms/mail</strong> folder does not exist. Please create mail folder in .cms directory.");
 
 // Redirect away from
 if (isroute("cms.php"))
@@ -413,18 +415,23 @@ if (isset(Mailer::$queue))
 			if ($mailer->subject == "")
 				$mailer->subject = "Email from your website";
 
-			if ($f3->CONFIG["developer"])
+			if (array_check_value($f3->CONFIG, "developer", true))
 			{
-				$mailer->recipients = null;
-				$mailer->addTo = $f3->CONFIG["mailer"]["testing_email"];
+				file_put_contents("developer_mail_cache.html", $mailer->message["html"]);
 			}
+			else
+			{
+				// Lets run the Antispam Filter
+				require_once $ROOTDIR."/resources/sblamtest-1.3/sblamtest.php";
+				
+				$result = sblamtestpost($mailer->antispam);
 
-			$mailer->send($mailer->subject);
-			
-			//file_put_contents(".cms/mail/test.txt", $mailer->log);
-			//$mailer->save(uniqid().".txt");
-
-			//file_put_json(".cms/mail_log.json", $mailer);
+				if ($result < 1)
+				{
+					$mailer->send($mailer->subject);
+					file_put_json(".cms/mail/mail.".uniqid().".html", $mailer);	
+				}
+			}
 		}
 	}
 }
