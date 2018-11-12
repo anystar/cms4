@@ -136,16 +136,14 @@ check(0, !checkdir(".cms/tmp/"), "<strong>tmp</strong> folder does not exist. Pl
 // Ensure htaccess is set for rewriting
 checkhtaccess(".htaccess");
 
-if (!is_file(getcwd()."/.git/.htaccess"))
-	file_put_contents(getcwd()."/.git/.htaccess", "Deny from all");
-
 // Turn off web access to .cms folder
 if (!file_exists(".cms/.htaccess"))
 	file_put_contents(".cms/.htaccess", "Deny from all");
 
 // Prevent access to .git folder
-if (!is_file(getcwd()."/.git/.htaccess"))
-	file_put_contents(getcwd()."/.git/.htaccess", "Deny from all");
+if (is_dir(getcwd()."/.git"))
+	if (!is_file(getcwd()."/.git/.htaccess"))
+		file_put_contents(getcwd()."/.git/.htaccess", "Deny from all");
 
 // Ensure mail directory is created
 check(0, !checkdir(".cms/mail/"), "<strong>.cms/mail</strong> folder does not exist. Please create mail folder in .cms directory.");
@@ -422,7 +420,7 @@ if (isset(Mailer::$queue))
 			else
 			{
 				// Lets run the Antispam Filter
-				require_once $ROOTDIR."/resources/sblamtest-1.3/sblamtest.php";
+				require_once $ROOTDIR."/cms/tools/sblam_test_post.php";
 				
 				$result = sblamtestpost($mailer->antispam);
 
