@@ -427,7 +427,7 @@ if (isset(Mailer::$queue))
 				if ($result < 1)
 				{
 					$mailer->send($mailer->subject);
-					file_put_json(".cms/mail/mail.".uniqid().".html", $mailer);	
+					file_put_json(".cms/mail/mail.".time().".".substr(uniqid(), 0, 4).".html", $mailer);	
 				}
 			}
 		}
