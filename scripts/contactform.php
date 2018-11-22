@@ -191,7 +191,9 @@ class contactform {
 			die;
 		}
 
-		$mailer->antispam = $form;
+		if ($this->settings["spam"] !== "off")
+			if ($this->settings["spam"] != false)
+				$mailer->antispam = $form;
 
 		$mailer->queue($options["subject"]);
 
