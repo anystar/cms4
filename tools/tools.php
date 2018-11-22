@@ -662,6 +662,14 @@ function array_not_unique($raw_array) {
 
 function array_check_value ($array, $key, $against = "") {
 
+	// Do not evaluate nulls
+	if ($array == null)
+		return false;
+	
+	// Check if it is an array?
+	if (!is_array($array))
+		return false;
+
 	// Check if key exists in array
 	if (!array_key_exists($key, $array))
 		return false;
@@ -719,3 +727,4 @@ function file_put_json ($filename, $contents) {
 	$file[] = $contents;
 	file_put_contents($filename, json_encode($file, JSON_PRETTY_PRINT));
 }
+

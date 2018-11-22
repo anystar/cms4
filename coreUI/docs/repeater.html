@@ -1,0 +1,34 @@
+<h1>Repeater Block Documentation</h1>
+
+<h2>Example Config</h2>
+
+<editor mode="json">
+{
+    "class": "repeater",
+    "name": "products",
+    "label": "Add Product",
+    "routes": "*",
+    "template": "_products.html",
+    "image-directory": "assets/product-images",
+    "image-settings": {
+        "size": "1500x1500",
+        "thumbnail": {
+            "size": "500x500",
+            "crop": true,
+            "enlarge": true,
+            "quality": 100,
+            "subfolder": "thumbs"
+        },
+        "crop": false,
+        "enlarge": false,
+        "quality": 100,
+        "type": "auto",
+        "overwrite": false
+    }
+}
+</editor>
+
+<h2>Repeat Templates</h2>
+
+<p>Store templates in the <strong>.cms/repeat-snippets/</strong> directory.</p>
+<p>Call the template the same file name as used in the template configuration value.</p>

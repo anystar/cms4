@@ -9,7 +9,6 @@ class repeater {
 
 	function __construct($settings) {
 
-
 		$defaults["class"] = "repeater";
 		$defaults["name"] = "example";
 		$defaults["label"] = "example";
@@ -74,8 +73,9 @@ class repeater {
 
 		// Do admin routes
 		if (admin::$signed)
+		{
 			$this->admin_routes(base::instance());
-
+		}
 	}
 
 	function admin_routes($f3) {

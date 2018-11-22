@@ -11,6 +11,10 @@ function sblamtestpost($data)
 	global $_sblam_last_id, $_sblam_last_error;
 	$_sblam_last_id=$_sblam_last_error=NULL;
 
+	// if no data is set lets just return
+	if ($data == null) return -1;
+	if (!is_array($data)) return -1;
+
 	// Flattern Array
 	$data = flatten($data);
 
@@ -124,7 +128,11 @@ function sblamlasterror()
 }
 
 function flatten($array, $prefix = '') {
-    $result = array();
+	
+	if (!is_array($array))
+		return $array;
+	
+	$result = array();
     foreach($array as $key=>$value) {
         if(is_array($value)) {
             $result = $result + flatten($value, $prefix . $key . '.');

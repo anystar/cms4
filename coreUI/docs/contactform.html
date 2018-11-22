@@ -1,0 +1,59 @@
+<h1>Contact Form Documentation</h1>
+
+<h2>Example Config</h2>
+
+
+<editor mode="json">
+{
+    "class": "contactform",
+    "name": "contactform",
+    "label": "Contact Form",
+    "routes": "*",
+    "sendto": "Who to send email too?",
+    "subject": "Website Enquiry",
+    "template": "email_template.html",
+    "success": "?success=true"
+}
+</editor>
+
+<h2>Recaptcha Tag</h2>
+
+<editor mode="html"><recaptcha align="left/center/right"></recaptcha></editor>
+
+<h2>Email Templates</h2>
+
+<p>
+    <a href="https://gist.githubusercontent.com/sevn/fbde16459a3c40fa05d2b96368915d10/raw/f5d25f50ed6bafe8f82720a090e8bc6799849b62/email_template.html">Fancy Email Template</a><br>
+    <a href="https://gist.githubusercontent.com/sevn/bc53002c6e3c8b33bf79fd6d868ce2a8/raw/a83d24410b4024c9a804b79f700c52981af57ed0/email_template.html">Simple Email Template</a>
+</p>
+
+<h2>Example HTML</h2>
+
+<editor mode="html">   
+<contactform script="contactform">
+
+<div>
+    <label>Your Name</label>
+    <input type="text" name="name">
+</div>
+
+<div>
+    <label>Your Email</label>
+    <input type="text" name="email">
+</div>
+
+<div>
+    <label>Your Phone Number</label>
+    <input type="text" name="phone">
+</div>
+
+<div>
+    <label>Message</label>
+    <input type="text" name="message">
+</div>
+
+<recaptcha></recaptcha>
+<input type="submit" value="Submit Form">
+
+</contactform>
+</editor>

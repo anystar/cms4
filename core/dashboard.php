@@ -11,7 +11,6 @@ class dashboard extends prefab {
 
 		if (isset($f3->GET["settings"]))
 		{
-
 			// Load buttons from scripts
 			foreach ($f3->SETTINGS["scripts"] as $script) 
 			{

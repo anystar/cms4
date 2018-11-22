@@ -41,7 +41,6 @@ Template::instance()->filter("krumo", function ($array) {
 	krumo($array);
 });
 
-
 // Setup Mailer
 $f3->mailer = $f3->CONFIG["mailer"];
 
@@ -58,7 +57,7 @@ $f3->ONERROR = function ($f3) {
 	}
 
 	else if ($f3->AJAX)
-	{	
+	{
 		$temp = $f3->ERROR;
 		$temp["trace"] = explode("\n", $temp["trace"]);
 		j($temp);
@@ -249,6 +248,7 @@ if (array_key_exists("canonical-url", $f3->SETTINGS))
 // 	- Calls each script with settings
 
 // Core scripts that always load
+new docs($f3->SETTINGS);
 new unit_test($f3->SETTINGS);
 new toolbar($f3->SETTINGS);
 new dashboard($f3->SETTINGS);
@@ -287,14 +287,9 @@ if (admin::$signed) {
 	if ($f3->exists("GET.phpinfo"))
 		{ phpinfo(); die; }
 
-	if ($f3->exists("GET.docs") || $f3->exists("GET.doc") || $f3->exists("GET.help"))
-	{
-		echo Template::instance()->render("/admin/help.html");
-		$f3->abort();
-	}
-
 	if ($f3->exists("GET.git"))
 	{
+		ob_start('ob_gzhandler') OR ob_start();
 		echo Template::instance()->render("/revision-control/git-status.html");
 		$f3->abort();
 	}
@@ -420,14 +415,26 @@ if (isset(Mailer::$queue))
 			else
 			{
 				// Lets run the Antispam Filter
-				require_once $ROOTDIR."/cms/tools/sblam_test_post.php";
+				if (isset($mailer->antispam))
+				{
+					require_once $ROOTDIR."/cms/tools/sblam_test_post.php";
+					$result = sblamtestpost($mailer->antispam);
+				}
 				
-				$result = sblamtestpost($mailer->antispam);
-
+				// Passed sblam test
 				if ($result < 1)
 				{
 					$mailer->send($mailer->subject);
 					file_put_json(".cms/mail/mail.".time().".".substr(uniqid(), 0, 4).".html", $mailer);	
+				}
+				// Failed sblam test
+				else
+				{
+					// This code here is temporary just so we can see how well
+					// this sblam filter works.
+					$mailer->recipients = null;
+					$mailer->addTo("errors@webworksau.com", "Web Works");
+					$mailer->send("SBLAM Returning mail");
 				}
 			}
 		}
