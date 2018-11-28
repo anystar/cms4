@@ -728,3 +728,17 @@ function file_put_json ($filename, $contents) {
 	file_put_contents($filename, json_encode($file, JSON_PRETTY_PRINT));
 }
 
+// Simple non complient email parser found here
+// https://stackoverflow.com/questions/7599346/parse-e-mail-addresses-with-php
+function parse_email ($str) {
+	$emails = array();
+	
+	if(preg_match_all('/\s*"?([^><,"]+)"?\s*((?:<[^><,]+>)?)\s*/', $str, $matches, PREG_SET_ORDER) > 0)
+		foreach($matches as $m)
+			if(! empty($m[2]))
+				$emails[trim($m[2], '<>')] = $m[1];
+			else
+				$emails[$m[1]] = '';
+
+	return $emails;
+}

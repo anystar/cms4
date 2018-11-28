@@ -2,19 +2,77 @@
 
 <h2>Example Config</h2>
 
-
 <editor mode="json">
 {
     "class": "contactform",
     "name": "contactform",
     "label": "Contact Form",
-    "routes": "*",
-    "sendto": "Who to send email too?",
-    "subject": "Website Enquiry",
-    "template": "email_template.html",
-    "success": "?success=true"
+
+    "delivery-template": "email_template.html",
+    "delivery-to": "John Smith <john@example.com>",
+    "delivery-subject": "Website Enquiry",
+    
+    "confirmation-template": "confirmation_template.html",
+    "confirmation-replyto": "John Smith <john@example.com>",
+    "confirmation-subject": "Confirmation email from <business>",
+
+    "success-address": "?success=true",
+    "check-for-spam": "off"
 }
 </editor>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="200">Configuration Option</th>
+            <th>Valid Values</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>Unqiue name with no spaces or special characters</td>
+        </tr>
+        <tr>
+            <td>delivery-template</td>
+            <td>HTML File rendered to send business owner</td>
+        </tr>
+        <tr>
+            <td>delivery-to</td>
+            <td>Submit contact form to this email address. For example the business owner.</td>
+        </tr>
+        <tr>
+            <td>delivery-subject</td>
+            <td>Email subject</td>
+        </tr>
+        <tr>
+            <td>confirmation-template</td>
+            <td>
+                <p>HTML File rendered to send recipient.</p>
+                <p>
+                    When this field is provided the script will automatically look for a field called "email" and send this rendered template to enquirer.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>confirmation-replyto</td>
+            <td>Provides an email which form filler can respond back to.</td>
+        </tr>
+        <tr>
+            <td>confirmation-subject</td>
+            <td>Email subject</td>
+        </tr>
+        <tr>
+            <td>success-address</td>
+            <td>When form submits returns user to the success page</td>
+        </tr>
+        <tr>
+            <td>check-for-spam</td>
+            <td>Turns spam filter on and off</td>
+        </tr>
+    </tbody>
+</table>
 
 <h2>Recaptcha Tag</h2>
 

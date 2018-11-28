@@ -416,8 +416,8 @@ class PaypalExpressGateway {
 
 		if ($f3->CONFIG["developer"] == '1')
 		{
-			$this->settings["return"] = "http://paypal2.darklocker.com".$f3->BASE."/".$this->settings["return"];
-			$this->settings["cancel"] = "http://paypal2.darklocker.com".$f3->BASE."/".$this->settings["cancel"];
+			$this->settings["return"] = "http://inhouse.webworksau.com".$f3->BASE."/".$this->settings["return"];
+			$this->settings["cancel"] = "http://inhouse.webworksau.com".$f3->BASE."/".$this->settings["cancel"];
 
 			$default_sandbox = array();
 			$default_sandbox["user"] = "paypal user";
