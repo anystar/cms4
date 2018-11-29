@@ -104,20 +104,20 @@ class contactform {
 				$captcha_passed = true;
 		}
 
+		// Permit failed captchas if in developer mode
+		if (!base::instance()->CONFIG["developer"])
+			$captcha_passed = true;
+
 		// Captcha Failed!
-		// if (!$captcha_passed) {
+		if (!$captcha_passed) {
 
-		// 	// Permit failed captchas if in developer mode
-		// 	if (!base::instance()->CONFIG["developer"])
-		// 	{
-		// 		// Because we are posting to the same page, change VERB
-		// 		// so F3 route will be call correctly.
-		// 		$f3->VERB = "GET";
-		// 		$f3->POST["captcha"] = "";
+			// Because we are posting to the same page, change VERB
+			// so F3 route will be call correctly.
+			$f3->VERB = "GET";
+			$f3->POST["captcha"] = "";
 
-		// 		return;
-		// 	}
-		// }
+			return;
+		}
 
 		// Does 'email' exist in the form
 		$emailFromForm = "";
@@ -312,6 +312,7 @@ class recaptcha extends \Template\TagHandler {
 
 		$hive['random'] = uniqid();
 		$hive['form'] = $attr["form"]; unset($attr["form"]);
+		$hive['form'] = $attr["form-id"]; unset($attr["form-id"]);
 		$hive['key'] = base::instance()->CONFIG["recaptcha"]["invisible_public_key"];
 		$hive['innerhtml'] = $innerhtml;
 
