@@ -105,8 +105,9 @@ class contactform {
 		}
 
 		// Permit failed captchas if in developer mode
-		if (!base::instance()->CONFIG["developer"])
+		if (base::instance()->CONFIG["developer"] == "1")
 			$captcha_passed = true;
+
 
 		// Captcha Failed!
 		if (!$captcha_passed) {
@@ -214,10 +215,15 @@ class contactform {
 
 		$mailer->setHTML($body);
 
-		if ($spam !== "off")
-			if ($spam != false)
-				$mailer->antispam = $hive;
 
+		if ($spam !== "off")
+		{
+			if ($spam !== false)
+			{	
+				$mailer->antispam = $hive;
+			}
+		}
+		
 		$mailer->queue($subject);
 	}
 
