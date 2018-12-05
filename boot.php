@@ -415,27 +415,29 @@ if (isset(Mailer::$queue))
 			else
 			{
 				// Lets run the Antispam Filter
-				if (isset($mailer->antispam))
-				{
-					require_once $ROOTDIR."/cms/tools/sblam_test_post.php";
-					$result = sblamtestpost($mailer->antispam);
-				}
-				
-				// Passed sblam test
-				if ($result < 1)
-				{
-					$mailer->send($mailer->subject);
-					file_put_json(".cms/mail/mail.".time().".".substr(uniqid(), 0, 4).".html", $mailer);	
-				}
-				// Failed sblam test
-				else
-				{
-					// This code here is temporary just so we can see how well
-					// this sblam filter works.
-					$mailer->recipients = null;
-					$mailer->addTo("errors@webworksau.com", "Web Works");
-					$mailer->send("SBLAM Returning mail");
-				}
+				// if (isset($mailer->antispam))
+				// {
+				// 	require_once $ROOTDIR."/cms/tools/sblam_test_post.php";
+				// 	$result = sblamtestpost($mailer->antispam);
+				// }
+
+				$mailer->send($mailer->subject);
+				file_put_json(".cms/mail/mail.".time().".".substr(uniqid(), 0, 4).".html", $mailer);
+
+				// // Passed sblam test
+				// if ($result < 1)
+				// {
+
+				// }
+				// // Failed sblam test
+				// else
+				// {
+				// 	// This code here is temporary just so we can see how well
+				// 	// this sblam filter works.
+				// 	$mailer->recipients = null;
+				// 	$mailer->addTo("errors@webworksau.com", "Web Works");
+				// 	$mailer->send("SBLAM Returning mail");
+				// }
 			}
 		}
 	}
