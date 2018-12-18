@@ -34,7 +34,7 @@ function getConfig () {
 function init_inline_ckeditors() {
 	var editors = document.getElementsByClassName("ckeditor");
 
-	for (var i = editors.length - 1; i >= 0; i--)
+	for (var i = 0; i <= editors.length; i++)
 	{
 		var editorID = editors[i].getAttribute("id");
 		var editor = CKEDITOR.inline(editorID, getConfig());
@@ -46,9 +46,7 @@ function init_inline_ckeditors() {
 			}
 		});
 
-		editor.on( 'instanceCreated', function (e) {
-			
-		});
+		editor.on( 'instanceCreated', function (e) {});
 
 		editor.on( 'loaded', function (e) {
 			document.getElementById("statusbar").style.display = "none";

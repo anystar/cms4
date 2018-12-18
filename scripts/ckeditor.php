@@ -44,9 +44,14 @@ class ckeditor extends prefab {
 			$id 	  = $f3->POST["id"];
 			$sentHash = $f3->POST["hash"];
 			$contents = $f3->POST["contents"];
+			$order = $f3->POST["order"];
 
 			// Load in to replace contents with
 			$file = file_get_contents(getcwd()."/".$filename);
+
+
+			preg_match("#<ckeditor.*>.*<\/ckeditor>#siU", $file, $out);
+			j($out);
 
 			// Determine hash
 			preg_match_all("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
@@ -302,12 +307,14 @@ class ckeditor extends prefab {
 			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
 
 			$out .= '<?php if (admin::$signed) {?>';
-			$out .= "<div file='".urlencode($file)."' id='".$args["@attrib"]["id"]."' hash='$hash' class='ckeditor' type='$type' contenteditable='true'>";
+
+			$out .= '<div data-ck-file="'.urlencode($file).'" id="'.$args['@attrib']['id'].'" data-ck-hash="'.$hash.'" class="ckeditor" data-ck-order="<?php if (!isset($ckeditor_order)) { $ckeditor_order=0; } echo $ckeditor_order++; ?>" contenteditable="true">';
 			$out .= "<?php } ?>";
 			$out .= $args[0];
 			$out .= '<?php if (admin::$signed) {?>';
 			$out .= "</div>";
 			$out .= "<?php } ?>";
+			$out .= PHP_EOL;
 
 			return  $out;
 		});
