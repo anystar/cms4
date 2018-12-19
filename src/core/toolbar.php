@@ -48,7 +48,6 @@ class toolbar extends prefab {
 		Template::instance()->extend("body", "Body::render");
 
 		Template::instance()->extend("overlay", "Overlay::render");	
-
 	}
 
 	function append ($code) {

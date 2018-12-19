@@ -1,6 +1,10 @@
 {
     "require": {
-        "kktsvetkov/krumo"
-
+        "czproject/git-php": "^3.14",
+        "mmucklo/krumo": "^0.5.7",
+        "bcosca/fatfree": "^3.6",
+        "kreative/f3-pypl": "^1.0",
+        "ikkez/f3-mailer": "^1.0",
+        "ikkez/f3-template-directives": "^1.0"
     }
 }

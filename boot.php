@@ -8,18 +8,16 @@ GLOBAL $ROOTDIR;
 $ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);
 
 // Super useful alternative to print_r
-$krumo = $ROOTDIR."/resources/krumo/class.krumo.php";
+require (__DIR__."/vendor/autoload.php");
 
 // Load tools.php Contains super useful utils.
-require (__DIR__."/tools/tools.php");
+require (__DIR__."/src/tools/tools.php");
 
 // Robust Utils for handling images.
-require (__DIR__."/tools/image_handler.php");
+require (__DIR__."/src/tools/image_handler.php");
 
-// Path to F3, download at http://fatfreeframework.com/
-// Load F3 and Setup
-$fatfree = $ROOTDIR."/resources/fatfree-core/base.php";
-(file_exists($fatfree)) ? $f3 = include $fatfree : d("Fat Free Framework not found at '".$fatfree."'. Please download from http://fatfreeframework.com/");
+// F3 Short Cut
+$f3 = base::instance();
 
 // Set ROOTDIR for usage in F3
 $f3->ROOTDIR = $ROOTDIR;
@@ -35,9 +33,6 @@ $f3->CONFIG = $GLOBALS["config"] = parse_ini_file($ROOTDIR."/config.ini", true);
 
 // Setup Krumo for use in Templates
 Template::instance()->filter("krumo", function ($array) {
-	if (!isset($GLOBALS["krumo"])) check(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	if (!is_file($GLOBALS["krumo"])) check(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	require_once $GLOBALS["krumo"];
 	krumo($array);
 });
 
@@ -327,7 +322,7 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		ob_start('ob_gzhandler') OR ob_start();
 
 		echo Template::instance()->render($f3->FILE, $f3->MIME);
-
+		k($f3->FILE);
 		if (!headers_sent() && session_status()!=PHP_SESSION_ACTIVE)
 			session_start();
 		$out='';

@@ -74,7 +74,9 @@ class stats extends prefab {
 		
 		base::instance()->set("STATS", $this->stats);
 
-		ToolBar::instance()->append(Template::instance()->render("/stats/toolbar.html", null, ["STATS"=>$this->stats, "BASE"=>base::instance()->BASE]));
+		$render = Template::instance()->render("/stats/toolbar.html", null, ["STATS"=>$this->stats, "BASE"=>base::instance()->BASE]);
+
+		toolbar::instance()->append($render);
 
 		base::instance()->route("GET /admin/stats", function ($f3) {
 

@@ -142,40 +142,40 @@ function j ($data) {
 }
 
 
-function k ($x, $return = false)
-{
-	if (!isset($GLOBALS["krumo"]))
-	{
-		if (class_exists("base"))
-			base::instance()->error(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-		else
-			die('Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	}
+// function k ($x, $return = false)
+// {
+// 	if (!isset($GLOBALS["krumo"]))
+// 	{
+// 		if (class_exists("base"))
+// 			base::instance()->error(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+// 		else
+// 			die('Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+// 	}
 
-	if (!is_file($GLOBALS["krumo"]))
-	{
-		if (class_exists("base"))
-			base::instance()->error(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-		else
-			die('Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	}
+// 	if (!is_file($GLOBALS["krumo"]))
+// 	{
+// 		if (class_exists("base"))
+// 			base::instance()->error(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+// 		else
+// 			die('Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
+// 	}
 
 
-	require_once $GLOBALS["krumo"];
+// 	require_once $GLOBALS["krumo"];
 
-	if (class_exists("base"))
-	{
-		if ($return)
-			krumo($x, KRUMO_RETURN);
-		else
-			base::instance()->error(0, krumo($x, KRUMO_RETURN));
-	}
-	else
-		d($x);
+// 	if (class_exists("base"))
+// 	{
+// 		if ($return)
+// 			krumo($x, KRUMO_RETURN);
+// 		else
+// 			base::instance()->error(0, krumo($x, KRUMO_RETURN));
+// 	}
+// 	else
+// 		d($x);
 
-    if (class_exists("f3")) 
-   		base::instance()->error(0);
-}
+//     if (class_exists("f3")) 
+//    		base::instance()->error(0);
+// }
 
 
 

@@ -1,0 +1,262 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "7a2fcedc8c5641584ef160624d06527c",
+    "packages": [
+        {
+            "name": "bcosca/fatfree",
+            "version": "3.6.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bcosca/fatfree.git",
+                "reference": "dee4d73918a42076d5ac7db64d6d39706c7f328a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bcosca/fatfree/zipball/dee4d73918a42076d5ac7db64d6d39706c7f328a",
+                "reference": "dee4d73918a42076d5ac7db64d6d39706c7f328a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/base.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
+            "homepage": "http://fatfreeframework.com/",
+            "time": "2018-04-19T17:23:25+00:00"
+        },
+        {
+            "name": "czproject/git-php",
+            "version": "v3.14.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/czproject/git-php.git",
+                "reference": "6faf55527a17fb569456709c2769a6d8749ceb6d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/czproject/git-php/zipball/6faf55527a17fb569456709c2769a6d8749ceb6d",
+                "reference": "6faf55527a17fb569456709c2769a6d8749ceb6d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "nette/tester": "~1.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Pecha",
+                    "email": "janpecha@email.cz"
+                }
+            ],
+            "description": "Library for work with Git repository in PHP.",
+            "keywords": [
+                "git"
+            ],
+            "time": "2018-04-17T08:52:47+00:00"
+        },
+        {
+            "name": "ikkez/f3-mailer",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ikkez/f3-mailer.git",
+                "reference": "1c20e0551ef7523a4e775933fbdbd45764c8d596"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ikkez/f3-mailer/zipball/1c20e0551ef7523a4e775933fbdbd45764c8d596",
+                "reference": "1c20e0551ef7523a4e775933fbdbd45764c8d596",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "./"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "description": "SMTP plugin wrapper for PHP Fat-Free Framework",
+            "homepage": "https://github.com/ikkez/f3-mailer",
+            "keywords": [
+                "F3",
+                "email",
+                "fatfree",
+                "mail",
+                "smtp"
+            ],
+            "time": "2018-09-21T11:39:04+00:00"
+        },
+        {
+            "name": "ikkez/f3-template-directives",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ikkez/f3-template-directives.git",
+                "reference": "bb36b48c0d0eb00c980d2d5f9a6acfb955cef672"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ikkez/f3-template-directives/zipball/bb36b48c0d0eb00c980d2d5f9a6acfb955cef672",
+                "reference": "bb36b48c0d0eb00c980d2d5f9a6acfb955cef672",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "description": "Collection of template directives for PHP Fat-Free Framework",
+            "homepage": "https://github.com/ikkez/f3-template-directives",
+            "keywords": [
+                "F3",
+                "fatfree",
+                "form",
+                "image",
+                "template"
+            ],
+            "time": "2018-09-16T12:24:04+00:00"
+        },
+        {
+            "name": "kreative/f3-pypl",
+            "version": "V1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kreative/F3-PYPL.git",
+                "reference": "405a8a05cc1f4274cd2dba1c7436d97b3f4ddf0c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kreative/F3-PYPL/zipball/405a8a05cc1f4274cd2dba1c7436d97b3f4ddf0c",
+                "reference": "405a8a05cc1f4274cd2dba1c7436d97b3f4ddf0c",
+                "shasum": ""
+            },
+            "require": {
+                "bcosca/fatfree": "^3.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "description": "PayPal Express Checkout integration for the PHP Fat-Free Framework",
+            "homepage": "https://github.com/kreative/f3-pypl",
+            "keywords": [
+                "F3",
+                "express checkout",
+                "fatfree",
+                "paypal"
+            ],
+            "time": "2016-10-27T17:28:14+00:00"
+        },
+        {
+            "name": "mmucklo/krumo",
+            "version": "v0.5.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mmucklo/krumo.git",
+                "reference": "133a5b2382ef8b9b2537f6049964c8d88c5e5ad1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mmucklo/krumo/zipball/133a5b2382ef8b9b2537f6049964c8d88c5e5ad1",
+                "reference": "133a5b2382ef8b9b2537f6049964c8d88c5e5ad1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.17"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "dev-master",
+                "phpmd/phpmd": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "class.krumo.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Kaloyan K. Tsvetkov",
+                    "email": "kaloyan@kaloyan.info"
+                },
+                {
+                    "name": "Stefan Thomas",
+                    "email": "moon@justmoon.de"
+                },
+                {
+                    "name": "Matthew J. Mucklo",
+                    "email": "mmucklo@gmail.com"
+                },
+                {
+                    "name": "Scott Baker",
+                    "email": "scott@perturb.org"
+                }
+            ],
+            "description": "KRUMO - version 2.0 of print_r(); and var_dump(); (with new updates)",
+            "keywords": [
+                "debug",
+                "debugging",
+                "krumo",
+                "pretty",
+                "print",
+                "print_r",
+                "var_dump"
+            ],
+            "time": "2016-03-15T07:21:38+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

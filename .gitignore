@@ -1,3 +1,5 @@
 config.ini
 php_errors.log
 error.log
+vendor
+composer.phar
