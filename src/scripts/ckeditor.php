@@ -206,7 +206,7 @@ class ckeditor extends prefab {
 			
 			if (!is_writable($view))
 				return;
-			
+
 			if (mime_content_type2($view) == "text/html")
 			{
 
