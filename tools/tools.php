@@ -3,7 +3,53 @@
 function load_settings() {
 	$f3 = base::instance();
 	
-	$f3->SETTINGS = json_decode($f3->read(".cms/settings.json"), 1);
+	require $f3->ROOTDIR."/resources/php-ini-parser/src/IniParser.php";
+	
+	// Pull in default script set file
+	// Pull in use config file
+	
+	if (file_exists(".cms/settings.ini"))
+	{
+		$parser = new \IniParser();
+		$parser->treat_ini_string = true;
+
+		$parent = file_get_contents($f3->ROOTDIR."/cms/script-defaults.ini");
+		$child .= file_get_contents(".cms/settings.ini");
+
+		$parentObject = $parser->parse($parent);
+
+		foreach ($parentObject["global"] as $key=>$value)
+			$final[$key] = $value;
+
+		$childObject = $parser->parse($child.PHP_EOL.$parent);
+
+		foreach ($parentObject as $key => $value) {
+			if ($childObject[$key] == $parentObject[$key])
+				unset($childObject[$key]);
+		}
+
+		foreach ($childObject as $key=>$value)
+			$final[$key] = $value;
+
+		foreach ($final as $key => $value)
+		{
+			if (is_object($final[$key]))
+			{
+				if (array_key_exists("script", $final[$key]))
+				{
+					$final[$key]["class"] = $final[$key]["script"];
+					$final[$key]["name"] = $key;
+					unset($final[$key]["script"]);
+					$final["scripts"][] = $final[$key];
+					unset($final[$key]);
+				}
+			}
+		}
+
+		$f3->SETTINGS = $final;
+	} else {
+		$f3->SETTINGS = json_decode($f3->read(".cms/settings.json"), 1);
+	}
 
 	foreach ($f3->SETTINGS["scripts"] as $key=>$script) {
 
@@ -142,7 +188,7 @@ function j ($data) {
 }
 
 
-function k ($x, $return = false)
+function k ($x = "hit", $return = false)
 {
 	if (!isset($GLOBALS["krumo"]))
 	{
@@ -188,8 +234,8 @@ function writable($path) {
 	if (function_exists('posix_getpwuid'))
 	{
 		// For linux
-		//$serverUser = exec("whoami");
-		//$directoryUser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
+		$serverUser = exec("whoami");
+		$directoryUser = posix_getpwuid(fileowner($_SERVER["SCRIPT_FILENAME"]))["name"];
 	}
 	else
 	{

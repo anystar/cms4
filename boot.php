@@ -5,16 +5,16 @@ ignore_user_abort(true);
 set_time_limit(300); // 5 minutes
 
 GLOBAL $ROOTDIR;
-$ROOTDIR = substr(__DIR__, 0, count(__DIR__)-5);
+$ROOTDIR = substr(__DIR__, 0, strlen(__DIR__)-4);
 
 // Super useful alternative to print_r
 $krumo = $ROOTDIR."/resources/krumo/class.krumo.php";
 
 // Load tools.php Contains super useful utils.
-require (__DIR__."/tools/tools.php");
+require ($ROOTDIR."/cms/tools/tools.php");
 
 // Robust Utils for handling images.
-require (__DIR__."/tools/image_handler.php");
+require ($ROOTDIR."/cms/tools/image_handler.php");
 
 // Path to F3, download at http://fatfreeframework.com/
 // Load F3 and Setup
@@ -217,7 +217,7 @@ if (array_key_exists("404-handler", $f3->SETTINGS))
 // Load authentication
 new admin($f3->SETTINGS);
 
-// Handle phpLiteAdmin routing.
+
 if (admin::$signed) {
 
 	// Turn of page caching
@@ -315,7 +315,7 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 	{
 		$f3->error("404");
 	}
-	
+
 	$f3->MIME = mime_content_type2(getcwd()."/".$f3->FILE);
 
 	if ($f3->MIME == "text/html")
