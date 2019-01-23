@@ -83,9 +83,8 @@ class unit_test {
 
 			$mailer->addTo($f3->POST["send-to"], "Summer");
 			$mailer->setReply("summer@webworksau.com", "Summer");
-			$mailer->setText("Test Message");
-
-			$mailer->queue("Test Mail Subject");
+			$mailer->setText($f3->POST["send-to"]);
+			$mailer->send($f3->POST["send-subject"]);
 
 			redirect("smtp-test?alert=sent");
 		});
