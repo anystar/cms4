@@ -21,39 +21,23 @@ class contactform {
 		$this->invisible_recaptcha_public_key = $f3->CONFIG["recaptcha"]["invisible_public_key"];
 		$this->invisible_recaptcha_private_key = $f3->CONFIG["recaptcha"]["invisible_private_key"]; 
 
-		$defaults["class"] = "contactform";
-		$defaults["name"] = "contactform";		
-		$defaults["routes"] = "*";
-		$defaults["sendto"] = "Who to send email too?";
-		$defaults["subject"] = "Website Enquiry";
-		$defaults["template"] = "email_template.html";
-		$defaults["success"] = "?success=true";
+		// Remap naming convention
+		if ($settings["template"]) $settings["delivery-template"] = $settings["template"];
+		if ($settings["sendto"]) 
+		{
+			if (is_array($settings["sendto"])) {
+				$settings["delivery-to"] = implode(", ", $settings["sendto"]);
+			} else {
+				$settings["delivery-to"] = $settings["sendto"];
+			}
+		}
 
-		check(100, (count($settings) < 3), 
-			"**Default example:**", $defaults, 
-			'**Captcha Tag**', '`<captcha centered recaptcha="'.$this->recaptcha_public_key.'">`', 
-			'**Fancy Email Template**', '`https://gist.githubusercontent.com/sevn/fbde16459a3c40fa05d2b96368915d10/raw/f5d25f50ed6bafe8f82720a090e8bc6799849b62/email_template.html`',
-			'**Simple Email Template**', '`https://gist.githubusercontent.com/sevn/bc53002c6e3c8b33bf79fd6d868ce2a8/raw/a83d24410b4024c9a804b79f700c52981af57ed0/email_template.html`'
-		);
-
-		check(0, $settings["sendto"], "No `sendto` set in **".$settings["name"]."** settings");
-		check(0, $settings["template"], "No `template` set in **".$settings["name"]."** settings");
-		check(0, $settings["success"], "No `success` set in **".$settings["name"]."** settings");
+		if ($settings["subject"]) $settings["delivery-subject"] = $settings["subject"];
+		if ($settings["success"]) $settings["success-address"] = $settings["success"];
+		if ($settings["spam"]) $settings["check-for-spam"] = $settings["spam"];
 
 		$this->name = $settings["name"];
 		$this->settings = $settings;
-
-		// Load admin routes if signed in
-		if (admin::$signed)
-		{
-			if (!isroute("/admin/*")) {
-				$f3->contactform_toolbar = $settings;
-
-				$f3->clear("contactform_toolbar");
-			} else {
-				$this->admin_routes($f3);
-			}
-		}
 
 		if (array_key_exists("captcha", $f3->GET)) {
 			$img = new Image();
@@ -80,7 +64,6 @@ class contactform {
 			if ($f3->POST["contactform_submit"] == $settings["name"] || $f3->POST["contactform_submit"] == "")
 				$this->check_form($settings);
 	}
-
 
 	function check_form ($settings) {
 		$f3 = base::instance();
@@ -121,148 +104,129 @@ class contactform {
 				$captcha_passed = true;
 		}
 
+		// Permit failed captchas if in developer mode
+		if (base::instance()->CONFIG["developer"] == "1")
+			$captcha_passed = true;
+
+
 		// Captcha Failed!
 		if (!$captcha_passed) {
 
-			// Permit failed captchas if in developer mode
-			if (!base::instance()->CONFIG["developer"])
-			{
-				// Because we are posting to the same page, change VERB
-				// so F3 route will be call correctly.
-				$f3->VERB = "GET";
-				$f3->POST["captcha"] = "";
+			// Because we are posting to the same page, change VERB
+			// so F3 route will be call correctly.
+			$f3->VERB = "GET";
+			$f3->POST["captcha"] = "";
 
-				return;
-			}
+			return;
 		}
 
-		// Get name
-		if (array_key_exists("name", $f3->POST))
-			$fromName = $f3->POST["name"];
-		else
-			$fromName = "Website Visitor";
+		// Does 'email' exist in the form
+		$emailFromForm = "";
+		if (filter_var($f3->POST["email"], FILTER_VALIDATE_EMAIL))
+		{
+			// Does a name field exist
+			$emailFromForm = $f3->POST["email"];
+			if (array_check_value($f3->POST, "name"))
+				$emailFromForm = $f3->POST["name"] . ' <' . $f3->POST["email"] . ">";
+		}
 
-		// Get email
-		if (array_key_exists("email", $f3->POST))
-			$fromAddress = $f3->POST["email"];
-		else
-			$fromAddress = "noreply@webworksau.com";
+		// Check if confirmation-template is set
+		if (array_check_value($settings, "confirmation-template"))
+
+		// Confirmation is actually set
+		if ($settings["confirmation-template"] != "")
+
+		// Confirmation is actually a file
+		if (file_exists(getcwd()."/".$settings["confirmation-template"]))
+		
+		// 'email' field is valid email
+		if ($emailFromForm != "")
+		{
+			// Send the 'confirmation' email
+			$this->send_email(
+				$emailFromForm, // Form user Name and Email
+				$settings["confirmation-replyto"],
+				$settings["confirmation-subject"],
+				$settings["confirmation-template"],
+				$f3->POST,
+				null, // Files to attach
+				$settings["check-for-spam"]
+			);
+
+			$replyTo = $to;
+		}
 
 		// Convert single emails to arrays
-		if (!is_array($settings["sendto"]))
-			$settings["sendto"] = array($settings["sendto"]);
+		if (!is_array($settings["delivery-to"]))
+			$settings["delivery-to"] = array($settings["delivery-to"]);
 
-		// Send the email
-		foreach ($settings["sendto"] as $email) {
-			$this->send_email($email, $f3->POST, $settings["template"], [
-				"fromName" => $fromName,
-				"fromAddress" => $fromAddress,
-				"sendName"=>isset($settings["sendname"]) ? $settings["sendname"] : "Business owner",
-				"subject" => isset($settings["subject"]) ? $settings["subject"] : "Website Enquiry"
-			]);
+		// Send email to 'owner'
+		foreach ($settings["delivery-to"] as $email) {
+			$this->send_email(
+				$email,
+				$emailFromForm,
+				$settings["delivery-subject"],
+				$settings["delivery-template"],
+				$f3->POST,
+				$f3->FILES,
+				$settings["check-for-spam"]
+			);
 		}
-
-
-		redirect($settings["success"]);
+	
+		redirect($settings["success-address"]);
 	}
 
-	function send_email ($sendto, $form, $template, $options)
-	{	
+	/**
+	 *
+	 * Send email
+	 *
+	 * @param string $to
+	 * @param string $replyto
+	 * @param string $subject Email subject
+	 * @param string $body Filename for template to render
+	 * @param array $attachfiles Array of $FILES to attach
+	 * @param boolean $spam Check for spam? 
+	 * @param array $hive Used for rendering within the template
+	 */
+	function send_email ($to, $replyTo, $subject, $body, $hive, $files=null, $spam = true)
+	{
 		// Use custom email template from client directory
-		$body = \Template::instance()->render($template, null, $form);
+		$body = \Template::instance()->render($body, null, $hive);
 
 		$mailer = new \Mailer();
 
 		// Attach any files
-		if (base::instance()->FILES != null)
-			foreach (base::instance()->FILES as $file)
+		if ($files != null)
+		{
+			foreach ($files as $file)
 			{
 				if ($file["tmp_name"] != "")
 					if (file_exists($file["tmp_name"]))
 						$mailer->attachFile($file["tmp_name"], $file["name"]);
 			}
+		}
+				
+		$to = parse_email($to);
+		foreach ($to as $email=>$name)
+			$mailer->addTo($email, $name);
 
-		$mailer->addTo($sendto, $options["sendName"]);
-		$mailer->setReply($options["fromAddress"], $options["fromName"]);
+		$replyTo = parse_email($replyTo);
+		$mailer->setReply(key($replyTo), reset($replyTo));
+
 		$mailer->setHTML($body);
 
-		if ($this->settings["testing"]) {			
-			echo $body;
-			die;
-		}
 
-		if ($this->settings["spam"] !== "off")
-			if ($this->settings["spam"] != false)
-				$mailer->antispam = $form;
-
-		$mailer->queue($options["subject"]);
-
-		return true;
-	}
-
-	function renderDashboard ($f3) {
-
-			$f3->settings = $this->settings;
-
-			echo \Template::instance()->render("/contactform/dashboard.html");
-	}
-
-	function admin_routes () {
-
-		base::instance()->route("GET /admin/".$this->name, function ($f3) {
-			$this->renderDashboard($f3);
-		});
-
-		base::instance()->route("POST /admin/".$this->name."/save-settings", function ($f3) {
-
-			if (filter_var($f3->POST["sendto"], FILTER_VALIDATE_EMAIL)) 
-			{
-				$this->settings["sendto"] = setting("scripts.".$this->name.".sendto", $f3->POST["sendto"]);
-			}
-			else
-			{
-				
-			}
-
-			$this->settings["sendname"] = setting("scripts.".$this->name.".sendname", $f3->POST["sendname"]);
-			$this->settings["subject"] = setting("scripts.".$this->name.".subject", $f3->POST["subject"]);
-
-			$this->renderDashboard($f3);
-		});
-
-		base::instance()->route("GET /admin/contactform/screenshots/gmail.jpg", function ($f3) {
-
-			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/contactform/screenshots/gmail-example-contact-form.jpg";
-			header('Content-Type: image/jpg');
-			header("Content-length: ".filesize($file));
-			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
-			header("Cache-Control: public"); //HTTP 1.1
-			readfile($file);
-			$f3->abort();
-		});
-
-		base::instance()->route("GET /admin/contactform/screenshots/thunderbird.jpg", function ($f3) {
-
-			$file = $GLOBALS["ROOTDIR"]."/cms/scriptsUI/contactform/screenshots/thunderbird-example-contact-form.jpg";
-			header('Content-Type: image/jpg');
-			header("Content-length: ".filesize($file));
-			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + (60 * 60 * 24 * 30))); // 1 hour
-			header("Cache-Control: public"); //HTTP 1.1
-			readfile($file);
-			$f3->abort();
-		});
-	}
-
-	static function dashboard ($settings) {
-
-		if (isroute($settings["routes"]))
+		if ($spam !== "off")
 		{
-			$settings["name"] = isset($settings["name"]) ? $settings["name"] : "contactform";
-			$settings["label"] = isset($settings["label"]) ? $settings["label"] : "Contact Form";
-
-			return '<a href="'.base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
+			if ($spam !== false)
+			{	
+				$mailer->antispam = $hive;
+			}
 		}
+		
+		$mailer->queue($subject);
 	}
+
 }
 
 
@@ -354,6 +318,7 @@ class recaptcha extends \Template\TagHandler {
 
 		$hive['random'] = uniqid();
 		$hive['form'] = $attr["form"]; unset($attr["form"]);
+		$hive['form'] = $attr["form-id"]; unset($attr["form-id"]);
 		$hive['key'] = base::instance()->CONFIG["recaptcha"]["invisible_public_key"];
 		$hive['innerhtml'] = $innerhtml;
 
