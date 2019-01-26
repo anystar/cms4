@@ -44,14 +44,12 @@ class ckeditor extends prefab {
 			$id 	  = $f3->POST["id"];
 			$sentHash = $f3->POST["hash"];
 			$contents = $f3->POST["contents"];
-			$order = $f3->POST["order"];
+			$order =    $f3->POST["order"];
 
 			// Load in to replace contents with
 			$file = file_get_contents(getcwd()."/".$filename);
 
-
 			preg_match("#<ckeditor.*>.*<\/ckeditor>#siU", $file, $out);
-			j($out);
 
 			// Determine hash
 			preg_match_all("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
@@ -202,15 +200,16 @@ class ckeditor extends prefab {
 	public $id_list = array();
 	function template_filters ($f3) {
 
-		Template::instance()->beforerender(function ($view) {
-			
+		Template::instance()->beforerender(function ($contents, $view) {	
+		
 			if (!is_writable($view))
+			{
+				die("cannot write to file");
 				return;
+			}
 
 			if (mime_content_type2($view) == "text/html")
 			{
-
-				$contents = file_get_contents($view);
 				$orginal = $contents;
 
 				ini_set('pcre.backtrack_limit', 200000);
@@ -269,6 +268,7 @@ class ckeditor extends prefab {
 				}
 			}
 
+			return $contents;
 		});
 
 		// Template::instance()->extend("p", function ($args) {
@@ -277,6 +277,7 @@ class ckeditor extends prefab {
 
 		// });
 
+		
 		Template::instance()->extend("ckeditor", function ($args) {
 			$documentation = '
 

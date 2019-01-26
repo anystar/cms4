@@ -5,23 +5,17 @@ ignore_user_abort(true);
 set_time_limit(300); // 5 minutes
 
 GLOBAL $ROOTDIR;
-$ROOTDIR = substr(__DIR__, 0, strlen(__DIR__)-4);
+
+$ROOTDIR = substr(__DIR__, 0, strlen(__DIR__));
 
 // Super useful alternative to print_r
 require (__DIR__."/vendor/autoload.php");
 
 // Load tools.php Contains super useful utils.
-<<<<<<< HEAD
 require (__DIR__."/src/tools/tools.php");
 
 // Robust Utils for handling images.
 require (__DIR__."/src/tools/image_handler.php");
-=======
-require ($ROOTDIR."/cms/tools/tools.php");
-
-// Robust Utils for handling images.
-require ($ROOTDIR."/cms/tools/image_handler.php");
->>>>>>> master
 
 // F3 Short Cut
 $f3 = base::instance();
@@ -33,7 +27,7 @@ $f3->ROOTDIR = $ROOTDIR;
 $f3->REDIRECTING = false;
 
 // Setup framework configuration
-$f3->config($ROOTDIR."/cms/constants.ini", true);
+$f3->config($ROOTDIR."/constants.ini", true);
 
 // Load specific configuration for this server instance
 $f3->CONFIG = $GLOBALS["config"] = parse_ini_file($ROOTDIR."/config.ini", true);
@@ -102,7 +96,7 @@ $f3->ONERROR = function ($f3) {
 // Google
 if (isroute("google71e58acf252a99b8.html"))
 	die ("google-site-verification: google71e58acf252a99b8.html");
-
+	
 // Attempt to start session.
 try {
    session_start();
@@ -329,7 +323,7 @@ $f3->route(['GET /', 'GET /@path', 'GET /@path/*'], function ($f3, $params) {
 		ob_start('ob_gzhandler') OR ob_start();
 
 		echo Template::instance()->render($f3->FILE, $f3->MIME);
-		k($f3->FILE);
+		
 		if (!headers_sent() && session_status()!=PHP_SESSION_ACTIVE)
 			session_start();
 		$out='';

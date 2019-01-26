@@ -1,4 +1,6 @@
 <?php
+use Coyl\Git\Git;
+use Coyl\Git\GitRepo;
 
 class version_control extends prefab {
 
@@ -16,12 +18,10 @@ class version_control extends prefab {
 		
 		$f3 = base::instance();
 
-		require_once ($GLOBALS["ROOTDIR"]."/resources/git-php/Git.php");
-
 		check (0, !array_key_exists("git", $f3->CONFIG), "No `git` section in config.ini");
 		check (0, !array_key_exists("path", $f3->CONFIG["git"]), "No `git_path` set in config.ini");
 
-		Git::set_bin ($f3->CONFIG["git"]["path"]);
+		Git::setBin ($f3->CONFIG["git"]["path"]);
 
 		$this->repo = new GitRepo(getcwd(), true);
 
@@ -35,7 +35,7 @@ class version_control extends prefab {
 			$this->branch = Cache::instance()->get("gitbranch");
 		}
 		else
-			$this->branch = $branch = $this->repo->active_branch();
+			$this->branch = $branch = $this->repo->getActiveBranch();
 
 
 		// Ensure user and email are setup
@@ -71,7 +71,7 @@ class version_control extends prefab {
 		if ($check != $nextCmd)
 		{
 			$this->repo->run("config --unset-all alias.next");
-			$this->repo->run("config --add alias.next \"!sh -c 'git log --reverse --pretty=%H ".$this->branch." | awk \\\"/$(git rev-parse HEAD)/{getline;print}\\\" | xargs git checkout'\"");
+			$this->repo->run("config --add alias.next \"!sh -c 'git log --reverse --pretty=%%H ".$this->branch." | awk \\\"/$(git rev-parse HEAD)/{getline;print}\\\" | xargs git checkout'\"");
 		}
 
 		$check = $this->repo->run("config --get alias.prev");
@@ -163,7 +163,7 @@ class version_control extends prefab {
 	}
 
 	function getHistory () {
-		$history = $this->repo->run("log --oneline --format='%H'");
+		$history = $this->repo->run("log --oneline --format='%%H'");
 		$history = preg_split("/\\r\\n|\\r|\\n/", $history);
 		$history = array_filter($history);
 

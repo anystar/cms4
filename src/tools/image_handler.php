@@ -388,11 +388,11 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	################ LOAD IMAGE INTO GD #####################
 	#########################################################
 
-	// Load up GD
+	//TODO: Rewrite to check if uploaded temp file is an image or something else.
 
 	$GDimg = @new Image($options["tmp_name"], false, "");		
 
-	if ($GDimg->data == false) 
+	if ($GDimg->data() == false) 
 	{
 		// It's likely not an image. Lets just upload it as a file.
 		copy($options["tmp_name"], $options["absolute-directory"]."/".$options["filename"].".".$options["type"]);
@@ -401,11 +401,11 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	{
 
 		// Ensure GD loaded correctly
-		if ($GDimg->data == false)
+		if ($GDimg->data() == false)
 			base::instance()->error(500, "This image type ".$file_type." is not supported");
 
 		// Fix EXIF orientation
-		image_fix_orientation($GDimg->data, $options["tmp_name"]);
+		image_fix_orientation($GDimg->data(), $options["tmp_name"]);
 
 		// Resize Image
 		if (array_key_exists("size", $options))

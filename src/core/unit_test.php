@@ -82,7 +82,7 @@ class unit_test {
 			$mailer = new \Mailer();
 
 			$mailer->addTo($f3->POST["send-to"], "Summer");
-			$mailer->setReply("summer@webworksau.com", "Summer");
+			$mailer->set("summer@webworksau.com", "Summer");
 			$mailer->setText($f3->POST["send-to"]);
 			$mailer->send($f3->POST["send-subject"]);
 

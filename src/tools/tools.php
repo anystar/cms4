@@ -3,29 +3,30 @@
 function load_settings() {
 	$f3 = base::instance();
 	
-	require $f3->ROOTDIR."/resources/php-ini-parser/src/IniParser.php";
-	
 	// Pull in default script set file
 	// Pull in use config file
-	
+
 	if (file_exists(".cms/settings.ini"))
 	{
 		$parser = new \IniParser();
 		$parser->treat_ini_string = true;
 
-		$parent = file_get_contents($f3->ROOTDIR."/cms/script-defaults.ini");
+		$parent = file_get_contents($f3->ROOTDIR."/script-defaults.ini");
 		$child .= file_get_contents(".cms/settings.ini");
-
+		
 		$parentObject = $parser->parse($parent);
-
+		
 		foreach ($parentObject["global"] as $key=>$value)
 			$final[$key] = $value;
 
 		$childObject = $parser->parse($child.PHP_EOL.$parent);
-
+		
 		foreach ($parentObject as $key => $value) {
 			if ($childObject[$key] == $parentObject[$key])
-				unset($childObject[$key]);
+			{
+				if (!$parentObject[$key]["alwayson"])
+					unset($childObject[$key]);
+			}
 		}
 
 		foreach ($childObject as $key=>$value)
@@ -188,28 +189,8 @@ function j ($data) {
 }
 
 
-<<<<<<< HEAD:src/tools/tools.php
 // function k ($x, $return = false)
 // {
-// 	if (!isset($GLOBALS["krumo"]))
-// 	{
-// 		if (class_exists("base"))
-// 			base::instance()->error(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-// 		else
-// 			die('Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-// 	}
-
-// 	if (!is_file($GLOBALS["krumo"]))
-// 	{
-// 		if (class_exists("base"))
-// 			base::instance()->error(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-// 		else
-// 			die('Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-// 	}
-
-
-// 	require_once $GLOBALS["krumo"];
-
 // 	if (class_exists("base"))
 // 	{
 // 		if ($return)
@@ -223,42 +204,6 @@ function j ($data) {
 //     if (class_exists("f3")) 
 //    		base::instance()->error(0);
 // }
-=======
-function k ($x = "hit", $return = false)
-{
-	if (!isset($GLOBALS["krumo"]))
-	{
-		if (class_exists("base"))
-			base::instance()->error(0, 'Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-		else
-			die('Krumo path not set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	}
-
-	if (!is_file($GLOBALS["krumo"]))
-	{
-		if (class_exists("base"))
-			base::instance()->error(0, 'Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-		else
-			die('Krumo path incorrectly set in config.ini. Please download Krumo from <a href="https://github.com/mmucklo/krumo">GitHub</a>');
-	}
-
-
-	require_once $GLOBALS["krumo"];
-
-	if (class_exists("base"))
-	{
-		if ($return)
-			krumo($x, KRUMO_RETURN);
-		else
-			base::instance()->error(0, krumo($x, KRUMO_RETURN));
-	}
-	else
-		d($x);
-
-    if (class_exists("f3")) 
-   		base::instance()->error(0);
-}
->>>>>>> master:tools/tools.php
 
 
 

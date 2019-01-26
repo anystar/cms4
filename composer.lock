@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7a2fcedc8c5641584ef160624d06527c",
+    "content-hash": "6d417ca4cd53ea24660d36e2c7fc91fa",
     "packages": [
         {
             "name": "bcosca/fatfree",
-            "version": "3.6.4",
+            "version": "3.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bcosca/fatfree.git",
-                "reference": "dee4d73918a42076d5ac7db64d6d39706c7f328a"
+                "reference": "a841d838e8f146486d85e4947fb92e2fa78fdeb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bcosca/fatfree/zipball/dee4d73918a42076d5ac7db64d6d39706c7f328a",
-                "reference": "dee4d73918a42076d5ac7db64d6d39706c7f328a",
+                "url": "https://api.github.com/repos/bcosca/fatfree/zipball/a841d838e8f146486d85e4947fb92e2fa78fdeb8",
+                "reference": "a841d838e8f146486d85e4947fb92e2fa78fdeb8",
                 "shasum": ""
             },
             "require": {
@@ -35,49 +35,50 @@
             ],
             "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
             "homepage": "http://fatfreeframework.com/",
-            "time": "2018-04-19T17:23:25+00:00"
+            "time": "2018-12-24T13:43:34+00:00"
         },
         {
-            "name": "czproject/git-php",
-            "version": "v3.14.0",
+            "name": "coyl/git",
+            "version": "0.1.7",
             "source": {
                 "type": "git",
-                "url": "https://github.com/czproject/git-php.git",
-                "reference": "6faf55527a17fb569456709c2769a6d8749ceb6d"
+                "url": "https://github.com/coyl/git.git",
+                "reference": "bc9893d096fab1bdd0fac8ee2f30b8b1dcbf8d63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/czproject/git-php/zipball/6faf55527a17fb569456709c2769a6d8749ceb6d",
-                "reference": "6faf55527a17fb569456709c2769a6d8749ceb6d",
+                "url": "https://api.github.com/repos/coyl/git/zipball/bc9893d096fab1bdd0fac8ee2f30b8b1dcbf8d63",
+                "reference": "bc9893d096fab1bdd0fac8ee2f30b8b1dcbf8d63",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "php": ">=5.4"
             },
             "require-dev": {
-                "nette/tester": "~1.1.0"
+                "phpunit/phpunit": "~3.7.0"
             },
             "type": "library",
             "autoload": {
-                "classmap": [
-                    "src/"
-                ]
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
             "authors": [
                 {
-                    "name": "Jan Pecha",
-                    "email": "janpecha@email.cz"
+                    "name": "Vasil coylOne Kulakov",
+                    "email": "iam@vasiliy.pro",
+                    "homepage": "http://github.com/coyl"
                 }
             ],
-            "description": "Library for work with Git repository in PHP.",
+            "description": "PHP library for manipulations on git repository. Based on kbjr/Git.php and it's forks",
+            "homepage": "https://github.com/coyl/Git.php",
             "keywords": [
-                "git"
+                "git",
+                "git-client",
+                "php-git"
             ],
-            "time": "2018-04-17T08:52:47+00:00"
+            "time": "2017-09-12T08:37:07+00:00"
         },
         {
             "name": "ikkez/f3-mailer",
@@ -249,12 +250,51 @@
                 "var_dump"
             ],
             "time": "2016-03-15T07:21:38+00:00"
+        },
+        {
+            "name": "tajawal/php-ini-parser",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tajawal/php-ini-parser.git",
+                "reference": "31962527d2a0241d4df41f426540698038e0b976"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tajawal/php-ini-parser/zipball/31962527d2a0241d4df41f426540698038e0b976",
+                "reference": "31962527d2a0241d4df41f426540698038e0b976",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "IniParser": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "IT Team",
+                    "email": "it@tajawal.com"
+                }
+            ],
+            "description": "A Zend_Config_Ini like parser for .ini files.",
+            "keywords": [
+                "configuration",
+                "ini"
+            ],
+            "time": "2017-02-16T14:40:09+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "tajawal/php-ini-parser": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
