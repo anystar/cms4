@@ -36,8 +36,8 @@ function init_inline_ckeditors() {
 
 	for (var i = 0; i <= editors.length; i++)
 	{
-		var editorID = editors[i].getAttribute("id");
-		var editor = CKEDITOR.inline(editorID, getConfig());
+		editors[i].setAttribute("id", "ck-"+i);
+		var editor = CKEDITOR.inline("ck-"+i, getConfig());
 
 		editor.on( 'blur', function( e ) {
 			if (e.editor.checkDirty()) {

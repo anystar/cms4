@@ -54,11 +54,13 @@ class ckeditor extends prefab {
 			// Load in to replace contents with
 			$file = file_get_contents(getcwd()."/".$filename);
 
-			preg_match("#<ckeditor.*>.*<\/ckeditor>#siU", $file, $out);
+			preg_match_all("#<ckeditor.*>.*<\/ckeditor>#siU", $file, $out);
+
+			j($out);
 
 			// Determine hash
-			preg_match_all("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
-			$checkHash = sha1($output_array[2][0]);
+			// preg_match_all("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
+			// $checkHash = sha1($output_array[2][0]);
 
 			// If sent hash and check hash are the same,
 			// then we know for absolutly sure we are updating

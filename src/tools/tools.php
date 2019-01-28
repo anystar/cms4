@@ -182,9 +182,9 @@ function j ($data) {
 	header('Content-Type: application/json');
 
 	if (is_array($data))
-		echo json_encode($data);
+		echo json_encode($data, JSON_PRETTY_PRINT);
 	else 
-		echo json_encode(["response"=>$data]);
+		echo json_encode(["response"=>$data], JSON_PRETTY_PRINT);
 	
 	exit;
 }
