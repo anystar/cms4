@@ -11,7 +11,7 @@ class admin {
 	static public $clientPass;
 
 	function __construct($settings) {
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		admin::$webmasterEmail = $GLOBALS["config"]["global_user"];
 		admin::$webmasterPass = $GLOBALS["config"]["global_pass"];
@@ -29,7 +29,7 @@ class admin {
 		unset($GLOBALS["config"]["user"], $GLOBALS["config"]["pass"], $settings["user"], $settings["pass"]);
 
 		if (admin::$clientEmail == null || admin::$clientPass == null)
-			base::instance()->error(0, "There are no login credentials available whatsoever. Please check config.ini in cms folder or settings.json for client folder.");
+			\Base::instance()->error(0, "There are no login credentials available whatsoever. Please check config.ini in cms folder or settings.json for client folder.");
 
 		// Are we logged in?
 		if (isset($_SESSION))
@@ -120,7 +120,7 @@ class admin {
 		}
 
 
-		base::instance()->route("GET /admin/logo_xs.png", function ($f3) {
+		\Base::instance()->route("GET /admin/logo_xs.png", function ($f3) {
 
 			$file = $f3->ROOTDIR."/src/coreUI/admin/logo_xs.png";
 			header('Content-Type: image/png');
@@ -131,7 +131,7 @@ class admin {
 			$f3->abort();
 		});
 
-		base::instance()->route("GET /admin/logo_sm.png", function ($f3) {
+		\Base::instance()->route("GET /admin/logo_sm.png", function ($f3) {
 
 			$file = $f3->ROOTDIR."/src/coreUI/admin/logo_sm.png";
 			header('Content-Type: image/png');
@@ -142,7 +142,7 @@ class admin {
 			$f3->abort();
 		});
 
-		base::instance()->route("GET /admin/logo_md.png", function ($f3) {
+		\Base::instance()->route("GET /admin/logo_md.png", function ($f3) {
 
 			$file = $f3->ROOTDIR."/src/coreUI/admin/logo_md.png";
 			header('Content-Type: image/png');
@@ -153,7 +153,7 @@ class admin {
 			$f3->abort();
 		});
 
-		base::instance()->route("GET /admin/logo_lg.png", function ($f3) {
+		\Base::instance()->route("GET /admin/logo_lg.png", function ($f3) {
 
 			$file = $f3->ROOTDIR."/src/coreUI/admin/logo_lg.png";
 			header('Content-Type: image/png');
@@ -164,7 +164,7 @@ class admin {
 			$f3->abort();
 		});
 
-		base::instance()->route("GET /admin/logo_icon.png", function ($f3) {
+		\Base::instance()->route("GET /admin/logo_icon.png", function ($f3) {
 
 			$file = $f3->ROOTDIR."/src/coreUI/admin/logo_icon.png";
 			header('Content-Type: image/png');
@@ -175,7 +175,7 @@ class admin {
 			$f3->abort();
 		});
 
-		base::instance()->route("GET /admin/styles.css", function ($f3) {
+		\Base::instance()->route("GET /admin/styles.css", function ($f3) {
 
 			echo \Template::instance()->render("/admin/styles.css", "text/css");
 			$f3->abort();
@@ -187,7 +187,7 @@ class admin {
 	function login_routes($f3) {
 
 		$f3->route('GET /admin', function ($f3) {
-			echo Template::instance()->render("/admin/login.html");
+			echo \Template::instance()->render("/admin/login.html");
 			$f3->abort();
 		});
 
@@ -223,7 +223,7 @@ class admin {
 		$f3->clear("SESSION.login.pass_error");
 		$f3->set("SESSION.login.user", "");
 
-		$failure_attempts = Cache::instance()->get("login_failure_attempts");
+		$failure_attempts = \Cache::instance()->get("login_failure_attempts");
 
 		if ($failure_attempts > 4)
 			sleep(2);
@@ -276,13 +276,13 @@ class admin {
 			if (!$passPassed)
 				$f3->set("SESSION.login.pass_error", true);
 
-			Cache::instance()->set("login_failure_attempts", $failure_attempts+1, 3600);
+			\Cache::instance()->set("login_failure_attempts", $failure_attempts+1, 3600);
 
 			if ($failure_attempts > 4) {
 
 				admin::sendMagicLink();
 
-				Cache::instance()->set("login_failure_attempts", 4, 3600);
+				\Cache::instance()->set("login_failure_attempts", 4, 3600);
 				check(2, true, "We see your having issues trying to login. We have sent you a magic link to ".admin::$clientEmail." so you can login through that. If you cannot reach that email contact us on 5446 3371 and ask for Michael or Alan.");
 			}
 
@@ -299,10 +299,10 @@ class admin {
 		if (!cache::instance()->exists("login.hash"))
 			cache::instance()->set("login.hash", str_replace(".", "/", uniqid("", true).uniqid("", true).uniqid("", true).uniqid("", true)));
 
-		$hive["CDN"] = base::instance()->CDN;
-		$hive["URL"] = base::instance()->get("SCHEME")."://".base::instance()->get("HOST").base::instance()->get("BASE")."/admin/login?key=".cache::instance()->get("login.hash");
-		$hive["HOST"] = base::instance()->get("HOST");
-		$hive["SCHEME"] = base::instance()->get("SCHEME");
+		$hive["CDN"] = \Base::instance()->CDN;
+		$hive["URL"] = \Base::instance()->get("SCHEME")."://".\Base::instance()->get("HOST").\Base::instance()->get("BASE")."/admin/login?key=".cache::instance()->get("login.hash");
+		$hive["HOST"] = \Base::instance()->get("HOST");
+		$hive["SCHEME"] = \Base::instance()->get("SCHEME");
 
 		$body = \Template::instance()->render("/admin/magiclink.html", null, $hive);
 
@@ -315,7 +315,7 @@ class admin {
 
 	static public function logout () {
 		
-		base::instance()->clear("SESSION");
+		\Base::instance()->clear("SESSION");
 
 		if (isset($_SERVER['HTTP_COOKIE'])) {
 		    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);

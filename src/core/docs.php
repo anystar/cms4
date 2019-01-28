@@ -5,9 +5,9 @@ class docs {
     function __construct($settings) {
         GLOBAL $ROOTDIR;
 
-        $f3 = base::instance();
+        $f3 = \Base::instance();
 
-        Template::instance()->extend('editor', 'editor::render');
+        \Template::instance()->extend('editor', 'editor::render');
 
         if ($f3->exists("GET.docs") || $f3->exists("GET.doc") || $f3->exists("GET.help"))
         {
@@ -16,7 +16,7 @@ class docs {
 
                 if (file_exists($ROOTDIR."/cms/coreUI/docs/".$script["class"].".html")) {
 
-                    $f3->SETTINGS["scripts"][$key]["docs"] = Template::instance()->render("docs/".$script["class"].".html", null, $script);
+                    $f3->SETTINGS["scripts"][$key]["docs"] = \Template::instance()->render("docs/".$script["class"].".html", null, $script);
                 }
             }
     
@@ -24,7 +24,7 @@ class docs {
     
             $f3->doc_snippets = $doc_snippets;
     
-            echo Template::instance()->render("/docs/index.html");
+            echo \Template::instance()->render("/docs/index.html");
             $f3->abort();
         }
     }

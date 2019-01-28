@@ -105,7 +105,7 @@ class product_manager extends prefab {
 			$self->clear("primary_image_thumb_file");
 		});
 		
-		$this->routes(base::instance());
+		$this->routes(\Base::instance());
 	}
 
 	public function load ($flatten = false) {
@@ -163,7 +163,7 @@ class product_manager extends prefab {
 		if (!admin::$signed)
 			return;
 
-		base::instance()->route("GET /admin/".$this->name, function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name, function ($f3) {
 
 			$f3->settings = $this->settings;
 			$f3->name = $this->name;
@@ -207,7 +207,7 @@ class product_manager extends prefab {
 			echo \Template::instance()->render("/product-manager/index.html");
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/add-product", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/add-product", function ($f3) {
 
 			$f3->settings = $this->settings;
 			$f3->name = $this->name;
@@ -215,7 +215,7 @@ class product_manager extends prefab {
 			echo \Template::instance()->render("/product-manager/add-product.html");
 		});
 
-		base::instance()->route("POST /admin/".$this->name."/add-product", function ($f3) {
+		\Base::instance()->route("POST /admin/".$this->name."/add-product", function ($f3) {
 
 			$f3->POST["product_id"] = $this->generateID();
 
@@ -239,7 +239,7 @@ class product_manager extends prefab {
 			
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/manage-product", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/manage-product", function ($f3) {
 			$f3->name = $this->name;
 
 			$this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
@@ -248,7 +248,7 @@ class product_manager extends prefab {
 			echo \Template::instance()->render("/product-manager/manage-product.html");
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/edit-product", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/edit-product", function ($f3) {
 			$f3->name = $this->name;
 
 			$f3->product = $this->products_mapper->find(["@product_id=?", $f3->GET["product"]])[0];
@@ -256,7 +256,7 @@ class product_manager extends prefab {
 			echo \Template::instance()->render("/product-manager/edit-product.html");
 		});
 
-		base::instance()->route("POST /admin/".$this->name."/edit-product", function ($f3) {
+		\Base::instance()->route("POST /admin/".$this->name."/edit-product", function ($f3) {
 			$f3->name = $this->name;
 
 			$product = $this->products_mapper->load(["@product_id=?", $f3->POST["product"]]);
@@ -283,7 +283,7 @@ class product_manager extends prefab {
 			\Base::instance()->reroute("/admin/".$this->name."/edit-product?alert=1&product=".$f3->POST["product"]);
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/manage-images", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/manage-images", function ($f3) {
 			$f3->name = $this->name;
 
 			$f3->product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
@@ -291,7 +291,7 @@ class product_manager extends prefab {
 			echo \Template::instance()->render("/product-manager/manage-images.html");
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/duplicate-product", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/duplicate-product", function ($f3) {
 
 			$this->products_mapper->onload(null);
 			
@@ -310,7 +310,7 @@ class product_manager extends prefab {
 
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/delete-product", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/delete-product", function ($f3) {
 
 			$product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
 
@@ -324,7 +324,7 @@ class product_manager extends prefab {
 			$f3->reroute("/admin/".$this->name);
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/organise", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/organise", function ($f3) {
 			$f3->name = $this->name;
 			$f3->products = $this->products_mapper->find();
 			$f3->collections = $this->collections->find([], ["order"=>"order SORT_DESC"]);
@@ -332,7 +332,7 @@ class product_manager extends prefab {
 			echo \Template::instance()->render("/product-manager/organise.html");
 		});
 
-		base::instance()->route("POST /admin/".$this->name."/add-collection", function ($f3) {
+		\Base::instance()->route("POST /admin/".$this->name."/add-collection", function ($f3) {
 
 			$this->collections->reset();
 			$this->collections->name = $f3->POST["collection_name"];
@@ -342,7 +342,7 @@ class product_manager extends prefab {
 			$f3->reroute("/admin/".$this->name."/organise?alert=1&collection=".$this->collections["_id"]);
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/collection-add-product", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/collection-add-product", function ($f3) {
 
 			$product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
 
@@ -359,7 +359,7 @@ class product_manager extends prefab {
 			$f3->reroute("/admin/".$this->name."/?alert=2&collection=".$f3->GET["collection"]);
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/collection-remove-product", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/collection-remove-product", function ($f3) {
 
 			$product = $this->products_mapper->load(["@product_id=?", $f3->GET["product"]]);
 
@@ -374,7 +374,7 @@ class product_manager extends prefab {
 			$f3->reroute("/admin/".$this->name."/?alert=3&collection=".$f3->GET["collection"]);
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/collection-delete", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/collection-delete", function ($f3) {
 
 			$products = $this->products_mapper->find(['isset(@collections) && isset(@collections["'.$f3->GET["collection"].'"])']);
 
@@ -390,7 +390,7 @@ class product_manager extends prefab {
 			$f3->reroute("/admin/".$this->name."/organise?alert=2&collection=".$this->collections["_id"]);
 		});
 
-		base::instance()->route("GET /admin/".$this->name."/collection-empty", function ($f3) {
+		\Base::instance()->route("GET /admin/".$this->name."/collection-empty", function ($f3) {
 
 			$products = $this->products_mapper->find(['isset(@collections) && isset(@collections["'.$f3->GET["collection"].'"])']);
 
@@ -402,7 +402,7 @@ class product_manager extends prefab {
 			$f3->reroute("/admin/".$this->name."/organise?alert=3");
 		});
 
-		base::instance()->route("POST /admin/".$this->name."/collection-order-products", function ($f3) {
+		\Base::instance()->route("POST /admin/".$this->name."/collection-order-products", function ($f3) {
 
 			$collection = $f3->POST["collection"];
 			$order = json_decode($f3->POST["order"], true);
@@ -418,7 +418,7 @@ class product_manager extends prefab {
 			exit();
 		});
 
-		base::instance()->route("POST /admin/".$this->name."/collection-order-collections", function ($f3) {
+		\Base::instance()->route("POST /admin/".$this->name."/collection-order-collections", function ($f3) {
 
 			$order = json_decode($f3->POST["order"], true);
 
@@ -433,7 +433,7 @@ class product_manager extends prefab {
 			exit();
 		});
 
-		base::instance()->route("POST /admin/".$this->name."/collection-rename", function ($f3) {
+		\Base::instance()->route("POST /admin/".$this->name."/collection-rename", function ($f3) {
 
 			$collection = $this->collections->load(["@name=?", $f3->POST["old"]]);
 			$collection->name = $f3->POST["new"];
@@ -442,13 +442,13 @@ class product_manager extends prefab {
 			exit();
 		});
 
-		base::instance()->route("GET /admin/product-manager/style.css", function ($f3) {
+		\Base::instance()->route("GET /admin/product-manager/style.css", function ($f3) {
 
 			echo \Template::instance()->render("/product-manager/style.css", "text/css");
 			$f3->abort();
 		});
 
-		base::instance()->route("GET /admin/product-manager/script.js", function ($f3) {
+		\Base::instance()->route("GET /admin/product-manager/script.js", function ($f3) {
 
 			echo \Template::instance()->render("/product-manager/script.js", "application/javascript");
 			$f3->abort();
@@ -527,7 +527,7 @@ class product_manager extends prefab {
 		}
 
 		if ($i != 100)
-			base::instance()->error(500, "We actually collided?");
+			\Base::instance()->error(500, "We actually collided?");
 	}
 
 	static function dashboard ($settings) {
@@ -537,7 +537,7 @@ class product_manager extends prefab {
 			$settings["name"] = isset($settings["name"]) ? $settings["name"] : "product_manager";
 			$settings["label"] = isset($settings["label"]) ? $settings["label"] : "Products";
 
-			return '<a href="'.base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
+			return '<a href="'.\Base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
 		}
 	}
 }

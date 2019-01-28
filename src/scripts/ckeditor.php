@@ -1,11 +1,16 @@
 <?php
 
+class TemplateAdditional extends Template {
+
+	
+}
+
 class ckeditor extends prefab {
 
 	public static $default_label = "CKEditor";
 
 	function __construct($settings) {
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		if (admin::$signed)
 		{
@@ -29,7 +34,7 @@ class ckeditor extends prefab {
 
 			// Load on everything but admin routes
 			if (!isroute("/admin/*"))
-				ToolBar::instance()->append(Template::instance()->render("/ckeditor/inline_init.html", null));
+				ToolBar::instance()->append(\Template::instance()->render("/ckeditor/inline_init.html", null));
 		}
 
 		$this->template_filters($f3);
@@ -74,7 +79,7 @@ class ckeditor extends prefab {
 				// Prevent writing blank files
 				if ($file == "")
 				{	
-					base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on Save Route! <br><br>"."Filename: ".$filename."<br><br>Path".$path."<br><br>id".$id."<br><br>contents".$contents);
+					\Base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on Save Route! <br><br>"."Filename: ".$filename."<br><br>Path".$path."<br><br>id".$id."<br><br>contents".$contents);
 					return;
 				}
 
@@ -177,7 +182,7 @@ class ckeditor extends prefab {
 	function assets($f3) {
 
 		$f3->route("GET /admin/ckeditor/js/init.js", function () {
-			echo Template::instance()->render("/ckeditor/js/init.js", "text/javascript");
+			echo \Template::instance()->render("/ckeditor/js/init.js", "text/javascript");
 		});
 
 		$f3->route('GET /admin/ckeditor/skins/flat.png', function () { echo View::instance()->render("/ckeditor/skins/flat.png", "image/png"); });
@@ -188,7 +193,7 @@ class ckeditor extends prefab {
 
 		$f3->route('GET /admin/ckeditor/images/inlinesave-color.svg', function () { echo View::instance()->render("/ckeditor/images/save-color.png", "image/png"); });
 		$f3->route('GET /admin/ckeditor/images/inlinesave-label.svg', function () { echo View::instance()->render("/ckeditor/images/save-label.png", "image/png"); });
-		$f3->route('GET /admin/ckeditor/cms_save.js', function () { echo Template::instance()->render("/ckeditor/js/cms_save.js", "application/javascript"); });
+		$f3->route('GET /admin/ckeditor/cms_save.js', function () { echo \Template::instance()->render("/ckeditor/js/cms_save.js", "application/javascript"); });
 		$f3->route('GET /admin/ckeditor/imagebrowser.js', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/plugin.js", "application/javascript"); });
 		$f3->route('GET /admin/ckeditor/browser/browser.html', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.html", "text/html"); });
 		$f3->route('GET /admin/ckeditor/browser/browser.css', function () { echo View::instance()->render("/ckeditor/js/imagebrowser/browser/browser.css", "text/css"); });
@@ -199,117 +204,111 @@ class ckeditor extends prefab {
 
 	public $id_list = array();
 	function template_filters ($f3) {
-
-		Template::instance()->beforerender(function ($contents, $view) {	
 		
-			if (!is_writable($view))
-			{
-				die("cannot write to file");
-				return;
-			}
+		\Template::instance()->beforerender(function ($contents, $view) {	
 
-			if (mime_content_type2($view) == "text/html")
-			{
-				$orginal = $contents;
+			// Only process files in the client directory
+			if (getcwd() != substr($view, 0, strlen(getcwd())))
+				return $contents;
+			
+			// if (mime_content_type2($view) == "text/html")
+			// {
+			// 	if (!is_writable($view))
+			// 		return $contents;
 
-				ini_set('pcre.backtrack_limit', 200000);
-				ini_set('pcre.recursion_limit', 200000);
+			// 	$orginal = $contents;
 
-				// Automagically create IDs for ckeditor tag 
-				$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
+			// 	// Inject the filename at the start of the file.
 
-					$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
+			// 	ini_set('pcre.backtrack_limit', 200000);
+			// 	ini_set('pcre.recursion_limit', 200000);
 
-					return '<ckeditor id="'.$id.'">';
-				}, $contents);
+			// 	// Automagically create IDs for ckeditor tag 
+			// 	$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
 
-				if (array_key_exists("ckeditor-fix-ids", base::instance()->GET))
-				{
-					// Check for duplicates
-					preg_match_all("#<ckeditor.*id=[\"'](.*)[\"']>.*<\/ckeditor>#siU", $contents, $output_array);
+			// 		$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
 
-					if ($output_array[1]) {
-						$dups = array_not_unique($output_array[1]);
-						$dups = array_unique($dups);
+			// 		return '<ckeditor id="'.$id.'">';
+			// 	}, $contents);
 
-						foreach ($dups as $id)
-						{
-							$contents = preg_replace_callback("#(<ckeditor.*id=[\"'])(".$id.")([\"'].*>.*<\/ckeditor>)#siU", function ($matches) {
+			// 	if (array_key_exists("ckeditor-fix-ids", \Base::instance()->GET))
+			// 	{
+			// 		// Check for duplicates
+			// 		preg_match_all("#<ckeditor.*id=[\"'](.*)[\"']>.*<\/ckeditor>#siU", $contents, $output_array);
 
-								$return .= $matches[1];
-								$return .= substr("cid-".md5(uniqid(rand(), true)), 0, 12);
-								$return .= $matches[3];
+			// 		if ($output_array[1]) {
+			// 			$dups = array_not_unique($output_array[1]);
+			// 			$dups = array_unique($dups);
 
-								return $return;
-							}, $contents);
+			// 			foreach ($dups as $id)
+			// 			{
+			// 				$contents = preg_replace_callback("#(<ckeditor.*id=[\"'])(".$id.")([\"'].*>.*<\/ckeditor>)#siU", function ($matches) {
 
-						}
-					}
-				}
+			// 					$return .= $matches[1];
+			// 					$return .= substr("cid-".md5(uniqid(rand(), true)), 0, 12);
+			// 					$return .= $matches[3];
 
-				// $contents = preg_replace_callback('%(<p[^>]*>.*?</p>)%i', function ($match) {
+			// 					return $return;
+			// 				}, $contents);
 
-				// 	j($match);
+			// 			}
+			// 		}
+			// 	}
 
-				// }, $contents);
-
-
-				// Prevent writing blank files
-				if ($contents == "")
-				{	
-					//base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on before render ID validity check!<br><br>View: ".$view."<br><br>Is Signed In: " . admin::$signed ? 'true' : 'false');
-					return;
-				}
-				else 
-				{
-					// Make sure its actually changed
-					if ($orginal != $contents)
-						file_put_contents($view, $contents, LOCK_EX);
-				}
-			}
-
-			return $contents;
+			// 	// Prevent writing blank files
+			// 	if ($contents == "")
+			// 	{
+			// 		return "";
+			// 	}
+			// 	else 
+			// 	{
+			// 		// Make sure its actually changed
+			// 		if ($orginal != $contents)
+			// 			file_put_contents($view, $contents, LOCK_EX);
+			// 	}
+			// }
+			
+			return "{~ ".'$currentFileName="'.str_replace(getcwd()."/", "", $view).'";' . "~}" . PHP_EOL . $contents;
 		});
 
-		// Template::instance()->extend("p", function ($args) {
+		// \Template::instance()->extend("p", function ($args) {
 
 		// 	k($args);
 
 		// });
 
 		
-		Template::instance()->extend("ckeditor", function ($args) {
+		\Template::instance()->extend("ckeditor", function ($args) {
+			
 			$documentation = '
 
 				<h5>Syntax:</h5>
 			'.
-			base::instance()->highlight('<ckeditor id="{unique id}">').
+			\Base::instance()->highlight('<ckeditor id="{unique id}">').
 			'<h5 style="padding-top:20px;">Example:</h5>'.
-			base::instance()->highlight('<ckeditor id="main_header">').
+			\Base::instance()->highlight('<ckeditor id="main_header">').
 			"<br>or<br>".
-			base::instance()->highlight('<ckeditor id="mSXuS234fd2">').
+			\Base::instance()->highlight('<ckeditor id="mSXuS234fd2">').
 			"<br><br><a href='?ckeditor-fix-ids' class='btn btn-danger'>Auto Fix Duplicate IDs</a>";
 
-			if (!isset($args["@attrib"]))
-				base::instance()->error(1, 'A CKEditor has no attributes'.$documentation);
+			// if (!isset($args["@attrib"]))
+			// 	\Base::instance()->error(1, 'A CKEditor has no attributes'.$documentation);
 
-			if (!array_key_exists("id", $args["@attrib"]))
-				base::instance()->error(1, 'A CKEditor is missing id attribute'.$documentation);
+			// if (!array_key_exists("id", $args["@attrib"]))
+			// 	\Base::instance()->error(1, 'A CKEditor is missing id attribute'.$documentation);
 
-			if (!array_key_exists($args["@attrib"]["id"], ckeditor::instance()->id_list))
-				ckeditor::instance()->id_list[$args["@attrib"]["id"]] = true;
-			else
-				base::instance()->error(1, 'CKEditor Duplicate ID: "'.$args["@attrib"]["id"].'"'.$documentation);
-
+			// if (!array_key_exists($args["@attrib"]["id"], ckeditor::instance()->id_list))
+			// 	ckeditor::instance()->id_list[$args["@attrib"]["id"]] = true;
+			// else
+			// 	\Base::instance()->error(1, 'CKEditor Duplicate ID: "'.$args["@attrib"]["id"].'"'.$documentation);
 
 			$hash = sha1($args[0]);
-			$file = Template::instance()->actualfile;
-
+			
 			$type = ($args["@attrib"]["type"]) ? $args["@attrib"]["type"] : "full";
 
 			$out .= '<?php if (admin::$signed) {?>';
 
-			$out .= '<div data-ck-file="'.urlencode($file).'" id="'.$args['@attrib']['id'].'" data-ck-hash="'.$hash.'" class="ckeditor" data-ck-order="<?php if (!isset($ckeditor_order)) { $ckeditor_order=0; } echo $ckeditor_order++; ?>" contenteditable="true">';
+			$out .= '<div data-ck-file="<?php echo $currentFileName ?>" id="'.$args['@attrib']['id'].'" data-ck-hash="'.$hash.'" class="ckeditor" data-ck-order="<?php if (!isset($ckeditor_order)) { $ckeditor_order=0; } echo $ckeditor_order++; ?>" contenteditable="true">';
 			$out .= "<?php } ?>";
 			$out .= $args[0];
 			$out .= '<?php if (admin::$signed) {?>';
@@ -320,6 +319,6 @@ class ckeditor extends prefab {
 			return  $out;
 		});
 
-		Template::instance()->filter("urlencode", function ($encode) { return urlencode($encode); });
+		\Template::instance()->filter("urlencode", function ($encode) { return urlencode($encode); });
 	}
 }

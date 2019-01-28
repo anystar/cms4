@@ -23,9 +23,9 @@ class stats extends prefab {
 		
 		if (!admin::$signed)
 		{
-			if (!Cache::instance()->exists(base::instance()->IP))
+			if (!\Cache::instance()->exists(\Base::instance()->IP))
 			{
-				Cache::instance()->set(base::instance()->IP, true, 7200); // Cache for 2hrs
+				\Cache::instance()->set(\Base::instance()->IP, true, 7200); // Cache for 2hrs
 
 				// Only track views counted within a certain country
 				$config = $GLOBALS["config"];
@@ -72,13 +72,13 @@ class stats extends prefab {
 			}
 		}
 		
-		base::instance()->set("STATS", $this->stats);
+		\Base::instance()->set("STATS", $this->stats);
 
-		$render = Template::instance()->render("/stats/toolbar.html", null, ["STATS"=>$this->stats, "BASE"=>base::instance()->BASE]);
+		$render = \Template::instance()->render("/stats/toolbar.html", null, ["STATS"=>$this->stats, "BASE"=>\Base::instance()->BASE]);
 
 		toolbar::instance()->append($render);
 
-		base::instance()->route("GET /admin/stats", function ($f3) {
+		\Base::instance()->route("GET /admin/stats", function ($f3) {
 
 			for ($i = 0; $i <= 11; $i++) {
 			    $months[date("F Y", strtotime( date( 'Y-m-01' )." -$i months"))] = 0;
@@ -93,25 +93,25 @@ class stats extends prefab {
 			$f3->set("monthsArray", $months);
 			$f3->set("dataArray", $data);
 
-			echo Template::instance()->render("/stats/stats.html", "text/html");
+			echo \Template::instance()->render("/stats/stats.html", "text/html");
 		});
 	}
 
 	function email_view_alert ($view_message) {
 
-		$config = base::instance()->CONFIG;
+		$config = \Base::instance()->CONFIG;
 		$emails = array();
 
 		if (array_key_exists("stats", $config))
 		if (array_key_exists("emails", $config["stats"]))
 			$emails = $config["stats"]["emails"];
 
-		base::instance()->view_message = $view_message;
+		\Base::instance()->view_message = $view_message;
 
 		$webmaster_email_body = \Template::instance()->render("/stats/view_webmaster_alert_email.html", null);
 		$email_body = \Template::instance()->render("/stats/view_alert_email.html", null);
 
-		base::instance()->clear("view_message");
+		\Base::instance()->clear("view_message");
 
 		$mailer = new \Mailer();
 
@@ -123,7 +123,7 @@ class stats extends prefab {
 			foreach ($emails as $email)
 				$mailer->addBcc($email);
 
-			$mailer->send('Milestone for '.base::instance()->HOST);
+			$mailer->send('Milestone for '.\Base::instance()->HOST);
 			$mailer->reset();
 		}
 
@@ -131,7 +131,7 @@ class stats extends prefab {
 		{
 			$mailer->addHTML($email_body);
 			$mailer->addTo($this->email);
-			$mailer->send('Milestone for '.base::instance()->HOST);
+			$mailer->send('Milestone for '.\Base::instance()->HOST);
 			$mailer->reset();
 		}
 	}

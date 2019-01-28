@@ -13,7 +13,7 @@ class contactform {
 
 	function __construct($settings) {
 
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		$this->recaptcha_public_key = $f3->CONFIG["recaptcha"]["public_key"];
 		$this->recaptcha_private_key = $f3->CONFIG["recaptcha"]["private_key"];
@@ -66,7 +66,7 @@ class contactform {
 	}
 
 	function check_form ($settings) {
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		// Get the form ID
 		$id = $f3->get("POST.contactform_submit");
@@ -105,7 +105,7 @@ class contactform {
 		}
 
 		// Permit failed captchas if in developer mode
-		if (base::instance()->CONFIG["developer"] == "1")
+		if (\Base::instance()->CONFIG["developer"] == "1")
 			$captcha_passed = true;
 
 
@@ -234,7 +234,7 @@ class contactformHandler extends \Template\TagHandler {
 
 	function build ($attr, $content)
 	{
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		// Always post to the same page the form is located on.
 		$attr["src"] = '<?= $SCHEME."://".$HOST.$URI ?>';
@@ -270,7 +270,7 @@ class recaptcha extends \Template\TagHandler {
 	function visible ($attr, $innerhtml) {
 		
 		// Prevent including the same script in twice for multiple captchas on same page.
-		if (!base::instance()->RECAPTCHA_LOADED)
+		if (!\Base::instance()->RECAPTCHA_LOADED)
 		{
 			$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
 			$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
@@ -291,14 +291,14 @@ class recaptcha extends \Template\TagHandler {
 		}
 
 		// Include site key
-		$string .= '<div class="g-recaptcha" data-sitekey="'.base::instance()->CONFIG["recaptcha"]["public_key"].'"></div>'.PHP_EOL;
+		$string .= '<div class="g-recaptcha" data-sitekey="'.\Base::instance()->CONFIG["recaptcha"]["public_key"].'"></div>'.PHP_EOL;
 
 		// Finish up alignement div
 		if (array_check_value($attr, "align", "center") OR array_check_value($attr, "align", "right"))
 			$string .= '</div>'.PHP_EOL;
 
 		// Tag as loaded to prevent scripts being included
-		base::instance()->RECAPTCHA_LOADED = true;
+		\Base::instance()->RECAPTCHA_LOADED = true;
 
 		return $string;
 	}
@@ -308,7 +308,7 @@ class recaptcha extends \Template\TagHandler {
 		unset($attr["type"]);
 
 		// Prevent including the same script in twice for multiple captchas on same page.
-		if (!base::instance()->RECAPTCHA_LOADED)
+		if (!\Base::instance()->RECAPTCHA_LOADED)
 		{
 			$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
 			$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
@@ -319,7 +319,7 @@ class recaptcha extends \Template\TagHandler {
 		$hive['random'] = uniqid();
 		$hive['form'] = $attr["form"]; unset($attr["form"]);
 		$hive['form'] = $attr["form-id"]; unset($attr["form-id"]);
-		$hive['key'] = base::instance()->CONFIG["recaptcha"]["invisible_public_key"];
+		$hive['key'] = \Base::instance()->CONFIG["recaptcha"]["invisible_public_key"];
 		$hive['innerhtml'] = $innerhtml;
 
 		foreach ($attr as $key=>$value) {
@@ -336,7 +336,7 @@ class recaptcha extends \Template\TagHandler {
 		$string = Preview::instance()->resolve($string, $hive);
 
 		// Tag as loaded to prevent scripts being included
-		base::instance()->RECAPTCHA_LOADED = true;
+		\Base::instance()->RECAPTCHA_LOADED = true;
 
 		return $string;
 	}
@@ -345,11 +345,11 @@ class recaptcha extends \Template\TagHandler {
 class captcha extends \Template\TagHandler {
 	function build ($attr, $innerhtml)
 	{
-		$attr["src"] = base::instance()->BASE.base::instance()->PATH."?captcha";
+		$attr["src"] = \Base::instance()->BASE.\Base::instance()->PATH."?captcha";
 
 		if ($attr["recaptcha"])
 		{
-			if (!base::instance()->RECAPTCHA_LOADED)
+			if (!\Base::instance()->RECAPTCHA_LOADED)
 			{
 				$string .= "<script src='https://www.google.com/recaptcha/api.js?onload=renderRecaptchas&render=explicit' async defer></script>".PHP_EOL;
 				$string .= "<script>window.renderRecaptchas = function() {var recaptchas = document.querySelectorAll('.g-recaptcha');for (var i = 0; i < recaptchas.length; i++) {grecaptcha.render(recaptchas[i], {sitekey: recaptchas[i].getAttribute('data-sitekey')});}}</script>".PHP_EOL;
@@ -374,7 +374,7 @@ class captcha extends \Template\TagHandler {
 				$string .= '</div>'.PHP_EOL;
 			}
 
-			base::instance()->RECAPTCHA_LOADED = true;
+			\Base::instance()->RECAPTCHA_LOADED = true;
 
 			return $string;
 		}

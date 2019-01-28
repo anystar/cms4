@@ -9,7 +9,7 @@ class checkout extends prefab {
 	private $referenceNumber;
 
 	function __construct($settings) {
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		$this->settings = $settings;
 
@@ -55,7 +55,7 @@ class checkout extends prefab {
 		check(0, (count($settings) < 3), "**Default example:**",$defaults);
 
 		// Create and ensure json file exists
-		$this->log = new \DB\Jig\Mapper(base::instance()->JIG, $settings["name"]."_payments");
+		$this->log = new \DB\Jig\Mapper(\Base::instance()->JIG, $settings["name"]."_payments");
 
 		// Sort out payment gateways
 		foreach ($settings["payment_gateways"] as $gateway)
@@ -198,7 +198,7 @@ class PaypalButtonGateway {
 
 	function __construct ($checkout, $settings) {
 
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 		$this->settings = $settings;
 		$this->checkout = $checkout;
 		$this->return();
@@ -206,7 +206,7 @@ class PaypalButtonGateway {
 
 	function submit($data) {
 
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		$f3->data = $data;
 
@@ -221,7 +221,7 @@ class PaypalButtonGateway {
 
 	function return() {
 		
-		base::instance()->route("GET /".$this->settings["return"], function ($f3) {
+		\Base::instance()->route("GET /".$this->settings["return"], function ($f3) {
 
 			k("Not working");
 
@@ -242,7 +242,7 @@ class PaypalButtonGateway {
 			$options = [];
 			$options["sendName"] = $f3->data["name"];
 			$options["fromName"] = $this->settings["sender-name"];
-			$options["subject"] = Template::instance()->resolve($this->settings["subject"], $f3->data);
+			$options["subject"] = \Template::instance()->resolve($this->settings["subject"], $f3->data);
 			$options["sendto"] = $f3->data["email"];
 
 			$this->checkout->sendmail($body, $options);
@@ -254,7 +254,7 @@ class PaypalButtonGateway {
 					$options = [];
 					$options["sendName"] = $this->settings["sender-name"];
 					$options["fromName"] = $f3->data["name"];
-					$options["subject"] = Template::instance()->resolve($this->settings["subject"], $f3->data);
+					$options["subject"] = \Template::instance()->resolve($this->settings["subject"], $f3->data);
 					$options["sendto"] = $email;
 
 					$this->checkout->sendmail($body, $options);
@@ -264,7 +264,7 @@ class PaypalButtonGateway {
 			$record->clear("pending_id");
 			$record->save();
 
-			redirect(Template::instance()->resolve($this->settings["success"], $data));
+			redirect(\Template::instance()->resolve($this->settings["success"], $data));
 		});
 	}
 }
@@ -275,7 +275,7 @@ class EmailGateway {
 
 	function __construct ($checkout, $settings) {
 
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 		$this->settings = $settings;
 		$this->checkout = $checkout;
 
@@ -284,7 +284,7 @@ class EmailGateway {
 	}
 
 	function submit ($data) {
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		$f3->data = $data;
 		$body = \Template::instance()->render($this->settings["invoice_template"], null);
@@ -293,7 +293,7 @@ class EmailGateway {
 		$options = [];
 		$options["sendName"] = $data["name"];
 		$options["fromName"] = $this->settings["sender-name"];
-		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+		$options["subject"] = \Template::instance()->resolve($this->settings["subject"], $data);
 		$options["sendto"] = $data["email"];
 
 		$this->checkout->sendmail($body, $options);
@@ -305,7 +305,7 @@ class EmailGateway {
 				$options = [];
 				$options["sendName"] = $this->settings["sender-name"];
 				$options["fromName"] = $data["name"];
-				$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+				$options["subject"] = \Template::instance()->resolve($this->settings["subject"], $data);
 				$options["sendto"] = $email;
 
 				$this->checkout->sendmail($body, $options);
@@ -314,7 +314,7 @@ class EmailGateway {
 
 		$this->checkout->log($data);
 		
-		redirect(Template::instance()->resolve($this->settings["success"], $data));
+		redirect(\Template::instance()->resolve($this->settings["success"], $data));
 	}
 }
 
@@ -330,7 +330,7 @@ class PaypalExpress_CreditCardGateway {
 
 	function submit ($data) {
 
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		if ($this->settings["endpoint"] == "sandbox")
 		{				
@@ -369,15 +369,15 @@ class PaypalExpress_CreditCardGateway {
 		}
 		else
 		{
-			redirect(Template::instance()->resolve($this->settings["success"], $data));
+			redirect(\Template::instance()->resolve($this->settings["success"], $data));
 		}
 	}
 
 	function complete_payment () {
 
-		base::instance()->route("GET /".$this->settings["return"], function ($f3) {
+		\Base::instance()->route("GET /".$this->settings["return"], function ($f3) {
 			
-			redirect(Template::instance()->resolve($this->settings["success"], $data));
+			redirect(\Template::instance()->resolve($this->settings["success"], $data));
 		});
 
 	}
@@ -412,7 +412,7 @@ class PaypalExpressGateway {
 	}
 
 	function submit ($data) {
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		if ($f3->CONFIG["developer"] == '1')
 		{
@@ -447,7 +447,7 @@ class PaypalExpressGateway {
 	}
 
 	function complete_payment () {
-	base::instance()->route("GET /".$this->settings["return"], function ($f3) {
+	\Base::instance()->route("GET /".$this->settings["return"], function ($f3) {
 
 		if (!$f3->exists("SESSION.paypalexpress_data")) {
 			$f3->error(404);
@@ -525,7 +525,7 @@ class PaypalExpressGateway {
 		$options["sendName"] = $data["name"];
 		$options["fromName"] = $this->settings["send_name"];;
 
-		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+		$options["subject"] = \Template::instance()->resolve($this->settings["subject"], $data);
 		$options["sendto"] = $data["email"];
 
 		$this->checkout->sendmail($body, $options);
@@ -534,7 +534,7 @@ class PaypalExpressGateway {
 		$options = [];
 		$options["sendName"] = $this->settings["send_name"];
 		$options["fromName"] = $data["name"];
-		$options["subject"] = Template::instance()->resolve($this->settings["subject"], $data);
+		$options["subject"] = \Template::instance()->resolve($this->settings["subject"], $data);
 		$options["sendto"] = $this->settings["send_receipt_copy"];
 
 		$this->checkout->sendmail($body, $options);
@@ -543,7 +543,7 @@ class PaypalExpressGateway {
 
 		$f3->clear("SESSION.paypalexpress_data");
 
-		redirect(Template::instance()->resolve($this->settings["success"], $data));
+		redirect(\Template::instance()->resolve($this->settings["success"], $data));
 	});}
 }
 
@@ -553,7 +553,7 @@ class CheckoutFormHandler extends \Template\TagHandler {
 
 	function build ($attr, $content)
 	{
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		// Always post to the same page the form is located on.
 		$attr["src"] = '<?= $SCHEME."://".$HOST.$URI ?>';
@@ -646,7 +646,7 @@ class checkout_captcha extends \Template\TagHandler {
 		if (array_key_exists("centered", $attr))
 			$centered = ' style="display: inline-block" ';
 
-		$attr["src"] = base::instance()->BASE.base::instance()->PATH."?captcha";
+		$attr["src"] = \Base::instance()->BASE.\Base::instance()->PATH."?captcha";
 
 		if ($attr["recaptcha"])
 		{

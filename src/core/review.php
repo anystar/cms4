@@ -5,19 +5,19 @@ class review extends prefab {
 	private $settings;
 
 	function __construct($settings) {
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 		$this->settings = $settings;
 
 		if (admin::$signed)
 		{
 			if (array_key_exists("review", $f3->GET))
 			{
-				echo Template::instance()->render("/review/review.html");
+				echo \Template::instance()->render("/review/review.html");
 				die;
 			}
 
 			$f3->route("GET /admin/review/jquery.keepformdata.js", function ($f3) {
-				echo Template::instance()->render("/review/jquery.keepformdata.js", "application/javascript", null);
+				echo \Template::instance()->render("/review/jquery.keepformdata.js", "application/javascript", null);
 				$f3->abort();
 			});
 
@@ -28,11 +28,11 @@ class review extends prefab {
 					return;
 
 				$f3->delivered_to = $emails;
-				echo Template::instance()->render("/review/success.html", null);
+				echo \Template::instance()->render("/review/success.html", null);
 
 				$f3->abort();
 
-				$emailBody = Template::instance()->render("/review/email_tpl_review.html", null);
+				$emailBody = \Template::instance()->render("/review/email_tpl_review.html", null);
 
 				$f3->MAILER->addTo(array_shift($emails));
 

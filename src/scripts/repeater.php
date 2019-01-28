@@ -29,7 +29,7 @@ class repeater {
 
 			foreach ($from_client as $snippet) {
 				if (in_array($snippet, $from_cms)) {
-					base::instance()->error(500, "Duplicated named repeating snippets ".$snippet);
+					\Base::instance()->error(500, "Duplicated named repeating snippets ".$snippet);
 				}
 			}
 		}
@@ -74,7 +74,7 @@ class repeater {
 		// Do admin routes
 		if (admin::$signed)
 		{
-			$this->admin_routes(base::instance());
+			$this->admin_routes(\Base::instance());
 		}
 	}
 
@@ -108,7 +108,7 @@ class repeater {
 			foreach ($data as $row)
 				$f3->data[] = $row->cast();
 
-			echo Template::instance()->render("/repeat/repeat.html");
+			echo \Template::instance()->render("/repeat/repeat.html");
 		});
 
 		$f3->route('POST /admin/'.$this->name.'/addupdate', function ($f3) {
@@ -216,12 +216,12 @@ class repeater {
 
 
 	function toolbar () {
-		return "<a href='".base::instance()->BASE."/admin/".$this->settings["name"]."' class='button'>Add/Edit ".$this->settings["label"]."</a>";
+		return "<a href='".\Base::instance()->BASE."/admin/".$this->settings["name"]."' class='button'>Add/Edit ".$this->settings["label"]."</a>";
 	}
 
 	static function dashboard ($settings) {
 
 		if (isroute($settings["routes"]))
-			return '<a target="_blank" href="'.base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
+			return '<a target="_blank" href="'.\Base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
 	}
 }

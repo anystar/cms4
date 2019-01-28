@@ -16,7 +16,7 @@ class version_control extends prefab {
 		if ($settings["version-control"] != "true")
 			return;
 		
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		check (0, !array_key_exists("git", $f3->CONFIG), "No `git` section in config.ini");
 		check (0, !array_key_exists("path", $f3->CONFIG["git"]), "No `git_path` set in config.ini");
@@ -32,7 +32,7 @@ class version_control extends prefab {
 		if ($this->isDetached())
 		{
 			// We have to be careful about this though..
-			$this->branch = Cache::instance()->get("gitbranch");
+			$this->branch = \Cache::instance()->get("gitbranch");
 		}
 		else
 			$this->branch = $branch = $this->repo->getActiveBranch();
@@ -115,7 +115,7 @@ class version_control extends prefab {
 			die;
 		}
 
-		ToolBar::instance()->append(Template::instance()->render("/revision-control/toolbar.html", null, ["state"=>$this->getState(true), "BASE"=>$f3->BASE]));
+		ToolBar::instance()->append(\Template::instance()->render("/revision-control/toolbar.html", null, ["state"=>$this->getState(true), "BASE"=>$f3->BASE]));
 	}
 
 	function getState ($json = false) {
@@ -247,7 +247,7 @@ class version_control extends prefab {
 		// Destory changes
 		if ($this->detachedAndDirty())
 		{
-			if (!array_key_exists("discard-changes", base::instance()->GET))
+			if (!array_key_exists("discard-changes", \Base::instance()->GET))
 			{
 				check(3, true, "WARNING: Your about to destory changes you made while undo'ing work.<br><br> *Basically what you've done is hit the undo button, made a change, and then hit the undo button again. Saving now will bring these changes forward in history which may disorientate you. Discarding on the other hand will lose the changes but you'll proceed to undo.*");
 				die;
@@ -262,7 +262,7 @@ class version_control extends prefab {
 		{
 			// We are moving into a detached HEAD state
 			// Lets save the branch we are on
-			Cache::instance()->set("gitbranch", $this->branch, 0);
+			\Cache::instance()->set("gitbranch", $this->branch, 0);
 
 			if ($this->repo->run("status -s") != "")
 				$this->save();
@@ -270,7 +270,7 @@ class version_control extends prefab {
 
 		$this->repo->run("prev");
 
-		base::instance()->reroute(base::instance()->PATH);
+		\Base::instance()->reroute(\Base::instance()->PATH);
 	}
 
 	function redo () {
@@ -282,7 +282,7 @@ class version_control extends prefab {
 		// Destory changes
 		if ($this->detachedAndDirty())
 		{
-			if (!array_key_exists("discard-changes", base::instance()->GET))
+			if (!array_key_exists("discard-changes", \Base::instance()->GET))
 			{
 				check(3, true, "WARNING: Your about to destory changes you made while undo'ing work.<br><br> *Basically what you've done is hit the undo button, made a change, and then hit the redo button. Saving now will bring these changes forward in history which may disorientate you. Discarding on the other hand will lose the changes but you'll proceed to redo.*");
 				die;
@@ -303,7 +303,7 @@ class version_control extends prefab {
 			$this->repo->checkout($this->branch);
 		}
 
-		base::instance()->reroute(base::instance()->PATH);
+		\Base::instance()->reroute(\Base::instance()->PATH);
 	}
 
 	function canPush () {

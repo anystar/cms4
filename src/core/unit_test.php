@@ -3,7 +3,7 @@
 class unit_test {
 
 	function __construct($settings) {
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		if ($f3->ADMIN)
 		{
@@ -12,7 +12,7 @@ class unit_test {
 			
 			$f3->route("GET /admin/unit-tests", function () {
 				
-				echo Template::instance()->render("unit-test/index.html", "text/html");
+				echo \Template::instance()->render("unit-test/index.html", "text/html");
 
 			});
 			
@@ -55,7 +55,7 @@ class unit_test {
 
 			}
 
-			echo Template::instance()->render("/unit-test/image-test.html", "text/html");
+			echo \Template::instance()->render("/unit-test/image-test.html", "text/html");
 			die;
 		});
 	}
@@ -74,7 +74,7 @@ class unit_test {
 			$f3->test_subject = "Test Subject";
 			$f3->test_email = "darklocker@gmail.com";
 			
-			echo Template::instance()->render("/unit-test/smtp-test.html", "text/html");
+			echo \Template::instance()->render("/unit-test/smtp-test.html", "text/html");
 		});
 
 		$f3->route("POST /smtp-test", function ($f3) {

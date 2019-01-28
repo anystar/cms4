@@ -7,7 +7,7 @@ class gallery {
 
 	function __construct($settings) {
 
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		$defaults["class"] = "gallery";
 		$defaults["name"] = "gallery";
@@ -113,7 +113,7 @@ class gallery {
 			$f3->max_upload_count = ini_get('max_file_uploads');
 			$f3->max_upload_size = file_upload_max_size();
 
-			echo Template::instance()->render("/gallery/gallery.html", "text/html");
+			echo \Template::instance()->render("/gallery/gallery.html", "text/html");
 		});
 
 		$f3->route("POST /admin/{$this->name}/dropzone", function ($f3) {
@@ -123,24 +123,24 @@ class gallery {
 		});
 
 		$f3->route("POST /admin/{$this->name}/update-caption", function ($f3) {
-			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
+			$data = json_decode(\Base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
 
 			$data["captions"][$f3->POST["filename"]] = $f3->POST["caption"];
 
-			base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
+			\Base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 		});
 
 		$f3->route("POST /admin/{$this->name}/update-tags", function ($f3) {
-			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
+			$data = json_decode(\Base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
 
 			$data["tags"][$f3->POST["filename"]] = $f3->POST["tags"];
 
-			base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
+			\Base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 		});
 
 		$f3->route("GET /admin/{$this->name}/delete", function ($f3, $params) {
 
-			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
+			$data = json_decode(\Base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
 
 			$image = $f3->GET["image"];
 
@@ -167,7 +167,7 @@ class gallery {
 			if (file_exists($this->settings["path"]."/thumbs/thumb_".$image))
 				unlink($this->settings["path"]."/thumbs/thumb_".$image);
 
-			base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
+			\Base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 		});
 
 		$f3->route("POST /admin/{$this->name}/update_order", function ($f3) {
@@ -175,7 +175,7 @@ class gallery {
 			$images = json_decode($f3->POST["gallery_order"], true);
 
 			// Get data
-			$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
+			$data = json_decode(\Base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
 
 			// Get a list of current images
 			$files = array_diff(scandir($this->settings["filepath"]), array('..', '.', 'thumbs'));;
@@ -198,7 +198,7 @@ class gallery {
 
 			$data["order"] = $order;
 
-			base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
+			\Base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 		});
 
 		$f3->route("POST /admin/{$this->name}/upload_settings", function ($f3) {
@@ -239,7 +239,7 @@ class gallery {
 			return null;
 
 		// Get data
-		$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
+		$data = json_decode(\Base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
 
 		if ($data == null)
 		{
@@ -248,7 +248,7 @@ class gallery {
 			$data["tags"] = array();
 			$data["order"] = array();
 
-			base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
+			\Base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 		}
 
 		// Ensure there is a captions and tags array
@@ -266,9 +266,9 @@ class gallery {
 			if (!is_file($filepath."/".$file))
 				continue;
 
-			$temp["url"] = base::instance()->BASE."/".$urlpath."/".$file;
+			$temp["url"] = \Base::instance()->BASE."/".$urlpath."/".$file;
 			$temp["filename"] = $file;
-			$temp["thumb"] = base::instance()->BASE."/".$urlpath."/"."thumbs/thumb_".$temp["filename"];
+			$temp["thumb"] = \Base::instance()->BASE."/".$urlpath."/"."thumbs/thumb_".$temp["filename"];
 
 			$img = new Image($filepath."/".$file, null, "");
 
@@ -326,7 +326,7 @@ class gallery {
 
 		$upload_path = $this->settings["path"];
 
-		foreach (base::instance()->FILES as $file)
+		foreach (\Base::instance()->FILES as $file)
 		{
 			// Save primary image
 			$name = saveimg ($file, $upload_path, $this->settings["image-settings"]);
@@ -336,19 +336,19 @@ class gallery {
 	}
 
 	function append_to_order ($image_name) {
-		$data = json_decode(base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
+		$data = json_decode(\Base::instance()->read(".cms/json/".$this->name."_data.json"), 1);
 		$data["order"][] = $image_name;
-		base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
+		\Base::instance()->write(".cms/json/".$this->name."_data.json", json_encode($data, JSON_PRETTY_PRINT));
 	}
 
 	function toolbar () {
-		return "<a href='".base::instance()->BASE."/admin/".$this->name."' class='button'>Edit ".$this->name."</a>";
+		return "<a href='".\Base::instance()->BASE."/admin/".$this->name."' class='button'>Edit ".$this->name."</a>";
 	}
 
 	static function dashboard ($settings) {
 
 		if (isroute($settings["routes"]))
-			return '<a target="_blank" href="'.base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
+			return '<a target="_blank" href="'.\Base::instance()->BASE.'/admin/'.$settings["name"].'/" class="webworkscms_button btn-fullwidth">Edit '.$settings["label"].'</a>';
 		else
 			return "";
 	}

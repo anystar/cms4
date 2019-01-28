@@ -5,7 +5,7 @@ class dashboard extends prefab {
 	private $settings;
 
 	function __construct($settings) {
-		$f3 = base::instance();
+		$f3 = Base::instance();
 
 		$this->settings = $settings;
 
@@ -28,7 +28,7 @@ class dashboard extends prefab {
 			if ($f3->SESSION["root"])
 				$f3->ROOT = true;
 
-			echo Template::instance()->render("/dashboard/settings-navigation.html", "text/html");
+			echo \Template::instance()->render("/dashboard/settings-navigation.html", "text/html");
 			exit;
 		}
 
@@ -58,7 +58,7 @@ class dashboard extends prefab {
 			if (file_exists(getcwd()."/sitemap.txt"))
 				$f3->SITEMAP = file_get_contents(getcwd()."/sitemap.txt");
 
-			echo Template::instance()->render("/dashboard/seo-settings.html", "text/html");
+			echo \Template::instance()->render("/dashboard/seo-settings.html", "text/html");
 		});
 
 		$f3->route("POST /admin/seo-settings", function ($f3) {
@@ -103,7 +103,7 @@ class dashboard extends prefab {
 			$f3->set("website_login_password", $this->settings["pass"]);
 			$f3->set("contact_email", $this->settings["contact-email"]);
 
-			echo Template::instance()->render("/dashboard/login-settings.html", "text/html");
+			echo \Template::instance()->render("/dashboard/login-settings.html", "text/html");
 		});
 
 		$f3->route("POST /admin/login-settings", function ($f3) {

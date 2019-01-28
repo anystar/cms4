@@ -6,7 +6,7 @@ class module_name {
 
 
 
-		$this->routes(base::instance());
+		$this->routes(\Base::instance());
 	}
 
 	function routes($f3) {

@@ -83,7 +83,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	if (isset($options["thumbnail"])) {
 
 		if (!isset($options["thumbnail"]["size"]))
-			base::instance()->error("No size set for thumbnail property");
+			\Base::instance()->error("No size set for thumbnail property");
 		else 
 		{
 			if (is_string($options["thumbnail"]["size"]))
@@ -172,7 +172,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 		if ($options["placeholder"])
 			saveplaceholder(null, $directory, $options);
 		else
-			base::instance()->error(500, "File argument for saveimg is NULL.");
+			\Base::instance()->error(500, "File argument for saveimg is NULL.");
 	}
 
 	if (is_array($file)) {
@@ -240,7 +240,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 			);
 
 			// We should always handle this client side so throw a serious error
-			base::instance()->error(500, "Error uploading file ". $phpFileUploadErrors[$file["error"]]);
+			\Base::instance()->error(500, "Error uploading file ". $phpFileUploadErrors[$file["error"]]);
 		}
 
 		// When uploading multiple images often some upload fields wont
@@ -278,7 +278,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	################ DIRECTORY HANDLER #####################
 	########################################################
 	if ($directory=="")
-		base::instance()->error(500, "No directory provided");
+		\Base::instance()->error(500, "No directory provided");
 
 	// Check if it is a file or a directory
 	if (is_file($directory))
@@ -295,7 +295,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	else 
 	{
 		// Convert to absolute
-		$directory = base::instance()->fixslashes($directory);
+		$directory = \Base::instance()->fixslashes($directory);
 		$directory = ltrim($directory, "/");
 		$directory = rtrim($directory, "/");
 
@@ -304,11 +304,11 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 	}
 
 	if (!checkdir($options["absolute-directory"]))
-		base::instance()->error(500, "Could not create or read directory provided for saveimg()");
+		\Base::instance()->error(500, "Could not create or read directory provided for saveimg()");
 
 	if (array_key_exists("thumbnail", $options))
 		if (!checkdir($options["absolute-directory"]."/".$options["thumbnail"]["subfolder"]))
-			base::instance()->error(500, "Could not create or read subfolder directory provided for saveimg()");
+			\Base::instance()->error(500, "Could not create or read subfolder directory provided for saveimg()");
 
 
 	#########################################################
@@ -345,7 +345,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 
 	// Prevent going over the hard limit
 	if ($new_memory_limit > $maxMemoryUsage)
-	    base::instance()->error(500, "We will run out of memory if we process this image! Estimated size: ".$new_memory_limit."M");
+	    \Base::instance()->error(500, "We will run out of memory if we process this image! Estimated size: ".$new_memory_limit."M");
 
 	// Updating the default value
 	if ($new_memory_limit > $old_memory_limit)
@@ -402,7 +402,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 
 		// Ensure GD loaded correctly
 		if ($GDimg->data() == false)
-			base::instance()->error(500, "This image type ".$file_type." is not supported");
+			\Base::instance()->error(500, "This image type ".$file_type." is not supported");
 
 		// Fix EXIF orientation
 		image_fix_orientation($GDimg->data(), $options["tmp_name"]);
@@ -470,7 +470,7 @@ function saveimg ($file, $directory, $options, &$fill=null) {
 			}
 
 			if ($result == FALSE)
-				base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
+				\Base::instance()->error("Failed to save image. ```".json_encode($options, JSON_PRETTY_PRINT)."```");
 			else {
 				$options["thumbnail"]["path"] = $directory."/".$options["thumbnail"]["subfolder"]."/thumb_".$options["filename"].".".$options["type"];
 				$options["thumbnail"]["filename"] = $options["filename"].".".$options["type"];

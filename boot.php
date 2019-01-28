@@ -18,7 +18,7 @@ require (__DIR__."/src/tools/tools.php");
 require (__DIR__."/src/tools/image_handler.php");
 
 // F3 Short Cut
-$f3 = base::instance();
+$f3 = \Base::instance();
 
 // Set ROOTDIR for usage in F3
 $f3->ROOTDIR = $ROOTDIR;
@@ -103,7 +103,7 @@ try {
 } catch(ErrorExpression $e) {
    session_regenerate_id();
    session_start();
-} 
+}
 
 if (array_key_exists("login", $f3->GET) || array_key_exists("show-login", $f3->SESSION))
 {
@@ -390,6 +390,7 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 		$f3->error("404");
 	}
 });
+
 
 if (!$f3->REDIRECTING)
 	$f3->run();

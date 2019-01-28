@@ -6,7 +6,7 @@ class dropimg extends prefab {
 
 	function __construct() {
 
-		$f3 = base::instance();
+		$f3 = \Base::instance();
 
 		if (admin::$signed) {
 
@@ -63,11 +63,11 @@ class dropimg extends prefab {
 			if (isroute("/admin/*"))
 				return;
 
-			toolbar::instance()->append(Template::instance()->render("dropimg/init.html", null));
+			toolbar::instance()->append(\Template::instance()->render("dropimg/init.html", null));
 		}
 
-		Template::instance()->extend("dropimg", function ($args) {
-			$f3 = base::instance();
+		\Template::instance()->extend("dropimg", function ($args) {
+			$f3 = \Base::instance();
 
 			if (!isset($args["@attrib"]))
 				$f3->error(1, "DropIMG: No attributes found?");
@@ -107,7 +107,7 @@ class dropimg extends prefab {
 			}
 
 			// Have we changed the image size
-			if (Cache::instance()->exists("dropimg_".sha1($path), $value))
+			if (\Cache::instance()->exists("dropimg_".sha1($path), $value))
 			{
 				if ($size != $value)
 				{
@@ -118,7 +118,7 @@ class dropimg extends prefab {
 						"type" => $pi["extension"]
 					]);
 
-					Cache::instance()->set("dropimg_".sha1($path), $size);
+					\Cache::instance()->set("dropimg_".sha1($path), $size);
 				}
 			}
 
@@ -168,8 +168,8 @@ class dropimg extends prefab {
 		});
 
 
-		Template::instance()->extend("dropfile", function ($args) {
-			$f3 = base::instance();
+		\Template::instance()->extend("dropfile", function ($args) {
+			$f3 = \Base::instance();
 
 			$hive = array();
 

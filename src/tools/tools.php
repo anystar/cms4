@@ -1,7 +1,7 @@
 <?php
 
 function load_settings() {
-	$f3 = base::instance();
+	$f3 = \Base::instance();
 	
 	// Pull in default script set file
 	// Pull in use config file
@@ -76,7 +76,7 @@ function load_settings() {
 
 function setting($key, $value=null, $overwrite=true) {
 
-	$f3 = base::instance();
+	$f3 = \Base::instance();
 
 	$f3->temp_settings = json_decode(file_get_contents(getcwd() . "/.cms/settings.json"), true);
 
@@ -115,7 +115,7 @@ function setting($key, $value=null, $overwrite=true) {
 }
 
 function redirect ($url) {
-	$f3 = base::instance();
+	$f3 = \Base::instance();
 
 	$f3->REDIRECTING = true;
 
@@ -137,9 +137,9 @@ function check ($type, $cond, ...$messages) {
 			if (is_string($m))
 				$output .= "<p>".markdown::instance()->convert($m)."</p>";
 			if (is_array($m))
-				$output .= "<pre><code>".base::instance()->highlight(json_encode($m, JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES))."</code></pre>";
+				$output .= "<pre><code>".\Base::instance()->highlight(json_encode($m, JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES))."</code></pre>";
 		}
-		base::instance()->error($type, $output);
+		\Base::instance()->error($type, $output);
 	}
 
 }
@@ -167,13 +167,14 @@ function d ($x=null) {
         if ($x == null) {
 
         }       else {
+			
                 echo "<pre>";
                 print_r($x);
                 echo "</pre>";
         }
         echo "<br><br><hr><br><br>";
 
-        if (class_exists("f3")) base::instance()->error(0);
+        if (class_exists("f3")) \Base::instance()->error(0);
         exit;
 }
 
@@ -189,28 +190,28 @@ function j ($data) {
 }
 
 
-// function k ($x, $return = false)
-// {
-// 	if (class_exists("base"))
-// 	{
-// 		if ($return)
-// 			krumo($x, KRUMO_RETURN);
-// 		else
-// 			base::instance()->error(0, krumo($x, KRUMO_RETURN));
-// 	}
-// 	else
-// 		d($x);
+function dk ($x, $return = false)
+{
+	if (class_exists("Base"))
+	{
+		if ($return)
+			krumo($x, KRUMO_RETURN);
+		else{
+			\Base::instance()->error(0, krumo($x, KRUMO_RETURN));
+		}
+	}
+	else
+		d($x);
 
-//     if (class_exists("f3")) 
-//    		base::instance()->error(0);
-// }
+	die;
+}
 
 
 
 function writable($path) {
 	
 	// Step 0: is even something
-	if (strlen($path)  == 0) base::instance()->error(0, "no path given");
+	if (strlen($path)  == 0) \Base::instance()->error(0, "no path given");
 
 	// Step 1: Lets make sure the directory owner and server own is the same
 	if (function_exists('posix_getpwuid'))
@@ -231,7 +232,7 @@ function writable($path) {
 
 	if ($serverUser != $directoryUser)
 	{
-		base::instance()->error(0, "Warning!".
+		\Base::instance()->error(0, "Warning!".
 		"<br><br>".
 		"The webserver is running as a different user than the current folder we are in.".
 		"<br><br>".
@@ -253,7 +254,7 @@ function writable($path) {
 		if ($path == ".cms/tmp/")
 			die ("PHP is reporting that ".$path." is not writable. Check folder permissions!");
 
-		base::instance()->error(0, "PHP is reporting that ".$path." is not writable. Unfourtantly we cannot say why, sorry.");
+		\Base::instance()->error(0, "PHP is reporting that ".$path." is not writable. Unfourtantly we cannot say why, sorry.");
 	}
 
 	return true;
@@ -431,7 +432,7 @@ function isroute($route, $verb=null)
 
 	determine_path();
 
-	$f3 = base::instance();
+	$f3 = \Base::instance();
 
 	if ($verb!=null)
 		if (!strtolower($f3->VERB) == strtolower($verb))
@@ -496,7 +497,7 @@ function isroute($route, $verb=null)
 }
 
 function determine_path () {
-	$f3 = base::instance();
+	$f3 = \Base::instance();
 
 	// Prevent doing this multiple times
 	if ($GLOBALS["path_determined"]) return;
@@ -596,13 +597,13 @@ function time_elapsed_string($datetime, $full = false) {
 function dt ($clear = false) {
 
 	if ($clear)
-		base::instance()->clear("dtlog");
+		\Base::instance()->clear("dtlog");
 
     $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
 
-    $dt = base::instance()->get("dtlog");
+    $dt = \Base::instance()->get("dtlog");
     $dt[] = "Process Time: {$time}";
-    base::instance()->set("dtlog", $dt, 60*5);
+    \Base::instance()->set("dtlog", $dt, 60*5);
     k($dt);
     die;
 }
