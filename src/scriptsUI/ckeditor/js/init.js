@@ -12,6 +12,7 @@ function getConfig () {
 		enterMode : CKEDITOR.ENTER_BR,
 		allowedContent : true,
 		disableNativeSpellChecker: false,
+		floatSpaceDockedOffsetY: 15,
 		toolbarGroups : 
 		[
 			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
@@ -32,11 +33,21 @@ function getConfig () {
 };
 
 function init_inline_ckeditors() {
-	var editors = document.getElementsByClassName("ckeditor");
+	
+	editors = document.querySelectorAll('[ckeditor]');
+	for (var i=0; i < editors.length; i++)
+	{
+		editors[i].classList.add("ckeditor");
+		editors[i].setAttribute("cms-edit-on-attribute", "true");
+		editors[i].setAttribute("cms-order", i);
+	}
 
-	for (var i = 0; i <= editors.length; i++)
+	var editors = document.getElementsByClassName("ckeditor");
+	
+	for (var i = 0; i < editors.length; i++)
 	{
 		editors[i].setAttribute("id", "ck-"+i);
+		editors[i].contentEditable = "true";
 		var editor = CKEDITOR.inline("ck-"+i, getConfig());
 
 		editor.on( 'blur', function( e ) {

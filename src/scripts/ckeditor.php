@@ -49,15 +49,36 @@ class ckeditor extends prefab {
 			$id 	  = $f3->POST["id"];
 			$sentHash = $f3->POST["hash"];
 			$contents = $f3->POST["contents"];
-			$order =    $f3->POST["order"];
+			$order =    (int)$f3->POST["order"]; // Starting at 0
 
 			// Load in to replace contents with
 			$file = file_get_contents(getcwd()."/".$filename);
 
-			preg_match_all("#<ckeditor.*>.*<\/ckeditor>#siU", $file, $out);
+			//preg_match_all("#<ckeditor.*>.*<\/ckeditor>#siU", $file, $out);
 
-			j($out);
+			$count = 0;
+			$file = preg_replace_callback("#(<ckeditor.*>)(.*)(<\/ckeditor>)#siU", function ($match) use (&$count, $order, $contents) {
 
+				if ($count == $order) {
+
+					$return .= $match[1];
+					$return .= $contents;
+					$return .= $match[3];
+
+					$count++;
+					return $return;
+				} else {
+					$count++;
+					return $match[0];
+				}
+				
+			}, $file);
+
+			file_put_contents(getcwd()."/".$filename, $file, LOCK_EX);
+
+			echo sha1($contents);
+
+			return;
 			// Determine hash
 			// preg_match_all("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
 			// $checkHash = sha1($output_array[2][0]);
@@ -65,34 +86,34 @@ class ckeditor extends prefab {
 			// If sent hash and check hash are the same,
 			// then we know for absolutly sure we are updating
 			// the right content.
-			if ($sentHash == $checkHash) {
+			// if ($sentHash == $checkHash) {
 
-				ini_set('pcre.backtrack_limit', 200000);
-				ini_set('pcre.recursion_limit', 200000);
-				$file = preg_replace_callback("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents, $filename, $id) {
+			// 	ini_set('pcre.backtrack_limit', 200000);
+			// 	ini_set('pcre.recursion_limit', 200000);
+			// 	$file = preg_replace_callback("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents, $filename, $id) {
 
-					$return .= $matches[1];
-					$return .= $contents;
-					$return .= $matches[3];
+			// 		$return .= $matches[1];
+			// 		$return .= $contents;
+			// 		$return .= $matches[3];
 
-					return $return;
-				}, $file);
+			// 		return $return;
+			// 	}, $file);
 
-				// Prevent writing blank files
-				if ($file == "")
-				{	
-					\Base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on Save Route! <br><br>"."Filename: ".$filename."<br><br>Path".$path."<br><br>id".$id."<br><br>contents".$contents);
-					return;
-				}
+			// 	// Prevent writing blank files
+			// 	if ($file == "")
+			// 	{	
+			// 		\Base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on Save Route! <br><br>"."Filename: ".$filename."<br><br>Path".$path."<br><br>id".$id."<br><br>contents".$contents);
+			// 		return;
+			// 	}
 
-				file_put_contents(getcwd()."/".$filename, $file, LOCK_EX);
-			} else {
+			// 	file_put_contents(getcwd()."/".$filename, $file, LOCK_EX);
+			// } else {
 
-				echo "wrong hash!";
-				return;
-			}
+			// 	echo "wrong hash!";
+			// 	return;
+			// }
 			
-			echo sha1($contents);
+			// echo sha1($contents);
 
 			return;
 		});
@@ -213,73 +234,13 @@ class ckeditor extends prefab {
 			if (getcwd() != substr($view, 0, strlen(getcwd())))
 				return $contents;
 			
-			// if (mime_content_type2($view) == "text/html")
-			// {
-			// 	if (!is_writable($view))
-			// 		return $contents;
+			$file = str_replace(getcwd()."/", "", $view);
 
-			// 	$orginal = $contents;
+			$contents = str_replace(" ckeditor ",  " ckeditor cms-file='".$file."' ", $contents);
 
-			// 	// Inject the filename at the start of the file.
-
-			// 	ini_set('pcre.backtrack_limit', 200000);
-			// 	ini_set('pcre.recursion_limit', 200000);
-
-			// 	// Automagically create IDs for ckeditor tag 
-			// 	$contents = preg_replace_callback("/<ckeditor>/", function ($match) {
-
-			// 		$id = substr("cid-".md5(uniqid(rand(), true)), 0, 12);
-
-			// 		return '<ckeditor id="'.$id.'">';
-			// 	}, $contents);
-
-			// 	if (array_key_exists("ckeditor-fix-ids", \Base::instance()->GET))
-			// 	{
-			// 		// Check for duplicates
-			// 		preg_match_all("#<ckeditor.*id=[\"'](.*)[\"']>.*<\/ckeditor>#siU", $contents, $output_array);
-
-			// 		if ($output_array[1]) {
-			// 			$dups = array_not_unique($output_array[1]);
-			// 			$dups = array_unique($dups);
-
-			// 			foreach ($dups as $id)
-			// 			{
-			// 				$contents = preg_replace_callback("#(<ckeditor.*id=[\"'])(".$id.")([\"'].*>.*<\/ckeditor>)#siU", function ($matches) {
-
-			// 					$return .= $matches[1];
-			// 					$return .= substr("cid-".md5(uniqid(rand(), true)), 0, 12);
-			// 					$return .= $matches[3];
-
-			// 					return $return;
-			// 				}, $contents);
-
-			// 			}
-			// 		}
-			// 	}
-
-			// 	// Prevent writing blank files
-			// 	if ($contents == "")
-			// 	{
-			// 		return "";
-			// 	}
-			// 	else 
-			// 	{
-			// 		// Make sure its actually changed
-			// 		if ($orginal != $contents)
-			// 			file_put_contents($view, $contents, LOCK_EX);
-			// 	}
-			// }
-			
-			return "{~ ".'$currentFileName="'.str_replace(getcwd()."/", "", $view).'";' . "~}" . PHP_EOL . $contents;
+			return "{~ ".'$currentFileName="'.str_replace(getcwd()."/", "", $file).'";' . "~}" . PHP_EOL . $contents;
 		});
 
-		// \Template::instance()->extend("p", function ($args) {
-
-		// 	k($args);
-
-		// });
-
-		
 		\Template::instance()->extend("ckeditor", function ($args) {
 			
 			$documentation = '

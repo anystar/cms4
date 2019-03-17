@@ -273,8 +273,8 @@ class gallery {
 			$img = new Image($filepath."/".$file, null, "");
 
 			// Ensure it loaded
-			if ($img->data == false)
-				continue;
+			// if ($img->data == false)
+			// 	continue;
 
 			$temp["width"] = $img->width();
 			$temp["height"] = $img->height();

@@ -754,7 +754,7 @@ function file_put_json ($filename, $contents) {
 
 	$file = json_decode(file_get_contents($filename), true);
 	$file[] = $contents;
-	file_put_contents($filename, json_encode($file, JSON_PRETTY_PRINT));
+	file_put_contents($filename, json_encode($file, JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES));
 }
 
 // Simple non complient email parser found here

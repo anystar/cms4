@@ -2,19 +2,16 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/xenobytezero/krumo"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/sevn/fatfree-core"
+            "url": "https://github.com/sevn/krumo"
         }
     ],
     "require": {
         "coyl/git": "^0.1.6",
-        "xenobytezero/krumo": "^0.5.8",
         "bcosca/fatfree": "3.6.5",
         "ikkez/f3-mailer": "^1.0",
         "ikkez/f3-template-directives": "^1.0",
-        "tajawal/php-ini-parser": "dev-master"
+        "tajawal/php-ini-parser": "dev-master",
+        "paquettg/php-html-parser": "2.0.0",
+	"sevn/krumo": "dev-master"
     }
 }
