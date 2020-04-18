@@ -93,7 +93,7 @@ class dropimg extends prefab {
 			if ($psize[0] == 'auto') $psize[0] = $psize[1];
 			if ($psize[1] == 'auto') $psize[1] = $psize[0];
 
-			$placeholder_path = "https://placeholdit.imgix.net/~text?txtsize=33&txt=".$psize[0]."x".$psize[1]."&w=".$psize[0]."&h=".$psize[1];
+			$placeholder_path = "https://via.placeholder.com/".$psize[0]."x".$psize[1]."?text=".$psize[0]."x".$psize[1];
 
 			// Does the file exist?
 			if (!file_exists($path = getcwd()."/".$file)) {

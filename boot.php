@@ -278,7 +278,7 @@ if (admin::$signed) {
 
 	// Show debug screen
 	if ($f3->exists("GET.debug"))
-		k($hive);
+		kd($hive);
 
 	if ($f3->exists("GET.phpinfo"))
 		{ phpinfo(); die; }

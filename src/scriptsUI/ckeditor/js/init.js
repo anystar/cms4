@@ -33,13 +33,12 @@ function getConfig () {
 };
 
 function init_inline_ckeditors() {
-	
 	editors = document.querySelectorAll('[ckeditor]');
 	for (var i=0; i < editors.length; i++)
 	{
 		editors[i].classList.add("ckeditor");
 		editors[i].setAttribute("cms-edit-on-attribute", "true");
-		editors[i].setAttribute("cms-order", i);
+		editors[i].setAttribute("cms-on-attribute", "true");
 	}
 
 	var editors = document.getElementsByClassName("ckeditor");
@@ -47,6 +46,11 @@ function init_inline_ckeditors() {
 	for (var i = 0; i < editors.length; i++)
 	{
 		editors[i].setAttribute("id", "ck-"+i);
+
+		if (!editors[i].hasAttribute("cms-on-attribute")) {
+			editors[i].setAttribute("cms-on-tag", true);
+		}
+
 		editors[i].contentEditable = "true";
 		var editor = CKEDITOR.inline("ck-"+i, getConfig());
 
@@ -63,5 +67,27 @@ function init_inline_ckeditors() {
 			document.getElementById("statusbar").style.display = "none";
     		document.getElementById("center_div").style.display = "table-cell";
 		});
+	}
+
+	// Set the order attribute
+	var files = {};
+	for (var i = 0; i < editors.length; i++) {
+
+		
+		var key = editors[i].getAttribute("cms-file");
+		
+		if (editors[i].hasAttribute("cms-on-attribute")) {
+			key = key + "-on-attribute";
+		} else {
+			key = key + "-on-tag";
+		}
+
+		if (files[key] === undefined) {
+			files[key] = 0;
+		}
+
+		editors[i].setAttribute("cms-order", files[key]);
+
+		files[key]++;
 	}
 }

@@ -9,7 +9,7 @@ CKEDITOR.plugins.add( 'cmssave',
 			order : editor.order
 		};
 
-		var postUrl = "{{@BASE}}/admin/ckeditor/save";
+		var postUrl = "{{@SCHEME}}://{{@HOST}}:{{@PORT}}{{@BASE}}/admin/ckeditor/save";
 
 		iconName = 'inlinesave-color.svg';
 
@@ -24,10 +24,14 @@ CKEDITOR.plugins.add( 'cmssave',
 
 					postData.contents = editor.getData();
 					postData.id = editor.container.getId();
-					postData.order = editor.element.getAttribute("data-ck-order");
-					postData.path = editor.element.getAttribute("data-ck-path");
-					postData.file = editor.element.getAttribute("data-ck-file");
-					postData.hash = editor.element.getAttribute("data-ck-hash");
+					postData.order = editor.element.getAttribute("cms-order");
+					postData.file = editor.element.getAttribute("cms-file");
+
+					if (editor.element.getAttribute("cms-on-attribute")) {
+						postData.method = "attribute";
+					} else {
+						postData.method = "tag";
+					}
 
 					// Convert postData object to multi-part form data query string for post like jQuery does by default.
 					var formData = '';

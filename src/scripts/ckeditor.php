@@ -1,4 +1,5 @@
 <?php
+use PHPHtmlParser\Dom;
 
 class TemplateAdditional extends Template {
 
@@ -45,77 +46,18 @@ class ckeditor extends prefab {
 		$f3->route("POST /admin/ckeditor/save", function ($f3) {
 
 			$filename = urldecode($f3->POST["file"]);
-			$path 	  = urldecode($f3->POST["path"]);
-			$id 	  = $f3->POST["id"];
-			$sentHash = $f3->POST["hash"];
+			// $path 	  = urldecode($f3->POST["path"]);
+			// $id 	  = $f3->POST["id"];
+			// $sentHash = $f3->POST["hash"];
 			$contents = $f3->POST["contents"];
 			$order =    (int)$f3->POST["order"]; // Starting at 0
+			$method = $f3->POST["method"];
 
-			// Load in to replace contents with
-			$file = file_get_contents(getcwd()."/".$filename);
-
-			//preg_match_all("#<ckeditor.*>.*<\/ckeditor>#siU", $file, $out);
-
-			$count = 0;
-			$file = preg_replace_callback("#(<ckeditor.*>)(.*)(<\/ckeditor>)#siU", function ($match) use (&$count, $order, $contents) {
-
-				if ($count == $order) {
-
-					$return .= $match[1];
-					$return .= $contents;
-					$return .= $match[3];
-
-					$count++;
-					return $return;
-				} else {
-					$count++;
-					return $match[0];
-				}
-				
-			}, $file);
-
-			file_put_contents(getcwd()."/".$filename, $file, LOCK_EX);
-
-			echo sha1($contents);
-
-			return;
-			// Determine hash
-			// preg_match_all("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", $file, $output_array);
-			// $checkHash = sha1($output_array[2][0]);
-
-			// If sent hash and check hash are the same,
-			// then we know for absolutly sure we are updating
-			// the right content.
-			// if ($sentHash == $checkHash) {
-
-			// 	ini_set('pcre.backtrack_limit', 200000);
-			// 	ini_set('pcre.recursion_limit', 200000);
-			// 	$file = preg_replace_callback("#(<ckeditor.*id=[\"']".$id."[\"'].*>)(.*)(<\/ckeditor>)#siU", function ($matches) use ($contents, $filename, $id) {
-
-			// 		$return .= $matches[1];
-			// 		$return .= $contents;
-			// 		$return .= $matches[3];
-
-			// 		return $return;
-			// 	}, $file);
-
-			// 	// Prevent writing blank files
-			// 	if ($file == "")
-			// 	{	
-			// 		\Base::instance()->error(500, "Critial Error: Stopping CKEditor from writing blank data on Save Route! <br><br>"."Filename: ".$filename."<br><br>Path".$path."<br><br>id".$id."<br><br>contents".$contents);
-			// 		return;
-			// 	}
-
-			// 	file_put_contents(getcwd()."/".$filename, $file, LOCK_EX);
-			// } else {
-
-			// 	echo "wrong hash!";
-			// 	return;
-			// }
-			
-			// echo sha1($contents);
-
-			return;
+			if ($method == "attribute") {
+				SaveOnAttribute($filename, $order, $contents);
+			} else {
+				SaveOnTag($filename, $order, $contents);
+			}
 		});
 
 
@@ -271,7 +213,7 @@ class ckeditor extends prefab {
 
 			$out .= '<?php if (admin::$signed) {?>';
 
-			$out .= '<div data-ck-file="<?php echo $currentFileName ?>" id="'.$args['@attrib']['id'].'" data-ck-hash="'.$hash.'" class="ckeditor" data-ck-order="<?php if (!isset($ckeditor_order)) { $ckeditor_order=0; } echo $ckeditor_order++; ?>" contenteditable="true">';
+			$out .= '<div cms-file="<?php echo $currentFileName ?>" id="'.$args['@attrib']['id'].'" data-ck-hash="'.$hash.'" class="ckeditor" data-ck-order="<?php if (!isset($ckeditor_order)) { $ckeditor_order=0; } echo $ckeditor_order++; ?>" contenteditable="true">';
 			$out .= "<?php } ?>";
 			$out .= $args[0];
 			$out .= '<?php if (admin::$signed) {?>';
@@ -284,4 +226,153 @@ class ckeditor extends prefab {
 
 		\Template::instance()->filter("urlencode", function ($encode) { return urlencode($encode); });
 	}
+}
+
+
+
+function SaveOnTag($filename, $order, $contents) {
+	// Load in to replace contents with
+	$file = file_get_contents(getcwd()."/".$filename);
+
+	//preg_match_all("#<ckeditor.*>.*<\/ckeditor>#siU", $file, $out);
+
+	$count = 0;
+	$file = preg_replace_callback("#(<ckeditor.*>)(.*)(<\/ckeditor>)#siU", function ($match) use (&$count, $order, $contents) {
+
+		if ($count == $order) {
+
+			$return .= $match[1];
+			$return .= $contents;
+			$return .= $match[3];
+
+			$count++;
+			return $return;
+		} else {
+			$count++;
+			return $match[0];
+		}
+		
+	}, $file);
+
+	file_put_contents(getcwd()."/".$filename, $file, LOCK_EX);
+
+	echo sha1($contents);
+}
+
+
+
+function SaveOnAttribute($filename, $index, $replacingContent)
+{ 
+	$dom = new Dom;
+	$dom->loadFromFile($filename, [
+		"cleanupInput" => false,
+		"whitespaceTextNode"=>true,
+		"removeDoubleSpace"=>false
+	]);
+	
+	$contents = $dom->find('*[ckeditor]');
+
+	if ($contents->count() == 0) return;
+
+	$hash = sha1($contents[$index]);
+
+	$i = 0;
+	foreach ($contents as $key=>$content) {
+		
+		if ($hash == sha1($content))
+		{   
+			$i++;
+			
+			if ($key == $index)
+			{
+				$realIndex = $i;
+				$fields[$key] = $content->outerHtml();
+				$contents[$key]->removeChild(0);
+			}
+		}
+	}
+
+	$innerHtml = $contents[$index]->innerHtml();
+
+	if ($innerHtml != "") {
+		$replacingContent = str_replace($innerHtml, $replacingContent, $contents[$index]);
+	} else {
+		$xx = $dom->loadStr($replacingContent, []);
+		$temp = clone($contents[$index]);
+		$temp->addChild($xx->root);
+		$replacingContent = $temp;
+	}
+
+	$file = file_get_contents($filename);
+	$search = $contents[$index]->outerHtml();
+	$count = 0;
+
+	$file2 = str_ureplace($contents[$index]->outerHtml(), function ($match, $count) use($realIndex, $replacingContent, $search) {
+
+		if ($count != $realIndex)
+			return "REPLACE__".sha1($search)."__REPLACE";
+		else
+			return $replacingContent;
+
+	}, $file);
+
+	$file2 = str_replace("REPLACE__".sha1($search)."__REPLACE", $search, $file2);
+
+	file_put_contents($filename, $file2);
+}
+
+
+
+
+/**
+ * str_ureplace
+ * 
+ * str_replace like function with callbacks for replacement(s).
+ * 
+ * @param string|array $search
+ * @param callback|array $replace
+ * @param string|array $subject
+ * @param int $replace_count
+ * @return string|array subject with replaces, FALSE on error.
+ */
+function str_ureplace($search, $replace, $subject, &$replace_count = null) {
+    $replace_count = 0;
+    
+    // validate input
+    $search = array_values((array) $search);
+    $searchCount = count($search);
+    if (!$searchCount) {
+        return $subject;
+    }
+    foreach($search as &$v) {
+        $v = (string) $v;
+    }
+    unset($v);
+    $replaceSingle = is_callable($replace);    
+    $replace = $replaceSingle ? array($replace) : array_values((array) $replace);
+    foreach($replace as $index=>$callback) {
+        if (!is_callable($callback)) {
+            throw new Exception(sprintf('Unable to use %s (#%d) as a callback', gettype($callback), $index));
+        }
+    }
+    
+    // search and replace
+    $subjectIsString = is_string($subject);
+    $subject = (array) $subject;
+    foreach($subject as &$haystack) {
+        if (!is_string($haystack)) continue;
+        foreach($search as $key => $needle) {
+            if (!$len = strlen($needle))
+                continue;            
+            $replaceSingle && $key = 0;            
+            $pos = 0;
+            while(false !== $pos = strpos($haystack, $needle, $pos)) {
+                $replaceWith = isset($replace[$key]) ? call_user_func($replace[$key], $needle, ++$replace_count) : '';
+                $haystack = substr_replace($haystack, $replaceWith, $pos, $len);
+            }
+        }
+    }
+    unset($haystack);
+    
+    return $subjectIsString ? reset($subject) : $subject;
 }
