@@ -223,7 +223,7 @@ class contactform {
 				$mailer->antispam = $hive;
 			}
 		}
-		
+
 		$mailer->queue($subject);
 	}
 

@@ -3,15 +3,19 @@
         {
             "type": "vcs",
             "url": "https://github.com/sevn/krumo"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/sevn/f3-mailer"
         }
     ],
     "require": {
         "coyl/git": "^0.1.6",
         "bcosca/fatfree": "3.6.5",
-        "ikkez/f3-mailer": "^1.0",
         "ikkez/f3-template-directives": "^1.0",
         "tajawal/php-ini-parser": "dev-master",
         "paquettg/php-html-parser": "2.0.0",
-	"sevn/krumo": "dev-master"
+        "ikkez/f3-mailer": "dev-master",
+        "sevn/krumo": "dev-master"
     }
 }

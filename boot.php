@@ -146,7 +146,12 @@ check(0, !checkdir(".cms/mail/"), "<strong>.cms/mail</strong> folder does not ex
 // Redirect away from
 if (isroute("cms.php"))
 {
-	header("Location: ".$f3->SCHEME."://".$f3->HOST.$f3->BASE."/");
+	if ($f3->PORT != "")
+	{ 
+		$port = ":" . $f3->PORT;
+	}
+
+	header("Location: ".$f3->SCHEME."://".$f3->HOST.$port.$f3->BASE."/");
 	die;
 }
 
@@ -391,51 +396,47 @@ $f3->route('GET /cms-cdn/*', function ($f3) {
 	}
 });
 
-
 if (!$f3->REDIRECTING)
 	$f3->run();
 
 // Process mail queue
-if (isset(Mailer::$queue))
+if (count(Mailer::$queue) != 0)
 {
-	if (count(Mailer::$queue) != 0)
-	{	
-		foreach (Mailer::$queue as $mailer)
+	foreach (Mailer::$queue as $mailer)
+	{
+		if ($mailer->subject == "")
+			$mailer->subject = "Email from your website";
+
+		if (array_check_value($f3->CONFIG, "developer", true))
+		{		
+			file_put_contents("developer_mail_cache.html", $mailer->message["html"]);
+		}
+		else
 		{
-			if ($mailer->subject == "")
-				$mailer->subject = "Email from your website";
+			file_put_contents("test.txt", "send" . "\n\r", FILE_APPEND);
+			// Lets run the Antispam Filter
+			// if (isset($mailer->antispam))
+			// {
+			// 	require_once $ROOTDIR."/cms/tools/sblam_test_post.php";
+			// 	$result = sblamtestpost($mailer->antispam);
+			// }
+			$return = $mailer->send($mailer->subject);
+			file_put_json(".cms/mail/mail.".time().".".substr(uniqid(), 0, 4).".html", $mailer);
+			file_put_contents("test.txt", $return . "\n\r", FILE_APPEND);
+			// // Passed sblam test
+			// if ($result < 1)
+			// {
 
-			if (array_check_value($f3->CONFIG, "developer", true))
-			{
-				file_put_contents("developer_mail_cache.html", $mailer->message["html"]);
-			}
-			else
-			{
-				// Lets run the Antispam Filter
-				// if (isset($mailer->antispam))
-				// {
-				// 	require_once $ROOTDIR."/cms/tools/sblam_test_post.php";
-				// 	$result = sblamtestpost($mailer->antispam);
-				// }
-
-				$mailer->send($mailer->subject);
-				file_put_json(".cms/mail/mail.".time().".".substr(uniqid(), 0, 4).".html", $mailer);
-
-				// // Passed sblam test
-				// if ($result < 1)
-				// {
-
-				// }
-				// // Failed sblam test
-				// else
-				// {
-				// 	// This code here is temporary just so we can see how well
-				// 	// this sblam filter works.
-				// 	$mailer->recipients = null;
-				// 	$mailer->addTo("errors@webworksau.com", "Web Works");
-				// 	$mailer->send("SBLAM Returning mail");
-				// }
-			}
+			// }
+			// // Failed sblam test
+			// else
+			// {
+			// 	// This code here is temporary just so we can see how well
+			// 	// this sblam filter works.
+			// 	$mailer->recipients = null;
+			// 	$mailer->addTo("errors@webworksau.com", "Web Works");
+			// 	$mailer->send("SBLAM Returning mail");
+			// }
 		}
 	}
 }

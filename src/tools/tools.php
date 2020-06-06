@@ -308,6 +308,7 @@ function redirect_htaccess () {
 return "RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^/$ cms.php [L,QSA]
 RewriteRule .* cms.php [L,QSA]";
 }
 

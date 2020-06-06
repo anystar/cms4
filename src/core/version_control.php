@@ -127,7 +127,11 @@ class version_control extends prefab {
 		$state["locked"] = $this->isLocked();
 		$state["canPush"] = $this->canPush();
 		$state["canPull"] = $this->canPull();
-		$state["isRemoteBehind"] = $this->isRemoteBehind();
+
+		if ($this->hasUpstream())
+			$state["isRemoteBehind"] = $this->isRemoteBehind();
+		else
+			$state["isRemoteBehind"] = null;
 
 		if ($json)
 			return json_encode($state);

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89f2762f2093f0f64cd944cbadcbfb69",
+    "content-hash": "238afbf54379c889b7965aa9c11a5601",
     "packages": [
         {
             "name": "bcosca/fatfree",
@@ -82,16 +82,16 @@
         },
         {
             "name": "ikkez/f3-mailer",
-            "version": "v1.0.4",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ikkez/f3-mailer.git",
-                "reference": "afa94ab575a70f8485e1d0de370ec258bde87598"
+                "url": "https://github.com/sevn/f3-mailer.git",
+                "reference": "b3dfaba49e47181480bdcdf65526d21bffb11df6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ikkez/f3-mailer/zipball/afa94ab575a70f8485e1d0de370ec258bde87598",
-                "reference": "afa94ab575a70f8485e1d0de370ec258bde87598",
+                "url": "https://api.github.com/repos/sevn/f3-mailer/zipball/b3dfaba49e47181480bdcdf65526d21bffb11df6",
+                "reference": "b3dfaba49e47181480bdcdf65526d21bffb11df6",
                 "shasum": ""
             },
             "type": "library",
@@ -100,7 +100,6 @@
                     "./"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-3.0"
             ],
@@ -113,20 +112,23 @@
                 "mail",
                 "smtp"
             ],
-            "time": "2019-02-12T23:48:26+00:00"
+            "support": {
+                "source": "https://github.com/sevn/f3-mailer/tree/dev-master"
+            },
+            "time": "2020-06-01T11:36:09+00:00"
         },
         {
             "name": "ikkez/f3-template-directives",
-            "version": "v1.0.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ikkez/f3-template-directives.git",
-                "reference": "bb36b48c0d0eb00c980d2d5f9a6acfb955cef672"
+                "reference": "2fe3e7332b0622fa5d90a5249b1ce4b9bd03b897"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ikkez/f3-template-directives/zipball/bb36b48c0d0eb00c980d2d5f9a6acfb955cef672",
-                "reference": "bb36b48c0d0eb00c980d2d5f9a6acfb955cef672",
+                "url": "https://api.github.com/repos/ikkez/f3-template-directives/zipball/2fe3e7332b0622fa5d90a5249b1ce4b9bd03b897",
+                "reference": "2fe3e7332b0622fa5d90a5249b1ce4b9bd03b897",
                 "shasum": ""
             },
             "type": "library",
@@ -148,7 +150,7 @@
                 "image",
                 "template"
             ],
-            "time": "2018-09-16T12:24:04+00:00"
+            "time": "2020-05-05T15:01:09+00:00"
         },
         {
             "name": "paquettg/php-html-parser",
@@ -352,6 +354,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "tajawal/php-ini-parser": 20,
+        "ikkez/f3-mailer": 20,
         "sevn/krumo": 20
     },
     "prefer-stable": false,
