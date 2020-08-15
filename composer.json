@@ -2,11 +2,11 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/sevn/krumo"
+            "url": "https://github.com/sevn/f3-mailer"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/sevn/f3-mailer"
+            "url": "https://github.com/sevn/krumo"
         }
     ],
     "require": {
@@ -14,8 +14,8 @@
         "bcosca/fatfree": "3.6.5",
         "ikkez/f3-template-directives": "^1.0",
         "tajawal/php-ini-parser": "dev-master",
-        "paquettg/php-html-parser": "2.0.0",
-        "ikkez/f3-mailer": "dev-master",
+        "paquettg/php-html-parser": "3.0.0",
+        "sevn/f3-mailer": "dev-master",
         "sevn/krumo": "dev-master"
     }
 }

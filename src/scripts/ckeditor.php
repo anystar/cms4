@@ -1,5 +1,6 @@
 <?php
 use PHPHtmlParser\Dom;
+use PHPHtmlParser\Options;
 
 class TemplateAdditional extends Template {
 
@@ -264,21 +265,44 @@ function SaveOnTag($filename, $order, $contents) {
 function SaveOnAttribute($filename, $index, $replacingContent)
 { 
 	$dom = new Dom;
-	$dom->loadFromFile($filename, [
-		"cleanupInput" => false,
-		"whitespaceTextNode"=>true,
-		"removeDoubleSpace"=>false
-	]);
-	
+	// $dom->loadFromFile($filename, [
+	// 	"cleanupInput" => false,
+	// 	"whitespaceTextNode" => true,
+	// 	"removeDoubleSpace" => false,
+	// 	"preserveLineBreaks" => false,
+	// 	"selfClosing" => false,
+	// 	"noSlash" => false,
+	// 	"removeDoubleSpace" => false
+	// ]);
+
+	$dom->setOptions(
+		// this is set as the global option level.
+			(new Options())
+			->setStrict(false)
+			->setWhitespaceTextNode(true)
+			->setCleanupInput(false)
+			->setRemoveScripts(false)
+			->setRemoveStyles(false)
+			->setPreserveLineBreaks(false)
+			->setRemoveDoubleSpace(false)
+			->addNoSlashTag('br')
+			->addNoSlashTag('ckeditor')
+			->addNoSlashTag('link')
+			->addNoSlashTag('dropimg')
+			->addNoSlashTag('meta')
+			->addSelfClosingTags(['dropimg', 'DOCTYPE', 'meta'])
+	);
+
+	$dom->loadFromFile($filename);
 	$contents = $dom->find('*[ckeditor]');
 
 	if ($contents->count() == 0) return;
 
 	$hash = sha1($contents[$index]);
-
+	
 	$i = 0;
 	foreach ($contents as $key=>$content) {
-		
+
 		if ($hash == sha1($content))
 		{   
 			$i++;
@@ -293,7 +317,7 @@ function SaveOnAttribute($filename, $index, $replacingContent)
 	}
 
 	$innerHtml = $contents[$index]->innerHtml();
-
+	
 	if ($innerHtml != "") {
 		$replacingContent = str_replace($innerHtml, $replacingContent, $contents[$index]);
 	} else {
@@ -306,6 +330,7 @@ function SaveOnAttribute($filename, $index, $replacingContent)
 	$file = file_get_contents($filename);
 	$search = $contents[$index]->outerHtml();
 	$count = 0;
+	$replace_count; // debug variable for str_ureplace
 
 	$file2 = str_ureplace($contents[$index]->outerHtml(), function ($match, $count) use($realIndex, $replacingContent, $search) {
 
@@ -314,8 +339,8 @@ function SaveOnAttribute($filename, $index, $replacingContent)
 		else
 			return $replacingContent;
 
-	}, $file);
-
+	}, $file, $replace_count);
+	
 	$file2 = str_replace("REPLACE__".sha1($search)."__REPLACE", $search, $file2);
 
 	file_put_contents($filename, $file2);
