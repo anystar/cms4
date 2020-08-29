@@ -270,11 +270,7 @@ class gallery {
 			$temp["filename"] = $file;
 			$temp["thumb"] = \Base::instance()->BASE."/".$urlpath."/"."thumbs/thumb_".$temp["filename"];
 
-			$img = new Image($filepath."/".$file, null, "");
-
-			// Ensure it loaded
-			// if ($img->data == false)
-			// 	continue;
+			$img = new Image($filepath."/".$file, false, "");
 
 			$temp["width"] = $img->width();
 			$temp["height"] = $img->height();
