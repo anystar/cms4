@@ -398,7 +398,6 @@ if (count(Mailer::$queue) != 0)
 		}
 		else
 		{
-			file_put_contents("test.txt", "send" . "\n\r", FILE_APPEND);
 			// Lets run the Antispam Filter
 			// if (isset($mailer->antispam))
 			// {
