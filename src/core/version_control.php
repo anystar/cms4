@@ -9,7 +9,6 @@ class version_control extends prefab {
 	private $branch;
 
 	function __construct($settings) {
-
 		if (!admin::$signed)
 			return;
 
