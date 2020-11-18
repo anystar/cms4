@@ -17,7 +17,7 @@ class repeater {
 
 		check(0, (count($settings) < 3), "**Default example:**", $defaults);
 
-		$from_cms = scandir($GLOBALS["ROOTDIR"]."/cms/scriptsUI/repeat/");
+		$from_cms = scandir($GLOBALS["ROOTDIR"]."/src/scriptsUI/repeat/");
 		$from_cms = array_diff($from_cms, array('.', '..', 'repeat.html'));
 
 		$client_dir = getcwd()."/.cms/repeat-snippets/";
