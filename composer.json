@@ -2,20 +2,24 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/sevn/f3-mailer"
+            "url": "https://github.com/anystar/f3-mailer"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/sevn/krumo"
+            "url": "https://github.com/anystar/krumo"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/anystar/php-ini-parser"
         }
     ],
     "require": {
         "coyl/git": "^0.1.6",
         "bcosca/fatfree": "3.6.5",
         "ikkez/f3-template-directives": "^1.0",
-        "tajawal/php-ini-parser": "dev-master",
         "paquettg/php-html-parser": "3.0.0",
-        "sevn/f3-mailer": "dev-master",
-        "sevn/krumo": "dev-master"
+        "anystar/f3-mailer": "dev-master",
+        "anystar/krumo": "dev-master",
+        "anystar/php-ini-parser": "dev-main"
     }
 }

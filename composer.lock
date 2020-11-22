@@ -4,8 +4,148 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "85d13806a1201f1673690047e11e73e9",
+    "content-hash": "65e00c86f5c1f2e54c65dc0867602bdc",
     "packages": [
+        {
+            "name": "anystar/f3-mailer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anystar/f3-mailer.git",
+                "reference": "8aa846e925259c26b70db57171855544a3138ecd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anystar/f3-mailer/zipball/8aa846e925259c26b70db57171855544a3138ecd",
+                "reference": "8aa846e925259c26b70db57171855544a3138ecd",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "./"
+                ]
+            },
+            "license": [
+                "GPL-3.0"
+            ],
+            "description": "SMTP plugin wrapper for PHP Fat-Free Framework",
+            "homepage": "https://github.com/ikkez/f3-mailer",
+            "keywords": [
+                "F3",
+                "email",
+                "fatfree",
+                "mail",
+                "smtp"
+            ],
+            "support": {
+                "source": "https://github.com/anystar/f3-mailer/tree/master"
+            },
+            "time": "2020-11-22T10:04:04+00:00"
+        },
+        {
+            "name": "anystar/krumo",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anystar/krumo.git",
+                "reference": "2a356999a0240cfed81b3803bab817c3c26a218e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anystar/krumo/zipball/2a356999a0240cfed81b3803bab817c3c26a218e",
+                "reference": "2a356999a0240cfed81b3803bab817c3c26a218e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.17"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "dev-master",
+                "phpmd/phpmd": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "class.krumo.php"
+                ]
+            },
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Kaloyan K. Tsvetkov",
+                    "email": "kaloyan@kaloyan.info"
+                },
+                {
+                    "name": "Matthew J. Mucklo",
+                    "email": "mmucklo@gmail.com"
+                },
+                {
+                    "name": "Stefan Thomas",
+                    "email": "moon@justmoon.de"
+                },
+                {
+                    "name": "Scott Baker",
+                    "email": "scott@perturb.org"
+                }
+            ],
+            "description": "KRUMO - version 2.0 of print_r(); and var_dump(); (with new updates)",
+            "keywords": [
+                "debug",
+                "debugging",
+                "krumo",
+                "pretty",
+                "print",
+                "print_r",
+                "var_dump"
+            ],
+            "support": {
+                "source": "https://github.com/anystar/krumo/tree/master"
+            },
+            "time": "2020-11-22T10:05:06+00:00"
+        },
+        {
+            "name": "anystar/php-ini-parser",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anystar/php-ini-parser.git",
+                "reference": "14852815f83e24cf4929c8094ad431feb0869bb3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anystar/php-ini-parser/zipball/14852815f83e24cf4929c8094ad431feb0869bb3",
+                "reference": "14852815f83e24cf4929c8094ad431feb0869bb3",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "IniParser": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "IT Team",
+                    "email": "it@tajawal.com"
+                }
+            ],
+            "description": "A Zend_Config_Ini like parser for .ini files.",
+            "keywords": [
+                "configuration",
+                "ini"
+            ],
+            "support": {
+                "source": "https://github.com/anystar/php-ini-parser/tree/1.0",
+                "issues": "https://github.com/anystar/php-ini-parser/issues"
+            },
+            "time": "2020-11-22T10:06:34+00:00"
+        },
         {
             "name": "bcosca/fatfree",
             "version": "3.6.5",
@@ -149,23 +289,23 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "v1.3.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646"
+                "reference": "60d379c243457e073cff02bc323a2a86cb355631"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/a59da6cf61d80060647ff4d3eb2c03a2bc694646",
-                "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/60d379c243457e073cff02bc323a2a86cb355631",
+                "reference": "60d379c243457e073cff02bc323a2a86cb355631",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "php": ">=5.5"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.0"
+                "symfony/phpunit-bridge": "^4.4 || ^5.1"
             },
             "type": "library",
             "extra": {
@@ -196,20 +336,20 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-12-20T10:07:11+00:00"
+            "time": "2020-09-30T07:37:28+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.6.1",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "239400de7a173fe9901b9ac7c06497751f00727a"
+                "reference": "53330f47520498c0ae1f61f7e2c90f55690c06a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/239400de7a173fe9901b9ac7c06497751f00727a",
-                "reference": "239400de7a173fe9901b9ac7c06497751f00727a",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/53330f47520498c0ae1f61f7e2c90f55690c06a3",
+                "reference": "53330f47520498c0ae1f61f7e2c90f55690c06a3",
                 "shasum": ""
             },
             "require": {
@@ -222,15 +362,15 @@
             },
             "require-dev": {
                 "ext-zlib": "*",
-                "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.8"
+                "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.8 || ^9.3.10"
             },
             "suggest": {
-                "zendframework/zend-httphandlerrunner": "Emit PSR-7 responses"
+                "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.6-dev"
+                    "dev-master": "1.7-dev"
                 }
             },
             "autoload": {
@@ -267,7 +407,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2019-07-01T23:21:34+00:00"
+            "time": "2020-09-30T07:37:11+00:00"
         },
         {
             "name": "ikkez/f3-template-directives",
@@ -306,16 +446,16 @@
         },
         {
             "name": "myclabs/php-enum",
-            "version": "1.7.6",
+            "version": "1.7.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/php-enum.git",
-                "reference": "5f36467c7a87e20fbdc51e524fd8f9d1de80187c"
+                "reference": "d178027d1e679832db9f38248fcc7200647dc2b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/5f36467c7a87e20fbdc51e524fd8f9d1de80187c",
-                "reference": "5f36467c7a87e20fbdc51e524fd8f9d1de80187c",
+                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/d178027d1e679832db9f38248fcc7200647dc2b7",
+                "reference": "d178027d1e679832db9f38248fcc7200647dc2b7",
                 "shasum": ""
             },
             "require": {
@@ -348,7 +488,17 @@
             "keywords": [
                 "enum"
             ],
-            "time": "2020-02-14T08:15:52+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/mnapoli",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/myclabs/php-enum",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-11-14T18:14:52+00:00"
         },
         {
             "name": "paquettg/php-html-parser",
@@ -454,51 +604,6 @@
                 "string"
             ],
             "time": "2018-12-21T02:25:09+00:00"
-        },
-        {
-            "name": "paragonie/random_compat",
-            "version": "v9.99.99",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
-                "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*|5.*",
-                "vimeo/psalm": "^1"
-            },
-            "suggest": {
-                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Paragon Initiative Enterprises",
-                    "email": "security@paragonie.com",
-                    "homepage": "https://paragonie.com"
-                }
-            ],
-            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
-            "keywords": [
-                "csprng",
-                "polyfill",
-                "pseudorandom",
-                "random"
-            ],
-            "time": "2018-07-02T15:55:56+00:00"
         },
         {
             "name": "php-http/guzzle6-adapter",
@@ -814,123 +919,22 @@
             "time": "2019-03-08T08:55:37+00:00"
         },
         {
-            "name": "sevn/f3-mailer",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sevn/f3-mailer.git",
-                "reference": "0969ec0db814b430ffb16b7169d1c2f7561bc8bd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sevn/f3-mailer/zipball/0969ec0db814b430ffb16b7169d1c2f7561bc8bd",
-                "reference": "0969ec0db814b430ffb16b7169d1c2f7561bc8bd",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "./"
-                ]
-            },
-            "license": [
-                "GPL-3.0"
-            ],
-            "description": "SMTP plugin wrapper for PHP Fat-Free Framework",
-            "homepage": "https://github.com/ikkez/f3-mailer",
-            "keywords": [
-                "F3",
-                "email",
-                "fatfree",
-                "mail",
-                "smtp"
-            ],
-            "support": {
-                "source": "https://github.com/sevn/f3-mailer/tree/master"
-            },
-            "time": "2020-08-15T12:16:41+00:00"
-        },
-        {
-            "name": "sevn/krumo",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sevn/krumo.git",
-                "reference": "d4bb9ecafbe7c1e1aab003cbadba0acf337b9a75"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sevn/krumo/zipball/d4bb9ecafbe7c1e1aab003cbadba0acf337b9a75",
-                "reference": "d4bb9ecafbe7c1e1aab003cbadba0acf337b9a75",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.17"
-            },
-            "require-dev": {
-                "fabpot/php-cs-fixer": "dev-master",
-                "phpmd/phpmd": "dev-master"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "class.krumo.php"
-                ]
-            },
-            "license": [
-                "LGPL"
-            ],
-            "authors": [
-                {
-                    "name": "Kaloyan K. Tsvetkov",
-                    "email": "kaloyan@kaloyan.info"
-                },
-                {
-                    "name": "Matthew J. Mucklo",
-                    "email": "mmucklo@gmail.com"
-                },
-                {
-                    "name": "Stefan Thomas",
-                    "email": "moon@justmoon.de"
-                },
-                {
-                    "name": "Scott Baker",
-                    "email": "scott@perturb.org"
-                }
-            ],
-            "description": "KRUMO - version 2.0 of print_r(); and var_dump(); (with new updates)",
-            "keywords": [
-                "debug",
-                "debugging",
-                "krumo",
-                "pretty",
-                "print",
-                "print_r",
-                "var_dump"
-            ],
-            "support": {
-                "source": "https://github.com/sevn/krumo/tree/master"
-            },
-            "time": "2019-02-22T08:26:02+00:00"
-        },
-        {
             "name": "symfony/polyfill-intl-idn",
-            "version": "v1.18.1",
+            "version": "v1.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-idn.git",
-                "reference": "5dcab1bc7146cf8c1beaa4502a3d9be344334251"
+                "reference": "3b75acd829741c768bc8b1f84eb33265e7cc5117"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/5dcab1bc7146cf8c1beaa4502a3d9be344334251",
-                "reference": "5dcab1bc7146cf8c1beaa4502a3d9be344334251",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/3b75acd829741c768bc8b1f84eb33265e7cc5117",
+                "reference": "3b75acd829741c768bc8b1f84eb33265e7cc5117",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=7.1",
                 "symfony/polyfill-intl-normalizer": "^1.10",
-                "symfony/polyfill-php70": "^1.10",
                 "symfony/polyfill-php72": "^1.10"
             },
             "suggest": {
@@ -939,7 +943,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.18-dev"
+                    "dev-main": "1.20-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -982,24 +986,38 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-08-04T06:02:08+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-10-23T14:02:19+00:00"
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.18.1",
+            "version": "v1.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
-                "reference": "37078a8dd4a2a1e9ab0231af7c6cb671b2ed5a7e"
+                "reference": "727d1096295d807c309fb01a851577302394c897"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/37078a8dd4a2a1e9ab0231af7c6cb671b2ed5a7e",
-                "reference": "37078a8dd4a2a1e9ab0231af7c6cb671b2ed5a7e",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/727d1096295d807c309fb01a851577302394c897",
+                "reference": "727d1096295d807c309fb01a851577302394c897",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=7.1"
             },
             "suggest": {
                 "ext-intl": "For best performance"
@@ -1007,7 +1025,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.18-dev"
+                    "dev-main": "1.20-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -1049,92 +1067,43 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-07-14T12:35:20+00:00"
-        },
-        {
-            "name": "symfony/polyfill-php70",
-            "version": "v1.18.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php70.git",
-                "reference": "0dd93f2c578bdc9c72697eaa5f1dd25644e618d3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php70/zipball/0dd93f2c578bdc9c72697eaa5f1dd25644e618d3",
-                "reference": "0dd93f2c578bdc9c72697eaa5f1dd25644e618d3",
-                "shasum": ""
-            },
-            "require": {
-                "paragonie/random_compat": "~1.0|~2.0|~9.99",
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.18-dev"
-                },
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php70\\": ""
-                },
-                "files": [
-                    "bootstrap.php"
-                ],
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
+            "funding": [
                 {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
                 },
                 {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
                 }
             ],
-            "description": "Symfony polyfill backporting some PHP 7.0+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "time": "2020-07-14T12:35:20+00:00"
+            "time": "2020-10-23T14:02:19+00:00"
         },
         {
             "name": "symfony/polyfill-php72",
-            "version": "v1.18.1",
+            "version": "v1.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php72.git",
-                "reference": "639447d008615574653fb3bc60d1986d7172eaae"
+                "reference": "cede45fcdfabdd6043b3592e83678e42ec69e930"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/639447d008615574653fb3bc60d1986d7172eaae",
-                "reference": "639447d008615574653fb3bc60d1986d7172eaae",
+                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/cede45fcdfabdd6043b3592e83678e42ec69e930",
+                "reference": "cede45fcdfabdd6043b3592e83678e42ec69e930",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=7.1"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.18-dev"
+                    "dev-main": "1.20-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -1171,53 +1140,30 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-07-14T12:35:20+00:00"
-        },
-        {
-            "name": "tajawal/php-ini-parser",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:tajawal/php-ini-parser.git",
-                "reference": "31962527d2a0241d4df41f426540698038e0b976"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tajawal/php-ini-parser/zipball/31962527d2a0241d4df41f426540698038e0b976",
-                "reference": "31962527d2a0241d4df41f426540698038e0b976",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "IniParser": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
+            "funding": [
                 {
-                    "name": "IT Team",
-                    "email": "it@tajawal.com"
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
                 }
             ],
-            "description": "A Zend_Config_Ini like parser for .ini files.",
-            "keywords": [
-                "configuration",
-                "ini"
-            ],
-            "time": "2017-02-16T14:40:09+00:00"
+            "time": "2020-10-23T14:02:19+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "tajawal/php-ini-parser": 20,
-        "sevn/f3-mailer": 20,
-        "sevn/krumo": 20
+        "anystar/f3-mailer": 20,
+        "anystar/krumo": 20,
+        "anystar/php-ini-parser": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
