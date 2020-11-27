@@ -2,6 +2,10 @@
     "repositories": [
         {
             "type": "vcs",
+            "url": "https://github.com/anystar/fatfree-core"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/anystar/f3-mailer"
         },
         {
@@ -15,9 +19,9 @@
     ],
     "require": {
         "coyl/git": "^0.1.6",
-        "bcosca/fatfree": "3.6.5",
         "ikkez/f3-template-directives": "^1.0",
         "paquettg/php-html-parser": "3.0.0",
+        "anystar/fatfree-core": "dev-master",
         "anystar/f3-mailer": "dev-master",
         "anystar/krumo": "dev-master",
         "anystar/php-ini-parser": "dev-main"

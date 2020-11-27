@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "65e00c86f5c1f2e54c65dc0867602bdc",
+    "content-hash": "6e40a19c15af1f656c8c0083a357fea0",
     "packages": [
         {
             "name": "anystar/f3-mailer",
@@ -42,6 +42,39 @@
                 "source": "https://github.com/anystar/f3-mailer/tree/master"
             },
             "time": "2020-11-22T10:04:04+00:00"
+        },
+        {
+            "name": "anystar/fatfree-core",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anystar/fatfree-core.git",
+                "reference": "efa88df116e0ea419eb60dbc28696aa900000698"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anystar/fatfree-core/zipball/efa88df116e0ea419eb60dbc28696aa900000698",
+                "reference": "efa88df116e0ea419eb60dbc28696aa900000698",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "."
+                ]
+            },
+            "license": [
+                "GPL-3.0"
+            ],
+            "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
+            "homepage": "http://fatfreeframework.com/",
+            "support": {
+                "source": "https://github.com/anystar/fatfree-core/tree/master"
+            },
+            "time": "2020-11-25T09:29:33+00:00"
         },
         {
             "name": "anystar/krumo",
@@ -145,37 +178,6 @@
                 "issues": "https://github.com/anystar/php-ini-parser/issues"
             },
             "time": "2020-11-22T10:06:34+00:00"
-        },
-        {
-            "name": "bcosca/fatfree",
-            "version": "3.6.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bcosca/fatfree.git",
-                "reference": "a841d838e8f146486d85e4947fb92e2fa78fdeb8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bcosca/fatfree/zipball/a841d838e8f146486d85e4947fb92e2fa78fdeb8",
-                "reference": "a841d838e8f146486d85e4947fb92e2fa78fdeb8",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "lib/base.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
-            "homepage": "http://fatfreeframework.com/",
-            "time": "2018-12-24T13:43:34+00:00"
         },
         {
             "name": "coyl/git",
@@ -1161,6 +1163,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "anystar/fatfree-core": 20,
         "anystar/f3-mailer": 20,
         "anystar/krumo": 20,
         "anystar/php-ini-parser": 20
