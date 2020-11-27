@@ -161,7 +161,7 @@ if (isroute("cms.php"))
 if (!is_file(".cms/settings.json")) {
 	
 	// Looks like settings.json does not exist
-	$default_settings["user"] = "alan@webworksau.com";
+	$default_settings["user"] = "admin@example.com";
 	$default_settings["pass"] = "nopass1000";
 	$default_settings["version-control"] = "true";
 	$default_settings["404-handler"] = "";
@@ -398,7 +398,6 @@ if (count(Mailer::$queue) != 0)
 		}
 		else
 		{
-			file_put_contents("test.txt", "send" . "\n\r", FILE_APPEND);
 			// Lets run the Antispam Filter
 			// if (isset($mailer->antispam))
 			// {

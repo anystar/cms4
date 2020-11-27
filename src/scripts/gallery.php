@@ -272,8 +272,9 @@ class gallery {
 
 			$img = new Image($filepath."/".$file, false, "");
 
-			$temp["width"] = $img->width();
-			$temp["height"] = $img->height();
+			// Ensure it loaded
+			if ($img->data == false)
+				continue;
 
 			$thumbnail_size = $this->settings["image-settings"]["thumbnail"]["size"];
 			$thumbnail_size = explode("x", $thumbnail_size);
